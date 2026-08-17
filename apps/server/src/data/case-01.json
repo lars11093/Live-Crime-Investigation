@@ -1,0 +1,55 @@
+{
+  "id": "case-01",
+  "title": "The Office at 22:30",
+  "suspects": [
+    { "id": "daniel-keller", "name": "Daniel Keller" },
+    { "id": "monica-brandt", "name": "Monica Brandt" },
+    { "id": "leo-fischer", "name": "Leo Fischer" }
+  ],
+  "scenarios": [
+    {
+      "id": "scenario-daniel",
+      "suspectId": "daniel-keller",
+      "motive": "Blackmail",
+      "weapon": "Kitchen Knife",
+      "timeOfCrime": "22:46",
+      "requiredEdgeIds": ["edge-fingerprint-daniel", "edge-message-daniel", "edge-cctv-daniel"]
+    },
+    {
+      "id": "scenario-monica",
+      "suspectId": "monica-brandt",
+      "motive": "Revenge",
+      "weapon": "Letter Opener",
+      "timeOfCrime": "22:39",
+      "requiredEdgeIds": ["edge-fingerprint-monica", "edge-message-monica"]
+    }
+  ],
+  "seedEvidence": [
+    { "id": "victim", "label": "Victim", "kind": "person", "x": 400, "y": 80 },
+    { "id": "weapon", "label": "Murder Weapon", "kind": "object", "x": 200, "y": 220 },
+    { "id": "message-2230", "label": "\"Meet me at the office. 22:30.\"", "kind": "message", "x": 600, "y": 220 }
+  ],
+  "timeline": [
+    {
+      "atSeconds": 300,
+      "type": "NEW_EVIDENCE",
+      "title": "NEW EVIDENCE DISCOVERED",
+      "body": "Security Camera #04 footage available.",
+      "visibleTo": ["field"]
+    },
+    {
+      "atSeconds": 480,
+      "type": "STATEMENT_CHANGED",
+      "title": "SUSPECT CHANGED STATEMENT",
+      "body": "Monica Brandt revised her alibi for 22:30-22:50.",
+      "visibleTo": ["interrogation", "lead"]
+    },
+    {
+      "atSeconds": 900,
+      "type": "SERVER_BREACH",
+      "title": "EVIDENCE SERVER BREACH",
+      "body": "3 files have been corrupted. Cross-check remaining evidence carefully.",
+      "visibleTo": ["cyber", "lead"]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "case-zero",
+  "private": true,
+  "description": "CASE//ZERO - Live Crime Investigation. Realtime multiplayer detective/forensics game (TBZ M426 project).",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/server & npm run dev --workspace=apps/web",
+    "dev:server": "npm run dev --workspace=apps/server",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspace=packages/shared && npm run build --workspace=apps/server && npm run build --workspace=apps/web",
+    "lint": "npm run lint --workspace=apps/server && npm run lint --workspace=apps/web",
+    "typecheck": "npm run typecheck --workspace=apps/server && npm run typecheck --workspace=apps/web",
+    "test": "npm run test --workspace=apps/server && npm run test --workspace=apps/web"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,94 @@
+:root {
+  --bg: #05070a;
+  --panel: #0d1117;
+  --border: #1f2933;
+  --ink: #e6edf3;
+  --muted: #7d8590;
+  --accent: #22c55e;
+  --danger: #ef4444;
+  font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+.app-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.terminal-title {
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.25rem;
+}
+
+input, button, select {
+  font-family: inherit;
+  background: #0a0f14;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.6rem 0.8rem;
+}
+
+button {
+  cursor: pointer;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+button:hover {
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.role-badge {
+  display: inline-block;
+  border: 1px solid var(--border);
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.evidence-board {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  background:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 24px 24px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.evidence-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  cursor: grab;
+  user-select: none;
+}
