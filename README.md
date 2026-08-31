@@ -1,4 +1,4 @@
-# 🕵️ CASE//ZERO — Live Crime Investigation
+# CASE//ZERO — Live Crime Investigation
 
 Realtime multiplayer detective/forensics game. Five players, five different interfaces, one shared crime. Nobody can solve the case alone — the game forces information exchange between roles, synced live over WebSockets.
 
@@ -14,11 +14,11 @@ Ein einziger, aber brutal hochwertiger Fall statt zehn oberflächlicher. Fünf S
 
 | Rolle | Exklusiver Zugriff |
 |---|---|
-| 🔬 Forensiker | DNA, Fingerabdrücke, Autopsie |
-| 💻 Cyber Investigator | Handys, Chats, Dateien, Metadaten |
-| 🗣️ Verhör-Spezialist | Verdächtige befragen |
-| 📍 Field Detective | Orte, CCTV, Zeugenaussagen |
-| 🧠 Lead Detective | Timeline & Evidence Board verwalten |
+| Forensiker | DNA, Fingerabdrücke, Autopsie |
+| Cyber Investigator | Handys, Chats, Dateien, Metadaten |
+| Verhör-Spezialist | Verdächtige befragen |
+| Field Detective | Orte, CCTV, Zeugenaussagen |
+| Lead Detective | Timeline & Evidence Board verwalten |
 
 Ein Fall hat 2–3 mögliche Täter-Szenarien (`CaseEngine` wählt beim Case-Start eines aus und aktiviert dazu passende Beweise/Nachrichten/Aussagen) — damit kann niemand die Lösung vorab verraten.
 
