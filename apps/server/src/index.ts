@@ -101,7 +101,7 @@ io.on("connection", (socket) => {
     if (!room) return;
     room.state.started = true;
     io.to(code).emit("room:state", room.state);
-    scheduleTimeline(code, room);
+    scheduleTimeline(room);
   });
 
   socket.on("board:addNode", ({ code, node }) => {
@@ -143,7 +143,7 @@ io.on("connection", (socket) => {
   });
 });
 
-function scheduleTimeline(code: string, room: Room) {
+function scheduleTimeline(room: Room) {
   for (const event of room.caseDef.timeline) {
     setTimeout(() => {
       const targets = room.state.players.filter((p) =>
