@@ -75,7 +75,9 @@ Live-Crime-Investigation/
 - **Sprints:** 2 Wochen, insgesamt 4 Sprints à 2 Wochen + 1 Woche Puffer/Präsentation (9 Wochen total).
 - **Ritual:** Daily Standup (kurz), Sprint Planning zu Sprintbeginn, Sprint Review + Retro zu Sprintende.
 - **Backlog-Werkzeug:** GitHub Issues + Projects Board (Spalten: `Backlog`, `Sprint Backlog`, `In Progress`, `Review`, `Done`).
-- **Definition of Done:** Code gemerged in `main`, CI grün (Lint+Typecheck+Test), manuell mit 2+ Browser-Tabs durchgespielt, README/CLAUDE.md aktualisiert falls Architektur betroffen.
+- **Definition of Done:** sechs Kriterien, verbindlich ab Sprint 1 — siehe [docs/definition-of-done.md](docs/definition-of-done.md).
+- **Portfolio (Pflichtnachweis):** [docs/portfolio.md](docs/portfolio.md) — Team, Vision, Backlog, Sprint-Blöcke.
+- **Sprint 1 (aktuell):** Ziel, Schätzung und Sprint Backlog in [docs/sprint-1-planning.md](docs/sprint-1-planning.md), Refinement-Protokoll in [docs/refinement-sprint-1.md](docs/refinement-sprint-1.md).
 
 ### Sprint-Plan (Vorschlag)
 
