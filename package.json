@@ -16,7 +16,10 @@
     "test": "npm run test --workspace=apps/server && npm run test --workspace=apps/web"
   },
   "devDependencies": {
-    "typescript": "^5.7.2"
+    "eslint": "^9.39.5",
+    "globals": "^15.15.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.69.0"
   },
   "engines": {
     "node": ">=20"
