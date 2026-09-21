@@ -18,3 +18,7 @@ apps/web/public/scenes/*
 # Asservatenfotos werden nicht committet (siehe apps/web/public/evidence/README.md)
 apps/web/public/evidence/*
 !apps/web/public/evidence/README.md
+
+# Portraets werden nicht committet (siehe apps/web/public/suspects/README.md)
+apps/web/public/suspects/*
+!apps/web/public/suspects/README.md
