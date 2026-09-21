@@ -1,11 +1,14 @@
-import { useState } from "react";
-import type { Hotspot, Scene } from "@case-zero/shared";
+import { useEffect, useState } from "react";
+import type { CollectableEvidence, Hotspot, Scene } from "@case-zero/shared";
 
 interface Props {
   scene: Scene;
   /** IDs bereits untersuchter Stellen — bleibt beim Verlassen der Szene erhalten. */
   investigatedIds: string[];
   onInvestigate: (hotspotId: string) => void;
+  /** IDs bereits eingesammelter Funde (#9). */
+  collectedIds: string[];
+  onCollect: (evidence: CollectableEvidence) => void;
   onBack: () => void;
 }
 
@@ -17,11 +20,33 @@ interface Props {
  * (Copyright/Repo-Groesse). Bis dahin greift der Platzhalter, der deshalb
  * kein Randfall ist, sondern der Normalzustand.
  */
-export function SceneView({ scene, investigatedIds, onInvestigate, onBack }: Props) {
+export function SceneView({
+  scene,
+  investigatedIds,
+  onInvestigate,
+  collectedIds,
+  onCollect,
+  onBack,
+}: Props) {
   const [imageFailed, setImageFailed] = useState(false);
   const [openHotspot, setOpenHotspot] = useState<Hotspot | null>(null);
+  const [confirmation, setConfirmation] = useState<string | null>(null);
 
   const investigated = new Set(investigatedIds);
+  const collected = new Set(collectedIds);
+
+  // Bestaetigung wieder ausblenden, damit sie nicht dauerhaft im Bild steht.
+  useEffect(() => {
+    if (!confirmation) return;
+    const timer = setTimeout(() => setConfirmation(null), 4000);
+    return () => clearTimeout(timer);
+  }, [confirmation]);
+
+  function collect(evidence: CollectableEvidence) {
+    onCollect(evidence);
+    setConfirmation(`"${evidence.label}" ist in deiner Beweisakte.`);
+    setOpenHotspot(null);
+  }
 
   function open(hotspot: Hotspot) {
     setOpenHotspot(hotspot);
@@ -77,15 +102,39 @@ export function SceneView({ scene, investigatedIds, onInvestigate, onBack }: Pro
         </button>
       </div>
 
+      {confirmation && (
+        <p className="scene__confirmation" role="status">
+          {confirmation}
+        </p>
+      )}
+
       {openHotspot && (
         <div className="hotspot-detail" role="dialog" aria-label={openHotspot.label}>
           <div className="hotspot-detail__panel">
             <p className="terminal-title">Spur untersucht</p>
             <h2 className="hotspot-detail__title">{openHotspot.label}</h2>
             <p className="hotspot-detail__text">{openHotspot.detail}</p>
-            <button className="button--primary" onClick={() => setOpenHotspot(null)}>
-              Schliessen
-            </button>
+
+            {openHotspot.evidence && (
+              <p className="hotspot-detail__find">
+                Sicherbar: <strong>{openHotspot.evidence.label}</strong>
+              </p>
+            )}
+
+            <div className="case-status__actions">
+              {openHotspot.evidence &&
+                (collected.has(openHotspot.evidence.id) ? (
+                  <button disabled>Bereits eingesammelt</button>
+                ) : (
+                  <button
+                    className="button--primary"
+                    onClick={() => collect(openHotspot.evidence!)}
+                  >
+                    Einsammeln
+                  </button>
+                ))}
+              <button onClick={() => setOpenHotspot(null)}>Schliessen</button>
+            </div>
           </div>
         </div>
       )}
