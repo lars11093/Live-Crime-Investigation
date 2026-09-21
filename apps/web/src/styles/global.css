@@ -159,3 +159,62 @@ body,
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
+
+/* ---------------------------------------------------------------
+   Story #2 — Fall laden: Lade- und Fehlerzustand
+   --------------------------------------------------------------- */
+
+.case-title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  line-height: 1.2;
+}
+
+.case-status {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+}
+
+.case-status p {
+  margin: 0;
+}
+
+.case-status__error {
+  color: var(--danger);
+  font-size: 1.1rem;
+}
+
+.case-status__hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.case-status__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.case-status__spinner {
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: case-spin 0.8s linear infinite;
+}
+
+@keyframes case-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-status__spinner {
+    animation-duration: 3s;
+  }
+}
