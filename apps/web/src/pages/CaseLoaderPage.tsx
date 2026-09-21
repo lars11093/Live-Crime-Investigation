@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import type { PublicCase } from "@case-zero/shared";
 import { fetchCase } from "../lib/api";
 import { CaseBriefingPanel } from "../components/CaseBriefingPanel";
+import { SceneView } from "../components/SceneView";
 
 /** Solange es nur einen Fall gibt, ist er fest verdrahtet. Fallauswahl ist #30. */
 const CASE_ID = "case-01";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
-type View = "briefing" | "akte";
+type View = "briefing" | "akte" | "tatort";
 
 type LoadState =
   | { status: "loading" }
@@ -77,13 +78,21 @@ export function CaseLoaderPage() {
 
   const { caseData } = state;
 
+  // Solange nur ein Tatort pro Fall angezeigt wird, ist es der erste.
+  // Mehrere Tatorte zur Auswahl sind #59.
+  const scene = caseData.scenes.at(0);
+
+  if (view === "tatort" && scene) {
+    return <SceneView scene={scene} onBack={() => setView("akte")} />;
+  }
+
   if (view === "briefing") {
     return (
       <main className="app-shell">
         <CaseBriefingPanel
           title={caseData.title}
           briefing={caseData.briefing}
-          onOpenScene={() => setView("akte")}
+          onOpenScene={() => setView(scene ? "tatort" : "akte")}
           onClose={() => setView("akte")}
         />
       </main>
@@ -100,6 +109,11 @@ export function CaseLoaderPage() {
           {caseData.seedEvidence.length} erste Spuren
         </p>
         <div className="case-status__actions">
+          {scene && (
+            <button className="button--primary" onClick={() => setView("tatort")}>
+              Zum Tatort
+            </button>
+          )}
           <button onClick={() => setView("briefing")}>Briefing</button>
         </div>
       </div>
