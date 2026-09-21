@@ -49,6 +49,21 @@ export interface Suspect {
 }
 
 /**
+ * Ein Tatort als Szene (Story #7).
+ *
+ * `imagePath` ist ein Pfad, kein Asset: echte Bilder werden bewusst nicht
+ * committet (Copyright/Repo-Groesse). Laedt das Bild nicht — und in der
+ * MVP-Phase tut es das nie — zeigt der Client einen Platzhalter mit dem
+ * Szenennamen.
+ */
+export interface Scene {
+  id: string;
+  /** Anzeigename, dauerhaft als Overlay sichtbar. */
+  name: string;
+  imagePath: string;
+}
+
+/**
  * Das Briefing, das der Spieler vor dem Tatort liest (Story #6).
  *
  * Optional am Fall: fehlt es, zeigt der Client "Kein Briefing verfuegbar"
@@ -67,6 +82,7 @@ export interface CaseDefinition {
   id: string;
   title: string;
   briefing?: CaseBriefing;
+  scenes: Scene[];
   suspects: Suspect[];
   scenarios: Scenario[];
   seedEvidence: EvidenceNode[];
