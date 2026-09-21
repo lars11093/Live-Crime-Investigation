@@ -2,6 +2,8 @@ import type { CollectableEvidence } from "@case-zero/shared";
 
 interface Props {
   evidence: CollectableEvidence[];
+  /** Zurueck in die Fallakte. Fehlt, wenn die Liste eingebettet gezeigt wird. */
+  onBack?: () => void;
 }
 
 const KIND_LABEL: Record<CollectableEvidence["kind"], string> = {
@@ -13,14 +15,20 @@ const KIND_LABEL: Record<CollectableEvidence["kind"], string> = {
 };
 
 /**
- * Story #9 — die Beweisakte.
- * Zeigt, was im Tatort eingesammelt wurde. Die volle Akte mit Filtern,
- * Notizen und Verknuepfungen ist #10 bis #13.
+ * Story #10 — alle gesammelten Beweise als Liste.
+ *
+ * Die Liste haengt am State der Fallseite, nicht an einem eigenen Ladevorgang:
+ * ein neu eingesammelter Fund erscheint dadurch sofort, ohne Neuladen.
  */
-export function EvidenceList({ evidence }: Props) {
+export function EvidenceList({ evidence, onBack }: Props) {
   return (
     <section className="panel evidence-list">
-      <p className="terminal-title">Beweisakte</p>
+      <div className="evidence-list__bar">
+        <p className="terminal-title" style={{ margin: 0 }}>
+          Beweisakte · {evidence.length}
+        </p>
+        {onBack && <button onClick={onBack}>Zurueck zur Fallakte</button>}
+      </div>
 
       {evidence.length === 0 ? (
         <p className="evidence-list__empty">
