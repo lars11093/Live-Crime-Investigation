@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { CollectedEvidence, PublicCase } from "@case-zero/shared";
+import type { PublicCase } from "@case-zero/shared";
 import { fetchCase, findRoom } from "../lib/api";
+import {
+  browserStorage,
+  loadProgress,
+  saveProgress,
+  setNote,
+  type CaseProgress,
+} from "../lib/caseProgress";
 import { CaseBriefingPanel } from "../components/CaseBriefingPanel";
 import { SceneView } from "../components/SceneView";
 import { EvidenceList } from "../components/EvidenceList";
@@ -26,13 +33,19 @@ export function CaseLoaderPage() {
   const [state, setState] = useState<LoadState>({ status: "loading" });
   // Nach dem Laden erscheint zuerst das Briefing (#2 -> #6).
   const [view, setView] = useState<View>("briefing");
-  // Untersuchte Stellen ueberleben das Verlassen der Szene (#8).
-  const [investigatedIds, setInvestigatedIds] = useState<string[]>([]);
-  // Eingesammelte Funde (#9). Ein Fund kann nur einmal hineinkommen.
-  const [collected, setCollected] = useState<CollectedEvidence[]>([]);
+  // Fortschritt kommt gespeichert herein und wird bei jeder Aenderung
+  // zurueckgeschrieben, damit Notizen ein Neuladen ueberleben (#12).
+  const [progress, setProgress] = useState<CaseProgress>(() =>
+    loadProgress(browserStorage(), code)
+  );
+  const { investigatedIds, collected, notes } = progress;
   // Welcher Beweis im Detail offen ist (#11).
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    saveProgress(browserStorage(), code, progress);
+  }, [code, progress]);
 
   const load = useCallback(() => {
     let cancelled = false;
@@ -125,12 +138,18 @@ export function CaseLoaderPage() {
         scene={scene}
         investigatedIds={investigatedIds}
         onInvestigate={(id) =>
-          setInvestigatedIds((prev) => (prev.includes(id) ? prev : [...prev, id]))
+          setProgress((prev) =>
+            prev.investigatedIds.includes(id)
+              ? prev
+              : { ...prev, investigatedIds: [...prev.investigatedIds, id] }
+          )
         }
         collectedIds={collected.map((e) => e.id)}
         onCollect={(evidence) =>
-          setCollected((prev) =>
-            prev.some((e) => e.id === evidence.id) ? prev : [...prev, evidence]
+          setProgress((prev) =>
+            prev.collected.some((e) => e.id === evidence.id)
+              ? prev
+              : { ...prev, collected: [...prev.collected, evidence] }
           )
         }
         onBack={() => setView("akte")}
@@ -143,10 +162,18 @@ export function CaseLoaderPage() {
     return (
       <main className="app-shell">
         {open ? (
-          <EvidenceDetail evidence={open} onBack={() => setOpenEvidenceId(null)} />
+          <EvidenceDetail
+            evidence={open}
+            note={notes[open.id] ?? ""}
+            onSaveNote={(text) =>
+              setProgress((prev) => ({ ...prev, notes: setNote(prev.notes, open.id, text) }))
+            }
+            onBack={() => setOpenEvidenceId(null)}
+          />
         ) : (
           <EvidenceList
             evidence={collected}
+            notes={notes}
             onOpen={setOpenEvidenceId}
             onBack={() => setView("akte")}
           />
