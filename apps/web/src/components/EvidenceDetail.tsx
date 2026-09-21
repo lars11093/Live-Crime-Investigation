@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { CollectedEvidence } from "@case-zero/shared";
 import { KIND_LABEL } from "./evidenceKind";
 
 interface Props {
   evidence: CollectedEvidence;
+  /** Gespeicherte Notiz zu diesem Beweis (#12), leer wenn keine da ist. */
+  note: string;
+  onSaveNote: (text: string) => void;
   onBack: () => void;
 }
 
@@ -13,8 +16,23 @@ interface Props {
  * steht hier ein Platzhalter mit dem Titel statt einer leeren Flaeche — wie
  * bei der Szene in #7.
  */
-export function EvidenceDetail({ evidence, onBack }: Props) {
+export function EvidenceDetail({ evidence, note, onSaveNote, onBack }: Props) {
   const [imageFailed, setImageFailed] = useState(!evidence.imagePath);
+  const [draft, setDraft] = useState(note);
+  const [saved, setSaved] = useState(false);
+
+  // Beim Wechsel auf einen anderen Beweis dessen Notiz in den Entwurf holen.
+  useEffect(() => {
+    setDraft(note);
+    setSaved(false);
+  }, [evidence.id, note]);
+
+  const dirty = draft.trim() !== note.trim();
+
+  function save() {
+    onSaveNote(draft);
+    setSaved(true);
+  }
 
   return (
     <section className="panel evidence-detail">
@@ -58,6 +76,33 @@ export function EvidenceDetail({ evidence, onBack }: Props) {
           <dd>{evidence.foundAt.hotspotLabel}</dd>
         </div>
       </dl>
+
+      <div className="evidence-note">
+        <label className="team-code__label" htmlFor={`note-${evidence.id}`}>
+          Meine Notiz
+        </label>
+        <textarea
+          id={`note-${evidence.id}`}
+          className="evidence-note__input"
+          value={draft}
+          rows={4}
+          placeholder="Was faellt dir an diesem Beweis auf?"
+          onChange={(e) => {
+            setDraft(e.target.value);
+            setSaved(false);
+          }}
+        />
+        <div className="case-status__actions">
+          <button className="button--primary" onClick={save} disabled={!dirty}>
+            Notiz speichern
+          </button>
+          {saved && !dirty && (
+            <span className="evidence-note__saved" role="status">
+              Gespeichert
+            </span>
+          )}
+        </div>
+      </div>
     </section>
   );
 }

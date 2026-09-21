@@ -730,3 +730,48 @@ button:disabled:hover {
   line-height: 1.8;
   max-width: 62ch;
 }
+
+/* ---------------------------------------------------------------
+   Story #12 — Notiz am Beweis
+   --------------------------------------------------------------- */
+
+.evidence-note {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.evidence-note__input {
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  background: #0a0f14;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.7rem 0.8rem;
+  resize: vertical;
+}
+
+.evidence-note__input:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.evidence-note__saved {
+  align-self: center;
+  color: var(--accent);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.evidence-list__note {
+  color: var(--ink);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  padding-left: 0.6rem;
+  border-left: 2px solid var(--accent);
+}
