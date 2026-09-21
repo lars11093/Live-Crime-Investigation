@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { PublicCase } from "@case-zero/shared";
-import { fetchCase } from "../lib/api";
+import { fetchCase, findRoom } from "../lib/api";
 import { CaseBriefingPanel } from "../components/CaseBriefingPanel";
 import { SceneView } from "../components/SceneView";
-
-/** Solange es nur einen Fall gibt, ist er fest verdrahtet. Fallauswahl ist #30. */
-const CASE_ID = "case-01";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort";
@@ -14,6 +11,7 @@ type View = "briefing" | "akte" | "tatort";
 type LoadState =
   | { status: "loading" }
   | { status: "error" }
+  | { status: "invalidCode" }
   | { status: "ready"; caseData: PublicCase };
 
 /**
@@ -22,6 +20,7 @@ type LoadState =
  * versuchen", geladener Fall mit sichtbarem Titel.
  */
 export function CaseLoaderPage() {
+  const { code = "" } = useParams();
   const [state, setState] = useState<LoadState>({ status: "loading" });
   // Nach dem Laden erscheint zuerst das Briefing (#2 -> #6).
   const [view, setView] = useState<View>("briefing");
@@ -30,17 +29,27 @@ export function CaseLoaderPage() {
   const load = useCallback(() => {
     let cancelled = false;
     setState({ status: "loading" });
-    fetchCase(CASE_ID)
-      .then((caseData) => {
-        if (!cancelled) setState({ status: "ready", caseData });
+
+    // Erst die Team-Session pruefen, dann den Fall dazu laden. So sehen zwei
+    // Personen mit demselben Code garantiert denselben Fall (#5).
+    findRoom(code)
+      .then((room) => {
+        if (!room) {
+          if (!cancelled) setState({ status: "invalidCode" });
+          return;
+        }
+        return fetchCase(room.caseId).then((caseData) => {
+          if (!cancelled) setState({ status: "ready", caseData });
+        });
       })
       .catch(() => {
         if (!cancelled) setState({ status: "error" });
       });
+
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [code]);
 
   useEffect(() => load(), [load]);
 
@@ -51,6 +60,26 @@ export function CaseLoaderPage() {
         <div className="panel case-status">
           <span className="case-status__spinner" aria-hidden="true" />
           <p>Fall wird geladen&hellip;</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (state.status === "invalidCode") {
+    return (
+      <main className="app-shell">
+        <p className="terminal-title">Team-Session nicht gefunden</p>
+        <div className="panel case-status">
+          <p className="case-status__error">Ungueltiger Team-Code</p>
+          <p className="case-status__hint">
+            Der Code <code>{code}</code> gehoert zu keiner laufenden Ermittlung. Sessions
+            leben nur im Serverspeicher — nach einem Server-Neustart sind sie weg.
+          </p>
+          <div className="case-status__actions">
+            <button className="button--primary" onClick={() => navigate("/")}>
+              Zur Startseite
+            </button>
+          </div>
         </div>
       </main>
     );
@@ -107,6 +136,9 @@ export function CaseLoaderPage() {
         <p className="case-status__hint">
           {caseData.suspects.length} Verdaechtige &middot;{" "}
           {caseData.seedEvidence.length} erste Spuren
+        </p>
+        <p className="case-status__hint">
+          Team-Code zum Teilen: <strong className="case-code">{code}</strong>
         </p>
         <div className="case-status__actions">
           {scene && (
