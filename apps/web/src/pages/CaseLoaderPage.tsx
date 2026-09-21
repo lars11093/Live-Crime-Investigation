@@ -24,6 +24,8 @@ export function CaseLoaderPage() {
   const [state, setState] = useState<LoadState>({ status: "loading" });
   // Nach dem Laden erscheint zuerst das Briefing (#2 -> #6).
   const [view, setView] = useState<View>("briefing");
+  // Untersuchte Stellen ueberleben das Verlassen der Szene (#8).
+  const [investigatedIds, setInvestigatedIds] = useState<string[]>([]);
   const navigate = useNavigate();
 
   const load = useCallback(() => {
@@ -112,7 +114,16 @@ export function CaseLoaderPage() {
   const scene = caseData.scenes.at(0);
 
   if (view === "tatort" && scene) {
-    return <SceneView scene={scene} onBack={() => setView("akte")} />;
+    return (
+      <SceneView
+        scene={scene}
+        investigatedIds={investigatedIds}
+        onInvestigate={(id) =>
+          setInvestigatedIds((prev) => (prev.includes(id) ? prev : [...prev, id]))
+        }
+        onBack={() => setView("akte")}
+      />
+    );
   }
 
   if (view === "briefing") {
@@ -140,6 +151,11 @@ export function CaseLoaderPage() {
         <p className="case-status__hint">
           Team-Code zum Teilen: <strong className="case-code">{code}</strong>
         </p>
+        {scene && (
+          <p className="case-status__hint">
+            {investigatedIds.length} von {scene.hotspots.length} Stellen im Tatort untersucht
+          </p>
+        )}
         <div className="case-status__actions">
           {scene && (
             <button className="button--primary" onClick={() => setView("tatort")}>

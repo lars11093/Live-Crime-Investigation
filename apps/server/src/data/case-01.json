@@ -7,8 +7,26 @@
     "text": "Die Reinigungskraft findet Thomas Vogt um 23:14 Uhr leblos in seinem Buero im vierten Stock. Die Bueroetage war ab 22:00 Uhr offiziell leer, der Badge-Zutritt ist aber dreimal protokolliert. Auf dem Schreibtisch liegt ein aufgeklapptes Notebook mit einer halb geschriebenen Kuendigung. Die Nachricht \"Meet me at the office. 22:30.\" ging zwei Stunden vor der Tat an drei Personen. Drei Verdaechtige, drei Aussagen, und mindestens eine davon stimmt nicht mit den Spuren ueberein."
   },
   "scenes": [
-    { "id": "buero-412", "name": "Buero 4.12 - Fundort", "imagePath": "/scenes/case-01/buero-412.jpg" },
-    { "id": "flur-4og", "name": "Flur 4. OG - Badge-Leser", "imagePath": "/scenes/case-01/flur-4og.jpg" }
+    {
+      "id": "buero-412",
+      "name": "Buero 4.12 - Fundort",
+      "imagePath": "/scenes/case-01/buero-412.jpg",
+      "hotspots": [
+        { "id": "schreibtisch", "label": "Schreibtisch", "x": 32, "y": 58, "detail": "Auf dem Schreibtisch liegt ein aufgeklapptes Notebook. Der Bildschirm zeigt eine halb geschriebene Kuendigung, adressiert an die Geschaeftsleitung. Gespeichert wurde sie nie." },
+        { "id": "fenster", "label": "Fensterfront", "x": 72, "y": 40, "detail": "Das Kippfenster steht offen. Auf dem Rahmen aussen sind Kratzer, die nicht zur Lackierung passen - jemand hat hier etwas abgestellt oder hinausgereicht." },
+        { "id": "papierkorb", "label": "Papierkorb", "x": 18, "y": 78, "detail": "Im Papierkorb liegt ein zerknuelltes Blatt mit einer handschriftlichen Zahlenreihe. Die letzte Zeile ist durchgestrichen und mit \"22:30\" ueberschrieben." },
+        { "id": "teetasse", "label": "Tasse auf der Ablage", "x": 55, "y": 66, "detail": "Eine halbvolle Tasse, der Inhalt ist kalt. Am Rand ein Lippenstiftabdruck - das Opfer trug keinen." }
+      ]
+    },
+    {
+      "id": "flur-4og",
+      "name": "Flur 4. OG - Badge-Leser",
+      "imagePath": "/scenes/case-01/flur-4og.jpg",
+      "hotspots": [
+        { "id": "badge-leser", "label": "Badge-Leser", "x": 25, "y": 50, "detail": "Das Protokoll zeigt drei Zutritte nach 22:00 Uhr. Zwei davon mit demselben Badge im Abstand von vier Minuten - einmal hinein, einmal hinaus, und dann noch einmal hinein." },
+        { "id": "kamera-04", "label": "Kamera #04", "x": 80, "y": 22, "detail": "Die Kamera haengt leicht schief. Die Aufzeichnung des Abends hat eine Luecke von 22:34 bis 22:52 Uhr." }
+      ]
+    }
   ],
   "suspects": [
     { "id": "daniel-keller", "name": "Daniel Keller" },
