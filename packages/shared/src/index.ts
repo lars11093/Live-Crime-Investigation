@@ -48,9 +48,25 @@ export interface Suspect {
   name: string;
 }
 
+/**
+ * Das Briefing, das der Spieler vor dem Tatort liest (Story #6).
+ *
+ * Optional am Fall: fehlt es, zeigt der Client "Kein Briefing verfuegbar"
+ * statt einer leeren Box.
+ */
+export interface CaseBriefing {
+  /** Tatzeit, wie sie im Briefing steht — z. B. "Freitag, 22:30 Uhr". */
+  timeOfCrime: string;
+  /** Tatort in Worten — z. B. "Buero 4.12, Hardturmstrasse 61". */
+  location: string;
+  /** Fliesstext, mindestens drei Saetze. */
+  text: string;
+}
+
 export interface CaseDefinition {
   id: string;
   title: string;
+  briefing?: CaseBriefing;
   suspects: Suspect[];
   scenarios: Scenario[];
   seedEvidence: EvidenceNode[];

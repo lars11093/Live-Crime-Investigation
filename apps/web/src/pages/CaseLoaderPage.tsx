@@ -2,9 +2,13 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { PublicCase } from "@case-zero/shared";
 import { fetchCase } from "../lib/api";
+import { CaseBriefingPanel } from "../components/CaseBriefingPanel";
 
 /** Solange es nur einen Fall gibt, ist er fest verdrahtet. Fallauswahl ist #30. */
 const CASE_ID = "case-01";
+
+/** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
+type View = "briefing" | "akte";
 
 type LoadState =
   | { status: "loading" }
@@ -18,6 +22,8 @@ type LoadState =
  */
 export function CaseLoaderPage() {
   const [state, setState] = useState<LoadState>({ status: "loading" });
+  // Nach dem Laden erscheint zuerst das Briefing (#2 -> #6).
+  const [view, setView] = useState<View>("briefing");
   const navigate = useNavigate();
 
   const load = useCallback(() => {
@@ -69,15 +75,33 @@ export function CaseLoaderPage() {
     );
   }
 
+  const { caseData } = state;
+
+  if (view === "briefing") {
+    return (
+      <main className="app-shell">
+        <CaseBriefingPanel
+          title={caseData.title}
+          briefing={caseData.briefing}
+          onOpenScene={() => setView("akte")}
+          onClose={() => setView("akte")}
+        />
+      </main>
+    );
+  }
+
   return (
     <main className="app-shell">
       <p className="terminal-title">Fallakte geoeffnet</p>
-      <div className="panel">
-        <h1 className="case-title">{state.caseData.title}</h1>
+      <div className="panel case-status">
+        <h1 className="case-title">{caseData.title}</h1>
         <p className="case-status__hint">
-          {state.caseData.suspects.length} Verdaechtige &middot;{" "}
-          {state.caseData.seedEvidence.length} erste Spuren
+          {caseData.suspects.length} Verdaechtige &middot;{" "}
+          {caseData.seedEvidence.length} erste Spuren
         </p>
+        <div className="case-status__actions">
+          <button onClick={() => setView("briefing")}>Briefing</button>
+        </div>
       </div>
     </main>
   );
