@@ -1,4 +1,4 @@
-import type { PublicCase } from "@case-zero/shared";
+import type { CombineResult, PublicCase } from "@case-zero/shared";
 
 export const SERVER_URL = import.meta.env.VITE_SERVER_URL ?? "http://localhost:4000";
 
@@ -65,4 +65,26 @@ export async function findRoom(code: string): Promise<RoomSummary | null> {
     throw new Error(`Team-Code konnte nicht geprueft werden (HTTP ${response.status})`);
   }
   return (await response.json()) as RoomSummary;
+}
+
+/**
+ * Kombiniert zwei Beweise (#13).
+ *
+ * Die Pruefung passiert auf dem Server — die Kombinationsliste ist Teil der
+ * Loesung und wird dem Client nie ausgeliefert.
+ */
+export async function combineEvidence(
+  caseId: string,
+  evidenceIds: [string, string],
+  foundInsightIds: string[]
+): Promise<CombineResult> {
+  const response = await fetch(`${SERVER_URL}/api/cases/${caseId}/combine`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ evidenceIds, foundInsightIds }),
+  });
+  if (!response.ok && response.status !== 400) {
+    throw new Error(`Kombination fehlgeschlagen (HTTP ${response.status})`);
+  }
+  return (await response.json()) as CombineResult;
 }

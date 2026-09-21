@@ -12,6 +12,7 @@ import type {
 } from "@case-zero/shared";
 import case01 from "./data/case-01.json" with { type: "json" };
 import { toPublicCase } from "./engine/caseView.js";
+import { combineEvidence } from "./engine/combine.js";
 import {
   allRooms,
   createRoom,
@@ -66,6 +67,22 @@ app.post("/api/rooms", (req, res) => {
   }
   const room = createRoom(caseDef);
   return res.status(201).json({ code: room.state.code, caseId, caseTitle: caseDef.title });
+});
+
+// Story #13 — zwei Beweise kombinieren. Die Regeln bleiben auf dem Server:
+// der Client schickt zwei IDs und bekommt die Erkenntnis oder eine Absage,
+// nie die Liste der Moeglichkeiten.
+app.post("/api/cases/:caseId/combine", (req, res) => {
+  const caseDef = CASES[req.params.caseId];
+  if (!caseDef) {
+    return res.status(404).json({ error: "Fall nicht gefunden" });
+  }
+  const { evidenceIds, foundInsightIds } = req.body ?? {};
+  if (!Array.isArray(evidenceIds) || evidenceIds.length !== 2) {
+    return res.status(400).json({ ok: false, reason: "invalid" });
+  }
+  const found = Array.isArray(foundInsightIds) ? foundInsightIds.filter((x) => typeof x === "string") : [];
+  return res.json(combineEvidence(caseDef, String(evidenceIds[0]), String(evidenceIds[1]), found));
 });
 
 // Story #5 — Team-Code pruefen. Falsches Format und unbekannter Code sind fuer

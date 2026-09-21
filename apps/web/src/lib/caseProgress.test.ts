@@ -50,11 +50,16 @@ describe("Fortschritt speichern und laden", () => {
       investigatedIds: ["schreibtisch"],
       collected: [evidence],
       notes: { "tasse-lippenstift": "Lippenstift passt nicht zum Opfer." },
+      insights: [{ id: "insight-1", title: "Zweite Person", body: "Jemand sass mit am Tisch." }],
     });
     const loaded = loadProgress(storage, "ABC-123");
     expect(loaded.notes["tasse-lippenstift"]).toBe("Lippenstift passt nicht zum Opfer.");
     expect(loaded.collected).toHaveLength(1);
     expect(loaded.investigatedIds).toEqual(["schreibtisch"]);
+    // Aufgedeckte Verknuepfungen muessen ein Neuladen ebenso ueberstehen (#13).
+    expect(loaded.insights).toEqual([
+      { id: "insight-1", title: "Zweite Person", body: "Jemand sass mit am Tisch." },
+    ]);
   });
 
   it("haelt Sessions auseinander", () => {
