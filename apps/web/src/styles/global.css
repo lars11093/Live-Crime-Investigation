@@ -651,3 +651,82 @@ button:disabled:hover {
   gap: 1rem;
   margin-bottom: 0.5rem;
 }
+
+/* ---------------------------------------------------------------
+   Story #11 — Beweis im Detail
+   --------------------------------------------------------------- */
+
+.evidence-list__item--button {
+  display: grid;
+  gap: 0.35rem;
+  width: 100%;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.evidence-list__item--button:hover,
+.evidence-list__item--button:focus-visible {
+  border-color: var(--accent);
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.evidence-list__found {
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.evidence-detail__title {
+  margin: 0.5rem 0 1.25rem;
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  line-height: 1.2;
+}
+
+.evidence-detail__figure {
+  margin: 0 0 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  /* Feste Proportion, damit Bild und Platzhalter gleich gross sind. */
+  aspect-ratio: 16 / 9;
+  max-height: 22rem;
+}
+
+.evidence-detail__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.evidence-detail__placeholder {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 100%;
+  padding: 1.5rem;
+  text-align: center;
+  background-color: #04060a;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(125, 133, 144, 0.06) 0px,
+    rgba(125, 133, 144, 0.06) 10px,
+    transparent 10px,
+    transparent 24px
+  );
+}
+
+.evidence-detail__placeholder-name {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.evidence-detail__description {
+  margin: 0;
+  line-height: 1.8;
+  max-width: 62ch;
+}

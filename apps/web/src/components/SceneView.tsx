@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { CollectableEvidence, Hotspot, Scene } from "@case-zero/shared";
+import type { CollectedEvidence, Hotspot, Scene } from "@case-zero/shared";
 
 interface Props {
   scene: Scene;
@@ -8,7 +8,7 @@ interface Props {
   onInvestigate: (hotspotId: string) => void;
   /** IDs bereits eingesammelter Funde (#9). */
   collectedIds: string[];
-  onCollect: (evidence: CollectableEvidence) => void;
+  onCollect: (evidence: CollectedEvidence) => void;
   onBack: () => void;
 }
 
@@ -42,8 +42,13 @@ export function SceneView({
     return () => clearTimeout(timer);
   }, [confirmation]);
 
-  function collect(evidence: CollectableEvidence) {
-    onCollect(evidence);
+  function collect(hotspot: Hotspot, evidence: NonNullable<Hotspot["evidence"]>) {
+    // Fundort entsteht hier, nicht in den Falldaten: die Akte soll zeigen,
+    // wo dieser Ermittler den Fund gesichert hat (#11).
+    onCollect({
+      ...evidence,
+      foundAt: { sceneName: scene.name, hotspotLabel: hotspot.label },
+    });
     setConfirmation(`"${evidence.label}" ist in deiner Beweisakte.`);
     setOpenHotspot(null);
   }
@@ -128,7 +133,7 @@ export function SceneView({
                 ) : (
                   <button
                     className="button--primary"
-                    onClick={() => collect(openHotspot.evidence!)}
+                    onClick={() => collect(openHotspot, openHotspot.evidence!)}
                   >
                     Einsammeln
                   </button>
