@@ -218,3 +218,50 @@ body,
     animation-duration: 3s;
   }
 }
+
+/* ---------------------------------------------------------------
+   Story #6 — Fall-Briefing
+   --------------------------------------------------------------- */
+
+.briefing {
+  max-width: 52rem;
+}
+
+.briefing__facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 1rem 0;
+  border-block: 1px solid var(--border);
+}
+
+.briefing__facts dt {
+  color: var(--accent);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.briefing__facts dd {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.briefing__text {
+  margin: 0 0 1.75rem;
+  line-height: 1.8;
+  color: var(--ink);
+  /* Laufweite begrenzen — lange Zeilen liest niemand. */
+  max-width: 62ch;
+}
+
+.briefing__empty {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+  text-align: center;
+}
