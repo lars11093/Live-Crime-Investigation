@@ -4,6 +4,9 @@ import { StatementView } from "./StatementView";
 
 interface Props {
   suspect: Suspect;
+  /** Satznummern der markierten Widersprueche dieser Person (#17). */
+  markedIndices: number[];
+  onToggleSentence: (sentenceIndex: number, text: string) => void;
   onBack: () => void;
 }
 
@@ -14,7 +17,7 @@ interface Props {
  * `knownMotive` ist das oeffentlich bekannte Motiv, nicht die Loesung: die
  * steht in `Scenario` und verlaesst den Server nie (engine/caseView.ts).
  */
-export function SuspectProfile({ suspect, onBack }: Props) {
+export function SuspectProfile({ suspect, markedIndices, onToggleSentence, onBack }: Props) {
   return (
     <section className="panel">
       <div className="evidence-list__bar">
@@ -57,7 +60,11 @@ export function SuspectProfile({ suspect, onBack }: Props) {
         )}
       </div>
 
-      <StatementView statement={suspect.statement} />
+      <StatementView
+        statement={suspect.statement}
+        markedIndices={markedIndices}
+        onToggleSentence={onToggleSentence}
+      />
     </section>
   );
 }

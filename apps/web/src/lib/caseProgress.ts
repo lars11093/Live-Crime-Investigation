@@ -14,6 +14,39 @@ export interface CaseProgress {
   notes: Record<string, string>;
   /** Bereits aufgedeckte Verknuepfungen (#13). */
   insights: Insight[];
+  /** Als widerspruechlich markierte Saetze aus Aussagen (#17). */
+  contradictions: Contradiction[];
+}
+
+/**
+ * Ein markierter Widerspruch (#17).
+ *
+ * Speichert den Satztext mit, nicht nur die Position: aendert sich eine
+ * Aussage im Case-JSON, zeigt die Uebersicht sonst auf einen anderen Satz.
+ */
+export interface Contradiction {
+  suspectId: string;
+  suspectName: string;
+  sentenceIndex: number;
+  text: string;
+}
+
+/** Eindeutiger Schluessel eines Satzes innerhalb einer Aussage. */
+export function contradictionKey(suspectId: string, sentenceIndex: number): string {
+  return `${suspectId}:${sentenceIndex}`;
+}
+
+/** Markiert einen Satz oder nimmt die Markierung zurueck (#17). */
+export function toggleContradiction(
+  list: Contradiction[],
+  entry: Contradiction
+): Contradiction[] {
+  const key = contradictionKey(entry.suspectId, entry.sentenceIndex);
+  const existing = list.find((c) => contradictionKey(c.suspectId, c.sentenceIndex) === key);
+  if (existing) {
+    return list.filter((c) => contradictionKey(c.suspectId, c.sentenceIndex) !== key);
+  }
+  return [...list, entry];
 }
 
 export const EMPTY_PROGRESS: CaseProgress = {
@@ -21,6 +54,7 @@ export const EMPTY_PROGRESS: CaseProgress = {
   collected: [],
   notes: {},
   insights: [],
+  contradictions: [],
 };
 
 /**
@@ -70,6 +104,7 @@ export function loadProgress(storage: ProgressStorage, roomCode: string): CasePr
           ? parsed.notes
           : {},
       insights: Array.isArray(parsed.insights) ? parsed.insights : [],
+      contradictions: Array.isArray(parsed.contradictions) ? parsed.contradictions : [],
     };
   } catch {
     return EMPTY_PROGRESS;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { splitByTime, timesIn } from "./statement";
+import { splitByTime, splitIntoSentences, timesIn } from "./statement";
 
 describe("Zeitangaben in einer Aussage", () => {
   it("findet eine einzelne Uhrzeit", () => {
@@ -44,5 +44,43 @@ describe("Zeitangaben in einer Aussage", () => {
 
   it("gibt bei leerem Text nichts zurueck", () => {
     expect(splitByTime("")).toEqual([]);
+  });
+});
+
+describe("Aussage in Saetze zerlegen", () => {
+  it("trennt an Punkten", () => {
+    expect(splitIntoSentences("Ich war da. Dann ging ich.")).toEqual([
+      "Ich war da.",
+      "Dann ging ich.",
+    ]);
+  });
+
+  it("trennt nicht an der Uhrzeit", () => {
+    expect(splitIntoSentences("Ich war bis 22:10 da.")).toEqual(["Ich war bis 22:10 da."]);
+  });
+
+  it("nimmt auch Frage- und Ausrufezeichen", () => {
+    expect(splitIntoSentences("Wer war das? Ich nicht!")).toEqual(["Wer war das?", "Ich nicht!"]);
+  });
+
+  it("nimmt einen Satz ohne Schlusspunkt mit", () => {
+    expect(splitIntoSentences("Ich war da. Und dann")).toEqual(["Ich war da.", "Und dann"]);
+  });
+
+  it("wirft leere Stuecke weg", () => {
+    expect(splitIntoSentences("Ja.   Nein.  ")).toEqual(["Ja.", "Nein."]);
+  });
+
+  it("gibt bei leerem Text nichts zurueck", () => {
+    expect(splitIntoSentences("")).toEqual([]);
+  });
+
+  it("zerlegt eine echte Aussage aus dem Fall in vier Saetze", () => {
+    const statement =
+      "Ich hatte um 22:30 einen Termin mit ihm, den er selbst angesetzt hat. " +
+      "Wir haben etwa zehn Minuten geredet, dann bin ich gegangen. " +
+      "Ich habe das Gebaeude um 22:45 verlassen und bin direkt nach Hause gefahren. " +
+      "Als ich ging, hat er noch am Schreibtisch gesessen.";
+    expect(splitIntoSentences(statement)).toHaveLength(4);
   });
 });

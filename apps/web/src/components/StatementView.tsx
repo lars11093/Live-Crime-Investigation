@@ -1,15 +1,35 @@
-import { splitByTime, timesIn } from "../lib/statement";
+import { splitByTime, splitIntoSentences, timesIn } from "../lib/statement";
 
 interface Props {
   statement?: string;
+  /** Satznummern, die als Widerspruch markiert sind (#17). */
+  markedIndices: number[];
+  onToggleSentence: (sentenceIndex: number, text: string) => void;
+}
+
+function TimeHighlighted({ text }: { text: string }) {
+  return (
+    <>
+      {splitByTime(text).map((segment, i) =>
+        segment.isTime ? (
+          <mark key={i} className="statement__time">
+            {segment.text}
+          </mark>
+        ) : (
+          <span key={i}>{segment.text}</span>
+        )
+      )}
+    </>
+  );
 }
 
 /**
- * Story #16 — die Aussage eines Verdaechtigen.
- * Uhrzeiten sind hervorgehoben, weil genau sie sich mit dem Badge-Protokoll
- * und der Kamera-Luecke abgleichen lassen.
+ * Story #16 — Aussage mit hervorgehobenen Zeitangaben.
+ * Story #17 — einzelne Saetze als Widerspruch markieren.
+ *
+ * Markiert wird satzweise, nicht zeichengenau — siehe lib/statement.ts.
  */
-export function StatementView({ statement }: Props) {
+export function StatementView({ statement, markedIndices, onToggleSentence }: Props) {
   if (!statement) {
     return (
       <div className="statement">
@@ -22,6 +42,8 @@ export function StatementView({ statement }: Props) {
   }
 
   const times = timesIn(statement);
+  const sentences = splitIntoSentences(statement);
+  const marked = new Set(markedIndices);
 
   return (
     <div className="statement">
@@ -36,16 +58,22 @@ export function StatementView({ statement }: Props) {
         )}
       </div>
 
+      <p className="case-status__hint" style={{ marginBottom: "0.6rem" }}>
+        Klicke einen Satz an, um ihn als Widerspruch zu markieren.
+      </p>
+
       <blockquote className="statement__text">
-        {splitByTime(statement).map((segment, i) =>
-          segment.isTime ? (
-            <mark key={i} className="statement__time">
-              {segment.text}
-            </mark>
-          ) : (
-            <span key={i}>{segment.text}</span>
-          )
-        )}
+        {sentences.map((sentence, index) => (
+          <button
+            key={index}
+            className={`statement__sentence${marked.has(index) ? " statement__sentence--marked" : ""}`}
+            onClick={() => onToggleSentence(index, sentence)}
+            aria-pressed={marked.has(index)}
+            title={marked.has(index) ? "Markierung aufheben" : "Als Widerspruch markieren"}
+          >
+            <TimeHighlighted text={sentence} />{" "}
+          </button>
+        ))}
       </blockquote>
     </div>
   );
