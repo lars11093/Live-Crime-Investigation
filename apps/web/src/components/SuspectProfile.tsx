@@ -1,5 +1,6 @@
 import type { Suspect } from "@case-zero/shared";
 import { SuspectPortrait } from "./SuspectPortrait";
+import { StatementView } from "./StatementView";
 
 interface Props {
   suspect: Suspect;
@@ -29,9 +30,6 @@ export function SuspectProfile({ suspect, onBack }: Props) {
           <h1 className="evidence-detail__title" style={{ margin: 0 }}>
             {suspect.name}
           </h1>
-          <p className="suspect__relation" style={{ marginTop: "0.4rem" }}>
-            {suspect.age} Jahre
-          </p>
         </div>
       </div>
 
@@ -58,6 +56,8 @@ export function SuspectProfile({ suspect, onBack }: Props) {
           </p>
         )}
       </div>
+
+      <StatementView statement={suspect.statement} />
     </section>
   );
 }
