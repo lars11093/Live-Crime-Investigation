@@ -2,37 +2,29 @@ import { createServer } from "node:http";
 import express from "express";
 import cors from "cors";
 import { Server } from "socket.io";
-import { customAlphabet } from "nanoid";
 import type {
   Accusation,
   CaseDefinition,
   ClientToServerEvents,
-  RoomState,
   ScoreResult,
   ServerToClientEvents,
   Role,
 } from "@case-zero/shared";
 import case01 from "./data/case-01.json" with { type: "json" };
 import { toPublicCase } from "./engine/caseView.js";
+import {
+  allRooms,
+  createRoom,
+  getRoom,
+  isValidRoomCode,
+  normalizeRoomCode,
+  roomCount,
+  type Room,
+} from "./engine/rooms.js";
 
 const CASES: Record<string, CaseDefinition> = {
   "case-01": case01 as CaseDefinition,
 };
-
-const nanoid = customAlphabet("ABCDEFGHJKLMNPQRSTUVWXYZ23456789", 3);
-const makeRoomCode = () => `${nanoid()}-${nanoid()}`;
-
-interface Room {
-  state: RoomState;
-  caseDef: CaseDefinition;
-  scenario: CaseDefinition["scenarios"][number];
-}
-
-const rooms = new Map<string, Room>();
-
-function pickScenario(caseDef: CaseDefinition) {
-  return caseDef.scenarios[Math.floor(Math.random() * caseDef.scenarios.length)];
-}
 
 function scoreAccusation(room: Room, accusation: Accusation): ScoreResult {
   const total = room.scenario.requiredEdgeIds.length;
@@ -53,7 +45,8 @@ function scoreAccusation(room: Room, accusation: Accusation): ScoreResult {
 
 const app = express();
 app.use(cors());
-app.get("/health", (_req, res) => res.json({ ok: true, rooms: rooms.size }));
+app.use(express.json());
+app.get("/health", (_req, res) => res.json({ ok: true, rooms: roomCount() }));
 
 // Story #2 — Fall laden. Liefert den Fall ohne die Loesung (siehe engine/caseView.ts).
 app.get("/api/cases/:caseId", (req, res) => {
@@ -62,6 +55,35 @@ app.get("/api/cases/:caseId", (req, res) => {
     return res.status(404).json({ error: "Fall nicht gefunden" });
   }
   return res.json(toPublicCase(caseDef));
+});
+
+// Story #5 — Team-Session anlegen. Der Code ist das, was im Team geteilt wird.
+app.post("/api/rooms", (req, res) => {
+  const caseId = typeof req.body?.caseId === "string" ? req.body.caseId : "case-01";
+  const caseDef = CASES[caseId];
+  if (!caseDef) {
+    return res.status(404).json({ error: "Fall nicht gefunden" });
+  }
+  const room = createRoom(caseDef);
+  return res.status(201).json({ code: room.state.code, caseId, caseTitle: caseDef.title });
+});
+
+// Story #5 — Team-Code pruefen. Falsches Format und unbekannter Code sind fuer
+// den Spieler derselbe Fall: "Ungueltiger Team-Code".
+app.get("/api/rooms/:code", (req, res) => {
+  const code = normalizeRoomCode(req.params.code);
+  if (!isValidRoomCode(code)) {
+    return res.status(400).json({ error: "Ungueltiger Team-Code" });
+  }
+  const room = getRoom(code);
+  if (!room) {
+    return res.status(404).json({ error: "Ungueltiger Team-Code" });
+  }
+  return res.json({
+    code: room.state.code,
+    caseId: room.state.caseId,
+    caseTitle: room.caseDef.title,
+  });
 });
 
 const httpServer = createServer(app);
@@ -73,28 +95,18 @@ io.on("connection", (socket) => {
   socket.on("room:create", ({ caseId, playerName }, cb) => {
     const caseDef = CASES[caseId];
     if (!caseDef) return;
-    const code = makeRoomCode();
-    const room: Room = {
-      caseDef,
-      scenario: pickScenario(caseDef),
-      state: {
-        code,
-        caseId,
-        started: false,
-        players: [{ id: socket.id, name: playerName, role: null }],
-        board: { nodes: caseDef.seedEvidence, edges: [] },
-      },
-    };
-    rooms.set(code, room);
+    const room = createRoom(caseDef);
+    const code = room.state.code;
+    room.state.players.push({ id: socket.id, name: playerName, role: null });
     socket.join(code);
     cb(code);
     io.to(code).emit("room:state", room.state);
   });
 
   socket.on("room:join", ({ code, playerName, role }) => {
-    const room = rooms.get(code);
+    const room = getRoom(code);
     if (!room) {
-      socket.emit("error:message", "Case code not found.");
+      socket.emit("error:message", "Ungueltiger Team-Code");
       return;
     }
     if (room.state.players.some((p) => p.role === role)) {
@@ -107,7 +119,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("room:start", ({ code }) => {
-    const room = rooms.get(code);
+    const room = getRoom(code);
     if (!room) return;
     room.state.started = true;
     io.to(code).emit("room:state", room.state);
@@ -115,14 +127,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("board:addNode", ({ code, node }) => {
-    const room = rooms.get(code);
+    const room = getRoom(code);
     if (!room) return;
     room.state.board.nodes.push(node);
     io.to(code).emit("board:update", room.state.board);
   });
 
   socket.on("board:moveNode", ({ code, nodeId, x, y }) => {
-    const room = rooms.get(code);
+    const room = getRoom(code);
     if (!room) return;
     const node = room.state.board.nodes.find((n) => n.id === nodeId);
     if (!node) return;
@@ -132,7 +144,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("board:connect", ({ code, fromId, toId }) => {
-    const room = rooms.get(code);
+    const room = getRoom(code);
     if (!room) return;
     const edgeId = `edge-${fromId}-${toId}`;
     const correct = room.scenario.requiredEdgeIds.includes(edgeId);
@@ -141,13 +153,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("case:accuse", ({ code, accusation }, cb) => {
-    const room = rooms.get(code);
+    const room = getRoom(code);
     if (!room) return;
     cb(scoreAccusation(room, accusation));
   });
 
   socket.on("disconnect", () => {
-    for (const room of rooms.values()) {
+    for (const room of allRooms()) {
       room.state.players = room.state.players.filter((p) => p.id !== socket.id);
     }
   });

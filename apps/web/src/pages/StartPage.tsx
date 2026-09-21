@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createRoom } from "../lib/api";
+import { TeamCodeForm } from "../components/TeamCodeForm";
 
 /**
  * Story #1 — Startseite.
@@ -7,6 +10,22 @@ import { useNavigate } from "react-router-dom";
  */
 export function StartPage() {
   const navigate = useNavigate();
+  const [starting, setStarting] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
+
+  async function startCase() {
+    setStarting(true);
+    setStartError(null);
+    try {
+      // Ein Fallstart legt eine Team-Session an — der Code ist das, was man
+      // den Mitspielern gibt (#5).
+      const room = await createRoom("case-01");
+      navigate(`/fall/${room.code}`);
+    } catch {
+      setStartError("Fall konnte nicht gestartet werden. Server nicht erreichbar.");
+      setStarting(false);
+    }
+  }
 
   return (
     <main className="start-screen">
@@ -22,12 +41,21 @@ export function StartPage() {
           nur zusammen lösen wir den Fall.
         </p>
 
-        <button
-          className="button--primary"
-          onClick={() => navigate("/fall")}
-        >
-          Fall starten
+        <button className="button--primary" onClick={startCase} disabled={starting}>
+          {starting ? "Fall wird gestartet…" : "Fall starten"}
         </button>
+
+        {startError && (
+          <p className="team-code__error" role="alert">
+            {startError}
+          </p>
+        )}
+
+        <div className="start-screen__divider">
+          <span>oder einem Team beitreten</span>
+        </div>
+
+        <TeamCodeForm onJoined={(code) => navigate(`/fall/${code}`)} />
 
         <p className="start-screen__hint">
           Modul 426 · TBZ · Prototyp
