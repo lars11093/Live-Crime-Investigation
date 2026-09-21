@@ -7,7 +7,7 @@ import { SceneView } from "../components/SceneView";
 import { EvidenceList } from "../components/EvidenceList";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
-type View = "briefing" | "akte" | "tatort";
+type View = "briefing" | "akte" | "tatort" | "beweise";
 
 type LoadState =
   | { status: "loading" }
@@ -135,6 +135,14 @@ export function CaseLoaderPage() {
     );
   }
 
+  if (view === "beweise") {
+    return (
+      <main className="app-shell">
+        <EvidenceList evidence={collected} onBack={() => setView("akte")} />
+      </main>
+    );
+  }
+
   if (view === "briefing") {
     return (
       <main className="app-shell">
@@ -174,12 +182,11 @@ export function CaseLoaderPage() {
               Zum Tatort
             </button>
           )}
+          <button onClick={() => setView("beweise")}>
+            Beweisakte ({collected.length})
+          </button>
           <button onClick={() => setView("briefing")}>Briefing</button>
         </div>
-      </div>
-
-      <div style={{ marginTop: "1rem" }}>
-        <EvidenceList evidence={collected} />
       </div>
     </main>
   );
