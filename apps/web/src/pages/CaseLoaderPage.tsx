@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { PublicCase } from "@case-zero/shared";
-import { fetchCase, findRoom } from "../lib/api";
+import { combineEvidence, fetchCase, findRoom } from "../lib/api";
 import {
   browserStorage,
   loadProgress,
@@ -13,6 +13,7 @@ import { CaseBriefingPanel } from "../components/CaseBriefingPanel";
 import { SceneView } from "../components/SceneView";
 import { EvidenceList } from "../components/EvidenceList";
 import { EvidenceDetail } from "../components/EvidenceDetail";
+import { CombinePanel } from "../components/CombinePanel";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort" | "beweise";
@@ -38,7 +39,7 @@ export function CaseLoaderPage() {
   const [progress, setProgress] = useState<CaseProgress>(() =>
     loadProgress(browserStorage(), code)
   );
-  const { investigatedIds, collected, notes } = progress;
+  const { investigatedIds, collected, notes, insights } = progress;
   // Welcher Beweis im Detail offen ist (#11).
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -171,12 +172,45 @@ export function CaseLoaderPage() {
             onBack={() => setOpenEvidenceId(null)}
           />
         ) : (
-          <EvidenceList
-            evidence={collected}
-            notes={notes}
-            onOpen={setOpenEvidenceId}
-            onBack={() => setView("akte")}
-          />
+          <>
+            <EvidenceList
+              evidence={collected}
+              notes={notes}
+              onOpen={setOpenEvidenceId}
+              onBack={() => setView("akte")}
+            />
+            <div style={{ marginTop: "1rem" }}>
+              <CombinePanel
+                evidence={collected}
+                insights={insights}
+                onCombine={async (a, b) => {
+                  try {
+                    const result = await combineEvidence(
+                      state.caseData.id,
+                      [a, b],
+                      insights.map((i) => i.id)
+                    );
+                    if (result.ok) {
+                      setProgress((prev) => ({
+                        ...prev,
+                        insights: [...prev.insights, result.insight],
+                      }));
+                      return `Neue Erkenntnis: ${result.insight.title}`;
+                    }
+                    if (result.reason === "already-found") {
+                      return "Diese Verknuepfung hast du bereits aufgedeckt.";
+                    }
+                    if (result.reason === "invalid") {
+                      return "Waehle zwei verschiedene Beweise.";
+                    }
+                    return "Zwischen diesen beiden Beweisen ist kein Zusammenhang erkennbar.";
+                  } catch {
+                    return "Server nicht erreichbar. Bitte erneut versuchen.";
+                  }
+                }}
+              />
+            </div>
+          </>
         )}
       </main>
     );

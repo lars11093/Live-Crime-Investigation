@@ -131,11 +131,40 @@ export interface CaseBriefing {
   text: string;
 }
 
+/**
+ * Eine Verknuepfung zweier Beweise (Story #13).
+ *
+ * Liegt beim Fall, nicht beim Beweis: welche Paare etwas ergeben, ist Teil der
+ * Loesung. Deshalb wird `combinations` — wie `scenarios` — serverseitig aus der
+ * Client-Antwort entfernt (engine/caseView.ts). Kaeme die Liste an den Browser,
+ * liesse sich der Fall aus der Netzwerk-Konsole loesen.
+ */
+export interface Combination {
+  id: string;
+  /** Genau zwei Beweis-IDs. Die Reihenfolge spielt keine Rolle. */
+  evidenceIds: [string, string];
+  /** Die Erkenntnis, die aus dem Paar entsteht. */
+  insight: Insight;
+}
+
+/** Was beim Kombinieren herauskommt (Story #13). */
+export interface Insight {
+  id: string;
+  title: string;
+  body: string;
+}
+
+/** Antwort des Servers auf einen Kombinationsversuch (Story #13). */
+export type CombineResult =
+  | { ok: true; insight: Insight }
+  | { ok: false; reason: "no-connection" | "already-found" | "invalid" };
+
 export interface CaseDefinition {
   id: string;
   title: string;
   briefing?: CaseBriefing;
   scenes: Scene[];
+  combinations: Combination[];
   suspects: Suspect[];
   scenarios: Scenario[];
   seedEvidence: EvidenceNode[];
@@ -149,7 +178,7 @@ export interface CaseDefinition {
  * serverseitig entfernt — siehe apps/server/src/engine/caseView.ts. Der Client
  * bekommt diesen Typ, nie CaseDefinition.
  */
-export type PublicCase = Omit<CaseDefinition, "scenarios">;
+export type PublicCase = Omit<CaseDefinition, "scenarios" | "combinations">;
 
 export interface Accusation {
   suspectId: string;
