@@ -46,6 +46,22 @@ export interface Scenario {
 export interface Suspect {
   id: string;
   name: string;
+  /** Alter in Jahren (Story #15). */
+  age: number;
+  /** Beziehung zum Opfer, z. B. "Vorgesetzte" (Story #15). */
+  relationToVictim: string;
+  /**
+   * Das oeffentlich bekannte Motiv (Story #15) — NICHT das Motiv aus
+   * `Scenario`. Jenes ist die Loesung und verlaesst den Server nie.
+   * Hier steht, was die Ermittlung ueber diese Person weiss; das haben
+   * bewusst mehrere Verdaechtige, sonst waere der Fall trivial.
+   * Optional, weil die Story "sofern bekannt" sagt.
+   */
+  knownMotive?: string;
+  /** Aussage zur Tatnacht (Story #16). */
+  statement?: string;
+  /** Portraet. Wie ueberall: kein Asset im Repo, Platzhalter im Client. */
+  imagePath?: string;
 }
 
 /**
