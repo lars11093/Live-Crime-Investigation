@@ -6,8 +6,7 @@ Repository: <https://github.com/lars11093/Live-Crime-Investigation> · Board: Gi
 > **Vor der Abgabe ausfüllen** (Platzhalter `_<…>_`):
 > Namen und Rollen in Abschnitt 1 · Link/Screenshot Vision Board in Abschnitt 2 ·
 > Link zum Foto der Story Map in Abschnitt 2 · Personen in den Task-Tabellen in
-> [sprint-1-planning.md](sprint-1-planning.md).
-
+> [sprint-1-planning.md](sprint-1-planning.md) · Feedback im Review Sprint 1
 ---
 
 ## 1. Team und Produkt
@@ -17,10 +16,12 @@ Repository: <https://github.com/lars11093/Live-Crime-Investigation> · Board: Gi
 | Person | Scrum-Rolle | Schwerpunkt |
 |---|---|---|
 | Lars Herrmann | Entwickler | Repo, CI, Server |
-| `_<Name>_` | Product Owner (und Entwickler) | Anforderungen, Abnahme |
-| `_<Name>_` | Scrum Master (und Entwickler) | Prozess, Timeboxen, Impediments |
-| `_<Name>_` | Entwickler | |
-| `_<Name>_` | Entwickler | |
+| `_<n>_` | Product Owner (und Entwickler) | Anforderungen, Abnahme |
+| `_<n>_` | Scrum Master (und Entwickler) | Prozess, Timeboxen, Impediments |
+| `_<n>_` | Entwickler | |
+| `_<n>_` | Entwickler | |
+
+Team: Lars, Loris, Elina, Nehir, Tenzing — Rollen oben noch zuordnen.
 
 Product Owner und Scrum Master sind gleichzeitig Entwickler im Team — bei fünf Personen und
 neun Wochen ist eine reine Rollentrennung nicht sinnvoll.
@@ -151,7 +152,35 @@ draussen: sie zahlt nicht auf das Sprintziel ein.
 **Fünf Erkenntnisse aus dem Schätzen** und die Aufteilung in Tasks:
 [sprint-1-planning.md](sprint-1-planning.md).
 
-*Review, Retrospective und Ergebnis werden am Ende des Sprints hier ergänzt.*
+**Ergebnis:** Sprintziel nach DoD **nicht erreicht**. Der Weg ist auf den Feature-Branches
+umgesetzt, aber keine Story ist reviewt und auf `master` gemergt. **Velocity: 0 von 11 SP.**
+
+**Review (Modultag 6, 28.09.2026)** — vollständig in [sprint-1-review.md](sprint-1-review.md):
+
+Gezeigt: klickbarer Weg Startseite → Fall laden → Briefing → Tatort, lokal vom Branch.
+Feedback: `_<Feedback aus dem Review eintragen>_`.
+Ins Backlog: #1, #2, #6, #7 ohne Sprint-Zuordnung zurück, bleiben zuoberst; die ungeplant
+begonnenen Stories #8 – #17 gehen zuerst ins Refinement.
+
+**Retrospective (Modultag 6, 20 Minuten, Starfish)** — vollständig in
+[retrospective-sprint-1.md](retrospective-sprint-1.md):
+
+*Massnahme aus Sprint 0:* **nicht erfüllt.** Alle Pull Requests stammen von einem Konto, keiner
+der Sprint-PRs ist gemergt. Im Weg standen: Tasks wurden verteilt statt gezogen, eine Person hat
+allein ohne Rückmeldung gearbeitet, und fertige Arbeit wurde nicht gemeldet.
+
+*Retro-Erkenntnis:* Der Engpass war nicht das Programmieren, sondern das gemeinsame Abschliessen.
+Ohne Review durch eine zweite Person kann keine Story unsere DoD erfüllen — und solange nur eine
+Person den Code kennt, kann niemand reviewen.
+
+**Verbesserungsmassnahme für Sprint 2 (genau eine):**
+
+> **Jeder Pull Request wird innerhalb eines Modultags von einer anderen Person reviewt, und jede
+> Person im Team reviewt in Sprint 2 mindestens zwei PRs.**
+
+*Nachprüfbar:* Reviewer in den gemergten PRs (`gh pr list --state merged`). Fünf Namen mit je
+mindestens zwei Reviews = erfüllt. Verantwortlich: Scrum Master, offene PRs sind fester Punkt im
+Daily.
 
 ---
 
@@ -162,6 +191,7 @@ draussen: sie zahlt nicht auf das Sprintziel ein.
 | Product Vision hinterfragen | 2 | [backlog-priorisierung.md](backlog-priorisierung.md), Abschnitt 4 |
 | INVEST-Check / Story-Splitting | 3 | [backlog-priorisierung.md](backlog-priorisierung.md), Abschnitt 3 und 4 |
 | Refinement der obersten fünf Stories (freiwillig) | 4 | [refinement-sprint-1.md](refinement-sprint-1.md) |
+| Review-Protokoll und Retro-Dokumentation Sprint 1 strukturieren (Claude) | 6 | [sprint-1-review.md](sprint-1-review.md), [retrospective-sprint-1.md](retrospective-sprint-1.md) |
 
 **Modultag 4 — übernommen:**
 
@@ -179,3 +209,27 @@ draussen: sie zahlt nicht auf das Sprintziel ein.
 | #7 "Tatort als Szene" in Ansicht und Interaktion splitten | Die Interaktion ist bereits eine eigene Story (#8). Ein weiterer Split hätte eine Story ohne sichtbares Ergebnis erzeugt. |
 | #2 entlang der Technik splitten (erst Endpunkt, dann UI) | Eine geladene JSON-Datei ohne Ansicht kann niemand benutzen. Technische Schritte sind bei uns Tasks, keine Stories. |
 | #5 Team-Code trotzdem in Sprint 1 nehmen, "ist ja nur ein Eingabefeld" | Sie zahlt nicht auf das Sprintziel ein, und die Session-Frage dahinter ist offen. Lieber zu wenig planen. |
+
+**Modultag 6 — übernommen:**
+
+| Vorschlag | Warum übernommen |
+|---|---|
+| Sprint-Stories streng gegen die DoD prüfen statt gegen «läuft auf dem Branch» | Offene PRs ohne Review sind nach unserer DoD nicht fertig — das Review muss das ehrlich zeigen. |
+| Die Retro-Doku im selben Aufbau wie Sprint 0 führen | Die zwei Retros sind so direkt vergleichbar. |
+
+---
+
+## 6. Persönliche Kurzreflexion
+
+Jede Person trägt ihre eigene Zeile selbst ein. Fragen: siehe *Persönliche Kurzreflexion* in
+Reflexion und Lernjournal.
+
+### Sprint 1
+
+| Person | Mein Beitrag | Wichtigste Erkenntnis | Nächster Lernschritt |
+|---|---|---|---|
+| Lars | | | |
+| Loris | | | |
+| Elina | | | |
+| Nehir | | | |
+| Chime | | | |
