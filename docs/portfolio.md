@@ -228,7 +228,8 @@ Reflexion und Lernjournal.
 
 | Person | Mein Beitrag | Wichtigste Erkenntnis | Nächster Lernschritt |
 |---|---|---|---|
-| Lars |Projekt aufgesetzt |Es ist schwer dauert lange |Warten bis Pr's approved sind sodass ich die anderen reviewen kann || Loris | | | |
+| Lars |Projekt aufgesetzt |Es ist schwer dauert lange |Warten bis Pr's approved sind sodass ich die anderen reviewen kann |
+| Loris | Reviewing | Es braucht eine bessere Aufteilung der Aufgaben | Aufteilen der Aufgaben |
 | Elina |emotionale unterstüzung |weniger reden |zu arbeiten |
 | Nehir | Unterstützung | Gegenseitige Unterstützung ist ein grosser Teil von SCRUM | Mehr User Stories übernehmen |
 | Chime | | | |
