@@ -50,7 +50,6 @@ Gezeigt lokal auf ___ (Branch-Stand, nicht `master`): Startseite → Fall laden 
 
 - #1, #2, #6, #7 zurück ins Backlog, bleiben Top-Priorität (Review und Merge fehlen noch)
 - #5 Team-Code bleibt erste neue Story für Sprint 2 (wie geplant)
-- #8–#17: PRs vorhanden, aber nicht refined und nicht geschätzt → zuerst ins Refinement
 
 ## 6. Kurzfassung fürs Portfolio (Abschnitt 4, Review-Ergebnis)
 
