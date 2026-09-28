@@ -228,8 +228,7 @@ Reflexion und Lernjournal.
 
 | Person | Mein Beitrag | Wichtigste Erkenntnis | Nächster Lernschritt |
 |---|---|---|---|
-| Lars | | | |
-| Loris | | | |
+| Lars |Projekt aufgesetzt |Es ist schwer dauert lange |Warten bis Pr's approved sind sodass ich die anderen reviewen kann || Loris | | | |
 | Elina |emotionale unterstüzung |weniger reden |zu arbeiten |
 | Nehir | | | |
 | Chime | | | |
