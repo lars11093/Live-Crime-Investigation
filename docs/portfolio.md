@@ -179,6 +179,44 @@ Daily.
 
 ---
 
+### Sprint 2 — Kernfunktion nutzbar machen (28.09.2026 – 26.10.2026)
+
+**Sprintziel:**
+
+> Am 19. Oktober ist die Kernfunktion von CASE//ZERO, den Tatort untersuchen, zum ersten Mal auf
+> `master` spielbar — eine fremde Person klickt ohne Erklärung vom Start bis in den Tatort und
+> untersucht dort Stellen, und jede Story auf diesem Weg ist nach unserer DoD fertig.
+
+**Sprint Backlog:** #1 Startseite (1 SP) · #2 Fall laden (3 SP) · #6 Fall-Briefing (2 SP) ·
+#7 Tatort als Szene (5 SP) · #8 Tatort untersuchen (_ SP) — **_ Story Points**, dazu die
+Retro-Massnahme als eigener Eintrag. Richtwert aus Sprint 1 war 0 SP: #1, #2, #6, #7 nehmen wir
+trotzdem wieder auf, weil nur Review und Merge fehlen; neu gebaut wird nur #8. #5 Team-Code und
+#9 – #17 sind bewusst draussen: sie zahlen nicht auf das Sprintziel ein.
+
+**Erkenntnisse aus dem Schätzen** und die Aufteilung in Tasks:
+[sprint-2-planning.md](sprint-2-planning.md).
+
+**Ergebnis:** `_<am 26.10. ergänzen: Sprintziel erreicht? Velocity: _ von _ SP>_`
+
+**Review (Modultag 7, 26.10.2026)** — vollständig in [Sprint-Review-2.md](Sprint-Review-2.md):
+
+Gezeigt: `_<was gezeigt>_`
+Feedback: `_<welches Feedback>_`
+Ins Backlog: `_<was zurück oder neu ins Backlog>_`
+
+**Retrospective (Modultag 7, 26.10.2026)** — vollständig in
+[retrospective-sprint-2.md](retrospective-sprint-2.md):
+
+*Massnahme aus Sprint 1:* 
+
+*Retro-Erkenntnis:* 
+
+**Verbesserungsmassnahme für Sprint 3:**
+
+gegenseitiges reviewen
+
+---
+
 ## 5. KI-Nutzungsnachweis
 
 | Nachweis | Modultag | Wo |
