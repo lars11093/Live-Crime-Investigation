@@ -230,6 +230,6 @@ Reflexion und Lernjournal.
 |---|---|---|---|
 | Lars | | | |
 | Loris | | | |
-| Elina | | | |
+| Elina |emotionale unterstüzung |weniger reden |zu arbeiten |
 | Nehir | | | |
 | Chime | | | |
