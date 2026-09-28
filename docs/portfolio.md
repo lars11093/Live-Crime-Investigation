@@ -15,16 +15,11 @@ Repository: <https://github.com/lars11093/Live-Crime-Investigation> · Board: Gi
 
 | Person | Scrum-Rolle | Schwerpunkt |
 |---|---|---|
-| Lars Herrmann | Entwickler | Repo, CI, Server |
-| `_<n>_` | Product Owner (und Entwickler) | Anforderungen, Abnahme |
-| `_<n>_` | Scrum Master (und Entwickler) | Prozess, Timeboxen, Impediments |
-| `_<n>_` | Entwickler | |
-| `_<n>_` | Entwickler | |
-
-Team: Lars, Loris, Elina, Nehir, Tenzing — Rollen oben noch zuordnen.
-
-Product Owner und Scrum Master sind gleichzeitig Entwickler im Team — bei fünf Personen und
-neun Wochen ist eine reine Rollentrennung nicht sinnvoll.
+| Lars | Product Owner (und Entwickler) | Anforderungen, Abnahme |
+| Chime | Scrum Master (und Entwickler) | Prozess, Timeboxen, Impediments |
+| Loris | Entwickler | |
+| Nehir | Entwickler | |
+| Elina | Entwickler | |
 
 ### Produkt
 
@@ -232,4 +227,4 @@ Reflexion und Lernjournal.
 | Loris | Reviewing | Es braucht eine bessere Aufteilung der Aufgaben | Aufteilen der Aufgaben |
 | Elina |emotionale unterstüzung |weniger reden |zu arbeiten |
 | Nehir | Unterstützung | Gegenseitige Unterstützung ist ein grosser Teil von SCRUM | Mehr User Stories übernehmen |
-| Chime | | | |
+| Chime | Unterstützung | Eine Story ist erst fertig, wenn sie reviewt und gemergt ist | User Stories besser zuteilen und evt. übernehmen|
