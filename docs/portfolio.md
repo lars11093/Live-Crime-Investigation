@@ -3,7 +3,7 @@
 Modul 426 · Software mit agilen Methoden entwickeln · AP 25b · N. Fricker
 Repository: <https://github.com/lars11093/Live-Crime-Investigation> · Board: GitHub Issues + Projects
 
-> **Vor der Abgabe ausfüllen** (Platzhalter `_<…>_`):
+> **Vor der Abgabe ausfüllen** :
 > Namen und Rollen in Abschnitt 1 · Link/Screenshot Vision Board in Abschnitt 2 ·
 > Link zum Foto der Story Map in Abschnitt 2 · Personen in den Task-Tabellen in
 > [sprint-1-planning.md](sprint-1-planning.md) · Feedback im Review Sprint 1
@@ -93,9 +93,9 @@ Splitting-Entscheide: [refinement-sprint-1.md](refinement-sprint-1.md).
 Gilt ab Sprint 1 für **alle** Stories, sechs Kriterien — im Detail in
 [definition-of-done.md](definition-of-done.md):
 
-1. Akzeptanzkriterien erfüllt · 2. Code über PR auf `master` · 3. Review durch eine zweite Person ·
-4. CI grün (Lint, Typecheck, Test) · 5. lokal von einer zweiten Person durchgeklickt ·
-6. Board aktualisiert (Spalte, Story Points, Milestone).
+1\. Akzeptanzkriterien erfüllt · 2. Code über PR auf `master` · 3. Review durch eine zweite Person ·
+4\. CI grün (Lint, Typecheck, Test) · 5. lokal von einer zweiten Person durchgeklickt ·
+6\. Board aktualisiert (Spalte, Story Points, Milestone).
 
 ---
 
@@ -150,10 +150,10 @@ draussen: sie zahlt nicht auf das Sprintziel ein.
 **Ergebnis:** Sprintziel nach DoD **nicht erreicht**. Der Weg ist auf den Feature-Branches
 umgesetzt, aber keine Story ist reviewt und auf `master` gemergt. **Velocity: 0 von 11 SP.**
 
-**Review (Modultag 6, 28.09.2026)** — vollständig in [sprint-1-review.md](sprint-1-review.md):
+**Review (Modultag 6, 28.09.2026)** — vollständig in [Sprint-Review-1.md](Sprint-Review-1.md):
 
 Gezeigt: klickbarer Weg Startseite → Fall laden → Briefing → Tatort, lokal vom Branch.
-Feedback: `_<Feedback aus dem Review eintragen>_`.
+Feedback: Kein Feedback erhalten.
 Ins Backlog: #1, #2, #6, #7 ohne Sprint-Zuordnung zurück, bleiben zuoberst; die ungeplant
 begonnenen Stories #8 – #17 gehen zuerst ins Refinement.
 
@@ -186,7 +186,7 @@ Daily.
 | Product Vision hinterfragen | 2 | [backlog-priorisierung.md](backlog-priorisierung.md), Abschnitt 4 |
 | INVEST-Check / Story-Splitting | 3 | [backlog-priorisierung.md](backlog-priorisierung.md), Abschnitt 3 und 4 |
 | Refinement der obersten fünf Stories (freiwillig) | 4 | [refinement-sprint-1.md](refinement-sprint-1.md) |
-| Review-Protokoll und Retro-Dokumentation Sprint 1 strukturieren (Claude) | 6 | [sprint-1-review.md](sprint-1-review.md), [retrospective-sprint-1.md](retrospective-sprint-1.md) |
+| Review-Protokoll und Retro-Dokumentation Sprint 1 strukturieren (Claude) | 6 | [Sprint-Review-1.md](Sprint-Review-1.md), [retrospective-sprint-1.md](retrospective-sprint-1.md) |
 
 **Modultag 4 — übernommen:**
 
