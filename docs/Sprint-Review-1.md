@@ -1,6 +1,6 @@
-# Sprint Review – Sprint 1 «Durchstich»
+# Sprint Review – Sprint 1
 
-**Datum:** 28.09.2026 · **Zeit:** 08:__–08:__ (Timebox 25 Min.) · **Ort:** TBZ
+**Datum:** 28.09.2026 · **Zeit:** 08:30–09:00 · **Ort:** TBZ
 **Sprint:** 07.09.2026 – 21.09.2026
 **Teilnehmende:** PO Lars · SM Chime · Devs: Loris, Elina, Nehir · Stakeholder: N. Fricker
 
@@ -51,13 +51,11 @@ Gezeigt lokal auf ___ (Branch-Stand, nicht `master`): Startseite → Fall laden 
 - #1, #2, #6, #7 zurück ins Backlog, bleiben Top-Priorität (Review und Merge fehlen noch)
 - #5 Team-Code bleibt erste neue Story für Sprint 2 (wie geplant)
 - #8–#17: PRs vorhanden, aber nicht refined und nicht geschätzt → zuerst ins Refinement
-- Neu aus Feedback: ___
-- Reihenfolge durch PO geprüft: ☐
 
 ## 6. Kurzfassung fürs Portfolio (Abschnitt 4, Review-Ergebnis)
 
 Gezeigt: klickbarer Weg Startseite → Briefing → Tatort, lokal vom Branch. Sprintziel nach DoD nicht
-erreicht, da keine Story reviewt und gemergt ist (0 von 11 SP). Feedback: ___. Ins Backlog: #1, #2,
+erreicht, da keine Story reviewt und gemergt ist (0 von 11 SP). Ins Backlog: #1, #2,
 #6, #7 zurück; PRs ausserhalb des Sprints (#8–#17) ins Refinement.
 
-**Protokoll:** ___
+**Protokoll:** Chime Dongkar (SM)
