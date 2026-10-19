@@ -354,3 +354,89 @@ body,
 .scene__back {
   background: rgba(5, 7, 10, 0.85);
 }
+
+/* ---------------------------------------------------------------
+   Story #5 — Team-Code
+   --------------------------------------------------------------- */
+
+.start-screen__divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2.5rem 0 1.5rem;
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.start-screen__divider::before,
+.start-screen__divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.team-code {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: center;
+  text-align: left;
+}
+
+.team-code__label {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.team-code__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.team-code__input {
+  width: 9rem;
+  text-align: center;
+  font-size: 1.1rem;
+  /* Der Code wird im Team vorgelesen — Zeichen klar auseinanderhalten. */
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.team-code__input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+button:disabled:hover {
+  background: #0a0f14;
+}
+
+.team-code__error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.85rem;
+}
+
+.team-code__hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.case-code {
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  font-size: 1rem;
+}
