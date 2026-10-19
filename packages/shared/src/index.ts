@@ -57,6 +57,15 @@ export interface CaseDefinition {
   timeline: TimedEvent[];
 }
 
+/**
+ * Der Fall, wie ihn der Client sehen darf.
+ *
+ * `scenarios` enthaelt die Loesung (Taeter, Waffe, Tatzeit) und wird deshalb
+ * serverseitig entfernt — siehe apps/server/src/engine/caseView.ts. Der Client
+ * bekommt diesen Typ, nie CaseDefinition.
+ */
+export type PublicCase = Omit<CaseDefinition, "scenarios">;
+
 export interface Accusation {
   suspectId: string;
   motive: string;

@@ -13,6 +13,7 @@ import type {
   Role,
 } from "@case-zero/shared";
 import case01 from "./data/case-01.json" with { type: "json" };
+import { toPublicCase } from "./engine/caseView.js";
 
 const CASES: Record<string, CaseDefinition> = {
   "case-01": case01 as CaseDefinition,
@@ -53,6 +54,15 @@ function scoreAccusation(room: Room, accusation: Accusation): ScoreResult {
 const app = express();
 app.use(cors());
 app.get("/health", (_req, res) => res.json({ ok: true, rooms: rooms.size }));
+
+// Story #2 — Fall laden. Liefert den Fall ohne die Loesung (siehe engine/caseView.ts).
+app.get("/api/cases/:caseId", (req, res) => {
+  const caseDef = CASES[req.params.caseId];
+  if (!caseDef) {
+    return res.status(404).json({ error: "Fall nicht gefunden" });
+  }
+  return res.json(toPublicCase(caseDef));
+});
 
 const httpServer = createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {

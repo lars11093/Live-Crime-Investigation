@@ -4,6 +4,7 @@ import { ROLES, type Role, type RoomState, type TimedEvent } from "@case-zero/sh
 import { socket } from "./lib/socket";
 import { EvidenceBoard } from "./components/EvidenceBoard";
 import { StartPage } from "./pages/StartPage";
+import { CaseLoaderPage } from "./pages/CaseLoaderPage";
 
 function JoinPage() {
   const [name, setName] = useState("");
@@ -141,6 +142,7 @@ export function App() {
   return (
     <Routes>
       <Route path="/" element={<StartPage />} />
+      <Route path="/fall" element={<CaseLoaderPage />} />
       {/* Prototyp aus Sprint 0 — Team-Beitritt wird mit #5 zur richtigen Story ausgebaut. */}
       <Route path="/lobby" element={<JoinPage />} />
       <Route path="/case/:code" element={<CasePage />} />
