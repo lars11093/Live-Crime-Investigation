@@ -49,7 +49,7 @@ app.use(cors());
 app.use(express.json());
 app.get("/health", (_req, res) => res.json({ ok: true, rooms: roomCount() }));
 
-// Story #2 — Fall laden. Liefert den Fall ohne die Loesung (siehe engine/caseView.ts).
+// Story #2 — Fall laden. Liefert den Fall ohne die Lösung (siehe engine/caseView.ts).
 app.get("/api/cases/:caseId", (req, res) => {
   const caseDef = CASES[req.params.caseId];
   if (!caseDef) {
@@ -71,7 +71,7 @@ app.post("/api/rooms", (req, res) => {
 
 // Story #13 — zwei Beweise kombinieren. Die Regeln bleiben auf dem Server:
 // der Client schickt zwei IDs und bekommt die Erkenntnis oder eine Absage,
-// nie die Liste der Moeglichkeiten.
+// nie die Liste der Möglichkeiten.
 app.post("/api/cases/:caseId/combine", (req, res) => {
   const caseDef = CASES[req.params.caseId];
   if (!caseDef) {
@@ -85,16 +85,16 @@ app.post("/api/cases/:caseId/combine", (req, res) => {
   return res.json(combineEvidence(caseDef, String(evidenceIds[0]), String(evidenceIds[1]), found));
 });
 
-// Story #5 — Team-Code pruefen. Falsches Format und unbekannter Code sind fuer
-// den Spieler derselbe Fall: "Ungueltiger Team-Code".
+// Story #5 — Team-Code prüfen. Falsches Format und unbekannter Code sind für
+// den Spieler derselbe Fall: "Ungültiger Team-Code".
 app.get("/api/rooms/:code", (req, res) => {
   const code = normalizeRoomCode(req.params.code);
   if (!isValidRoomCode(code)) {
-    return res.status(400).json({ error: "Ungueltiger Team-Code" });
+    return res.status(400).json({ error: "Ungültiger Team-Code" });
   }
   const room = getRoom(code);
   if (!room) {
-    return res.status(404).json({ error: "Ungueltiger Team-Code" });
+    return res.status(404).json({ error: "Ungültiger Team-Code" });
   }
   return res.json({
     code: room.state.code,
@@ -123,7 +123,7 @@ io.on("connection", (socket) => {
   socket.on("room:join", ({ code, playerName, role }) => {
     const room = getRoom(code);
     if (!room) {
-      socket.emit("error:message", "Ungueltiger Team-Code");
+      socket.emit("error:message", "Ungültiger Team-Code");
       return;
     }
     if (room.state.players.some((p) => p.role === role)) {

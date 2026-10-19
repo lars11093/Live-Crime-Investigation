@@ -5,16 +5,16 @@ interface Props {
   evidence: CollectedEvidence[];
   /** Beweis-ID -> Notiztext (#12). */
   notes?: Record<string, string>;
-  /** Oeffnet die Detailansicht (#11). */
+  /** Öffnet die Detailansicht (#11). */
   onOpen?: (id: string) => void;
-  /** Zurueck in die Fallakte. Fehlt, wenn die Liste eingebettet gezeigt wird. */
+  /** Zurück in die Fallakte. Fehlt, wenn die Liste eingebettet gezeigt wird. */
   onBack?: () => void;
 }
 
 /**
  * Story #10 — alle gesammelten Beweise als Liste.
  *
- * Die Liste haengt am State der Fallseite, nicht an einem eigenen Ladevorgang:
+ * Die Liste hängt am State der Fallseite, nicht an einem eigenen Ladevorgang:
  * ein neu eingesammelter Fund erscheint dadurch sofort, ohne Neuladen.
  */
 export function EvidenceList({ evidence, notes = {}, onOpen, onBack }: Props) {
@@ -24,12 +24,12 @@ export function EvidenceList({ evidence, notes = {}, onOpen, onBack }: Props) {
         <p className="terminal-title" style={{ margin: 0 }}>
           Beweisakte · {evidence.length}
         </p>
-        {onBack && <button onClick={onBack}>Zurueck zur Fallakte</button>}
+        {onBack && <button onClick={onBack}>Zurück zur Fallakte</button>}
       </div>
 
       {evidence.length === 0 ? (
         <p className="evidence-list__empty">
-          Noch nichts eingesammelt. Untersuche den Tatort oder ein Geraet und sichere, was du findest.
+          Noch nichts eingesammelt. Untersuche den Tatort oder ein Gerät und sichere, was du findest.
         </p>
       ) : (
         <ol className="evidence-list__items">

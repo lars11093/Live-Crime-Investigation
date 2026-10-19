@@ -9,7 +9,7 @@ const [first] = caseDef.combinations;
 const [aId, bId] = first.evidenceIds;
 
 describe("Beweise kombinieren", () => {
-  it("findet ein gueltiges Paar", () => {
+  it("findet ein gültiges Paar", () => {
     const result = combineEvidence(caseDef, aId, bId);
     expect(result).toEqual({ ok: true, insight: first.insight });
   });
@@ -41,7 +41,7 @@ describe("Beweise kombinieren", () => {
   });
 });
 
-describe("Die Kombinationsliste verlaesst den Server nicht", () => {
+describe("Die Kombinationsliste verlässt den Server nicht", () => {
   it("fehlt in der Client-Antwort", () => {
     expect("combinations" in toPublicCase(caseDef)).toBe(false);
   });

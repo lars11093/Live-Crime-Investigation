@@ -5,9 +5,9 @@ import type { CaseDefinition, PublicCase } from "@case-zero/shared";
  *
  * Architektur-Regel (CLAUDE.md): Der Client bekommt nie den vollen Case-State.
  * Entfernt werden zwei Dinge:
- *   - `scenarios`: Taeter, Motiv, Waffe, Tatzeit — die Loesung selbst.
+ *   - `scenarios`: Täter, Motiv, Waffe, Tatzeit — die Lösung selbst.
  *   - `combinations`: welche Beweispaare etwas ergeben. Mit dieser Liste
- *     liesse sich jede Verknuepfung aus der Netzwerk-Konsole ablesen, statt
+ *     liesse sich jede Verknüpfung aus der Netzwerk-Konsole ablesen, statt
  *     sie zu finden. Kombiniert wird deshalb serverseitig (#13).
  */
 export function toPublicCase(caseDef: CaseDefinition): PublicCase {

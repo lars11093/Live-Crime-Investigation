@@ -34,7 +34,7 @@ type LoadState =
 
 /**
  * Story #2 — Fall laden.
- * Drei Zustaende, nie ein leerer Bildschirm: Laden, Fehler mit "Erneut
+ * Drei Zustände, nie ein leerer Bildschirm: Laden, Fehler mit "Erneut
  * versuchen", geladener Fall mit sichtbarem Titel.
  */
 export function CaseLoaderPage() {
@@ -42,8 +42,8 @@ export function CaseLoaderPage() {
   const [state, setState] = useState<LoadState>({ status: "loading" });
   // Nach dem Laden erscheint zuerst das Briefing (#2 -> #6).
   const [view, setView] = useState<View>("briefing");
-  // Fortschritt kommt gespeichert herein und wird bei jeder Aenderung
-  // zurueckgeschrieben, damit Notizen ein Neuladen ueberleben (#12).
+  // Fortschritt kommt gespeichert herein und wird bei jeder Änderung
+  // zurückgeschrieben, damit Notizen ein Neuladen überleben (#12).
   const [progress, setProgress] = useState<CaseProgress>(() =>
     loadProgress(browserStorage(), code)
   );
@@ -51,7 +51,7 @@ export function CaseLoaderPage() {
     progress;
   // Welcher Beweis im Detail offen ist (#11).
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
-  // Welcher Verdaechtige im Profil offen ist (#15).
+  // Welcher Verdächtige im Profil offen ist (#15).
   const [openSuspectId, setOpenSuspectId] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -63,7 +63,7 @@ export function CaseLoaderPage() {
     let cancelled = false;
     setState({ status: "loading" });
 
-    // Erst die Team-Session pruefen, dann den Fall dazu laden. So sehen zwei
+    // Erst die Team-Session prüfen, dann den Fall dazu laden. So sehen zwei
     // Personen mit demselben Code garantiert denselben Fall (#5).
     findRoom(code)
       .then((room) => {
@@ -103,9 +103,9 @@ export function CaseLoaderPage() {
       <main className="app-shell">
         <p className="terminal-title">Team-Session nicht gefunden</p>
         <div className="panel case-status">
-          <p className="case-status__error">Ungueltiger Team-Code</p>
+          <p className="case-status__error">Ungültiger Team-Code</p>
           <p className="case-status__hint">
-            Der Code <code>{code}</code> gehoert zu keiner laufenden Ermittlung. Sessions
+            Der Code <code>{code}</code> gehört zu keiner laufenden Ermittlung. Sessions
             leben nur im Serverspeicher — nach einem Server-Neustart sind sie weg.
           </p>
           <div className="case-status__actions">
@@ -125,7 +125,7 @@ export function CaseLoaderPage() {
         <div className="panel case-status">
           <p className="case-status__error">Fall konnte nicht geladen werden</p>
           <p className="case-status__hint">
-            Der Ermittlungsserver antwortet nicht. Laeuft <code>npm run dev</code>?
+            Der Ermittlungsserver antwortet nicht. Läuft <code>npm run dev</code>?
           </p>
           <div className="case-status__actions">
             <button className="button--primary" onClick={load}>
@@ -165,8 +165,8 @@ export function CaseLoaderPage() {
     );
   }
 
-  // Solange es kein Forensik-Terminal mit Geraeteliste gibt (#18), oeffnet
-  // die Fallakte direkt das erste Geraet.
+  // Solange es kein Forensik-Terminal mit Geräteliste gibt (#18), öffnet
+  // die Fallakte direkt das erste Gerät.
   const device = caseData.devices?.at(0);
 
   if (view === "chat" && device) {
@@ -273,10 +273,10 @@ export function CaseLoaderPage() {
                       return `Neue Erkenntnis: ${result.insight.title}`;
                     }
                     if (result.reason === "already-found") {
-                      return "Diese Verknuepfung hast du bereits aufgedeckt.";
+                      return "Diese Verknüpfung hast du bereits aufgedeckt.";
                     }
                     if (result.reason === "invalid") {
-                      return "Waehle zwei verschiedene Beweise.";
+                      return "Wähle zwei verschiedene Beweise.";
                     }
                     return "Zwischen diesen beiden Beweisen ist kein Zusammenhang erkennbar.";
                   } catch {
@@ -310,7 +310,7 @@ export function CaseLoaderPage() {
       <div className="panel case-status">
         <h1 className="case-title">{caseData.title}</h1>
         <p className="case-status__hint">
-          {caseData.suspects.length} Verdaechtige &middot;{" "}
+          {caseData.suspects.length} Verdächtige &middot;{" "}
           {caseData.seedEvidence.length} erste Spuren
         </p>
         <p className="case-status__hint">
@@ -334,7 +334,7 @@ export function CaseLoaderPage() {
             Beweisakte ({collected.length})
           </button>
           <button onClick={() => setView("verdaechtige")}>
-            Verdaechtige ({caseData.suspects.length})
+            Verdächtige ({caseData.suspects.length})
           </button>
           {device && <button onClick={() => setView("chat")}>{device.label}</button>}
           <button onClick={() => setView("briefing")}>Briefing</button>

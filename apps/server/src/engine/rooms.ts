@@ -6,7 +6,7 @@ import type { CaseDefinition, RoomState } from "@case-zero/shared";
  *
  * Entscheidung zur offenen Frage im Issue ("Wie wird eine Session
  * serverseitig gehalten?"): im Server-Prozess, ohne Datenbank — so steht es
- * in CLAUDE.md fuer die MVP-Phase. Konsequenz, die das Team kennen muss:
+ * in CLAUDE.md für die MVP-Phase. Konsequenz, die das Team kennen muss:
  * ein Server-Neustart verwirft alle laufenden Sessions.
  */
 export interface Room {
@@ -38,8 +38,8 @@ function pickScenario(caseDef: CaseDefinition) {
 
 export function createRoom(caseDef: CaseDefinition): Room {
   let code = `${nanoid()}-${nanoid()}`;
-  // Bei 32^6 Kombinationen praktisch nie noetig, aber billiger als ein
-  // ueberschriebener Raum mit fremden Spielern darin.
+  // Bei 32^6 Kombinationen praktisch nie nötig, aber billiger als ein
+  // überschriebener Raum mit fremden Spielern darin.
   while (rooms.has(code)) {
     code = `${nanoid()}-${nanoid()}`;
   }

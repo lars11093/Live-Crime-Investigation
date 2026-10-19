@@ -1,4 +1,4 @@
-/** Ein Stueck Aussagetext — entweder Zeitangabe oder gewoehnlicher Text (#16). */
+/** Ein Stück Aussagetext — entweder Zeitangabe oder gewöhnlicher Text (#16). */
 export interface StatementSegment {
   text: string;
   isTime: boolean;
@@ -8,16 +8,16 @@ export interface StatementSegment {
  * Uhrzeiten im Format H:MM oder HH:MM.
  *
  * Bewusst nur Uhrzeiten, keine Datumsangaben: in einer Aussage zur Tatnacht
- * ist die Minute das, was sich mit dem Badge-Protokoll und der Kamera-Luecke
- * abgleichen laesst. Die Wortgrenzen verhindern Treffer in laengeren Zahlen.
+ * ist die Minute das, was sich mit dem Badge-Protokoll und der Kamera-Lücke
+ * abgleichen lässt. Die Wortgrenzen verhindern Treffer in längeren Zahlen.
  */
 const TIME_PATTERN = /\b(\d{1,2}:\d{2})\b/g;
 
 /**
- * Zerlegt eine Aussage in Text- und Zeitstuecke (#16).
+ * Zerlegt eine Aussage in Text- und Zeitstücke (#16).
  *
  * Als eigene Funktion, weil das Hervorheben die eigentliche Arbeit der Story
- * ist — und so ohne Browser pruefbar bleibt.
+ * ist — und so ohne Browser prüfbar bleibt.
  */
 export function splitByTime(text: string): StatementSegment[] {
   const segments: StatementSegment[] = [];
@@ -46,14 +46,14 @@ export function timesIn(text: string): string[] {
 }
 
 /**
- * Zerlegt eine Aussage in Saetze (#17).
+ * Zerlegt eine Aussage in Sätze (#17).
  *
- * Markiert wird satzweise, nicht zeichengenau. Zwei Gruende: ein Widerspruch
+ * Markiert wird satzweise, nicht zeichengenau. Zwei Gründe: ein Widerspruch
  * ist praktisch immer ein ganzer Satz ("Gegen 22:40 war ich bereits zu Hause"),
- * und zeichengenaue Positionen halten kein Re-Rendern und keine Textaenderung
+ * und zeichengenaue Positionen halten kein Re-Rendern und keine Textänderung
  * im Case-JSON aus.
  *
- * Bekannte Grenze: Abkuerzungen mit Punkt ("z. B.") wuerden faelschlich
+ * Bekannte Grenze: Abkürzungen mit Punkt ("z. B.") würden fälschlich
  * trennen. In den Aussagen dieses Falls kommen keine vor.
  */
 export function splitIntoSentences(text: string): string[] {

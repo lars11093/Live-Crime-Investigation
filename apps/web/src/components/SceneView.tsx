@@ -17,7 +17,7 @@ interface Props {
  *
  * TODO Bild-Assets: `scene.imagePath` zeigt auf Dateien, die es im Repo noch
  * nicht gibt — echte Bilder werden in der MVP-Phase bewusst nicht committet
- * (Copyright/Repo-Groesse). Bis dahin greift der Platzhalter, der deshalb
+ * (Copyright/Repo-Grösse). Bis dahin greift der Platzhalter, der deshalb
  * kein Randfall ist, sondern der Normalzustand.
  */
 export function SceneView({
@@ -35,7 +35,7 @@ export function SceneView({
   const investigated = new Set(investigatedIds);
   const collected = new Set(collectedIds);
 
-  // Bestaetigung wieder ausblenden, damit sie nicht dauerhaft im Bild steht.
+  // Bestätigung wieder ausblenden, damit sie nicht dauerhaft im Bild steht.
   useEffect(() => {
     if (!confirmation) return;
     const timer = setTimeout(() => setConfirmation(null), 4000);
@@ -66,7 +66,7 @@ export function SceneView({
             [ ! ]
           </p>
           <p className="scene__placeholder-name">{scene.name}</p>
-          <p className="scene__placeholder-hint">Szenenbild nicht verfuegbar</p>
+          <p className="scene__placeholder-hint">Szenenbild nicht verfügbar</p>
         </div>
       ) : (
         <img
@@ -103,7 +103,7 @@ export function SceneView({
           {investigated.size} / {scene.hotspots.length} untersucht
         </p>
         <button className="scene__back" onClick={onBack}>
-          Zurueck
+          Zurück
         </button>
       </div>
 
