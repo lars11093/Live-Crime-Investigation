@@ -177,6 +177,69 @@
       "imagePath": "/suspects/case-01/leo-fischer.jpg"
     }
   ],
+  "devices": [
+    {
+      "id": "smartphone-vogt",
+      "label": "Smartphone Thomas Vogt",
+      "owner": "Thomas Vogt",
+      "messages": [
+        {
+          "id": "msg-vogt-01",
+          "sender": "Monica Brandt",
+          "sentAt": "12.09. 17:52",
+          "text": "Thomas, die Zahlen fuer Q3 gehen am Montag so raus wie besprochen. Bitte keine Alleingaenge."
+        },
+        {
+          "id": "msg-vogt-02",
+          "sender": "Thomas Vogt",
+          "sentAt": "12.09. 18:05",
+          "text": "Wie besprochen? Ich habe nie zugestimmt. Ich schaue mir das heute Abend nochmal an."
+        },
+        {
+          "id": "msg-vogt-03",
+          "sender": "Daniel Keller",
+          "sentAt": "12.09. 19:40",
+          "text": "Hast du die Liste fuer die Befoerderungen schon abgegeben? Nur damit ich weiss, woran ich bin."
+        },
+        {
+          "id": "msg-vogt-04",
+          "sender": "Thomas Vogt",
+          "sentAt": "12.09. 19:58",
+          "text": "Noch nicht. Reden wir naechste Woche."
+        },
+        {
+          "id": "msg-vogt-05",
+          "sender": "Thomas Vogt",
+          "sentAt": "12.09. 20:30",
+          "text": "Meet me at the office. 22:30."
+        },
+        {
+          "id": "msg-vogt-06",
+          "sender": "Leo Fischer",
+          "sentAt": "12.09. 20:47",
+          "text": "Bin heute ohnehin fuer das Update im Haus. Soll ich vorher noch bei dir vorbeikommen?"
+        },
+        {
+          "id": "msg-vogt-07",
+          "sender": "Monica Brandt",
+          "sentAt": "12.09. 21:15",
+          "text": "Ich komme. Aber das bleibt unter uns."
+        },
+        {
+          "id": "msg-vogt-08",
+          "sender": "Daniel Keller",
+          "sentAt": "12.09. 22:02",
+          "text": "Bin noch kurz im Haus. Wir muessen reden, heute noch."
+        },
+        {
+          "id": "msg-vogt-09",
+          "sender": "Leo Fischer",
+          "sentAt": "12.09. 22:41",
+          "text": "Server laeuft wieder. Brauchst du mich noch oben?"
+        }
+      ]
+    }
+  ],
   "scenarios": [
     {
       "id": "scenario-daniel",

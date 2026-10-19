@@ -65,6 +65,39 @@ export interface Suspect {
 }
 
 /**
+ * Eine Nachricht im Chatverlauf eines Geraets (Story #19).
+ *
+ * Die ID ist pro Fall eindeutig, nicht nur pro Geraet: daran haengt die
+ * Markierung im Fortschritt des Ermittlers.
+ */
+export interface ChatMessage {
+  id: string;
+  /** Anzeigename des Absenders, z. B. "Monica Brandt". */
+  sender: string;
+  /** Zeitpunkt, wie er auf dem Geraet steht — z. B. "12.09. 20:31". */
+  sentAt: string;
+  text: string;
+}
+
+/**
+ * Ein sichergestelltes Geraet (Story #19).
+ *
+ * Die Nachrichten stehen in der Reihenfolge im Case-JSON, in der sie
+ * angezeigt werden — chronologisch, die aelteste zuerst. Der Client
+ * sortiert nicht um, weil `sentAt` ein Anzeigetext ist und kein Datum.
+ *
+ * Auflisten und Sperren der Geraete ist #18 (Forensik-Terminal).
+ */
+export interface Device {
+  id: string;
+  /** z. B. "Smartphone Thomas Vogt". */
+  label: string;
+  /** Wem das Geraet gehoert. Gleich geschrieben wie `ChatMessage.sender`, damit eigene Nachrichten erkennbar sind. */
+  owner: string;
+  messages: ChatMessage[];
+}
+
+/**
  * Ein Tatort als Szene (Story #7).
  *
  * `imagePath` ist ein Pfad, kein Asset: echte Bilder werden bewusst nicht
@@ -182,6 +215,8 @@ export interface CaseDefinition {
   scenes: Scene[];
   combinations: Combination[];
   suspects: Suspect[];
+  /** Sichergestellte Geraete mit Chatverlauf (#19). Optional: nicht jeder Fall hat welche. */
+  devices?: Device[];
   scenarios: Scenario[];
   seedEvidence: EvidenceNode[];
   timeline: TimedEvent[];
