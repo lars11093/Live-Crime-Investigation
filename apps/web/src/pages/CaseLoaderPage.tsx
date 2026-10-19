@@ -53,6 +53,9 @@ export function CaseLoaderPage() {
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
   // Welcher Verdaechtige im Profil offen ist (#15).
   const [openSuspectId, setOpenSuspectId] = useState<string | null>(null);
+  // Story #25 — Auswahl des Taeters fuer die Anklage.
+  const [selectedSuspectId, setSelectedSuspectId] =
+      useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -223,6 +226,8 @@ export function CaseLoaderPage() {
               suspects={caseData.suspects}
               onOpen={setOpenSuspectId}
               onBack={() => setView("akte")}
+              selectedSuspectId={selectedSuspectId}
+              onSelectSuspect={setSelectedSuspectId}
             />
             <div style={{ marginTop: "1rem" }}>
               <ContradictionOverview contradictions={contradictions} />
