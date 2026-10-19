@@ -1035,10 +1035,21 @@ button:disabled:hover {
   justify-content: flex-end;
 }
 
+.chat__bubble {
+  display: grid;
+  gap: 0.3rem;
+  justify-items: start;
+  max-width: min(80%, 60ch);
+}
+
+.chat__row--own .chat__bubble {
+  justify-items: end;
+}
+
 .chat__message {
   display: grid;
   gap: 0.3rem;
-  max-width: min(80%, 60ch);
+  width: 100%;
   padding: 0.6rem 0.8rem;
   text-align: left;
   color: var(--ink);
@@ -1088,4 +1099,31 @@ button:disabled:hover {
 .chat__text {
   font-size: 0.9rem;
   line-height: 1.6;
+}
+
+/* ---------------------------------------------------------------
+   Story #21 — digitale Spur als Beweis sichern
+   --------------------------------------------------------------- */
+
+.chat__secure {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chat__secure:disabled {
+  cursor: default;
+  color: var(--muted);
+  border-color: var(--border);
+  background: none;
+}
+
+.chat__confirmation {
+  margin: 0 0 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  color: var(--accent);
+  font-size: 0.85rem;
 }

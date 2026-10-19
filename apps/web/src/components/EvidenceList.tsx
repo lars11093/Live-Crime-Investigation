@@ -29,7 +29,7 @@ export function EvidenceList({ evidence, notes = {}, onOpen, onBack }: Props) {
 
       {evidence.length === 0 ? (
         <p className="evidence-list__empty">
-          Noch nichts eingesammelt. Untersuche den Tatort und sichere, was du findest.
+          Noch nichts eingesammelt. Untersuche den Tatort oder ein Geraet und sichere, was du findest.
         </p>
       ) : (
         <ol className="evidence-list__items">

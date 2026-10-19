@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { CollectedEvidence } from "@case-zero/shared";
 import {
   EMPTY_PROGRESS,
+  collectEvidence,
   loadProgress,
   saveProgress,
   setNote,
@@ -165,5 +166,16 @@ describe("Chatnachrichten markieren", () => {
     const loaded = loadProgress(storage, "ABC-123");
     expect(loaded.markedMessageIds).toEqual([]);
     expect(loaded.investigatedIds).toEqual(["schreibtisch"]);
+  });
+});
+
+describe("Beweise einsammeln", () => {
+  it("legt einen neuen Fund in die Akte", () => {
+    expect(collectEvidence([], evidence)).toEqual([evidence]);
+  });
+
+  it("sichert denselben Fund nicht doppelt", () => {
+    const list = [evidence];
+    expect(collectEvidence(list, { ...evidence })).toBe(list);
   });
 });
