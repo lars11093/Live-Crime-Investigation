@@ -99,6 +99,56 @@
       ]
     }
   ],
+  "combinations": [
+    {
+      "id": "kombi-zeitluecke",
+      "evidenceIds": [
+        "badge-protokoll",
+        "kamera-luecke"
+      ],
+      "insight": {
+        "id": "insight-zeitluecke",
+        "title": "Die Luecke ist kein Zufall",
+        "body": "Die Kamera faellt genau in dem Fenster aus, in dem derselbe Badge zweimal benutzt wird. Wer hier hinein- und hinausging, wusste, dass er nicht gefilmt wird."
+      }
+    },
+    {
+      "id": "kombi-zweite-person",
+      "evidenceIds": [
+        "tasse-lippenstift",
+        "notebook-kuendigung"
+      ],
+      "insight": {
+        "id": "insight-zweite-person",
+        "title": "Jemand sass hier mit am Tisch",
+        "body": "Die Tasse mit dem Lippenstiftabdruck stand neben dem aufgeklappten Notebook. Das Opfer schrieb die Kuendigung nicht allein - jemand las mit."
+      }
+    },
+    {
+      "id": "kombi-uhrzeit",
+      "evidenceIds": [
+        "zettel-zahlenreihe",
+        "badge-protokoll"
+      ],
+      "insight": {
+        "id": "insight-uhrzeit",
+        "title": "22:30 war abgesprochen",
+        "body": "Die durchgestrichene Zeile auf dem Zettel wurde durch 22:30 ersetzt - dieselbe Zeit, zu der der erste Zutritt protokolliert ist. Das Treffen war geplant, nicht zufaellig."
+      }
+    },
+    {
+      "id": "kombi-fenster",
+      "evidenceIds": [
+        "kratzer-fensterrahmen",
+        "tasse-lippenstift"
+      ],
+      "insight": {
+        "id": "insight-fenster",
+        "title": "Etwas verliess den Raum nicht durch die Tuer",
+        "body": "Frische Kratzer aussen am Fensterrahmen, und im Raum eine Tasse, die nicht dem Opfer gehoerte. Wer hier war, wollte etwas loswerden, ohne am Badge-Leser vorbeizugehen."
+      }
+    }
+  ],
   "suspects": [
     { "id": "daniel-keller", "name": "Daniel Keller" },
     { "id": "monica-brandt", "name": "Monica Brandt" },

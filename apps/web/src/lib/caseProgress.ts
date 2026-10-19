@@ -1,4 +1,4 @@
-import type { CollectedEvidence } from "@case-zero/shared";
+import type { CollectedEvidence, Insight } from "@case-zero/shared";
 
 /**
  * Der Ermittlungsfortschritt einer Person in einer Team-Session.
@@ -12,12 +12,15 @@ export interface CaseProgress {
   collected: CollectedEvidence[];
   /** Beweis-ID -> Notiztext. */
   notes: Record<string, string>;
+  /** Bereits aufgedeckte Verknuepfungen (#13). */
+  insights: Insight[];
 }
 
 export const EMPTY_PROGRESS: CaseProgress = {
   investigatedIds: [],
   collected: [],
   notes: {},
+  insights: [],
 };
 
 /**
@@ -66,6 +69,7 @@ export function loadProgress(storage: ProgressStorage, roomCode: string): CasePr
         parsed.notes && typeof parsed.notes === "object" && !Array.isArray(parsed.notes)
           ? parsed.notes
           : {},
+      insights: Array.isArray(parsed.insights) ? parsed.insights : [],
     };
   } catch {
     return EMPTY_PROGRESS;
