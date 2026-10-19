@@ -8,6 +8,7 @@ import {
   saveProgress,
   setNote,
   toggleContradiction,
+  toggleMarkedMessage,
   type CaseProgress,
 } from "../lib/caseProgress";
 import { CaseBriefingPanel } from "../components/CaseBriefingPanel";
@@ -18,9 +19,10 @@ import { CombinePanel } from "../components/CombinePanel";
 import { SuspectList } from "../components/SuspectList";
 import { SuspectProfile } from "../components/SuspectProfile";
 import { ContradictionOverview } from "../components/ContradictionOverview";
+import { ChatHistory } from "../components/ChatHistory";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
-type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige";
+type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "chat";
 
 type LoadState =
   | { status: "loading" }
@@ -43,7 +45,8 @@ export function CaseLoaderPage() {
   const [progress, setProgress] = useState<CaseProgress>(() =>
     loadProgress(browserStorage(), code)
   );
-  const { investigatedIds, collected, notes, insights, contradictions } = progress;
+  const { investigatedIds, collected, notes, insights, contradictions, markedMessageIds } =
+    progress;
   // Welcher Beweis im Detail offen ist (#11).
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
   // Welcher Verdaechtige im Profil offen ist (#15).
@@ -161,6 +164,28 @@ export function CaseLoaderPage() {
         }
         onBack={() => setView("akte")}
       />
+    );
+  }
+
+  // Solange es kein Forensik-Terminal mit Geraeteliste gibt (#18), oeffnet
+  // die Fallakte direkt das erste Geraet.
+  const device = caseData.devices?.at(0);
+
+  if (view === "chat" && device) {
+    return (
+      <main className="app-shell">
+        <ChatHistory
+          device={device}
+          markedIds={markedMessageIds}
+          onToggleMessage={(messageId) =>
+            setProgress((prev) => ({
+              ...prev,
+              markedMessageIds: toggleMarkedMessage(prev.markedMessageIds, messageId),
+            }))
+          }
+          onBack={() => setView("akte")}
+        />
+      </main>
     );
   }
 
@@ -306,6 +331,7 @@ export function CaseLoaderPage() {
           <button onClick={() => setView("verdaechtige")}>
             Verdaechtige ({caseData.suspects.length})
           </button>
+          {device && <button onClick={() => setView("chat")}>{device.label}</button>}
           <button onClick={() => setView("briefing")}>Briefing</button>
         </div>
       </div>

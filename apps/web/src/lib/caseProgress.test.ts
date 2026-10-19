@@ -6,6 +6,7 @@ import {
   saveProgress,
   setNote,
   toggleContradiction,
+  toggleMarkedMessage,
   type ProgressStorage,
 } from "./caseProgress";
 
@@ -53,6 +54,7 @@ describe("Fortschritt speichern und laden", () => {
       notes: { "tasse-lippenstift": "Lippenstift passt nicht zum Opfer." },
       insights: [{ id: "insight-1", title: "Zweite Person", body: "Jemand sass mit am Tisch." }],
       contradictions: [],
+      markedMessageIds: [],
     });
     const loaded = loadProgress(storage, "ABC-123");
     expect(loaded.notes["tasse-lippenstift"]).toBe("Lippenstift passt nicht zum Opfer.");
@@ -135,5 +137,33 @@ describe("Widersprueche markieren", () => {
     const storage = fakeStorage();
     saveProgress(storage, "ABC-123", { ...EMPTY_PROGRESS, contradictions: [entry] });
     expect(loadProgress(storage, "ABC-123").contradictions).toEqual([entry]);
+  });
+});
+
+describe("Chatnachrichten markieren", () => {
+  it("markiert eine Nachricht", () => {
+    expect(toggleMarkedMessage([], "msg-vogt-05")).toEqual(["msg-vogt-05"]);
+  });
+
+  it("nimmt dieselbe Markierung wieder zurueck", () => {
+    expect(toggleMarkedMessage(["msg-vogt-05", "msg-vogt-07"], "msg-vogt-05")).toEqual([
+      "msg-vogt-07",
+    ]);
+  });
+
+  it("ueberlebt das Speichern und Laden", () => {
+    const storage = fakeStorage();
+    saveProgress(storage, "ABC-123", { ...EMPTY_PROGRESS, markedMessageIds: ["msg-vogt-05"] });
+    expect(loadProgress(storage, "ABC-123").markedMessageIds).toEqual(["msg-vogt-05"]);
+  });
+
+  // Wer vor #19 gespielt hat, hat das Feld noch nicht im Storage.
+  it("laedt einen alten Stand ohne Markierungen", () => {
+    const storage = fakeStorage({
+      "case-zero:progress:ABC-123": '{"investigatedIds":["schreibtisch"]}',
+    });
+    const loaded = loadProgress(storage, "ABC-123");
+    expect(loaded.markedMessageIds).toEqual([]);
+    expect(loaded.investigatedIds).toEqual(["schreibtisch"]);
   });
 });

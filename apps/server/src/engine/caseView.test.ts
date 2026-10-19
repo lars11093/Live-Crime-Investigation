@@ -17,6 +17,8 @@ describe("toPublicCase", () => {
     expect(view.title).toBe(caseDef.title);
     expect(view.suspects).toEqual(caseDef.suspects);
     expect(view.seedEvidence).toEqual(caseDef.seedEvidence);
+    // Der Chatverlauf ist Ermittlungsmaterial, keine Loesung (#19).
+    expect(view.devices).toEqual(caseDef.devices);
   });
 
   // Die Verdaechtigen-Liste ist oeffentlich — der Spieler muss sie sehen.

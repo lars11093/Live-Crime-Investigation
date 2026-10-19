@@ -16,6 +16,8 @@ export interface CaseProgress {
   insights: Insight[];
   /** Als widerspruechlich markierte Saetze aus Aussagen (#17). */
   contradictions: Contradiction[];
+  /** Als relevant markierte Chatnachrichten (#19), per Nachrichten-ID. */
+  markedMessageIds: string[];
 }
 
 /**
@@ -49,12 +51,18 @@ export function toggleContradiction(
   return [...list, entry];
 }
 
+/** Markiert eine Chatnachricht als relevant oder nimmt die Markierung zurueck (#19). */
+export function toggleMarkedMessage(ids: string[], messageId: string): string[] {
+  return ids.includes(messageId) ? ids.filter((id) => id !== messageId) : [...ids, messageId];
+}
+
 export const EMPTY_PROGRESS: CaseProgress = {
   investigatedIds: [],
   collected: [],
   notes: {},
   insights: [],
   contradictions: [],
+  markedMessageIds: [],
 };
 
 /**
@@ -105,6 +113,7 @@ export function loadProgress(storage: ProgressStorage, roomCode: string): CasePr
           : {},
       insights: Array.isArray(parsed.insights) ? parsed.insights : [],
       contradictions: Array.isArray(parsed.contradictions) ? parsed.contradictions : [],
+      markedMessageIds: Array.isArray(parsed.markedMessageIds) ? parsed.markedMessageIds : [],
     };
   } catch {
     return EMPTY_PROGRESS;
