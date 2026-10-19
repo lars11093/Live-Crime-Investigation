@@ -22,7 +22,8 @@ import { SuspectProfile } from "../components/SuspectProfile";
 import { ContradictionOverview } from "../components/ContradictionOverview";
 import { ChatHistory } from "../components/ChatHistory";
 import { TeamPanel } from "../components/TeamPanel";
-import { useTeam } from "../lib/team";
+import { shareMessage, useTeam } from "../lib/team";
+import { SharedFindings } from "../components/SharedFindings";
 import { messageToEvidence } from "../lib/digitalTrace";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
@@ -248,6 +249,11 @@ export function CaseLoaderPage() {
             onSaveNote={(text) =>
               setProgress((prev) => ({ ...prev, notes: setNote(prev.notes, open.id, text) }))
             }
+            share={{
+              sharedBy: team.findings.find((f) => f.evidence.id === open.id)?.sharedBy ?? null,
+              joined: team.name !== "",
+              onShare: async () => shareMessage(await team.share(open)),
+            }}
             onBack={() => setOpenEvidenceId(null)}
           />
         ) : (
@@ -288,6 +294,9 @@ export function CaseLoaderPage() {
                   }
                 }}
               />
+            </div>
+            <div style={{ marginTop: "1rem" }}>
+              <SharedFindings findings={team.findings} myId={team.myId} />
             </div>
           </>
         )}

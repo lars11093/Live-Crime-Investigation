@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import type { Player } from "@case-zero/shared";
+import type { CollectedEvidence, Player, SharedFinding, ShareResult } from "@case-zero/shared";
 import { socket } from "./socket";
 import type { ProgressStorage } from "./caseProgress";
 
@@ -18,6 +18,21 @@ export function nameError(rawName: string): string | null {
     return `Der Name darf hoechstens ${MAX_NAME_LENGTH} Zeichen haben.`;
   }
   return null;
+}
+
+/** Was der Spieler nach einem Teilen-Versuch liest (#23). */
+export function shareMessage(result: ShareResult): string {
+  if (result.ok) return "Mit dem Team geteilt.";
+  switch (result.reason) {
+    case "not-in-team":
+      return "Tritt zuerst in der Fallakte dem Team bei.";
+    case "already-shared":
+      return "Diesen Fund hat schon jemand geteilt.";
+    case "unknown-evidence":
+      return "Dieser Fund gehoert nicht zum Fall.";
+    case "invalid-room":
+      return "Die Team-Session gibt es nicht mehr.";
+  }
 }
 
 /**
@@ -67,10 +82,15 @@ export function useTeam(roomCode: string) {
   const [players, setPlayers] = useState<Player[]>([]);
   const [myId, setMyId] = useState<string | undefined>(socket.id);
   const [error, setError] = useState<string | null>(null);
+  // Mit dem Team geteilte Funde (#23), live vom Server.
+  const [findings, setFindings] = useState<SharedFinding[]>([]);
 
   useEffect(() => {
     function onUpdate(list: Player[]) {
       setPlayers(list);
+    }
+    function onFindings(list: SharedFinding[]) {
+      setFindings(list);
     }
     function join() {
       if (!name) return;
@@ -85,10 +105,12 @@ export function useTeam(roomCode: string) {
     }
 
     socket.on("team:update", onUpdate);
+    socket.on("team:findings", onFindings);
     socket.on("connect", join);
     if (socket.connected) join();
     return () => {
       socket.off("team:update", onUpdate);
+      socket.off("team:findings", onFindings);
       socket.off("connect", join);
     };
   }, [roomCode, name]);
@@ -107,5 +129,22 @@ export function useTeam(roomCode: string) {
     [roomCode]
   );
 
-  return { name, players, myId, error, joinAs };
+  /**
+   * Teilt einen Fund (#23). Die Antwort kommt vom Server, die neue Liste per
+   * `team:findings`. Mit Timeout: ohne Verbindung puffert Socket.IO das Event
+   * sonst still, und der Button wartet ewig.
+   */
+  const share = useCallback(
+    (evidence: CollectedEvidence) =>
+      new Promise<ShareResult>((resolve, reject) => {
+        socket
+          .timeout(5000)
+          .emit("evidence:share", { code: roomCode, evidence }, (err, result) =>
+            err ? reject(err) : resolve(result)
+          );
+      }),
+    [roomCode]
+  );
+
+  return { name, players, myId, error, joinAs, findings, share };
 }
