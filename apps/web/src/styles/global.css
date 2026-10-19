@@ -889,3 +889,17 @@ button:disabled:hover {
   gap: 1.25rem;
   margin-top: 1rem;
 }
+
+/* Story #15 — Profil eines Verdaechtigen */
+.suspect-profile__motive {
+  margin-top: 1.5rem;
+}
+
+.suspect-profile__motive-text {
+  margin: 0;
+  padding: 0.8rem 1rem;
+  border-left: 2px solid var(--danger);
+  background: rgba(239, 68, 68, 0.06);
+  line-height: 1.7;
+  max-width: 62ch;
+}
