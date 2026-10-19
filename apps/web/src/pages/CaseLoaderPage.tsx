@@ -14,9 +14,11 @@ import { SceneView } from "../components/SceneView";
 import { EvidenceList } from "../components/EvidenceList";
 import { EvidenceDetail } from "../components/EvidenceDetail";
 import { CombinePanel } from "../components/CombinePanel";
+import { SuspectList } from "../components/SuspectList";
+import { SuspectProfile } from "../components/SuspectProfile";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
-type View = "briefing" | "akte" | "tatort" | "beweise";
+type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige";
 
 type LoadState =
   | { status: "loading" }
@@ -42,6 +44,8 @@ export function CaseLoaderPage() {
   const { investigatedIds, collected, notes, insights } = progress;
   // Welcher Beweis im Detail offen ist (#11).
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
+  // Welcher Verdaechtige im Profil offen ist (#15).
+  const [openSuspectId, setOpenSuspectId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -158,6 +162,23 @@ export function CaseLoaderPage() {
     );
   }
 
+  if (view === "verdaechtige") {
+    const openSuspect = caseData.suspects.find((s) => s.id === openSuspectId);
+    return (
+      <main className="app-shell">
+        {openSuspect ? (
+          <SuspectProfile suspect={openSuspect} onBack={() => setOpenSuspectId(null)} />
+        ) : (
+          <SuspectList
+            suspects={caseData.suspects}
+            onOpen={setOpenSuspectId}
+            onBack={() => setView("akte")}
+          />
+        )}
+      </main>
+    );
+  }
+
   if (view === "beweise") {
     const open = collected.find((e) => e.id === openEvidenceId);
     return (
@@ -257,6 +278,9 @@ export function CaseLoaderPage() {
           )}
           <button onClick={() => setView("beweise")}>
             Beweisakte ({collected.length})
+          </button>
+          <button onClick={() => setView("verdaechtige")}>
+            Verdaechtige ({caseData.suspects.length})
           </button>
           <button onClick={() => setView("briefing")}>Briefing</button>
         </div>

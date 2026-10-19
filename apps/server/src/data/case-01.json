@@ -150,9 +150,32 @@
     }
   ],
   "suspects": [
-    { "id": "daniel-keller", "name": "Daniel Keller" },
-    { "id": "monica-brandt", "name": "Monica Brandt" },
-    { "id": "leo-fischer", "name": "Leo Fischer" }
+    {
+      "id": "daniel-keller",
+      "name": "Daniel Keller",
+      "age": 34,
+      "relationToVictim": "Kollege, teilte sich die Etage mit dem Opfer",
+      "knownMotive": "Das Opfer hatte seine Befoerderung zweimal blockiert.",
+      "statement": "Ich war bis 22:10 im Buero und bin dann gegangen. Auf dem Weg nach draussen habe ich niemanden mehr gesehen. Gegen 22:40 war ich bereits zu Hause und habe mit meiner Schwester telefoniert. Von der Sache erfahren habe ich erst am naechsten Morgen.",
+      "imagePath": "/suspects/case-01/daniel-keller.jpg"
+    },
+    {
+      "id": "monica-brandt",
+      "name": "Monica Brandt",
+      "age": 41,
+      "relationToVictim": "Direkte Vorgesetzte des Opfers",
+      "knownMotive": "Das Opfer wollte interne Zahlen offenlegen, fuer die sie verantwortlich war.",
+      "statement": "Ich hatte um 22:30 einen Termin mit ihm, den er selbst angesetzt hat. Wir haben etwa zehn Minuten geredet, dann bin ich gegangen. Ich habe das Gebaeude um 22:45 verlassen und bin direkt nach Hause gefahren. Als ich ging, hat er noch am Schreibtisch gesessen.",
+      "imagePath": "/suspects/case-01/monica-brandt.jpg"
+    },
+    {
+      "id": "leo-fischer",
+      "name": "Leo Fischer",
+      "age": 28,
+      "relationToVictim": "Externer IT-Dienstleister, betreute die Serverraeume",
+      "statement": "Ich war an dem Abend fuer ein Update im Haus, aber im Serverraum im Untergeschoss. Zwischen 22:00 und 23:00 habe ich das Untergeschoss nicht verlassen. Mit dem vierten Stock habe ich nichts zu tun.",
+      "imagePath": "/suspects/case-01/leo-fischer.jpg"
+    }
   ],
   "scenarios": [
     {
