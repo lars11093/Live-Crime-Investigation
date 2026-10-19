@@ -13,7 +13,7 @@ interface Props {
 /**
  * Story #11 — ein Beweis im Detail.
  * Zeigt Titel, Asservatenfoto, Beschreibung und den Fundort. Ohne Bild-Asset
- * steht hier ein Platzhalter mit dem Titel statt einer leeren Flaeche — wie
+ * steht hier ein Platzhalter mit dem Titel statt einer leeren Fläche — wie
  * bei der Szene in #7.
  */
 export function EvidenceDetail({ evidence, note, onSaveNote, onBack }: Props) {
@@ -40,7 +40,7 @@ export function EvidenceDetail({ evidence, note, onSaveNote, onBack }: Props) {
         <p className="terminal-title" style={{ margin: 0 }}>
           Asservat · {KIND_LABEL[evidence.kind]}
         </p>
-        <button onClick={onBack}>Zurueck zur Liste</button>
+        <button onClick={onBack}>Zurück zur Liste</button>
       </div>
 
       <h1 className="evidence-detail__title">{evidence.label}</h1>
@@ -86,7 +86,7 @@ export function EvidenceDetail({ evidence, note, onSaveNote, onBack }: Props) {
           className="evidence-note__input"
           value={draft}
           rows={4}
-          placeholder="Was faellt dir an diesem Beweis auf?"
+          placeholder="Was fällt dir an diesem Beweis auf?"
           onChange={(e) => {
             setDraft(e.target.value);
             setSaved(false);

@@ -3,7 +3,7 @@ import type { CaseBriefing } from "@case-zero/shared";
 interface Props {
   title: string;
   briefing?: CaseBriefing;
-  /** Fuehrt in den Tatort (#7). */
+  /** Führt in den Tatort (#7). */
   onOpenScene: () => void;
   /** Schliesst das Briefing, ohne den Spielstand anzufassen. */
   onClose: () => void;
@@ -12,7 +12,7 @@ interface Props {
 /**
  * Story #6 — Fall-Briefing.
  * Zeigt Falltitel, Tatzeit, Tatort und den Briefing-Text. Fehlt das Briefing
- * im Fall, steht hier "Kein Briefing verfuegbar" statt einer leeren Box.
+ * im Fall, steht hier "Kein Briefing verfügbar" statt einer leeren Box.
  */
 export function CaseBriefingPanel({ title, briefing, onOpenScene, onClose }: Props) {
   return (
@@ -35,7 +35,7 @@ export function CaseBriefingPanel({ title, briefing, onOpenScene, onClose }: Pro
           <p className="briefing__text">{briefing.text}</p>
         </>
       ) : (
-        <p className="briefing__empty">Kein Briefing verfuegbar</p>
+        <p className="briefing__empty">Kein Briefing verfügbar</p>
       )}
 
       <div className="case-status__actions">

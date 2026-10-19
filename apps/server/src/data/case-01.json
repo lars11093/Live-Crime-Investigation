@@ -3,13 +3,13 @@
   "title": "The Office at 22:30",
   "briefing": {
     "timeOfCrime": "Freitag, 12.09., zwischen 22:30 und 22:50 Uhr",
-    "location": "Buero 4.12, Hardturmstrasse 61, Zuerich",
-    "text": "Die Reinigungskraft findet Thomas Vogt um 23:14 Uhr leblos in seinem Buero im vierten Stock. Die Bueroetage war ab 22:00 Uhr offiziell leer, der Badge-Zutritt ist aber dreimal protokolliert. Auf dem Schreibtisch liegt ein aufgeklapptes Notebook mit einer halb geschriebenen Kuendigung. Die Nachricht \"Meet me at the office. 22:30.\" ging zwei Stunden vor der Tat an drei Personen. Drei Verdaechtige, drei Aussagen, und mindestens eine davon stimmt nicht mit den Spuren ueberein."
+    "location": "Büro 4.12, Hardturmstrasse 61, Zürich",
+    "text": "Die Reinigungskraft findet Thomas Vogt um 23:14 Uhr leblos in seinem Büro im vierten Stock. Die Büroetage war ab 22:00 Uhr offiziell leer, der Badge-Zutritt ist aber dreimal protokolliert. Auf dem Schreibtisch liegt ein aufgeklapptes Notebook mit einer halb geschriebenen Kündigung. Die Nachricht \"Meet me at the office. 22:30.\" ging zwei Stunden vor der Tat an drei Personen. Drei Verdächtige, drei Aussagen, und mindestens eine davon stimmt nicht mit den Spuren überein."
   },
   "scenes": [
     {
       "id": "buero-412",
-      "name": "Buero 4.12 - Fundort",
+      "name": "Büro 4.12 - Fundort",
       "imagePath": "/scenes/case-01/buero-412.jpg",
       "hotspots": [
         {
@@ -17,12 +17,12 @@
           "label": "Schreibtisch",
           "x": 32,
           "y": 58,
-          "detail": "Auf dem Schreibtisch liegt ein aufgeklapptes Notebook. Der Bildschirm zeigt eine halb geschriebene Kuendigung, adressiert an die Geschaeftsleitung. Gespeichert wurde sie nie.",
+          "detail": "Auf dem Schreibtisch liegt ein aufgeklapptes Notebook. Der Bildschirm zeigt eine halb geschriebene Kündigung, adressiert an die Geschäftsleitung. Gespeichert wurde sie nie.",
           "evidence": {
             "id": "notebook-kuendigung",
-            "label": "Notebook mit Kuendigungsentwurf",
+            "label": "Notebook mit Kündigungsentwurf",
             "kind": "object",
-            "description": "Aufgeklapptes Notebook vom Schreibtisch des Opfers. Enthaelt eine nie gespeicherte Kuendigung an die Geschaeftsleitung.",
+            "description": "Aufgeklapptes Notebook vom Schreibtisch des Opfers. Enthält eine nie gespeicherte Kündigung an die Geschäftsleitung.",
             "imagePath": "/evidence/case-01/notebook-kuendigung.jpg"
           }
         },
@@ -45,12 +45,12 @@
           "label": "Papierkorb",
           "x": 18,
           "y": 78,
-          "detail": "Im Papierkorb liegt ein zerknuelltes Blatt mit einer handschriftlichen Zahlenreihe. Die letzte Zeile ist durchgestrichen und mit \"22:30\" ueberschrieben.",
+          "detail": "Im Papierkorb liegt ein zerknuelltes Blatt mit einer handschriftlichen Zahlenreihe. Die letzte Zeile ist durchgestrichen und mit \"22:30\" überschrieben.",
           "evidence": {
             "id": "zettel-zahlenreihe",
             "label": "Zerknuellter Zettel mit Zahlenreihe",
             "kind": "object",
-            "description": "Handschriftliche Zahlenreihe, letzte Zeile durchgestrichen und mit 22:30 ueberschrieben.",
+            "description": "Handschriftliche Zahlenreihe, letzte Zeile durchgestrichen und mit 22:30 überschrieben.",
             "imagePath": "/evidence/case-01/zettel-zahlenreihe.jpg"
           }
         },
@@ -94,7 +94,7 @@
           "label": "Kamera #04",
           "x": 80,
           "y": 22,
-          "detail": "Die Kamera haengt leicht schief. Die Aufzeichnung des Abends hat eine Luecke von 22:34 bis 22:52 Uhr."
+          "detail": "Die Kamera hängt leicht schief. Die Aufzeichnung des Abends hat eine Lücke von 22:34 bis 22:52 Uhr."
         }
       ]
     }
@@ -108,8 +108,8 @@
       ],
       "insight": {
         "id": "insight-zeitluecke",
-        "title": "Die Luecke ist kein Zufall",
-        "body": "Die Kamera faellt genau in dem Fenster aus, in dem derselbe Badge zweimal benutzt wird. Wer hier hinein- und hinausging, wusste, dass er nicht gefilmt wird."
+        "title": "Die Lücke ist kein Zufall",
+        "body": "Die Kamera fällt genau in dem Fenster aus, in dem derselbe Badge zweimal benutzt wird. Wer hier hinein- und hinausging, wusste, dass er nicht gefilmt wird."
       }
     },
     {
@@ -121,7 +121,7 @@
       "insight": {
         "id": "insight-zweite-person",
         "title": "Jemand sass hier mit am Tisch",
-        "body": "Die Tasse mit dem Lippenstiftabdruck stand neben dem aufgeklappten Notebook. Das Opfer schrieb die Kuendigung nicht allein - jemand las mit."
+        "body": "Die Tasse mit dem Lippenstiftabdruck stand neben dem aufgeklappten Notebook. Das Opfer schrieb die Kündigung nicht allein - jemand las mit."
       }
     },
     {
@@ -133,7 +133,7 @@
       "insight": {
         "id": "insight-uhrzeit",
         "title": "22:30 war abgesprochen",
-        "body": "Die durchgestrichene Zeile auf dem Zettel wurde durch 22:30 ersetzt - dieselbe Zeit, zu der der erste Zutritt protokolliert ist. Das Treffen war geplant, nicht zufaellig."
+        "body": "Die durchgestrichene Zeile auf dem Zettel wurde durch 22:30 ersetzt - dieselbe Zeit, zu der der erste Zutritt protokolliert ist. Das Treffen war geplant, nicht zufällig."
       }
     },
     {
@@ -144,8 +144,8 @@
       ],
       "insight": {
         "id": "insight-fenster",
-        "title": "Etwas verliess den Raum nicht durch die Tuer",
-        "body": "Frische Kratzer aussen am Fensterrahmen, und im Raum eine Tasse, die nicht dem Opfer gehoerte. Wer hier war, wollte etwas loswerden, ohne am Badge-Leser vorbeizugehen."
+        "title": "Etwas verliess den Raum nicht durch die Tür",
+        "body": "Frische Kratzer aussen am Fensterrahmen, und im Raum eine Tasse, die nicht dem Opfer gehörte. Wer hier war, wollte etwas loswerden, ohne am Badge-Leser vorbeizugehen."
       }
     }
   ],
@@ -155,8 +155,8 @@
       "name": "Daniel Keller",
       "age": 34,
       "relationToVictim": "Kollege, teilte sich die Etage mit dem Opfer",
-      "knownMotive": "Das Opfer hatte seine Befoerderung zweimal blockiert.",
-      "statement": "Ich war bis 22:10 im Buero und bin dann gegangen. Auf dem Weg nach draussen habe ich niemanden mehr gesehen. Gegen 22:40 war ich bereits zu Hause und habe mit meiner Schwester telefoniert. Von der Sache erfahren habe ich erst am naechsten Morgen.",
+      "knownMotive": "Das Opfer hatte seine Beförderung zweimal blockiert.",
+      "statement": "Ich war bis 22:10 im Büro und bin dann gegangen. Auf dem Weg nach draussen habe ich niemanden mehr gesehen. Gegen 22:40 war ich bereits zu Hause und habe mit meiner Schwester telefoniert. Von der Sache erfahren habe ich erst am nächsten Morgen.",
       "imagePath": "/suspects/case-01/daniel-keller.jpg"
     },
     {
@@ -164,16 +164,16 @@
       "name": "Monica Brandt",
       "age": 41,
       "relationToVictim": "Direkte Vorgesetzte des Opfers",
-      "knownMotive": "Das Opfer wollte interne Zahlen offenlegen, fuer die sie verantwortlich war.",
-      "statement": "Ich hatte um 22:30 einen Termin mit ihm, den er selbst angesetzt hat. Wir haben etwa zehn Minuten geredet, dann bin ich gegangen. Ich habe das Gebaeude um 22:45 verlassen und bin direkt nach Hause gefahren. Als ich ging, hat er noch am Schreibtisch gesessen.",
+      "knownMotive": "Das Opfer wollte interne Zahlen offenlegen, für die sie verantwortlich war.",
+      "statement": "Ich hatte um 22:30 einen Termin mit ihm, den er selbst angesetzt hat. Wir haben etwa zehn Minuten geredet, dann bin ich gegangen. Ich habe das Gebäude um 22:45 verlassen und bin direkt nach Hause gefahren. Als ich ging, hat er noch am Schreibtisch gesessen.",
       "imagePath": "/suspects/case-01/monica-brandt.jpg"
     },
     {
       "id": "leo-fischer",
       "name": "Leo Fischer",
       "age": 28,
-      "relationToVictim": "Externer IT-Dienstleister, betreute die Serverraeume",
-      "statement": "Ich war an dem Abend fuer ein Update im Haus, aber im Serverraum im Untergeschoss. Zwischen 22:00 und 23:00 habe ich das Untergeschoss nicht verlassen. Mit dem vierten Stock habe ich nichts zu tun.",
+      "relationToVictim": "Externer IT-Dienstleister, betreute die Serverräume",
+      "statement": "Ich war an dem Abend für ein Update im Haus, aber im Serverraum im Untergeschoss. Zwischen 22:00 und 23:00 habe ich das Untergeschoss nicht verlassen. Mit dem vierten Stock habe ich nichts zu tun.",
       "imagePath": "/suspects/case-01/leo-fischer.jpg"
     }
   ],
@@ -187,7 +187,7 @@
           "id": "msg-vogt-01",
           "sender": "Monica Brandt",
           "sentAt": "12.09. 17:52",
-          "text": "Thomas, die Zahlen fuer Q3 gehen am Montag so raus wie besprochen. Bitte keine Alleingaenge."
+          "text": "Thomas, die Zahlen für Q3 gehen am Montag so raus wie besprochen. Bitte keine Alleingänge."
         },
         {
           "id": "msg-vogt-02",
@@ -199,13 +199,13 @@
           "id": "msg-vogt-03",
           "sender": "Daniel Keller",
           "sentAt": "12.09. 19:40",
-          "text": "Hast du die Liste fuer die Befoerderungen schon abgegeben? Nur damit ich weiss, woran ich bin."
+          "text": "Hast du die Liste für die Beförderungen schon abgegeben? Nur damit ich weiss, woran ich bin."
         },
         {
           "id": "msg-vogt-04",
           "sender": "Thomas Vogt",
           "sentAt": "12.09. 19:58",
-          "text": "Noch nicht. Reden wir naechste Woche."
+          "text": "Noch nicht. Reden wir nächste Woche."
         },
         {
           "id": "msg-vogt-05",
@@ -217,7 +217,7 @@
           "id": "msg-vogt-06",
           "sender": "Leo Fischer",
           "sentAt": "12.09. 20:47",
-          "text": "Bin heute ohnehin fuer das Update im Haus. Soll ich vorher noch bei dir vorbeikommen?"
+          "text": "Bin heute ohnehin für das Update im Haus. Soll ich vorher noch bei dir vorbeikommen?"
         },
         {
           "id": "msg-vogt-07",
@@ -229,13 +229,13 @@
           "id": "msg-vogt-08",
           "sender": "Daniel Keller",
           "sentAt": "12.09. 22:02",
-          "text": "Bin noch kurz im Haus. Wir muessen reden, heute noch."
+          "text": "Bin noch kurz im Haus. Wir müssen reden, heute noch."
         },
         {
           "id": "msg-vogt-09",
           "sender": "Leo Fischer",
           "sentAt": "12.09. 22:41",
-          "text": "Server laeuft wieder. Brauchst du mich noch oben?"
+          "text": "Server läuft wieder. Brauchst du mich noch oben?"
         }
       ]
     }

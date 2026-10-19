@@ -3,8 +3,8 @@ import type { CollectedEvidence, Insight } from "@case-zero/shared";
 /**
  * Der Ermittlungsfortschritt einer Person in einer Team-Session.
  *
- * Story #12 verlangt, dass eine Notiz ein Neuladen ueberlebt. Eine Notiz ohne
- * den zugehoerigen Beweis waere wertlos, deshalb wird der ganze Fortschritt
+ * Story #12 verlangt, dass eine Notiz ein Neuladen überlebt. Eine Notiz ohne
+ * den zugehörigen Beweis wäre wertlos, deshalb wird der ganze Fortschritt
  * gesichert, nicht nur der Notiztext.
  */
 export interface CaseProgress {
@@ -12,9 +12,9 @@ export interface CaseProgress {
   collected: CollectedEvidence[];
   /** Beweis-ID -> Notiztext. */
   notes: Record<string, string>;
-  /** Bereits aufgedeckte Verknuepfungen (#13). */
+  /** Bereits aufgedeckte Verknüpfungen (#13). */
   insights: Insight[];
-  /** Als widerspruechlich markierte Saetze aus Aussagen (#17). */
+  /** Als widersprüchlich markierte Sätze aus Aussagen (#17). */
   contradictions: Contradiction[];
   /** Als relevant markierte Chatnachrichten (#19), per Nachrichten-ID. */
   markedMessageIds: string[];
@@ -23,8 +23,8 @@ export interface CaseProgress {
 /**
  * Ein markierter Widerspruch (#17).
  *
- * Speichert den Satztext mit, nicht nur die Position: aendert sich eine
- * Aussage im Case-JSON, zeigt die Uebersicht sonst auf einen anderen Satz.
+ * Speichert den Satztext mit, nicht nur die Position: ändert sich eine
+ * Aussage im Case-JSON, zeigt die Übersicht sonst auf einen anderen Satz.
  */
 export interface Contradiction {
   suspectId: string;
@@ -33,12 +33,12 @@ export interface Contradiction {
   text: string;
 }
 
-/** Eindeutiger Schluessel eines Satzes innerhalb einer Aussage. */
+/** Eindeutiger Schlüssel eines Satzes innerhalb einer Aussage. */
 export function contradictionKey(suspectId: string, sentenceIndex: number): string {
   return `${suspectId}:${sentenceIndex}`;
 }
 
-/** Markiert einen Satz oder nimmt die Markierung zurueck (#17). */
+/** Markiert einen Satz oder nimmt die Markierung zurück (#17). */
 export function toggleContradiction(
   list: Contradiction[],
   entry: Contradiction
@@ -51,7 +51,7 @@ export function toggleContradiction(
   return [...list, entry];
 }
 
-/** Markiert eine Chatnachricht als relevant oder nimmt die Markierung zurueck (#19). */
+/** Markiert eine Chatnachricht als relevant oder nimmt die Markierung zurück (#19). */
 export function toggleMarkedMessage(ids: string[], messageId: string): string[] {
   return ids.includes(messageId) ? ids.filter((id) => id !== messageId) : [...ids, messageId];
 }
@@ -59,9 +59,9 @@ export function toggleMarkedMessage(ids: string[], messageId: string): string[] 
 /**
  * Legt einen Fund in die Beweisakte, aber nur einmal (#9, #21).
  *
- * Gilt fuer Funde aus dem Tatort genauso wie fuer digitale Spuren: doppelt
- * ist doppelt, egal woher der Beweis kommt. Ohne Aenderung kommt dieselbe
- * Liste zurueck, damit React nicht unnoetig neu zeichnet.
+ * Gilt für Funde aus dem Tatort genauso wie für digitale Spuren: doppelt
+ * ist doppelt, egal woher der Beweis kommt. Ohne Änderung kommt dieselbe
+ * Liste zurück, damit React nicht unnötig neu zeichnet.
  */
 export function collectEvidence(
   list: CollectedEvidence[],
@@ -83,7 +83,7 @@ export const EMPTY_PROGRESS: CaseProgress = {
  * Nur das, was wir zum Lesen und Schreiben brauchen.
  *
  * Als Parameter, damit die Funktionen ohne Browser testbar sind — und damit
- * ein spaeterer Umzug auf den Server (siehe unten) nur diese Datei trifft.
+ * ein späterer Umzug auf den Server (siehe unten) nur diese Datei trifft.
  */
 export interface ProgressStorage {
   getItem(key: string): string | null;
@@ -94,18 +94,18 @@ export interface ProgressStorage {
  * Wo der Fortschritt liegt: im localStorage des Browsers, pro Team-Code.
  *
  * Bewusste MVP-Entscheidung, mit zwei bekannten Grenzen:
- *   1. Der Fortschritt haengt am Geraet. Wer den Browser wechselt, faengt neu an.
+ *   1. Der Fortschritt hängt am Gerät. Wer den Browser wechselt, fängt neu an.
  *   2. Er ist privat. Das Team sieht ihn nicht.
  *
- * Grenze 2 ist fuer #12 richtig — eine Notiz ist eine persoenliche Ueberlegung.
+ * Grenze 2 ist für #12 richtig — eine Notiz ist eine persönliche Überlegung.
  * Sobald #23 ("Fund mit dem Team teilen") kommt, zieht der geteilte Teil in den
- * Room-State auf dem Server; diese Datei bleibt dann fuer das Private zustaendig.
+ * Room-State auf dem Server; diese Datei bleibt dann für das Private zuständig.
  */
 function storageKey(roomCode: string): string {
   return `case-zero:progress:${roomCode}`;
 }
 
-/** Faengt alles ab, was kaputt sein kann: gesperrter Storage, kaputtes JSON, fremde Daten. */
+/** Fängt alles ab, was kaputt sein kann: gesperrter Storage, kaputtes JSON, fremde Daten. */
 export function loadProgress(storage: ProgressStorage, roomCode: string): CaseProgress {
   let raw: string | null;
   try {
@@ -146,7 +146,7 @@ export function saveProgress(
   }
 }
 
-/** Leerer oder reiner Leerzeichen-Text loescht die Notiz, statt sie leer zu speichern. */
+/** Leerer oder reiner Leerzeichen-Text löscht die Notiz, statt sie leer zu speichern. */
 export function setNote(
   notes: CaseProgress["notes"],
   evidenceId: string,

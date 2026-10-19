@@ -51,48 +51,48 @@ export interface Suspect {
   /** Beziehung zum Opfer, z. B. "Vorgesetzte" (Story #15). */
   relationToVictim: string;
   /**
-   * Das oeffentlich bekannte Motiv (Story #15) — NICHT das Motiv aus
-   * `Scenario`. Jenes ist die Loesung und verlaesst den Server nie.
-   * Hier steht, was die Ermittlung ueber diese Person weiss; das haben
-   * bewusst mehrere Verdaechtige, sonst waere der Fall trivial.
+   * Das öffentlich bekannte Motiv (Story #15) — NICHT das Motiv aus
+   * `Scenario`. Jenes ist die Lösung und verlässt den Server nie.
+   * Hier steht, was die Ermittlung über diese Person weiss; das haben
+   * bewusst mehrere Verdächtige, sonst wäre der Fall trivial.
    * Optional, weil die Story "sofern bekannt" sagt.
    */
   knownMotive?: string;
   /** Aussage zur Tatnacht (Story #16). */
   statement?: string;
-  /** Portraet. Wie ueberall: kein Asset im Repo, Platzhalter im Client. */
+  /** Porträt. Wie überall: kein Asset im Repo, Platzhalter im Client. */
   imagePath?: string;
 }
 
 /**
- * Eine Nachricht im Chatverlauf eines Geraets (Story #19).
+ * Eine Nachricht im Chatverlauf eines Geräts (Story #19).
  *
- * Die ID ist pro Fall eindeutig, nicht nur pro Geraet: daran haengt die
+ * Die ID ist pro Fall eindeutig, nicht nur pro Gerät: daran hängt die
  * Markierung im Fortschritt des Ermittlers.
  */
 export interface ChatMessage {
   id: string;
   /** Anzeigename des Absenders, z. B. "Monica Brandt". */
   sender: string;
-  /** Zeitpunkt, wie er auf dem Geraet steht — z. B. "12.09. 20:31". */
+  /** Zeitpunkt, wie er auf dem Gerät steht — z. B. "12.09. 20:31". */
   sentAt: string;
   text: string;
 }
 
 /**
- * Ein sichergestelltes Geraet (Story #19).
+ * Ein sichergestelltes Gerät (Story #19).
  *
  * Die Nachrichten stehen in der Reihenfolge im Case-JSON, in der sie
- * angezeigt werden — chronologisch, die aelteste zuerst. Der Client
+ * angezeigt werden — chronologisch, die älteste zuerst. Der Client
  * sortiert nicht um, weil `sentAt` ein Anzeigetext ist und kein Datum.
  *
- * Auflisten und Sperren der Geraete ist #18 (Forensik-Terminal).
+ * Auflisten und Sperren der Geräte ist #18 (Forensik-Terminal).
  */
 export interface Device {
   id: string;
   /** z. B. "Smartphone Thomas Vogt". */
   label: string;
-  /** Wem das Geraet gehoert. Gleich geschrieben wie `ChatMessage.sender`, damit eigene Nachrichten erkennbar sind. */
+  /** Wem das Gerät gehört. Gleich geschrieben wie `ChatMessage.sender`, damit eigene Nachrichten erkennbar sind. */
   owner: string;
   messages: ChatMessage[];
 }
@@ -101,7 +101,7 @@ export interface Device {
  * Ein Tatort als Szene (Story #7).
  *
  * `imagePath` ist ein Pfad, kein Asset: echte Bilder werden bewusst nicht
- * committet (Copyright/Repo-Groesse). Laedt das Bild nicht — und in der
+ * committet (Copyright/Repo-Grösse). Lädt das Bild nicht — und in der
  * MVP-Phase tut es das nie — zeigt der Client einen Platzhalter mit dem
  * Szenennamen.
  */
@@ -109,11 +109,11 @@ export interface Device {
  * Eine anklickbare Stelle im Tatort (Story #8).
  *
  * Position in Prozent der Szene, nicht in Pixeln: die Szene skaliert mit dem
- * Viewport, ein Pixelwert saesse bei 1920 woanders als bei 1280.
+ * Viewport, ein Pixelwert sässe bei 1920 woanders als bei 1280.
  */
 export interface Hotspot {
   id: string;
-  /** Kurzer Name, erscheint beim Ueberfahren und in der Detailansicht. */
+  /** Kurzer Name, erscheint beim Überfahren und in der Detailansicht. */
   label: string;
   /** 0-100, gemessen von links bzw. oben. */
   x: number;
@@ -123,7 +123,7 @@ export interface Hotspot {
   /**
    * Der Beweis, der hier eingesammelt werden kann (Story #9).
    *
-   * Optional: nicht jede Stelle gibt etwas her. Fehlt das Feld, laesst sich
+   * Optional: nicht jede Stelle gibt etwas her. Fehlt das Feld, lässt sich
    * die Stelle untersuchen, aber nichts mitnehmen.
    */
   evidence?: CollectableEvidence;
@@ -134,11 +134,11 @@ export interface CollectableEvidence {
   id: string;
   label: string;
   kind: EvidenceNode["kind"];
-  /** Beschreibung in der Beweisakte — ausfuehrlicher als das Label. */
+  /** Beschreibung in der Beweisakte — ausführlicher als das Label. */
   description: string;
   /**
    * Asservatenfoto (Story #11). Optional und ohne Asset im Repo — wie bei
-   * den Szenen zeigt der Client einen Platzhalter, wenn nichts laedt.
+   * den Szenen zeigt der Client einen Platzhalter, wenn nichts lädt.
    */
   imagePath?: string;
 }
@@ -147,7 +147,7 @@ export interface CollectableEvidence {
  * Ein Fund, wie er in der Beweisakte liegt (Story #11).
  *
  * Der Fundort wird beim Einsammeln festgehalten, nicht im Fall hinterlegt:
- * derselbe Beweis koennte spaeter an mehreren Stellen auftauchen, und die
+ * derselbe Beweis könnte später an mehreren Stellen auftauchen, und die
  * Akte soll zeigen, wo *dieser* Ermittler ihn gesichert hat.
  */
 export interface CollectedEvidence extends CollectableEvidence {
@@ -168,25 +168,25 @@ export interface Scene {
 /**
  * Das Briefing, das der Spieler vor dem Tatort liest (Story #6).
  *
- * Optional am Fall: fehlt es, zeigt der Client "Kein Briefing verfuegbar"
+ * Optional am Fall: fehlt es, zeigt der Client "Kein Briefing verfügbar"
  * statt einer leeren Box.
  */
 export interface CaseBriefing {
   /** Tatzeit, wie sie im Briefing steht — z. B. "Freitag, 22:30 Uhr". */
   timeOfCrime: string;
-  /** Tatort in Worten — z. B. "Buero 4.12, Hardturmstrasse 61". */
+  /** Tatort in Worten — z. B. "Büro 4.12, Hardturmstrasse 61". */
   location: string;
-  /** Fliesstext, mindestens drei Saetze. */
+  /** Fliesstext, mindestens drei Sätze. */
   text: string;
 }
 
 /**
- * Eine Verknuepfung zweier Beweise (Story #13).
+ * Eine Verknüpfung zweier Beweise (Story #13).
  *
  * Liegt beim Fall, nicht beim Beweis: welche Paare etwas ergeben, ist Teil der
- * Loesung. Deshalb wird `combinations` — wie `scenarios` — serverseitig aus der
- * Client-Antwort entfernt (engine/caseView.ts). Kaeme die Liste an den Browser,
- * liesse sich der Fall aus der Netzwerk-Konsole loesen.
+ * Lösung. Deshalb wird `combinations` — wie `scenarios` — serverseitig aus der
+ * Client-Antwort entfernt (engine/caseView.ts). Käme die Liste an den Browser,
+ * liesse sich der Fall aus der Netzwerk-Konsole lösen.
  */
 export interface Combination {
   id: string;
@@ -215,7 +215,7 @@ export interface CaseDefinition {
   scenes: Scene[];
   combinations: Combination[];
   suspects: Suspect[];
-  /** Sichergestellte Geraete mit Chatverlauf (#19). Optional: nicht jeder Fall hat welche. */
+  /** Sichergestellte Geräte mit Chatverlauf (#19). Optional: nicht jeder Fall hat welche. */
   devices?: Device[];
   scenarios: Scenario[];
   seedEvidence: EvidenceNode[];
@@ -225,7 +225,7 @@ export interface CaseDefinition {
 /**
  * Der Fall, wie ihn der Client sehen darf.
  *
- * `scenarios` enthaelt die Loesung (Taeter, Waffe, Tatzeit) und wird deshalb
+ * `scenarios` enthält die Lösung (Täter, Waffe, Tatzeit) und wird deshalb
  * serverseitig entfernt — siehe apps/server/src/engine/caseView.ts. Der Client
  * bekommt diesen Typ, nie CaseDefinition.
  */

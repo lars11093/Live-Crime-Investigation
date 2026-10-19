@@ -14,7 +14,7 @@ interface Props {
 }
 
 /**
- * Story #19 — Chatverlauf eines Geraets lesen.
+ * Story #19 — Chatverlauf eines Geräts lesen.
  * Jede Nachricht mit Absender und Zeit, der Verlauf scrollt in seinem eigenen
  * Fenster, ein Klick markiert eine Nachricht als relevant.
  *
@@ -23,7 +23,7 @@ interface Props {
  * Lesehilfe und jederzeit umkehrbar, sichern legt die Nachricht in die
  * Beweisakte, wo sie kombiniert und notiert werden kann.
  *
- * Nachrichten des Geraetebesitzers stehen rechts, wie auf einem Handy — so
+ * Nachrichten des Gerätebesitzers stehen rechts, wie auf einem Handy — so
  * sieht man ohne Lesen, wer geschrieben hat und wer geantwortet.
  */
 export function ChatHistory({
@@ -40,7 +40,7 @@ export function ChatHistory({
   const markedCount = device.messages.filter((m) => marked.has(m.id)).length;
   const securedCount = device.messages.filter((m) => collected.has(m.id)).length;
 
-  // Die Bestaetigung verschwindet von selbst, wie beim Einsammeln im Tatort (#9).
+  // Die Bestätigung verschwindet von selbst, wie beim Einsammeln im Tatort (#9).
   useEffect(() => {
     if (!confirmation) return;
     const timer = setTimeout(() => setConfirmation(null), 4000);
@@ -58,7 +58,7 @@ export function ChatHistory({
         <p className="terminal-title" style={{ margin: 0 }}>
           {device.label}
         </p>
-        <button onClick={onBack}>Zurueck zur Fallakte</button>
+        <button onClick={onBack}>Zurück zur Fallakte</button>
       </div>
 
       <p className="case-status__hint">
@@ -74,7 +74,7 @@ export function ChatHistory({
       )}
 
       {device.messages.length === 0 ? (
-        <p className="evidence-list__empty">Auf diesem Geraet sind keine Nachrichten gespeichert.</p>
+        <p className="evidence-list__empty">Auf diesem Gerät sind keine Nachrichten gespeichert.</p>
       ) : (
         <>
           <p className="case-status__hint" style={{ marginBottom: "0.6rem" }}>

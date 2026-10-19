@@ -8,21 +8,21 @@ interface Props {
 }
 
 /**
- * Story #14 — Liste der Verdaechtigen.
- * Name und Bild pro Person, Anzahl in der Kopfzeile, Klick oeffnet das Profil.
+ * Story #14 — Liste der Verdächtigen.
+ * Name und Bild pro Person, Anzahl in der Kopfzeile, Klick öffnet das Profil.
  */
 export function SuspectList({ suspects, onOpen, onBack }: Props) {
   return (
     <section className="panel">
       <div className="evidence-list__bar">
         <p className="terminal-title" style={{ margin: 0 }}>
-          Verdaechtige · {suspects.length}
+          Verdächtige · {suspects.length}
         </p>
-        <button onClick={onBack}>Zurueck zur Fallakte</button>
+        <button onClick={onBack}>Zurück zur Fallakte</button>
       </div>
 
       {suspects.length === 0 ? (
-        <p className="evidence-list__empty">In diesem Fall ist niemand als verdaechtig gefuehrt.</p>
+        <p className="evidence-list__empty">In diesem Fall ist niemand als verdächtig geführt.</p>
       ) : (
         <ul className="suspect-list">
           {suspects.map((suspect) => (

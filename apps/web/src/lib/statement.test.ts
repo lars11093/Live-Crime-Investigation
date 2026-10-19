@@ -3,7 +3,7 @@ import { splitByTime, splitIntoSentences, timesIn } from "./statement";
 
 describe("Zeitangaben in einer Aussage", () => {
   it("findet eine einzelne Uhrzeit", () => {
-    expect(timesIn("Ich war bis 22:10 im Buero.")).toEqual(["22:10"]);
+    expect(timesIn("Ich war bis 22:10 im Büro.")).toEqual(["22:10"]);
   });
 
   it("findet mehrere Uhrzeiten in der Reihenfolge des Auftretens", () => {
@@ -18,11 +18,11 @@ describe("Zeitangaben in einer Aussage", () => {
     expect(timesIn("Ich habe niemanden gesehen.")).toEqual([]);
   });
 
-  it("haelt laengere Zahlenfolgen fuer keine Uhrzeit", () => {
+  it("hält längere Zahlenfolgen für keine Uhrzeit", () => {
     expect(timesIn("Die Kennung lautet 1234:5678.")).toEqual([]);
   });
 
-  it("setzt den Text luekenlos wieder zusammen", () => {
+  it("setzt den Text lückenlos wieder zusammen", () => {
     const text = "Um 22:30 kam sie, um 22:45 ging sie wieder.";
     expect(
       splitByTime(text)
@@ -32,9 +32,9 @@ describe("Zeitangaben in einer Aussage", () => {
   });
 
   it("markiert genau die Uhrzeiten als solche", () => {
-    const segments = splitByTime("Bis 22:10 im Buero.");
+    const segments = splitByTime("Bis 22:10 im Büro.");
     expect(segments.filter((s) => s.isTime).map((s) => s.text)).toEqual(["22:10"]);
-    expect(segments.filter((s) => !s.isTime).map((s) => s.text)).toEqual(["Bis ", " im Buero."]);
+    expect(segments.filter((s) => !s.isTime).map((s) => s.text)).toEqual(["Bis ", " im Büro."]);
   });
 
   it("kommt mit einer Aussage klar, die mit einer Uhrzeit beginnt und endet", () => {
@@ -42,12 +42,12 @@ describe("Zeitangaben in einer Aussage", () => {
     expect(segments).toEqual([{ text: "22:30", isTime: true }]);
   });
 
-  it("gibt bei leerem Text nichts zurueck", () => {
+  it("gibt bei leerem Text nichts zurück", () => {
     expect(splitByTime("")).toEqual([]);
   });
 });
 
-describe("Aussage in Saetze zerlegen", () => {
+describe("Aussage in Sätze zerlegen", () => {
   it("trennt an Punkten", () => {
     expect(splitIntoSentences("Ich war da. Dann ging ich.")).toEqual([
       "Ich war da.",
@@ -67,19 +67,19 @@ describe("Aussage in Saetze zerlegen", () => {
     expect(splitIntoSentences("Ich war da. Und dann")).toEqual(["Ich war da.", "Und dann"]);
   });
 
-  it("wirft leere Stuecke weg", () => {
+  it("wirft leere Stücke weg", () => {
     expect(splitIntoSentences("Ja.   Nein.  ")).toEqual(["Ja.", "Nein."]);
   });
 
-  it("gibt bei leerem Text nichts zurueck", () => {
+  it("gibt bei leerem Text nichts zurück", () => {
     expect(splitIntoSentences("")).toEqual([]);
   });
 
-  it("zerlegt eine echte Aussage aus dem Fall in vier Saetze", () => {
+  it("zerlegt eine echte Aussage aus dem Fall in vier Sätze", () => {
     const statement =
       "Ich hatte um 22:30 einen Termin mit ihm, den er selbst angesetzt hat. " +
       "Wir haben etwa zehn Minuten geredet, dann bin ich gegangen. " +
-      "Ich habe das Gebaeude um 22:45 verlassen und bin direkt nach Hause gefahren. " +
+      "Ich habe das Gebäude um 22:45 verlassen und bin direkt nach Hause gefahren. " +
       "Als ich ging, hat er noch am Schreibtisch gesessen.";
     expect(splitIntoSentences(statement)).toHaveLength(4);
   });

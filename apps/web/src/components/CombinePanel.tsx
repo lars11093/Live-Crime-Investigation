@@ -4,7 +4,7 @@ import type { CollectedEvidence, Insight } from "@case-zero/shared";
 interface Props {
   evidence: CollectedEvidence[];
   insights: Insight[];
-  /** Liefert die Rueckmeldung als Text — der Server entscheidet, nicht der Client. */
+  /** Liefert die Rückmeldung als Text — der Server entscheidet, nicht der Client. */
   onCombine: (a: string, b: string) => Promise<string>;
 }
 
@@ -23,7 +23,7 @@ export function CombinePanel({ evidence, insights, onCombine }: Props) {
     setMessage(null);
     setSelected((prev) => {
       if (prev.includes(id)) return prev.filter((x) => x !== id);
-      // Bei zwei bereits Gewaehlten rueckt der aeltere heraus, statt den
+      // Bei zwei bereits Gewählten rückt der ältere heraus, statt den
       // Klick wirkungslos verpuffen zu lassen.
       return prev.length < 2 ? [...prev, id] : [prev[1], id];
     });
@@ -43,9 +43,9 @@ export function CombinePanel({ evidence, insights, onCombine }: Props) {
   if (evidence.length < 2) {
     return (
       <section className="panel">
-        <p className="terminal-title">Verknuepfungen</p>
+        <p className="terminal-title">Verknüpfungen</p>
         <p className="evidence-list__empty">
-          Sammle mindestens zwei Beweise, um nach Zusammenhaengen zu suchen.
+          Sammle mindestens zwei Beweise, um nach Zusammenhängen zu suchen.
         </p>
       </section>
     );
@@ -53,9 +53,9 @@ export function CombinePanel({ evidence, insights, onCombine }: Props) {
 
   return (
     <section className="panel">
-      <p className="terminal-title">Verknuepfungen</p>
+      <p className="terminal-title">Verknüpfungen</p>
       <p className="case-status__hint">
-        Waehle zwei Beweise aus und pruefe, ob sie zusammengehoeren.
+        Wähle zwei Beweise aus und prüfe, ob sie zusammengehören.
       </p>
 
       <ul className="combine__options">
@@ -74,9 +74,9 @@ export function CombinePanel({ evidence, insights, onCombine }: Props) {
 
       <div className="case-status__actions">
         <button className="button--primary" onClick={combine} disabled={selected.length !== 2 || busy}>
-          {busy ? "Pruefe…" : "Kombinieren"}
+          {busy ? "Prüfe…" : "Kombinieren"}
         </button>
-        <span className="case-status__hint">{selected.length} / 2 gewaehlt</span>
+        <span className="case-status__hint">{selected.length} / 2 gewählt</span>
       </div>
 
       {message && (

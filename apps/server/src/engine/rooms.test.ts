@@ -13,7 +13,7 @@ describe("Team-Code", () => {
 
   it("weist alles ab, was nicht XXX-XXX ist", () => {
     for (const bad of ["", "7K4XP9", "7K4-XP", "7K4-XP99", "7K4_XP9", "7k4-xp9", "ÄÖÜ-123"]) {
-      expect(isValidRoomCode(bad), `"${bad}" sollte ungueltig sein`).toBe(false);
+      expect(isValidRoomCode(bad), `"${bad}" sollte ungültig sein`).toBe(false);
     }
   });
 
@@ -38,12 +38,12 @@ describe("Room Store", () => {
     expect(getRoom("ZZZ-999")).toBeUndefined();
   });
 
-  it("gibt zwei Raeumen nicht denselben Code", () => {
+  it("gibt zwei Räumen nicht denselben Code", () => {
     const codes = new Set(Array.from({ length: 50 }, () => createRoom(caseDef).state.code));
     expect(codes.size).toBe(50);
   });
 
-  it("teilt das Board nicht zwischen Raeumen", () => {
+  it("teilt das Board nicht zwischen Räumen", () => {
     const a = createRoom(caseDef);
     const b = createRoom(caseDef);
     a.state.board.nodes.push({ id: "x", label: "x", kind: "fact", x: 0, y: 0 });

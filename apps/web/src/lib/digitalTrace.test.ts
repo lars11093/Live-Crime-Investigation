@@ -18,7 +18,7 @@ const device: Device = {
 const message = device.messages[0];
 
 describe("Chatnachricht als Beweis", () => {
-  it("uebernimmt die Nachrichten-ID als Beweis-ID", () => {
+  it("übernimmt die Nachrichten-ID als Beweis-ID", () => {
     expect(messageToEvidence(device, message).id).toBe("msg-vogt-05");
   });
 
@@ -32,7 +32,7 @@ describe("Chatnachricht als Beweis", () => {
     expect(evidence.description).toContain("Meet me at the office. 22:30.");
   });
 
-  it("haelt Geraet und Zeitstempel als Fundort fest", () => {
+  it("hält Gerät und Zeitstempel als Fundort fest", () => {
     expect(messageToEvidence(device, message).foundAt).toEqual({
       sceneName: "Smartphone Thomas Vogt",
       hotspotLabel: "Chat · 12.09. 20:30",

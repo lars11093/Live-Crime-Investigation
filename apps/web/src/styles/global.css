@@ -268,14 +268,14 @@ body,
 
 /* ---------------------------------------------------------------
    Story #7 — Tatort als Szene
-   Vollflaechig ohne horizontales Scrollen: die Szene ist genau so
+   Vollflächig ohne horizontales Scrollen: die Szene ist genau so
    breit wie der Viewport, das Bild wird zugeschnitten statt gestreckt.
    --------------------------------------------------------------- */
 
 .scene {
   position: relative;
   width: 100vw;
-  /* 100dvh faengt die Browserleisten auf Mobilgeraeten ab. */
+  /* 100dvh fängt die Browserleisten auf Mobilgeräten ab. */
   height: 100dvh;
   max-width: 100%;
   overflow: hidden;
@@ -299,7 +299,7 @@ body,
   padding: 2rem;
   text-align: center;
   background-color: #04060a;
-  /* Diagonales Absperrband-Raster statt weisser Flaeche. */
+  /* Diagonales Absperrband-Raster statt weisser Fläche. */
   background-image: repeating-linear-gradient(
     45deg,
     rgba(34, 197, 94, 0.05) 0px,
@@ -444,7 +444,7 @@ button:disabled:hover {
 /* ---------------------------------------------------------------
    Story #8 — Stellen im Tatort anklicken
    Position kommt aus den Falldaten in Prozent, damit die Hotspots
-   bei jeder Viewport-Groesse an derselben Stelle im Bild sitzen.
+   bei jeder Viewport-Grösse an derselben Stelle im Bild sitzen.
    --------------------------------------------------------------- */
 
 .hotspot {
@@ -812,7 +812,7 @@ button:disabled:hover {
 }
 
 /* ---------------------------------------------------------------
-   Story #14 — Liste der Verdaechtigen
+   Story #14 — Liste der Verdächtigen
    --------------------------------------------------------------- */
 
 .suspect-list {
@@ -890,7 +890,7 @@ button:disabled:hover {
   margin-top: 1rem;
 }
 
-/* Story #15 — Profil eines Verdaechtigen */
+/* Story #15 — Profil eines Verdächtigen */
 .suspect-profile__motive {
   margin-top: 1.5rem;
 }
@@ -949,7 +949,7 @@ button:disabled:hover {
 }
 
 /* ---------------------------------------------------------------
-   Story #17 — Widersprueche markieren
+   Story #17 — Widersprüche markieren
    --------------------------------------------------------------- */
 
 .statement__sentence {
@@ -1004,11 +1004,11 @@ button:disabled:hover {
 }
 
 /* ---------------------------------------------------------------
-   Story #19 — Chatverlauf eines Geraets
+   Story #19 — Chatverlauf eines Geräts
    --------------------------------------------------------------- */
 
-/* Eigenes Scrollfenster: lange Verlaeufe schieben die Kopfzeile mit
-   "Zurueck" nicht aus dem Bild. */
+/* Eigenes Scrollfenster: lange Verläufe schieben die Kopfzeile mit
+   "Zurück" nicht aus dem Bild. */
 .chat {
   list-style: none;
   margin: 0;
