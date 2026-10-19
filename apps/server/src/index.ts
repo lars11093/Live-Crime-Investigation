@@ -23,6 +23,7 @@ import {
   type Room,
 } from "./engine/rooms.js";
 import { joinTeam, leaveTeam, teamOf } from "./engine/team.js";
+import { shareFinding } from "./engine/sharing.js";
 
 const CASES: Record<string, CaseDefinition> = {
   "case-01": case01 as CaseDefinition,
@@ -189,6 +190,20 @@ io.on("connection", (socket) => {
     if (!result.ok) return;
     socket.join(room.state.code);
     io.to(room.state.code).emit("team:update", teamOf(room));
+    // Wer spaeter dazukommt, sieht trotzdem alles, was schon geteilt wurde (#23).
+    socket.emit("team:findings", room.findings);
+  });
+
+  // Story #23 — Fund teilen. Gepruefter Fund geht an alle im Raum.
+  socket.on("evidence:share", ({ code, evidence }, cb) => {
+    const room = getRoom(code);
+    if (!room) {
+      cb({ ok: false, reason: "invalid-room" });
+      return;
+    }
+    const result = shareFinding(room, socket.id, evidence);
+    cb(result);
+    if (result.ok) io.to(room.state.code).emit("team:findings", room.findings);
   });
 
   socket.on("disconnect", () => {
