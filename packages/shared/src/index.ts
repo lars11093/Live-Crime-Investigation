@@ -87,6 +87,25 @@ export interface CollectableEvidence {
   kind: EvidenceNode["kind"];
   /** Beschreibung in der Beweisakte — ausfuehrlicher als das Label. */
   description: string;
+  /**
+   * Asservatenfoto (Story #11). Optional und ohne Asset im Repo — wie bei
+   * den Szenen zeigt der Client einen Platzhalter, wenn nichts laedt.
+   */
+  imagePath?: string;
+}
+
+/**
+ * Ein Fund, wie er in der Beweisakte liegt (Story #11).
+ *
+ * Der Fundort wird beim Einsammeln festgehalten, nicht im Fall hinterlegt:
+ * derselbe Beweis koennte spaeter an mehreren Stellen auftauchen, und die
+ * Akte soll zeigen, wo *dieser* Ermittler ihn gesichert hat.
+ */
+export interface CollectedEvidence extends CollectableEvidence {
+  foundAt: {
+    sceneName: string;
+    hotspotLabel: string;
+  };
 }
 
 export interface Scene {

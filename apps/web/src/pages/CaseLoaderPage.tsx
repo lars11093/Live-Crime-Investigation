@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { CollectableEvidence, PublicCase } from "@case-zero/shared";
+import type { CollectedEvidence, PublicCase } from "@case-zero/shared";
 import { fetchCase, findRoom } from "../lib/api";
 import { CaseBriefingPanel } from "../components/CaseBriefingPanel";
 import { SceneView } from "../components/SceneView";
 import { EvidenceList } from "../components/EvidenceList";
+import { EvidenceDetail } from "../components/EvidenceDetail";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort" | "beweise";
@@ -28,7 +29,9 @@ export function CaseLoaderPage() {
   // Untersuchte Stellen ueberleben das Verlassen der Szene (#8).
   const [investigatedIds, setInvestigatedIds] = useState<string[]>([]);
   // Eingesammelte Funde (#9). Ein Fund kann nur einmal hineinkommen.
-  const [collected, setCollected] = useState<CollectableEvidence[]>([]);
+  const [collected, setCollected] = useState<CollectedEvidence[]>([]);
+  // Welcher Beweis im Detail offen ist (#11).
+  const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const load = useCallback(() => {
@@ -136,9 +139,18 @@ export function CaseLoaderPage() {
   }
 
   if (view === "beweise") {
+    const open = collected.find((e) => e.id === openEvidenceId);
     return (
       <main className="app-shell">
-        <EvidenceList evidence={collected} onBack={() => setView("akte")} />
+        {open ? (
+          <EvidenceDetail evidence={open} onBack={() => setOpenEvidenceId(null)} />
+        ) : (
+          <EvidenceList
+            evidence={collected}
+            onOpen={setOpenEvidenceId}
+            onBack={() => setView("akte")}
+          />
+        )}
       </main>
     );
   }

@@ -1,18 +1,13 @@
-import type { CollectableEvidence } from "@case-zero/shared";
+import type { CollectedEvidence } from "@case-zero/shared";
+import { KIND_LABEL } from "./evidenceKind";
 
 interface Props {
-  evidence: CollectableEvidence[];
+  evidence: CollectedEvidence[];
+  /** Oeffnet die Detailansicht (#11). */
+  onOpen?: (id: string) => void;
   /** Zurueck in die Fallakte. Fehlt, wenn die Liste eingebettet gezeigt wird. */
   onBack?: () => void;
 }
-
-const KIND_LABEL: Record<CollectableEvidence["kind"], string> = {
-  person: "Person",
-  object: "Gegenstand",
-  location: "Ort",
-  message: "Nachricht",
-  fact: "Feststellung",
-};
 
 /**
  * Story #10 — alle gesammelten Beweise als Liste.
@@ -20,7 +15,7 @@ const KIND_LABEL: Record<CollectableEvidence["kind"], string> = {
  * Die Liste haengt am State der Fallseite, nicht an einem eigenen Ladevorgang:
  * ein neu eingesammelter Fund erscheint dadurch sofort, ohne Neuladen.
  */
-export function EvidenceList({ evidence, onBack }: Props) {
+export function EvidenceList({ evidence, onOpen, onBack }: Props) {
   return (
     <section className="panel evidence-list">
       <div className="evidence-list__bar">
@@ -37,12 +32,20 @@ export function EvidenceList({ evidence, onBack }: Props) {
       ) : (
         <ol className="evidence-list__items">
           {evidence.map((item) => (
-            <li key={item.id} className="evidence-list__item">
-              <div className="evidence-list__head">
-                <span className="evidence-list__label">{item.label}</span>
-                <span className="evidence-list__kind">{KIND_LABEL[item.kind]}</span>
-              </div>
-              <p className="evidence-list__description">{item.description}</p>
+            <li key={item.id}>
+              <button
+                className="evidence-list__item evidence-list__item--button"
+                onClick={() => onOpen?.(item.id)}
+              >
+                <span className="evidence-list__head">
+                  <span className="evidence-list__label">{item.label}</span>
+                  <span className="evidence-list__kind">{KIND_LABEL[item.kind]}</span>
+                </span>
+                <span className="evidence-list__description">{item.description}</span>
+                <span className="evidence-list__found">
+                  Gefunden: {item.foundAt.sceneName} · {item.foundAt.hotspotLabel}
+                </span>
+              </button>
             </li>
           ))}
         </ol>

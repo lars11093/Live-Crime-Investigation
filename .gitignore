@@ -14,3 +14,7 @@ coverage/
 # Szenenbilder werden nicht committet (siehe apps/web/public/scenes/README.md)
 apps/web/public/scenes/*
 !apps/web/public/scenes/README.md
+
+# Asservatenfotos werden nicht committet (siehe apps/web/public/evidence/README.md)
+apps/web/public/evidence/*
+!apps/web/public/evidence/README.md
