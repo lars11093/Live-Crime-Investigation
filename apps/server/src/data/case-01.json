@@ -237,6 +237,37 @@
           "sentAt": "12.09. 22:41",
           "text": "Server laeuft wieder. Brauchst du mich noch oben?"
         }
+      ],
+      "files": [
+        {
+          "id": "file-vogt-kuendigung",
+          "name": "kuendigung_entwurf_v2.txt",
+          "type": "text",
+          "modifiedAt": "12.09. 21:58",
+          "content": "An die Geschaeftsleitung\n\nHiermit kuendige ich mein Arbeitsverhaeltnis per Ende Dezember.\n\nDie Zahlen fuer Q3, die am Montag rausgehen sollen, stimmen nicht. Ich habe das mehrfach angesprochen und werde sie nicht mittragen. Die Unterlagen dazu liegen auf dem Server, Ordner /finanzen/q3/original.\n\nThomas Vogt"
+        },
+        {
+          "id": "file-vogt-zugaenge",
+          "name": "zugaenge_4og.txt",
+          "type": "text",
+          "modifiedAt": "10.09. 08:12",
+          "content": "Ersatzbadges 4. OG\n\n0412  Reinigung\n0415  Empfang (Reserve)\n0417  IT-Dienstleister, ausgegeben fuer Serverwartung\n\nRueckgabe 0417 noch offen."
+        },
+        {
+          "id": "file-vogt-whiteboard",
+          "name": "IMG_2207.jpg",
+          "type": "image",
+          "modifiedAt": "12.09. 19:03",
+          "imagePath": "/devices/case-01/img-2207.jpg",
+          "caption": "Foto eines Whiteboards im Sitzungszimmer. Darauf drei Kuerzel mit Pfeilen: \"MB -> Q3\", \"DK -> Befoerderung?\", \"LF -> Badge zurueck!\""
+        },
+        {
+          "id": "file-vogt-backup",
+          "name": "q3_original.xlsx.enc",
+          "type": "unreadable",
+          "modifiedAt": "12.09. 22:05",
+          "unreadableReason": "Verschluesselt. Ohne Passwort laesst sich die Datei nicht oeffnen."
+        }
       ]
     }
   ],

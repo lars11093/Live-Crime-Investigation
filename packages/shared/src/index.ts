@@ -80,6 +80,29 @@ export interface ChatMessage {
 }
 
 /**
+ * Eine Datei auf einem Geraet (Story #20).
+ *
+ * `type` sagt, wie der Client sie oeffnet:
+ *   - "text":       `content` wird als Text gezeigt
+ *   - "image":      `imagePath` als Bild, mit Platzhalter wie ueberall (kein Asset im Repo)
+ *   - "unreadable": verschluesselt oder beschaedigt — der Client zeigt `unreadableReason`
+ */
+export interface DeviceFile {
+  id: string;
+  /** Dateiname inkl. Endung, z. B. "notizen.txt". */
+  name: string;
+  type: "text" | "image" | "unreadable";
+  /** Zuletzt geaendert, als Anzeigetext — wie `ChatMessage.sentAt`. */
+  modifiedAt: string;
+  content?: string;
+  imagePath?: string;
+  /** Was auf dem Bild zu sehen ist. Steht unter dem Platzhalter, solange es kein Asset gibt. */
+  caption?: string;
+  /** Warum die Datei nicht lesbar ist, z. B. "Verschluesselt". */
+  unreadableReason?: string;
+}
+
+/**
  * Ein sichergestelltes Geraet (Story #19).
  *
  * Die Nachrichten stehen in der Reihenfolge im Case-JSON, in der sie
@@ -95,6 +118,8 @@ export interface Device {
   /** Wem das Geraet gehoert. Gleich geschrieben wie `ChatMessage.sender`, damit eigene Nachrichten erkennbar sind. */
   owner: string;
   messages: ChatMessage[];
+  /** Dateien auf dem Geraet (#20). Optional: nicht jedes Geraet hat welche. */
+  files?: DeviceFile[];
 }
 
 /**
