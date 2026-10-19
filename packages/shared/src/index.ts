@@ -266,11 +266,18 @@ export interface ClientToServerEvents {
   "board:moveNode": (payload: { code: string; nodeId: string; x: number; y: number }) => void;
   "board:connect": (payload: { code: string; fromId: string; toId: string }) => void;
   "case:accuse": (payload: { code: string; accusation: Accusation }, cb: (result: ScoreResult) => void) => void;
+  /** Story #22 — mit Namen dem Team einer Session beitreten. */
+  "team:join": (payload: { code: string; playerName: string }, cb: (result: TeamJoinResult) => void) => void;
 }
+
+/** Antwort auf `team:join` (#22). */
+export type TeamJoinResult = { ok: true } | { ok: false; error: string };
 
 export interface ServerToClientEvents {
   "room:state": (state: RoomState) => void;
   "event:new": (event: TimedEvent) => void;
   "board:update": (board: RoomState["board"]) => void;
   "error:message": (message: string) => void;
+  /** Story #22 — die aktuelle Teamliste, nach jedem Beitritt und Verlassen an alle im Raum. */
+  "team:update": (players: Player[]) => void;
 }

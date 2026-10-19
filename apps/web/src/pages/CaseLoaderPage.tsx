@@ -21,6 +21,8 @@ import { SuspectList } from "../components/SuspectList";
 import { SuspectProfile } from "../components/SuspectProfile";
 import { ContradictionOverview } from "../components/ContradictionOverview";
 import { ChatHistory } from "../components/ChatHistory";
+import { TeamPanel } from "../components/TeamPanel";
+import { useTeam } from "../lib/team";
 import { messageToEvidence } from "../lib/digitalTrace";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
@@ -54,6 +56,8 @@ export function CaseLoaderPage() {
   // Welcher Verdaechtige im Profil offen ist (#15).
   const [openSuspectId, setOpenSuspectId] = useState<string | null>(null);
   const navigate = useNavigate();
+  // Wer sonst noch in dieser Session ermittelt (#22).
+  const team = useTeam(code);
 
   useEffect(() => {
     saveProgress(browserStorage(), code, progress);
@@ -339,6 +343,15 @@ export function CaseLoaderPage() {
           {device && <button onClick={() => setView("chat")}>{device.label}</button>}
           <button onClick={() => setView("briefing")}>Briefing</button>
         </div>
+      </div>
+      <div style={{ marginTop: "1rem" }}>
+        <TeamPanel
+          name={team.name}
+          players={team.players}
+          myId={team.myId}
+          error={team.error}
+          onJoin={team.joinAs}
+        />
       </div>
     </main>
   );
