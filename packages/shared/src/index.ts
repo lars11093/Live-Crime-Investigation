@@ -56,11 +56,29 @@ export interface Suspect {
  * MVP-Phase tut es das nie — zeigt der Client einen Platzhalter mit dem
  * Szenennamen.
  */
+/**
+ * Eine anklickbare Stelle im Tatort (Story #8).
+ *
+ * Position in Prozent der Szene, nicht in Pixeln: die Szene skaliert mit dem
+ * Viewport, ein Pixelwert saesse bei 1920 woanders als bei 1280.
+ */
+export interface Hotspot {
+  id: string;
+  /** Kurzer Name, erscheint beim Ueberfahren und in der Detailansicht. */
+  label: string;
+  /** 0-100, gemessen von links bzw. oben. */
+  x: number;
+  y: number;
+  /** Was der Ermittler sieht, wenn er die Stelle untersucht. */
+  detail: string;
+}
+
 export interface Scene {
   id: string;
   /** Anzeigename, dauerhaft als Overlay sichtbar. */
   name: string;
   imagePath: string;
+  hotspots: Hotspot[];
 }
 
 /**
