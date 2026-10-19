@@ -58,7 +58,7 @@ export function ChatHistory({
         <p className="terminal-title" style={{ margin: 0 }}>
           {device.label}
         </p>
-        <button onClick={onBack}>Zurueck zur Fallakte</button>
+        <button onClick={onBack}>Zurueck zum Forensik-Terminal</button>
       </div>
 
       <p className="case-status__hint">

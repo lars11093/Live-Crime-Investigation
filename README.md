@@ -48,7 +48,7 @@ Live-Crime-Investigation/
 │   │   └── src/
 │   │       ├── index.ts       Server-Bootstrap, Socket-Events
 │   │       ├── engine/         Room-/Case-Engine (Raumverwaltung, Szenario-Auswahl, Scoring)
-│   │       └── data/           Case-JSONs (Beweise, Verdächtige, Geräte mit Chatverlauf, Timeline, Lösung)
+│   │       └── data/           Case-JSONs (Beweise, Verdächtige, Geräte mit Chatverlauf und Sperre, Timeline, Lösung)
 │   └── web/                React SPA — 5 rollenspezifische Dashboards
 │       └── src/
 │           ├── pages/          Join, Lobby, RoleDashboard
