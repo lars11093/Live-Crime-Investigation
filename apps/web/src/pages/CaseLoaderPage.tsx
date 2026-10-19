@@ -21,10 +21,11 @@ import { SuspectList } from "../components/SuspectList";
 import { SuspectProfile } from "../components/SuspectProfile";
 import { ContradictionOverview } from "../components/ContradictionOverview";
 import { ChatHistory } from "../components/ChatHistory";
+import { DeviceFiles } from "../components/DeviceFiles";
 import { messageToEvidence } from "../lib/digitalTrace";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
-type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "chat";
+type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "chat" | "dateien";
 
 type LoadState =
   | { status: "loading" }
@@ -169,6 +170,18 @@ export function CaseLoaderPage() {
   // die Fallakte direkt das erste Geraet.
   const device = caseData.devices?.at(0);
 
+  if (view === "dateien" && device) {
+    return (
+      <main className="app-shell">
+        <DeviceFiles
+          device={device}
+          onShowMessages={() => setView("chat")}
+          onBack={() => setView("akte")}
+        />
+      </main>
+    );
+  }
+
   if (view === "chat" && device) {
     return (
       <main className="app-shell">
@@ -188,6 +201,7 @@ export function CaseLoaderPage() {
               collected: collectEvidence(prev.collected, messageToEvidence(device, message)),
             }))
           }
+          onShowFiles={device.files?.length ? () => setView("dateien") : undefined}
           onBack={() => setView("akte")}
         />
       </main>
