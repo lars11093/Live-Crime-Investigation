@@ -641,3 +641,13 @@ button:disabled:hover {
   line-height: 1.7;
   max-width: 68ch;
 }
+
+/* Story #10 — Beweisakte als eigene Ansicht */
+.evidence-list__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
