@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { ROLES, type Role, type RoomState, type TimedEvent } from "@case-zero/shared";
 import { socket } from "./lib/socket";
 import { EvidenceBoard } from "./components/EvidenceBoard";
+import { StartPage } from "./pages/StartPage";
 
 function JoinPage() {
   const [name, setName] = useState("");
@@ -139,8 +140,12 @@ function CasePage() {
 export function App() {
   return (
     <Routes>
-      <Route path="/" element={<JoinPage />} />
+      <Route path="/" element={<StartPage />} />
+      {/* Prototyp aus Sprint 0 — Team-Beitritt wird mit #5 zur richtigen Story ausgebaut. */}
+      <Route path="/lobby" element={<JoinPage />} />
       <Route path="/case/:code" element={<CasePage />} />
+      {/* Unbekannte Adresse führt zurück auf die Startseite statt auf eine leere Seite (#1). */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
