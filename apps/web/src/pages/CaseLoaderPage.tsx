@@ -24,6 +24,8 @@ import { ChatHistory } from "../components/ChatHistory";
 import { TeamPanel } from "../components/TeamPanel";
 import { shareMessage, useTeam } from "../lib/team";
 import { SharedFindings } from "../components/SharedFindings";
+import { ProgressPanel } from "../components/ProgressPanel";
+import { summarizeProgress } from "../lib/progress";
 import { messageToEvidence } from "../lib/digitalTrace";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
@@ -329,11 +331,6 @@ export function CaseLoaderPage() {
         <p className="case-status__hint">
           Team-Code zum Teilen: <strong className="case-code">{code}</strong>
         </p>
-        {scene && (
-          <p className="case-status__hint">
-            {investigatedIds.length} von {scene.hotspots.length} Stellen im Tatort untersucht
-          </p>
-        )}
         <p className="case-status__hint">
           {collected.length} {collected.length === 1 ? "Beweis" : "Beweise"} gesichert
         </p>
@@ -352,6 +349,16 @@ export function CaseLoaderPage() {
           {device && <button onClick={() => setView("chat")}>{device.label}</button>}
           <button onClick={() => setView("briefing")}>Briefing</button>
         </div>
+      </div>
+      <div style={{ marginTop: "1rem" }}>
+        <ProgressPanel
+          summary={summarizeProgress(
+            // Nur der Tatort, den die Fallakte anbietet — mehrere Tatorte sind #59.
+            scene ? [scene] : [],
+            [...collected.map((e) => e.id), ...team.findings.map((f) => f.evidence.id)],
+            investigatedIds
+          )}
+        />
       </div>
       <div style={{ marginTop: "1rem" }}>
         <TeamPanel
