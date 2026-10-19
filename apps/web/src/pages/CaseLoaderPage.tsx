@@ -4,6 +4,7 @@ import type { PublicCase } from "@case-zero/shared";
 import { combineEvidence, fetchCase, findRoom } from "../lib/api";
 import {
   browserStorage,
+  collectEvidence,
   loadProgress,
   saveProgress,
   setNote,
@@ -20,6 +21,7 @@ import { SuspectList } from "../components/SuspectList";
 import { SuspectProfile } from "../components/SuspectProfile";
 import { ContradictionOverview } from "../components/ContradictionOverview";
 import { ChatHistory } from "../components/ChatHistory";
+import { messageToEvidence } from "../lib/digitalTrace";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "chat";
@@ -156,11 +158,7 @@ export function CaseLoaderPage() {
         }
         collectedIds={collected.map((e) => e.id)}
         onCollect={(evidence) =>
-          setProgress((prev) =>
-            prev.collected.some((e) => e.id === evidence.id)
-              ? prev
-              : { ...prev, collected: [...prev.collected, evidence] }
-          )
+          setProgress((prev) => ({ ...prev, collected: collectEvidence(prev.collected, evidence) }))
         }
         onBack={() => setView("akte")}
       />
@@ -181,6 +179,13 @@ export function CaseLoaderPage() {
             setProgress((prev) => ({
               ...prev,
               markedMessageIds: toggleMarkedMessage(prev.markedMessageIds, messageId),
+            }))
+          }
+          collectedIds={collected.map((e) => e.id)}
+          onSecure={(message) =>
+            setProgress((prev) => ({
+              ...prev,
+              collected: collectEvidence(prev.collected, messageToEvidence(device, message)),
             }))
           }
           onBack={() => setView("akte")}

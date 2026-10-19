@@ -56,6 +56,20 @@ export function toggleMarkedMessage(ids: string[], messageId: string): string[] 
   return ids.includes(messageId) ? ids.filter((id) => id !== messageId) : [...ids, messageId];
 }
 
+/**
+ * Legt einen Fund in die Beweisakte, aber nur einmal (#9, #21).
+ *
+ * Gilt fuer Funde aus dem Tatort genauso wie fuer digitale Spuren: doppelt
+ * ist doppelt, egal woher der Beweis kommt. Ohne Aenderung kommt dieselbe
+ * Liste zurueck, damit React nicht unnoetig neu zeichnet.
+ */
+export function collectEvidence(
+  list: CollectedEvidence[],
+  evidence: CollectedEvidence
+): CollectedEvidence[] {
+  return list.some((e) => e.id === evidence.id) ? list : [...list, evidence];
+}
+
 export const EMPTY_PROGRESS: CaseProgress = {
   investigatedIds: [],
   collected: [],
