@@ -7,6 +7,7 @@ import {
   loadProgress,
   saveProgress,
   setNote,
+  toggleContradiction,
   type CaseProgress,
 } from "../lib/caseProgress";
 import { CaseBriefingPanel } from "../components/CaseBriefingPanel";
@@ -16,6 +17,7 @@ import { EvidenceDetail } from "../components/EvidenceDetail";
 import { CombinePanel } from "../components/CombinePanel";
 import { SuspectList } from "../components/SuspectList";
 import { SuspectProfile } from "../components/SuspectProfile";
+import { ContradictionOverview } from "../components/ContradictionOverview";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige";
@@ -41,7 +43,7 @@ export function CaseLoaderPage() {
   const [progress, setProgress] = useState<CaseProgress>(() =>
     loadProgress(browserStorage(), code)
   );
-  const { investigatedIds, collected, notes, insights } = progress;
+  const { investigatedIds, collected, notes, insights, contradictions } = progress;
   // Welcher Beweis im Detail offen ist (#11).
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
   // Welcher Verdaechtige im Profil offen ist (#15).
@@ -167,13 +169,35 @@ export function CaseLoaderPage() {
     return (
       <main className="app-shell">
         {openSuspect ? (
-          <SuspectProfile suspect={openSuspect} onBack={() => setOpenSuspectId(null)} />
-        ) : (
-          <SuspectList
-            suspects={caseData.suspects}
-            onOpen={setOpenSuspectId}
-            onBack={() => setView("akte")}
+          <SuspectProfile
+            suspect={openSuspect}
+            markedIndices={contradictions
+              .filter((c) => c.suspectId === openSuspect.id)
+              .map((c) => c.sentenceIndex)}
+            onToggleSentence={(sentenceIndex, text) =>
+              setProgress((prev) => ({
+                ...prev,
+                contradictions: toggleContradiction(prev.contradictions, {
+                  suspectId: openSuspect.id,
+                  suspectName: openSuspect.name,
+                  sentenceIndex,
+                  text,
+                }),
+              }))
+            }
+            onBack={() => setOpenSuspectId(null)}
           />
+        ) : (
+          <>
+            <SuspectList
+              suspects={caseData.suspects}
+              onOpen={setOpenSuspectId}
+              onBack={() => setView("akte")}
+            />
+            <div style={{ marginTop: "1rem" }}>
+              <ContradictionOverview contradictions={contradictions} />
+            </div>
+          </>
         )}
       </main>
     );

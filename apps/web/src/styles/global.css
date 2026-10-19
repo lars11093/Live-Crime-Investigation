@@ -947,3 +947,58 @@ button:disabled:hover {
   border-radius: 2px;
   font-weight: 700;
 }
+
+/* ---------------------------------------------------------------
+   Story #17 — Widersprueche markieren
+   --------------------------------------------------------------- */
+
+.statement__sentence {
+  display: inline;
+  padding: 0.1rem 0.15rem;
+  margin: 0;
+  background: none;
+  border: none;
+  border-radius: 2px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.statement__sentence:hover,
+.statement__sentence:focus-visible {
+  background: rgba(125, 133, 144, 0.18);
+}
+
+.statement__sentence--marked {
+  background: rgba(239, 68, 68, 0.15);
+  box-shadow: inset 0 -2px 0 var(--danger);
+}
+
+.statement__sentence--marked:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+.contradiction-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.contradiction {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.85rem 1rem;
+  background: #0a0f14;
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--danger);
+  border-radius: 3px;
+}
+
+.contradiction__text {
+  margin: 0;
+  line-height: 1.7;
+  max-width: 68ch;
+}

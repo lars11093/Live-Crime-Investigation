@@ -5,6 +5,7 @@ import {
   loadProgress,
   saveProgress,
   setNote,
+  toggleContradiction,
   type ProgressStorage,
 } from "./caseProgress";
 
@@ -51,6 +52,7 @@ describe("Fortschritt speichern und laden", () => {
       collected: [evidence],
       notes: { "tasse-lippenstift": "Lippenstift passt nicht zum Opfer." },
       insights: [{ id: "insight-1", title: "Zweite Person", body: "Jemand sass mit am Tisch." }],
+      contradictions: [],
     });
     const loaded = loadProgress(storage, "ABC-123");
     expect(loaded.notes["tasse-lippenstift"]).toBe("Lippenstift passt nicht zum Opfer.");
@@ -100,5 +102,38 @@ describe("Notizen", () => {
   it("loescht die Notiz, wenn das Feld geleert wird", () => {
     expect(setNote({ a: "alt", b: "bleibt" }, "a", "")).toEqual({ b: "bleibt" });
     expect(setNote({ a: "alt" }, "a", "   ")).toEqual({});
+  });
+});
+
+describe("Widersprueche markieren", () => {
+  const entry = {
+    suspectId: "monica-brandt",
+    suspectName: "Monica Brandt",
+    sentenceIndex: 2,
+    text: "Ich habe das Gebaeude um 22:45 verlassen.",
+  };
+
+  it("markiert einen Satz", () => {
+    expect(toggleContradiction([], entry)).toEqual([entry]);
+  });
+
+  it("nimmt dieselbe Markierung wieder zurueck", () => {
+    expect(toggleContradiction([entry], entry)).toEqual([]);
+  });
+
+  it("haelt gleiche Satznummern verschiedener Personen auseinander", () => {
+    const other = { ...entry, suspectId: "daniel-keller", suspectName: "Daniel Keller" };
+    expect(toggleContradiction([entry], other)).toHaveLength(2);
+  });
+
+  it("haelt verschiedene Saetze derselben Person auseinander", () => {
+    const other = { ...entry, sentenceIndex: 3 };
+    expect(toggleContradiction([entry], other)).toHaveLength(2);
+  });
+
+  it("ueberlebt das Speichern und Laden", () => {
+    const storage = fakeStorage();
+    saveProgress(storage, "ABC-123", { ...EMPTY_PROGRESS, contradictions: [entry] });
+    expect(loadProgress(storage, "ABC-123").contradictions).toEqual([entry]);
   });
 });

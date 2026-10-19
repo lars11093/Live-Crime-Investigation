@@ -44,3 +44,20 @@ export function timesIn(text: string): string[] {
     .filter((segment) => segment.isTime)
     .map((segment) => segment.text);
 }
+
+/**
+ * Zerlegt eine Aussage in Saetze (#17).
+ *
+ * Markiert wird satzweise, nicht zeichengenau. Zwei Gruende: ein Widerspruch
+ * ist praktisch immer ein ganzer Satz ("Gegen 22:40 war ich bereits zu Hause"),
+ * und zeichengenaue Positionen halten kein Re-Rendern und keine Textaenderung
+ * im Case-JSON aus.
+ *
+ * Bekannte Grenze: Abkuerzungen mit Punkt ("z. B.") wuerden faelschlich
+ * trennen. In den Aussagen dieses Falls kommen keine vor.
+ */
+export function splitIntoSentences(text: string): string[] {
+  const matches = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g);
+  if (!matches) return [];
+  return matches.map((sentence) => sentence.trim()).filter((sentence) => sentence.length > 0);
+}
