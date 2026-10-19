@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { PublicCase } from "@case-zero/shared";
+import type { CollectableEvidence, PublicCase } from "@case-zero/shared";
 import { fetchCase, findRoom } from "../lib/api";
 import { CaseBriefingPanel } from "../components/CaseBriefingPanel";
 import { SceneView } from "../components/SceneView";
+import { EvidenceList } from "../components/EvidenceList";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort";
@@ -26,6 +27,8 @@ export function CaseLoaderPage() {
   const [view, setView] = useState<View>("briefing");
   // Untersuchte Stellen ueberleben das Verlassen der Szene (#8).
   const [investigatedIds, setInvestigatedIds] = useState<string[]>([]);
+  // Eingesammelte Funde (#9). Ein Fund kann nur einmal hineinkommen.
+  const [collected, setCollected] = useState<CollectableEvidence[]>([]);
   const navigate = useNavigate();
 
   const load = useCallback(() => {
@@ -121,6 +124,12 @@ export function CaseLoaderPage() {
         onInvestigate={(id) =>
           setInvestigatedIds((prev) => (prev.includes(id) ? prev : [...prev, id]))
         }
+        collectedIds={collected.map((e) => e.id)}
+        onCollect={(evidence) =>
+          setCollected((prev) =>
+            prev.some((e) => e.id === evidence.id) ? prev : [...prev, evidence]
+          )
+        }
         onBack={() => setView("akte")}
       />
     );
@@ -156,6 +165,9 @@ export function CaseLoaderPage() {
             {investigatedIds.length} von {scene.hotspots.length} Stellen im Tatort untersucht
           </p>
         )}
+        <p className="case-status__hint">
+          {collected.length} {collected.length === 1 ? "Beweis" : "Beweise"} gesichert
+        </p>
         <div className="case-status__actions">
           {scene && (
             <button className="button--primary" onClick={() => setView("tatort")}>
@@ -164,6 +176,10 @@ export function CaseLoaderPage() {
           )}
           <button onClick={() => setView("briefing")}>Briefing</button>
         </div>
+      </div>
+
+      <div style={{ marginTop: "1rem" }}>
+        <EvidenceList evidence={collected} />
       </div>
     </main>
   );

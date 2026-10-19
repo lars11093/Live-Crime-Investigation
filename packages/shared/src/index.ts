@@ -71,6 +71,22 @@ export interface Hotspot {
   y: number;
   /** Was der Ermittler sieht, wenn er die Stelle untersucht. */
   detail: string;
+  /**
+   * Der Beweis, der hier eingesammelt werden kann (Story #9).
+   *
+   * Optional: nicht jede Stelle gibt etwas her. Fehlt das Feld, laesst sich
+   * die Stelle untersuchen, aber nichts mitnehmen.
+   */
+  evidence?: CollectableEvidence;
+}
+
+/** Ein einsammelbarer Fund aus dem Tatort (Story #9). */
+export interface CollectableEvidence {
+  id: string;
+  label: string;
+  kind: EvidenceNode["kind"];
+  /** Beschreibung in der Beweisakte — ausfuehrlicher als das Label. */
+  description: string;
 }
 
 export interface Scene {

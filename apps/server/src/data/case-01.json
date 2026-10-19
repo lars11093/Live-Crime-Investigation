@@ -12,10 +12,58 @@
       "name": "Buero 4.12 - Fundort",
       "imagePath": "/scenes/case-01/buero-412.jpg",
       "hotspots": [
-        { "id": "schreibtisch", "label": "Schreibtisch", "x": 32, "y": 58, "detail": "Auf dem Schreibtisch liegt ein aufgeklapptes Notebook. Der Bildschirm zeigt eine halb geschriebene Kuendigung, adressiert an die Geschaeftsleitung. Gespeichert wurde sie nie." },
-        { "id": "fenster", "label": "Fensterfront", "x": 72, "y": 40, "detail": "Das Kippfenster steht offen. Auf dem Rahmen aussen sind Kratzer, die nicht zur Lackierung passen - jemand hat hier etwas abgestellt oder hinausgereicht." },
-        { "id": "papierkorb", "label": "Papierkorb", "x": 18, "y": 78, "detail": "Im Papierkorb liegt ein zerknuelltes Blatt mit einer handschriftlichen Zahlenreihe. Die letzte Zeile ist durchgestrichen und mit \"22:30\" ueberschrieben." },
-        { "id": "teetasse", "label": "Tasse auf der Ablage", "x": 55, "y": 66, "detail": "Eine halbvolle Tasse, der Inhalt ist kalt. Am Rand ein Lippenstiftabdruck - das Opfer trug keinen." }
+        {
+          "id": "schreibtisch",
+          "label": "Schreibtisch",
+          "x": 32,
+          "y": 58,
+          "detail": "Auf dem Schreibtisch liegt ein aufgeklapptes Notebook. Der Bildschirm zeigt eine halb geschriebene Kuendigung, adressiert an die Geschaeftsleitung. Gespeichert wurde sie nie.",
+          "evidence": {
+            "id": "notebook-kuendigung",
+            "label": "Notebook mit Kuendigungsentwurf",
+            "kind": "object",
+            "description": "Aufgeklapptes Notebook vom Schreibtisch des Opfers. Enthaelt eine nie gespeicherte Kuendigung an die Geschaeftsleitung."
+          }
+        },
+        {
+          "id": "fenster",
+          "label": "Fensterfront",
+          "x": 72,
+          "y": 40,
+          "detail": "Das Kippfenster steht offen. Auf dem Rahmen aussen sind Kratzer, die nicht zur Lackierung passen - jemand hat hier etwas abgestellt oder hinausgereicht.",
+          "evidence": {
+            "id": "kratzer-fensterrahmen",
+            "label": "Kratzspuren am Fensterrahmen",
+            "kind": "fact",
+            "description": "Frische Kratzer aussen am Kippfenster, passen nicht zur Lackierung. Etwas wurde abgestellt oder hinausgereicht."
+          }
+        },
+        {
+          "id": "papierkorb",
+          "label": "Papierkorb",
+          "x": 18,
+          "y": 78,
+          "detail": "Im Papierkorb liegt ein zerknuelltes Blatt mit einer handschriftlichen Zahlenreihe. Die letzte Zeile ist durchgestrichen und mit \"22:30\" ueberschrieben.",
+          "evidence": {
+            "id": "zettel-zahlenreihe",
+            "label": "Zerknuellter Zettel mit Zahlenreihe",
+            "kind": "object",
+            "description": "Handschriftliche Zahlenreihe, letzte Zeile durchgestrichen und mit 22:30 ueberschrieben."
+          }
+        },
+        {
+          "id": "teetasse",
+          "label": "Tasse auf der Ablage",
+          "x": 55,
+          "y": 66,
+          "detail": "Eine halbvolle Tasse, der Inhalt ist kalt. Am Rand ein Lippenstiftabdruck - das Opfer trug keinen.",
+          "evidence": {
+            "id": "tasse-lippenstift",
+            "label": "Tasse mit Lippenstiftabdruck",
+            "kind": "object",
+            "description": "Halbvolle, kalte Tasse mit Lippenstiftabdruck am Rand. Das Opfer trug keinen."
+          }
+        }
       ]
     },
     {
@@ -23,8 +71,26 @@
       "name": "Flur 4. OG - Badge-Leser",
       "imagePath": "/scenes/case-01/flur-4og.jpg",
       "hotspots": [
-        { "id": "badge-leser", "label": "Badge-Leser", "x": 25, "y": 50, "detail": "Das Protokoll zeigt drei Zutritte nach 22:00 Uhr. Zwei davon mit demselben Badge im Abstand von vier Minuten - einmal hinein, einmal hinaus, und dann noch einmal hinein." },
-        { "id": "kamera-04", "label": "Kamera #04", "x": 80, "y": 22, "detail": "Die Kamera haengt leicht schief. Die Aufzeichnung des Abends hat eine Luecke von 22:34 bis 22:52 Uhr." }
+        {
+          "id": "badge-leser",
+          "label": "Badge-Leser",
+          "x": 25,
+          "y": 50,
+          "detail": "Das Protokoll zeigt drei Zutritte nach 22:00 Uhr. Zwei davon mit demselben Badge im Abstand von vier Minuten - einmal hinein, einmal hinaus, und dann noch einmal hinein.",
+          "evidence": {
+            "id": "badge-protokoll",
+            "label": "Badge-Protokoll nach 22:00 Uhr",
+            "kind": "message",
+            "description": "Drei Zutritte nach 22:00 Uhr, zwei davon mit demselben Badge im Abstand von vier Minuten."
+          }
+        },
+        {
+          "id": "kamera-04",
+          "label": "Kamera #04",
+          "x": 80,
+          "y": 22,
+          "detail": "Die Kamera haengt leicht schief. Die Aufzeichnung des Abends hat eine Luecke von 22:34 bis 22:52 Uhr."
+        }
       ]
     }
   ],
