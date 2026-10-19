@@ -265,3 +265,92 @@ body,
   color: var(--muted);
   text-align: center;
 }
+
+/* ---------------------------------------------------------------
+   Story #7 — Tatort als Szene
+   Vollflaechig ohne horizontales Scrollen: die Szene ist genau so
+   breit wie der Viewport, das Bild wird zugeschnitten statt gestreckt.
+   --------------------------------------------------------------- */
+
+.scene {
+  position: relative;
+  width: 100vw;
+  /* 100dvh faengt die Browserleisten auf Mobilgeraeten ab. */
+  height: 100dvh;
+  max-width: 100%;
+  overflow: hidden;
+  background: #04060a;
+}
+
+.scene__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scene__placeholder {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  text-align: center;
+  background-color: #04060a;
+  /* Diagonales Absperrband-Raster statt weisser Flaeche. */
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(34, 197, 94, 0.05) 0px,
+    rgba(34, 197, 94, 0.05) 12px,
+    transparent 12px,
+    transparent 28px
+  );
+}
+
+.scene__placeholder-mark {
+  margin: 0;
+  font-size: 2rem;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+}
+
+.scene__placeholder-name {
+  margin: 0;
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+.scene__placeholder-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.scene__overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(to top, rgba(5, 7, 10, 0.95), rgba(5, 7, 10, 0));
+}
+
+.scene__name {
+  margin: 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  /* Lesbar auch auf einem hellen Szenenbild. */
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+}
+
+.scene__back {
+  background: rgba(5, 7, 10, 0.85);
+}

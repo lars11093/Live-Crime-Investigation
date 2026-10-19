@@ -6,6 +6,10 @@
     "location": "Buero 4.12, Hardturmstrasse 61, Zuerich",
     "text": "Die Reinigungskraft findet Thomas Vogt um 23:14 Uhr leblos in seinem Buero im vierten Stock. Die Bueroetage war ab 22:00 Uhr offiziell leer, der Badge-Zutritt ist aber dreimal protokolliert. Auf dem Schreibtisch liegt ein aufgeklapptes Notebook mit einer halb geschriebenen Kuendigung. Die Nachricht \"Meet me at the office. 22:30.\" ging zwei Stunden vor der Tat an drei Personen. Drei Verdaechtige, drei Aussagen, und mindestens eine davon stimmt nicht mit den Spuren ueberein."
   },
+  "scenes": [
+    { "id": "buero-412", "name": "Buero 4.12 - Fundort", "imagePath": "/scenes/case-01/buero-412.jpg" },
+    { "id": "flur-4og", "name": "Flur 4. OG - Badge-Leser", "imagePath": "/scenes/case-01/flur-4og.jpg" }
+  ],
   "suspects": [
     { "id": "daniel-keller", "name": "Daniel Keller" },
     { "id": "monica-brandt", "name": "Monica Brandt" },

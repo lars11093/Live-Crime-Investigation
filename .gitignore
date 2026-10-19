@@ -10,3 +10,7 @@ coverage/
 .vite/
 *.tsbuildinfo
 .serena/
+
+# Szenenbilder werden nicht committet (siehe apps/web/public/scenes/README.md)
+apps/web/public/scenes/*
+!apps/web/public/scenes/README.md
