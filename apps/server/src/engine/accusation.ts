@@ -57,7 +57,12 @@ export function submitAccusation(
     submittedAt: now.toISOString(),
     // Die Aufloesung haengt an der Quittung (#28): berechnet genau dann, wenn
     // die Anklage gesperrt ist, und nie davor.
-    verdict: judgeAccusation(room.caseDef, room.scenario, checked.submission),
+    verdict: judgeAccusation(
+      room.caseDef,
+      room.scenario,
+      checked.submission,
+      (now.getTime() - room.createdAt.getTime()) / 60000
+    ),
   };
   room.accusation = receipt;
   return { ok: true, receipt };

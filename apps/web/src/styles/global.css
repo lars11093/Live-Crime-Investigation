@@ -2061,3 +2061,66 @@ div.account-bar {
 .button--danger:hover {
   background: rgba(239, 68, 68, 0.12);
 }
+
+/* Story #54 — Punktzahl */
+.score {
+  display: grid;
+  gap: 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1rem;
+}
+
+.score__points {
+  margin: 0;
+  font-size: 2rem;
+  color: var(--accent);
+}
+
+.score__max {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.score__rank {
+  margin: 0;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.score__bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.score__bar span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.score__breakdown {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.85rem;
+}
+
+.score__breakdown li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.score__plus {
+  color: var(--accent);
+}
+
+.score__minus {
+  color: var(--danger);
+}

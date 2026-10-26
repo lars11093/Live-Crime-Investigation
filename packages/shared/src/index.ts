@@ -379,6 +379,20 @@ export interface AccusationVerdict {
   /** Der Aufloesungstext aus dem aktiven Szenario. */
   resolution: string;
   findings: VerdictFinding[];
+  /**
+   * Die Punktzahl (#54). Optional, weil Quittungen aus der Zeit vor #54 sie
+   * nicht haben.
+   */
+  score?: AccusationScore;
+}
+
+/** Punktzahl einer Anklage mit Aufschluesselung (#54). */
+export interface AccusationScore {
+  points: number;
+  maxPoints: number;
+  /** Einordnung in Worten, z. B. "Solide Ermittlung". */
+  rank: string;
+  breakdown: { label: string; points: number }[];
 }
 
 /** Antwort des Servers auf `POST /api/rooms/:code/accusation` (Story #27). */

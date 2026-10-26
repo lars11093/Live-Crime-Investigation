@@ -73,6 +73,7 @@ Live-Crime-Investigation/
 6. Lead Detective reicht Accusation ein → Server vergleicht mit dem aktiven Szenario → `CASE SOLVED` Score-Payload an alle.
    Umgesetzt (#27) als `POST /api/rooms/:code/accusation` mit `{ suspectId, evidenceIds }`: Der Server prüft Täter und mindestens einen Beweis und speichert die Anklage einmal pro Team-Session (`201`). Jeder weitere Versuch bekommt `409` mit der ersten Quittung zurück, danach ist die Anklage gesperrt.
    Die Quittung enthält die Auflösung (#28): Ergebnis gelöst/nicht gelöst, wahrer Täter, Auflösungstext und eine Liste richtiger/falscher/übersehener Schlüsse. Grundlage sind die neuen Szenario-Felder `resolution` und `keyEvidenceIds` im Case-JSON. Wie das ganze Szenario verlassen sie den Server vor dem Absenden nie.
+   Dazu kommt die Punktzahl (#54, `verdict.score`): richtiger Täter +500, je tragender Beweis +100, je Beweis ohne Bezug −25, vollständige Beweiskette +150, Tempo (nur bei richtigem Täter, gemessen ab Anlegen der Session) +100 unter 30 bzw. +50 unter 60 Minuten. Nie unter 0, mit Einordnung von „Fehlermittlung“ bis „Meisterhafte Ermittlung“. Die Regeln stehen in `engine/score.ts`.
 
 ## 4. Scrum-Setup
 
