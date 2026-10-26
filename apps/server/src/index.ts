@@ -16,6 +16,7 @@ import { combineEvidence } from "./engine/combine.js";
 import { submitAccusation } from "./engine/accusation.js";
 import { chooseRole, joinTeam, teamView } from "./engine/team.js";
 import { addChatMessage, caseChannel } from "./engine/chat.js";
+import { addTask, removeTask, updateTask } from "./engine/tasks.js";
 import {
   allRooms,
   createRoom,
@@ -240,6 +241,56 @@ io.on("connection", (socket) => {
       return;
     }
     io.to(caseChannel(room.state.code)).emit("chat:message", result.message);
+    cb?.({ ok: true });
+  });
+
+  // Story #50 — gemeinsame Aufgabenliste, ebenfalls im Room case:<code>.
+  // Nach jeder Aenderung geht die ganze Liste an alle: bei hoechstens 50
+  // Aufgaben einfacher und robuster als einzelne Deltas.
+  function broadcastTasks(room: Room) {
+    io.to(caseChannel(room.state.code)).emit("tasks:state", {
+      tasks: room.tasks ?? [],
+      team: teamView(room),
+    });
+  }
+
+  socket.on("tasks:join", ({ code, playerId, name }) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      socket.emit("error:message", "Ungueltiger Team-Code");
+      return;
+    }
+    joinTeam(room, playerId, name);
+    socket.join(caseChannel(room.state.code));
+    // Alle bekommen den Stand — ein neues Teammitglied erscheint so auch in
+    // den Zuweisungs-Auswahlen der anderen.
+    broadcastTasks(room);
+  });
+
+  socket.on("tasks:add", ({ code, playerId, text }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) return cb?.({ ok: false, reason: "Ungueltiger Team-Code" });
+    const result = addTask(room, playerId, text);
+    if (!result.ok) return cb?.({ ok: false, reason: result.reason });
+    broadcastTasks(room);
+    cb?.({ ok: true });
+  });
+
+  socket.on("tasks:update", ({ code, playerId, taskId, patch }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) return cb?.({ ok: false, reason: "Ungueltiger Team-Code" });
+    const result = updateTask(room, playerId, taskId, patch ?? {});
+    if (!result.ok) return cb?.({ ok: false, reason: result.reason });
+    broadcastTasks(room);
+    cb?.({ ok: true });
+  });
+
+  socket.on("tasks:remove", ({ code, playerId, taskId }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) return cb?.({ ok: false, reason: "Ungueltiger Team-Code" });
+    const result = removeTask(room, playerId, taskId);
+    if (!result.ok) return cb?.({ ok: false, reason: result.reason });
+    broadcastTasks(room);
     cb?.({ ok: true });
   });
 

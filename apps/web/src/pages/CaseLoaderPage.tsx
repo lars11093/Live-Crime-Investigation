@@ -45,6 +45,8 @@ import { ObjectiveDock } from "../components/ObjectiveDock";
 import { TeamChat } from "../components/TeamChat";
 import { useTeamChat } from "../lib/useTeamChat";
 import { unreadCount } from "../lib/teamChat";
+import { TeamTasks } from "../components/TeamTasks";
+import { useTeamTasks } from "../lib/useTeamTasks";
 import { storePhoto } from "../lib/photos";
 import { rateInsight } from "../lib/insightRating";
 import { setAlibiVerdict } from "../lib/alibi";
@@ -61,7 +63,8 @@ type View =
   | "forensik"
   | "anklage"
   | "team"
-  | "chat";
+  | "chat"
+  | "aufgaben";
 
 type LoadState =
   | { status: "loading" }
@@ -175,6 +178,9 @@ export function CaseLoaderPage() {
     if (view === "chat") setChatReadCount(chat.messages.length);
   }, [view, chat.messages.length]);
   const chatUnread = unreadCount(chat.messages, me.id, chatReadCount);
+  // Gemeinsame Aufgabenliste (#50), ebenfalls live, sobald der Fall geladen ist.
+  const teamTasks = useTeamTasks(code, me, state.status === "ready");
+  const openTaskCount = teamTasks.tasks.filter((t) => !t.done).length;
 
   async function changeRole(targetId: string, role: Role | null) {
     setTeamError(null);
@@ -506,6 +512,22 @@ export function CaseLoaderPage() {
       );
     }
 
+    if (view === "aufgaben") {
+      return (
+        <main className="app-shell">
+          <TeamTasks
+            myId={me.id}
+            tasks={teamTasks.tasks}
+            team={teamTasks.team ?? team}
+            onAdd={teamTasks.add}
+            onUpdate={teamTasks.update}
+            onRemove={teamTasks.remove}
+            onBack={() => setView("akte")}
+          />
+        </main>
+      );
+    }
+
     if (view === "chat") {
       return (
         <main className="app-shell">
@@ -654,6 +676,7 @@ export function CaseLoaderPage() {
             <button onClick={() => setView("chat")}>
               Team-Chat{chatUnread > 0 ? ` (${chatUnread} neu)` : ""}
             </button>
+            <button onClick={() => setView("aufgaben")}>Aufgaben ({openTaskCount} offen)</button>
             <button onClick={() => setView("briefing")}>Briefing</button>
           </div>
         </div>
