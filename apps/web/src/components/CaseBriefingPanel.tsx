@@ -3,6 +3,8 @@ import type { CaseBriefing } from "@case-zero/shared";
 interface Props {
   title: string;
   briefing?: CaseBriefing;
+  /** Das Ermittlungsziel (#32) — im Briefing zum ersten Mal zu sehen. */
+  objective?: string;
   /** Fuehrt in den Tatort (#7). */
   onOpenScene: () => void;
   /** Schliesst das Briefing, ohne den Spielstand anzufassen. */
@@ -14,7 +16,7 @@ interface Props {
  * Zeigt Falltitel, Tatzeit, Tatort und den Briefing-Text. Fehlt das Briefing
  * im Fall, steht hier "Kein Briefing verfuegbar" statt einer leeren Box.
  */
-export function CaseBriefingPanel({ title, briefing, onOpenScene, onClose }: Props) {
+export function CaseBriefingPanel({ title, briefing, objective, onOpenScene, onClose }: Props) {
   return (
     <section className="panel briefing">
       <p className="terminal-title">Fall-Briefing</p>
@@ -36,6 +38,13 @@ export function CaseBriefingPanel({ title, briefing, onOpenScene, onClose }: Pro
         </>
       ) : (
         <p className="briefing__empty">Kein Briefing verfuegbar</p>
+      )}
+
+      {objective && (
+        <div className="briefing__objective">
+          <p className="team-code__label">Ermittlungsziel</p>
+          <p style={{ margin: 0 }}>{objective}</p>
+        </div>
       )}
 
       <div className="case-status__actions">
