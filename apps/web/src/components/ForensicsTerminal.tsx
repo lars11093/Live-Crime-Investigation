@@ -1,8 +1,10 @@
 import type { Device } from "@case-zero/shared";
-import { listDevices } from "../lib/forensics";
+import { deviceSummary, listDevices } from "../lib/forensics";
 
 interface Props {
   devices: Device[];
+  /** Bereits geoeffnete Geraete (#44). */
+  reviewedIds?: string[];
   onOpen: (deviceId: string) => void;
   onBack: () => void;
 }
@@ -12,10 +14,13 @@ interface Props {
  * Listet alle sichergestellten Geraete mit Besitzer und Status. Offene Geraete
  * lassen sich auswerten (Chatverlauf, #19), gesperrte sind deutlich als
  * gesperrt markiert und nicht anklickbar. Entsperren ist eine eigene Story.
+ *
+ * Story #44 — alle sichergestellten Geraete auflisten. Dazu Geraeteart, wo es
+ * sichergestellt wurde und ob es schon ausgewertet ist; was noch aussteht,
+ * steht oben.
  */
-export function ForensicsTerminal({ devices, onOpen, onBack }: Props) {
-  const entries = listDevices(devices);
-  const lockedCount = entries.filter((e) => !e.canOpen).length;
+export function ForensicsTerminal({ devices, reviewedIds = [], onOpen, onBack }: Props) {
+  const entries = listDevices(devices, reviewedIds);
 
   return (
     <section className="panel">
@@ -30,11 +35,9 @@ export function ForensicsTerminal({ devices, onOpen, onBack }: Props) {
         <p className="evidence-list__empty">In diesem Fall wurden keine Geraete sichergestellt.</p>
       ) : (
         <>
-          <p className="case-status__hint">
-            {entries.length - lockedCount} auswertbar &middot; {lockedCount} gesperrt
-          </p>
+          <p className="case-status__hint">{deviceSummary(entries)}</p>
           <ul className="evidence-list__items">
-            {entries.map(({ device, canOpen, status }) => (
+            {entries.map(({ device, canOpen, status, kindLabel, reviewed }) => (
               <li key={device.id}>
                 <button
                   className={`evidence-list__item evidence-list__item--button device${
@@ -42,17 +45,24 @@ export function ForensicsTerminal({ devices, onOpen, onBack }: Props) {
                   }`}
                   onClick={() => onOpen(device.id)}
                   disabled={!canOpen}
-                  aria-label={`${device.label}, ${status}`}
+                  aria-label={`${device.label}, ${kindLabel}, ${status}${
+                    canOpen ? (reviewed ? ", ausgewertet" : ", noch nicht ausgewertet") : ""
+                  }`}
                 >
                   <span className="evidence-list__head">
                     <span className="evidence-list__label">{device.label}</span>
                     <span className={`device__status${canOpen ? "" : " device__status--locked"}`}>
-                      {canOpen ? "Entsperrt" : "Gesperrt"}
+                      {canOpen ? (reviewed ? "Ausgewertet ✓" : "Entsperrt") : "Gesperrt"}
                     </span>
                   </span>
-                  <span className="evidence-list__found">Besitzer: {device.owner}</span>
+                  <span className="evidence-list__found">
+                    {kindLabel} · Besitzer: {device.owner}
+                    {device.seizedAt && ` · sichergestellt: ${device.seizedAt}`}
+                  </span>
                   <span className="evidence-list__description">
-                    {canOpen ? `${status} — klicken zum Auswerten` : status}
+                    {canOpen
+                      ? `${status} — ${reviewed ? "erneut ansehen" : "klicken zum Auswerten"}`
+                      : status}
                   </span>
                 </button>
               </li>

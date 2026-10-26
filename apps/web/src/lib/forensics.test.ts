@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Device } from "@case-zero/shared";
-import { listDevices, toDeviceEntry } from "./forensics";
+import { deviceSummary, listDevices, markReviewed, toDeviceEntry } from "./forensics";
 
 const phone: Device = {
   id: "smartphone-vogt",
@@ -60,5 +60,41 @@ describe("Forensik-Terminal", () => {
 
   it("liefert fuer einen Fall ohne Geraete eine leere Liste", () => {
     expect(listDevices([])).toEqual([]);
+  });
+});
+
+describe("Geraete auflisten (#44)", () => {
+  const phone: Device = {
+    id: "phone",
+    label: "Smartphone A",
+    owner: "A",
+    kind: "smartphone",
+    seizedAt: "Buero",
+    messages: [],
+  };
+  const laptop: Device = { id: "laptop", label: "Laptop B", owner: "B", messages: [] };
+  const locked: Device = { id: "locked", label: "Handy C", owner: "C", locked: true, messages: [] };
+
+  it("nennt die Geraeteart, ohne Angabe 'Geraet'", () => {
+    expect(toDeviceEntry(phone).kindLabel).toBe("Smartphone");
+    expect(toDeviceEntry(laptop).kindLabel).toBe("Geraet");
+  });
+
+  it("zeigt Unausgewertetes zuerst, dann Ausgewertetes, dann Gesperrtes", () => {
+    const order = listDevices([locked, phone, laptop], ["phone"]).map((e) => e.device.id);
+    expect(order).toEqual(["laptop", "phone", "locked"]);
+  });
+
+  it("fasst zusammen, was vorliegt", () => {
+    expect(deviceSummary(listDevices([locked, phone, laptop], ["phone"]))).toBe(
+      "2 auswertbar · 1 noch nicht ausgewertet · 1 gesperrt"
+    );
+    expect(deviceSummary(listDevices([phone], ["phone"]))).toBe(
+      "1 auswertbar · alle ausgewertet · 0 gesperrt"
+    );
+  });
+
+  it("merkt sich ein ausgewertetes Geraet nur einmal", () => {
+    expect(markReviewed(markReviewed([], "phone"), "phone")).toEqual(["phone"]);
   });
 });

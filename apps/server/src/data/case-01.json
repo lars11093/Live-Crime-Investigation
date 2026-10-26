@@ -184,6 +184,8 @@
       "id": "smartphone-vogt",
       "label": "Smartphone Thomas Vogt",
       "owner": "Thomas Vogt",
+      "kind": "smartphone",
+      "seizedAt": "Jackentasche des Opfers, Buero 4.12",
       "messages": [
         {
           "id": "msg-vogt-01",
@@ -245,6 +247,8 @@
       "id": "smartphone-fischer",
       "label": "Smartphone Leo Fischer",
       "owner": "Leo Fischer",
+      "kind": "smartphone",
+      "seizedAt": "Serverraum, Untergeschoss",
       "locked": true,
       "lockType": "PIN, 4 Ziffern",
       "messages": [
@@ -266,6 +270,8 @@
       "id": "laptop-vogt",
       "label": "Laptop Thomas Vogt",
       "owner": "Thomas Vogt",
+      "kind": "laptop",
+      "seizedAt": "Dockingstation, Buero 4.12",
       "locked": true,
       "lockType": "Passwort",
       "messages": []
