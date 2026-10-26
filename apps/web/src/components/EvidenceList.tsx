@@ -11,6 +11,7 @@ import {
   type EvidenceKind,
 } from "../lib/evidenceFilter";
 import { SORT_LABEL, formatCollectedAt, sortEvidence, type EvidenceSort } from "../lib/evidenceSort";
+import { RELEVANCE_LABEL, type Relevance } from "../lib/relevance";
 
 interface Props {
   evidence: CollectedEvidence[];
@@ -20,6 +21,8 @@ interface Props {
   tags?: Record<string, string[]>;
   /** Tatortfotos (#35), pro Beweis-ID. */
   photos?: Record<string, EvidencePhoto>;
+  /** Relevanz digitaler Spuren (#47). */
+  relevance?: Record<string, Relevance>;
   /** Oeffnet die Detailansicht (#11). */
   onOpen?: (id: string) => void;
   /** Zurueck in die Fallakte. Fehlt, wenn die Liste eingebettet gezeigt wird. */
@@ -39,7 +42,15 @@ interface Props {
  * Story #37 — sortieren nach Fundzeit (beide Richtungen), Art oder Name.
  * Sortiert wird nur die Anzeige; die Akte selbst bleibt in Fundreihenfolge.
  */
-export function EvidenceList({ evidence, notes = {}, tags = {}, photos = {}, onOpen, onBack }: Props) {
+export function EvidenceList({
+  evidence,
+  notes = {},
+  tags = {},
+  photos = {},
+  relevance = {},
+  onOpen,
+  onBack,
+}: Props) {
   const [filter, setFilter] = useState<EvidenceFilter>(NO_FILTER);
   const [sort, setSort] = useState<EvidenceSort>("found-asc");
   const shown = sortEvidence(filterEvidence(evidence, filter, notes), sort);
@@ -113,7 +124,10 @@ export function EvidenceList({ evidence, notes = {}, tags = {}, photos = {}, onO
                 {photos[item.id] && <EvidencePhotoView photo={photos[item.id]} />}
                 <span className="evidence-list__head">
                   <span className="evidence-list__label">{item.label}</span>
-                  <span className="evidence-list__kind">{KIND_LABEL[item.kind]}</span>
+                  <span className="evidence-list__kind">
+                    {KIND_LABEL[item.kind]}
+                    {relevance[item.id] && ` · ${RELEVANCE_LABEL[relevance[item.id]]}`}
+                  </span>
                 </span>
                 <span className="evidence-list__description">{item.description}</span>
                 {notes[item.id] && (
