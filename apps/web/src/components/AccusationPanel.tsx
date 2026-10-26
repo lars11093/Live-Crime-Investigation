@@ -5,6 +5,7 @@ import { KIND_LABEL } from "./evidenceKind";
 import { CaseResolution } from "./CaseResolution";
 import { AccusationReview } from "./AccusationReview";
 import type { ReviewFinding } from "../lib/accusationReview";
+import { SubmitConfirmDialog } from "./SubmitConfirmDialog";
 
 interface Props {
   draft: AccusationDraft;
@@ -42,6 +43,8 @@ function formatSubmittedAt(iso: string): string {
  *
  * Story #27 — Anklage absenden. Nur mit Taeter und mindestens einem Beweis;
  * danach zeigt das Panel die Bestaetigung und nichts laesst sich mehr aendern.
+ *
+ * Story #53 — vor dem endgueltigen Absenden steht ein Bestaetigungsdialog.
  */
 export function AccusationPanel({
   draft,
@@ -58,6 +61,8 @@ export function AccusationPanel({
   const [sending, setSending] = useState(false);
   // #52 — die Pruefung erscheint erst auf Wunsch und rechnet dann bei jeder Aenderung neu.
   const [showReview, setShowReview] = useState(false);
+  // #53 — erst bestaetigen, dann absenden.
+  const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const suspect = suspects.find((s) => s.id === draft.suspectId);
   const attached = draft.evidenceIds
@@ -73,6 +78,9 @@ export function AccusationPanel({
     const problem = await onSubmit();
     setSending(false);
     setError(problem);
+    // Bei Erfolg zeigt das Panel ohnehin die Quittung; bei einem Fehler
+    // zurueck zur Anklage, damit die Meldung sichtbar ist.
+    setConfirming(false);
   }
 
   if (receipt) {
@@ -218,12 +226,22 @@ export function AccusationPanel({
         </button>
         <button
           className="button--primary"
-          onClick={submit}
+          onClick={() => setConfirming(true)}
           disabled={missing.length > 0 || sending}
         >
-          {sending ? "Wird uebermittelt…" : "Anklage absenden"}
+          Anklage absenden …
         </button>
       </div>
+      {confirming && suspect && (
+        <SubmitConfirmDialog
+          suspectName={suspect.name}
+          evidenceLabels={attached.map((e) => e.label)}
+          warningCount={review.filter((f) => f.level === "warnung").length}
+          sending={sending}
+          onConfirm={submit}
+          onCancel={() => setConfirming(false)}
+        />
+      )}
       {error && (
         <p className="team-code__error" role="alert">
           {error}
