@@ -14,7 +14,7 @@ describe("Anklage absenden (#27)", () => {
       { suspectId: "monica-brandt", evidenceIds: ["tasse-lippenstift"] },
       new Date("2026-10-26T10:00:00Z")
     );
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       ok: true,
       receipt: {
         suspectId: "monica-brandt",
@@ -22,6 +22,8 @@ describe("Anklage absenden (#27)", () => {
         submittedAt: "2026-10-26T10:00:00.000Z",
       },
     });
+    // Die Aufloesung kommt mit der Quittung (#28).
+    expect(result.ok && result.receipt.verdict.culprit.id).toBe(room.scenario.suspectId);
   });
 
   it("lehnt eine Anklage ohne Beweis ab", () => {

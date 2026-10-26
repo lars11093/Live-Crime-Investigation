@@ -41,6 +41,13 @@ export interface Scenario {
   weapon: string;
   timeOfCrime: string;
   requiredEdgeIds: string[];
+  /**
+   * Beweise, die diese Loesung tragen (#28). Angehaengte Beweise ausserhalb
+   * dieser Liste gelten in der Aufloesung als "traegt nichts bei".
+   */
+  keyEvidenceIds: string[];
+  /** Was tatsaechlich passiert ist — erscheint erst nach der Anklage (#28). */
+  resolution: string;
 }
 
 export interface Suspect {
@@ -262,6 +269,33 @@ export type AccusationSubmission = Pick<Accusation, "suspectId" | "evidenceIds">
 export interface AccusationReceipt extends AccusationSubmission {
   /** ISO-Zeitpunkt, zu dem der Server die Anklage angenommen hat. */
   submittedAt: string;
+  /** Die Aufloesung (#28), gleich mit der Quittung ausgeliefert. */
+  verdict: AccusationVerdict;
+}
+
+/**
+ * Ein einzelner Schluss in der Aufloesung (Story #28): richtig oder falsch,
+ * mit dem Satz, der dazu im UI steht.
+ */
+export interface VerdictFinding {
+  /** Worum es geht: der Taeter, ein angehaengter Beweis oder ein uebersehener. */
+  topic: "suspect" | "evidence" | "missed";
+  correct: boolean;
+  text: string;
+}
+
+/**
+ * Die Aufloesung des Falls nach der Anklage (Story #28).
+ *
+ * Verlaesst den Server erst, wenn die Anklage abgesendet ist — vorher waere
+ * sie die Loesung.
+ */
+export interface AccusationVerdict {
+  solved: boolean;
+  culprit: { id: string; name: string };
+  /** Der Aufloesungstext aus dem aktiven Szenario. */
+  resolution: string;
+  findings: VerdictFinding[];
 }
 
 /** Antwort des Servers auf `POST /api/rooms/:code/accusation` (Story #27). */
