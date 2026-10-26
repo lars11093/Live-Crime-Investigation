@@ -46,6 +46,7 @@ import { storePhoto } from "../lib/photos";
 import { rateInsight } from "../lib/insightRating";
 import { setAlibiVerdict } from "../lib/alibi";
 import { setSuspicion } from "../lib/suspicion";
+import { setRelevance } from "../lib/relevance";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View =
@@ -320,6 +321,13 @@ export function CaseLoaderPage() {
                 ),
               }))
             }
+            relevance={progress.relevance}
+            onRelevance={(messageId, level) =>
+              setProgress((prev) => ({
+                ...prev,
+                relevance: setRelevance(prev.relevance, messageId, level),
+              }))
+            }
             metadataReadIds={progress.metadataReadIds}
             onReadMetadata={(messageId) =>
               setProgress((prev) =>
@@ -420,6 +428,13 @@ export function CaseLoaderPage() {
               evidence={open}
               note={notes[open.id] ?? ""}
               photo={progress.photos[open.id]}
+              relevance={progress.relevance[open.id]}
+              onRelevance={(level) =>
+                setProgress((prev) => ({
+                  ...prev,
+                  relevance: setRelevance(prev.relevance, open.id, level),
+                }))
+              }
               noteEditedAt={progress.noteEditedAt[open.id]}
               onSaveNote={(text) => setProgress((prev) => saveNote(prev, open.id, text))}
               onBack={() => setOpenEvidenceId(null)}
@@ -430,6 +445,7 @@ export function CaseLoaderPage() {
                 evidence={collected}
                 notes={notes}
                 photos={progress.photos}
+                relevance={progress.relevance}
                 onOpen={setOpenEvidenceId}
                 onBack={() => setView("akte")}
               />

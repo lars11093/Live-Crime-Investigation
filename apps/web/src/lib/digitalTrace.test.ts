@@ -65,3 +65,11 @@ describe("Anhang mit Metadaten in der Akte (#45)", () => {
     );
   });
 });
+
+describe("Herkunft einer digitalen Spur (#47)", () => {
+  it("markiert gesicherte Nachrichten als vom Geraet", () => {
+    const device = { id: "d", label: "Smartphone", owner: "A", messages: [] };
+    const message = { id: "m", sender: "B", sentAt: "12.09. 21:15", text: "Hallo" };
+    expect(messageToEvidence(device, message).source).toBe("device");
+  });
+});

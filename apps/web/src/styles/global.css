@@ -1880,3 +1880,24 @@ div.account-bar {
     padding: 0.35rem 0.25rem;
   }
 }
+
+/* Story #47 — Relevanz digitaler Spuren */
+.relevance--hoch {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.relevance--mittel {
+  border-color: #eab308;
+  color: #eab308;
+}
+
+.relevance--niedrig {
+  border-color: var(--muted);
+  color: var(--muted);
+}
+
+.chat__bubble .insight-rating {
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+}

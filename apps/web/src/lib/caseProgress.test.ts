@@ -62,12 +62,15 @@ describe("Fortschritt speichern und laden", () => {
       markedMessageIds: [],
       reviewedDeviceIds: ["smartphone-vogt"],
       metadataReadIds: ["msg-vogt-06"],
+      relevance: { "msg-vogt-07": "hoch" },
       alibiVerdicts: { "daniel-keller": "zweifelhaft" },
       suspicion: { "monica-brandt": 4 },
       accusation: { suspectId: "monica-brandt", evidenceIds: ["tasse-lippenstift"] },
       photos: {},
     });
     const loaded = loadProgress(storage, "ABC-123");
+    // Die Relevanz digitaler Spuren bleibt erhalten (#47).
+    expect(loaded.relevance).toEqual({ "msg-vogt-07": "hoch" });
     // Ausgelesene Metadaten bleiben ausgelesen (#45).
     expect(loaded.metadataReadIds).toEqual(["msg-vogt-06"]);
     // Ausgewertete Geraete bleiben ausgewertet (#44).

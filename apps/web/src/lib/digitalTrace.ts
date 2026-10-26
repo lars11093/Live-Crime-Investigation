@@ -27,6 +27,7 @@ export function messageToEvidence(
     id: message.id,
     label: `Nachricht von ${message.sender}`,
     kind: "message",
+    source: "device",
     description: `«${message.text}»${attachment}`,
     foundAt: {
       sceneName: device.label,
