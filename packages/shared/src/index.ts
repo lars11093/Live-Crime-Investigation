@@ -189,9 +189,22 @@ export interface Scene {
  * Optional am Fall: fehlt es, zeigt der Client "Kein Briefing verfuegbar"
  * statt einer leeren Box.
  */
+/** Das Tatzeitfenster als Uhrzeiten (#42), z. B. 22:30 bis 22:50. */
+export interface CrimeWindow {
+  /** "HH:MM" */
+  from: string;
+  /** "HH:MM" */
+  to: string;
+}
+
 export interface CaseBriefing {
   /** Tatzeit, wie sie im Briefing steht — z. B. "Freitag, 22:30 Uhr". */
   timeOfCrime: string;
+  /**
+   * Dieselbe Tatzeit maschinenlesbar, fuer die Alibi-Pruefung (#42).
+   * Optional: ohne Fenster bietet das Profil keine Pruefung an.
+   */
+  crimeWindow?: CrimeWindow;
   /** Tatort in Worten — z. B. "Buero 4.12, Hardturmstrasse 61". */
   location: string;
   /** Fliesstext, mindestens drei Saetze. */

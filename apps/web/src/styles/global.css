@@ -1674,3 +1674,75 @@ div.account-bar {
   color: var(--ink);
   padding: 0 0.1rem;
 }
+
+/* Story #42 — Alibi pruefen */
+.alibi {
+  border-top: 1px solid var(--border);
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.alibi__timeline {
+  position: relative;
+  height: 2.6rem;
+  border-bottom: 1px solid var(--muted);
+  margin: 0.5rem 1.5rem 0;
+}
+
+.alibi__window {
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  background: rgba(239, 68, 68, 0.18);
+  border-left: 1px dashed var(--danger);
+  border-right: 1px dashed var(--danger);
+}
+
+.alibi__tick {
+  position: absolute;
+  bottom: -0.35rem;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: var(--muted);
+  padding-bottom: 0.9rem;
+  border-bottom: 3px solid var(--muted);
+}
+
+.alibi__tick--in {
+  color: var(--danger);
+  border-bottom-color: var(--danger);
+}
+
+.alibi__entries {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.35rem;
+  line-height: 1.5;
+}
+
+.alibi__entry--in strong {
+  color: var(--danger);
+}
+
+.alibi__warning {
+  margin: 0;
+  color: #eab308;
+}
+
+.alibi__verdict--haltbar {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.alibi__verdict--zweifelhaft {
+  border-color: #eab308;
+  color: #eab308;
+}
+
+.alibi__verdict--nicht-haltbar {
+  border-color: var(--danger);
+  color: var(--danger);
+}

@@ -60,10 +60,13 @@ describe("Fortschritt speichern und laden", () => {
       insightRatings: { "insight-1": 3 },
       contradictions: [],
       markedMessageIds: [],
+      alibiVerdicts: { "daniel-keller": "zweifelhaft" },
       accusation: { suspectId: "monica-brandt", evidenceIds: ["tasse-lippenstift"] },
       photos: {},
     });
     const loaded = loadProgress(storage, "ABC-123");
+    // Das Urteil ueber ein Alibi bleibt erhalten (#42).
+    expect(loaded.alibiVerdicts).toEqual({ "daniel-keller": "zweifelhaft" });
     // Die eigene Bewertung einer Verknuepfung bleibt erhalten (#39).
     expect(loaded.insightRatings).toEqual({ "insight-1": 3 });
     // Taeterauswahl und angehaengte Beweise ueberstehen ein Neuladen (#25, #26).

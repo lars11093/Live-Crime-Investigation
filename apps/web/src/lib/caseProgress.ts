@@ -2,6 +2,7 @@ import type { CollectedEvidence, Insight } from "@case-zero/shared";
 import { EMPTY_ACCUSATION, parseAccusation, type AccusationDraft } from "./accusation";
 import { parsePhotos, type EvidencePhoto } from "./photos";
 import { parseRatings, type InsightStrength } from "./insightRating";
+import { parseAlibiVerdicts, type AlibiVerdict } from "./alibi";
 
 /**
  * Der Ermittlungsfortschritt einer Person in einer Team-Session.
@@ -25,6 +26,8 @@ export interface CaseProgress {
   contradictions: Contradiction[];
   /** Als relevant markierte Chatnachrichten (#19), per Nachrichten-ID. */
   markedMessageIds: string[];
+  /** Eigenes Urteil ueber das Alibi, pro Verdaechtigem (#42). */
+  alibiVerdicts: Record<string, AlibiVerdict>;
   /** Entwurf der Anklage: Taeter (#25) und angehaengte Beweise (#26). */
   accusation: AccusationDraft;
   /** Tatortfotos der Funde (#35), pro Beweis-ID eins. */
@@ -103,6 +106,7 @@ export const EMPTY_PROGRESS: CaseProgress = {
   insightRatings: {},
   contradictions: [],
   markedMessageIds: [],
+  alibiVerdicts: {},
   accusation: EMPTY_ACCUSATION,
   photos: {},
 };
@@ -171,6 +175,7 @@ export function loadProgress(
       insightRatings: parseRatings(parsed.insightRatings),
       contradictions: Array.isArray(parsed.contradictions) ? parsed.contradictions : [],
       markedMessageIds: Array.isArray(parsed.markedMessageIds) ? parsed.markedMessageIds : [],
+      alibiVerdicts: parseAlibiVerdicts(parsed.alibiVerdicts),
       accusation: parseAccusation(parsed.accusation),
       photos: parsePhotos(parsed.photos),
     };
