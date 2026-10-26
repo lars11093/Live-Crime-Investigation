@@ -324,6 +324,8 @@ Reflexion und Lernjournal.
 
 | Person | Mein Beitrag | Wichtigste Erkenntnis | Nächster Lernschritt |
 |---|---|---|---|
+| Lars | | | |
+| Loris | Stories #19, #20, #21, #22, #23, #24 umgesetzt (PRs #112, #113, #116 – #119, von Lars reviewt, gemergt), PR #120 von Chime reviewt | Je länger ein PR offen ist, desto mehr Konflikte gibt es, vor allem wenn alle in `CaseLoaderPage.tsx` arbeiten. Aufeinander gestapelte PRs machen das noch schlimmer | PRs kleiner halten und früher zum Review geben, Abhängigkeiten zwischen Stories vorher im Daily absprechen |
 | Lars |Reviewen und mergen |Es ist gut wenn alle arbeiten sonst hart |letzte changes reviewen und mergen |
 | Loris | | | |
 | Elina | | | |
