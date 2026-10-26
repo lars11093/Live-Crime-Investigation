@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { CaseDefinition } from "@case-zero/shared";
 import { createRoom } from "./rooms.js";
-import { MAX_NAME_LENGTH, chooseRole, joinTeam, leaveTeam, teamOf } from "./team.js";
+import { MAX_NAME_LENGTH, chooseRole, joinTeam, leaveTeam, teamOf, teamStateOf } from "./team.js";
 import case01 from "../data/case-01.json" with { type: "json" };
 
 const caseDef = case01 as CaseDefinition;
@@ -125,5 +125,70 @@ describe("Rolle waehlen (#31)", () => {
     chooseRole(room, "socket-Anna", "lead");
     leaveTeam(room, "socket-Anna");
     expect(chooseRole(room, "socket-Ben", "lead").ok).toBe(true);
+  });
+});
+
+describe("Teamleitung vergibt Rollen (#48)", () => {
+  function roomWith(...names: string[]) {
+    const room = createRoom(caseDef);
+    for (const name of names) joinTeam(room, `socket-${name}`, name);
+    return room;
+  }
+  const roleOf = (room: ReturnType<typeof createRoom>, id: string) =>
+    teamOf(room).find((p) => p.id === id)?.role;
+
+  it("macht die erste Person im Team zur Teamleitung", () => {
+    const room = roomWith("Anna", "Ben");
+    expect(teamStateOf(room).leaderId).toBe("socket-Anna");
+    // Ein erneuter Beitritt aendert daran nichts.
+    joinTeam(room, "socket-Ben", "Ben");
+    expect(teamStateOf(room).leaderId).toBe("socket-Anna");
+  });
+
+  it("laesst die Teamleitung Rollen an andere vergeben", () => {
+    const room = roomWith("Anna", "Ben");
+    expect(chooseRole(room, "socket-Anna", "cyber", "socket-Ben")).toEqual({ ok: true });
+    expect(roleOf(room, "socket-Ben")).toBe("cyber");
+  });
+
+  it("laesst Mitspieler nicht die Rolle eines anderen setzen", () => {
+    const room = roomWith("Anna", "Ben");
+    expect(chooseRole(room, "socket-Ben", "lead", "socket-Anna")).toEqual({
+      ok: false,
+      error: "Nur die Teamleitung kann Rollen an andere vergeben.",
+    });
+  });
+
+  it("haelt auch fuer die Teamleitung jede Rolle exklusiv", () => {
+    const room = roomWith("Anna", "Ben");
+    chooseRole(room, "socket-Anna", "lead");
+    expect(chooseRole(room, "socket-Anna", "lead", "socket-Ben").ok).toBe(false);
+  });
+
+  it("laesst die Teamleitung eine Rolle wieder entziehen", () => {
+    const room = roomWith("Anna", "Ben");
+    chooseRole(room, "socket-Ben", "field");
+    chooseRole(room, "socket-Anna", null, "socket-Ben");
+    expect(roleOf(room, "socket-Ben")).toBeNull();
+  });
+
+  it("weist Ziele ausserhalb des Teams ab", () => {
+    const room = roomWith("Anna");
+    expect(chooseRole(room, "socket-Anna", "lead", "socket-Zoe").ok).toBe(false);
+  });
+
+  it("gibt die Leitung weiter, wenn die Teamleitung geht", () => {
+    const room = roomWith("Anna", "Ben", "Cem");
+    leaveTeam(room, "socket-Anna");
+    expect(teamStateOf(room).leaderId).toBe("socket-Ben");
+    expect(chooseRole(room, "socket-Ben", "cyber", "socket-Cem").ok).toBe(true);
+  });
+
+  it("hat keine Leitung mehr, wenn alle gegangen sind, und vergibt sie neu", () => {
+    const room = roomWith("Anna");
+    leaveTeam(room, "socket-Anna");
+    expect(teamStateOf(room).leaderId).toBeNull();
+    joinTeam(room, "socket-Ben", "Ben");
+    expect(teamStateOf(room).leaderId).toBe("socket-Ben");
   });
 });

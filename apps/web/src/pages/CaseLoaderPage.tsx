@@ -762,11 +762,12 @@ export function CaseLoaderPage() {
           <TeamRoles
             myId={team.myId}
             players={team.players}
+            leaderId={team.leaderId}
             joined={team.name !== ""}
             error={roleError ?? team.error}
-            onChoose={async (role) => {
+            onAssign={async (playerId, role) => {
               try {
-                const result = await team.chooseRole(role);
+                const result = await team.chooseRole(role, playerId === team.myId ? undefined : playerId);
                 setRoleError(result.ok ? null : result.error);
               } catch {
                 setRoleError("Server nicht erreichbar. Bitte erneut versuchen.");

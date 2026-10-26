@@ -585,7 +585,10 @@ export interface ClientToServerEvents {
   /** Story #22 — mit Namen dem Team einer Session beitreten. */
   "team:join": (payload: { code: string; playerName: string }, cb: (result: TeamJoinResult) => void) => void;
   /** Story #31 — die eigene Rolle waehlen; `null` gibt sie wieder frei. */
-  "team:role": (payload: { code: string; role: Role | null }, cb: (result: TeamJoinResult) => void) => void;
+  "team:role": (
+    payload: { code: string; role: Role | null; /** Wem die Rolle gehoeren soll (#48); fehlt = mir. */ playerId?: string },
+    cb: (result: TeamJoinResult) => void
+  ) => void;
   /** Story #23 — einen Fund aus der eigenen Akte mit dem Team teilen. */
   "evidence:share": (payload: { code: string; evidence: CollectedEvidence }, cb: (result: ShareResult) => void) => void;
   /** Story #64 — eine eigene Notiz zu einem Beweis mit dem Team teilen. */
@@ -597,6 +600,13 @@ export interface ClientToServerEvents {
   "team:next": (payload: { code: string; newCode: string }, cb: (result: TeamJoinResult) => void) => void;
 }
 
+/** Die Teamliste mit der Teamleitung (#48): wer zuerst beigetreten ist. */
+export interface TeamState {
+  players: Player[];
+  /** Socket-ID der Teamleitung, `null` solange niemand im Team ist. */
+  leaderId: string | null;
+}
+
 /** Antwort auf `team:join` (#22). */
 export type TeamJoinResult = { ok: true } | { ok: false; error: string };
 
@@ -606,7 +616,7 @@ export interface ServerToClientEvents {
   "board:update": (board: RoomState["board"]) => void;
   "error:message": (message: string) => void;
   /** Story #22 — die aktuelle Teamliste, nach jedem Beitritt und Verlassen an alle im Raum. */
-  "team:update": (players: Player[]) => void;
+  "team:update": (team: TeamState) => void;
   /** Story #23 — alle geteilten Funde, nach jedem Teilen an alle und beim Beitritt an den Neuen. */
   "team:findings": (findings: SharedFinding[]) => void;
   /** Story #64 — alle geteilten Notizen, nach jedem Teilen an alle und beim Beitritt an den Neuen. */
