@@ -81,6 +81,9 @@ import { addTag, allTags, filterByTag, loadTags, removeTag, saveTags } from "../
 import { EvidenceTagEditor } from "../components/EvidenceTagEditor";
 import { EvidenceTagFilter } from "../components/EvidenceTagFilter";
 import { loadExcluded, saveExcluded, toggleExcluded } from "../lib/excludedSuspects";
+import { TeamChat } from "../components/TeamChat";
+import { useTeamChat } from "../lib/useTeamChat";
+import { unreadCount } from "../lib/teamChat";
 import { storePhoto } from "../lib/photos";
 import { rateInsight } from "../lib/insightRating";
 import { setAlibiVerdict } from "../lib/alibi";
@@ -96,7 +99,8 @@ type View =
   | "verdaechtige"
   | "forensik"
   | "anklage"
-  | "team";
+  | "team"
+  | "chat";
 
 type LoadState =
   | { status: "loading" }
@@ -261,6 +265,15 @@ export function CaseLoaderPage() {
   }, [code]);
 
   useEffect(() => load(), [load]);
+
+  // Team-Chat (#49): verbunden, sobald die Seite offen ist — so zaehlen auch
+  // Nachrichten, die ankommen, waehrend man im Tatort ist.
+  const chat = useTeamChat(code);
+  const [chatReadCount, setChatReadCount] = useState(0);
+  useEffect(() => {
+    if (view === "chat") setChatReadCount(chat.messages.length);
+  }, [view, chat.messages.length]);
+  const chatUnread = unreadCount(chat.messages, team.myId ?? "", chatReadCount);
 
   if (state.status === "loading") {
     return (
@@ -756,6 +769,21 @@ export function CaseLoaderPage() {
       );
     }
 
+    if (view === "chat") {
+      return (
+        <main className="app-shell">
+          <TeamChat
+            myId={team.myId}
+            joined={team.name !== ""}
+            messages={chat.messages}
+            connected={chat.connected}
+            onSend={chat.send}
+            onBack={() => setView("akte")}
+          />
+        </main>
+      );
+    }
+
     if (view === "team") {
       return (
         <main className="app-shell">
@@ -898,6 +926,9 @@ export function CaseLoaderPage() {
             </button>
             <button onClick={() => setView("team")}>
               {myRole ? `Team · ${ROLE_LABEL[myRole]}` : "Team · Rolle waehlen"}
+            </button>
+            <button onClick={() => setView("chat")}>
+              Team-Chat{chatUnread > 0 ? ` (${chatUnread} neu)` : ""}
             </button>
             <button onClick={() => setView("briefing")}>Briefing</button>
             {caseData.intro && (

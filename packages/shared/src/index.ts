@@ -562,6 +562,19 @@ export interface ScoreResult {
   evidenceTotal: number;
 }
 
+/** Eine Nachricht im Team-Chat (#49). */
+export interface TeamChatMessage {
+  id: string;
+  /** Socket-ID der Person, die geschrieben hat (#22). */
+  playerId: string;
+  name: string;
+  /** Rolle zum Zeitpunkt des Schreibens (#31), falls vergeben. */
+  role: Role | null;
+  text: string;
+  /** ISO-Zeitpunkt, vom Server gesetzt. */
+  sentAt: string;
+}
+
 export interface RoomState {
   code: string;
   caseId: string;
@@ -598,6 +611,11 @@ export interface ClientToServerEvents {
   ) => void;
   /** Story #57 — das ganze Team aus `code` in die neue Session `newCode` mitnehmen. */
   "team:next": (payload: { code: string; newCode: string }, cb: (result: TeamJoinResult) => void) => void;
+  /** Story #49 — Nachricht an das Team. Der Callback meldet eine Ablehnung, z. B. zu lang. */
+  "chat:send": (
+    payload: { code: string; text: string },
+    cb: (result: { ok: true } | { ok: false; reason: string }) => void
+  ) => void;
 }
 
 /** Die Teamliste mit der Teamleitung (#48): wer zuerst beigetreten ist. */
@@ -623,4 +641,8 @@ export interface ServerToClientEvents {
   "team:notes": (notes: SharedNote[]) => void;
   /** Story #57 — das Team zieht in eine neue Session um; `by` hat sie angelegt. */
   "team:moved": (payload: { code: string; by: string }) => void;
+  /** Story #49 — bisheriger Chatverlauf, beim Beitritt an den Neuen. */
+  "chat:history": (messages: TeamChatMessage[]) => void;
+  /** Story #49 — neue Nachricht an alle im Raum. */
+  "chat:message": (message: TeamChatMessage) => void;
 }
