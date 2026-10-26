@@ -258,6 +258,8 @@
         { "at": "12.09. 22:31", "place": "Buero 4.12, Hardturmstrasse 61", "source": "WLAN CORP-4OG" },
         { "at": "12.09. 22:44", "place": "Buero 4.12, Hardturmstrasse 61", "source": "WLAN CORP-4OG" }
       ],
+      "kind": "smartphone",
+      "seizedAt": "Jackentasche des Opfers, Buero 4.12",
       "messages": [
         {
           "id": "msg-vogt-01",
@@ -350,6 +352,8 @@
       "id": "smartphone-fischer",
       "label": "Smartphone Leo Fischer",
       "owner": "Leo Fischer",
+      "kind": "smartphone",
+      "seizedAt": "Serverraum, Untergeschoss",
       "locked": true,
       "lockType": "PIN, 4 Ziffern",
       "locations": [
@@ -379,6 +383,8 @@
       "id": "laptop-vogt",
       "label": "Laptop Thomas Vogt",
       "owner": "Thomas Vogt",
+      "kind": "laptop",
+      "seizedAt": "Dockingstation, Buero 4.12",
       "locked": true,
       "lockType": "Passwort",
       "lockHint": "Am Bildschirmrand klebt ein Post-it: \"PW = Ordner mit den echten Zahlen\".",

@@ -166,6 +166,10 @@ export interface Device {
    * das Feld, geprueft wird nur in `engine/unlock.ts`.
    */
   unlockSecret?: string;
+  /** Geraeteart fuer die Uebersicht (#44). Fehlt sie, steht "Geraet". */
+  kind?: "smartphone" | "laptop" | "tablet" | "storage";
+  /** Wo das Geraet sichergestellt wurde (#44), z. B. "Schreibtisch, Buero 4.12". */
+  seizedAt?: string;
   messages: ChatMessage[];
   /** Dateien auf dem Geraet (#20). Optional: nicht jedes Geraet hat welche. */
   files?: DeviceFile[];
