@@ -1645,3 +1645,32 @@ div.account-bar {
   font-size: 0.85rem;
   line-height: 1.5;
 }
+
+/* Story #41 — Aussagen durchsuchen */
+.statement-search__hits {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.statement-search__hit {
+  display: grid;
+  gap: 0.25rem;
+  border-left: 2px solid var(--border);
+  padding-left: 0.75rem;
+  line-height: 1.5;
+}
+
+.statement-search__who {
+  justify-self: start;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.statement-search__mark {
+  background: rgba(34, 197, 94, 0.25);
+  color: var(--ink);
+  padding: 0 0.1rem;
+}

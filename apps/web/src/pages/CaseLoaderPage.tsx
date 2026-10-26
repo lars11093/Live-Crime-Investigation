@@ -30,6 +30,7 @@ import { SuspectList } from "../components/SuspectList";
 import { SuspectProfile } from "../components/SuspectProfile";
 import { ContradictionOverview } from "../components/ContradictionOverview";
 import { SuspectCompare } from "../components/SuspectCompare";
+import { StatementSearch } from "../components/StatementSearch";
 import { ChatHistory } from "../components/ChatHistory";
 import { ForensicsTerminal } from "../components/ForensicsTerminal";
 import { messageToEvidence } from "../lib/digitalTrace";
@@ -348,6 +349,9 @@ export function CaseLoaderPage() {
                 }
                 selectionLocked={Boolean(accusation.receipt)}
               />
+              <div style={{ marginTop: "1rem" }}>
+                <StatementSearch suspects={caseData.suspects} onOpen={setOpenSuspectId} />
+              </div>
               <div style={{ marginTop: "1rem" }}>
                 <SuspectCompare suspects={caseData.suspects} contradictions={contradictions} />
               </div>
