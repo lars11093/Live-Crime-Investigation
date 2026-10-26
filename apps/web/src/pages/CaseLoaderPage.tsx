@@ -14,8 +14,8 @@ import {
   browserStorage,
   collectEvidence,
   loadProgress,
+  saveNote,
   saveProgress,
-  setNote,
   toggleContradiction,
   toggleInvestigated,
   toggleMarkedMessage,
@@ -364,9 +364,8 @@ export function CaseLoaderPage() {
               evidence={open}
               note={notes[open.id] ?? ""}
               photo={progress.photos[open.id]}
-              onSaveNote={(text) =>
-                setProgress((prev) => ({ ...prev, notes: setNote(prev.notes, open.id, text) }))
-              }
+              noteEditedAt={progress.noteEditedAt[open.id]}
+              onSaveNote={(text) => setProgress((prev) => saveNote(prev, open.id, text))}
               onBack={() => setOpenEvidenceId(null)}
             />
           ) : (
