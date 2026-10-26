@@ -27,6 +27,8 @@ export interface CaseProgress {
   contradictions: Contradiction[];
   /** Als relevant markierte Chatnachrichten (#19), per Nachrichten-ID. */
   markedMessageIds: string[];
+  /** Im Forensik-Terminal bereits geoeffnete Geraete (#44). */
+  reviewedDeviceIds: string[];
   /** Eigenes Urteil ueber das Alibi, pro Verdaechtigem (#42). */
   alibiVerdicts: Record<string, AlibiVerdict>;
   /** Eigener Verdachtsgrad pro Verdaechtigem (#43). */
@@ -109,6 +111,7 @@ export const EMPTY_PROGRESS: CaseProgress = {
   insightRatings: {},
   contradictions: [],
   markedMessageIds: [],
+  reviewedDeviceIds: [],
   alibiVerdicts: {},
   suspicion: {},
   accusation: EMPTY_ACCUSATION,
@@ -179,6 +182,7 @@ export function loadProgress(
       insightRatings: parseRatings(parsed.insightRatings),
       contradictions: Array.isArray(parsed.contradictions) ? parsed.contradictions : [],
       markedMessageIds: Array.isArray(parsed.markedMessageIds) ? parsed.markedMessageIds : [],
+      reviewedDeviceIds: Array.isArray(parsed.reviewedDeviceIds) ? parsed.reviewedDeviceIds : [],
       alibiVerdicts: parseAlibiVerdicts(parsed.alibiVerdicts),
       suspicion: parseSuspicion(parsed.suspicion),
       accusation: parseAccusation(parsed.accusation),

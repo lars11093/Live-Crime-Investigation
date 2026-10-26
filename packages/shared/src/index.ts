@@ -107,6 +107,10 @@ export interface Device {
   locked?: boolean;
   /** Art der Sperre, wie sie im Terminal steht — z. B. "PIN, 4 Ziffern" (#18). */
   lockType?: string;
+  /** Geraeteart fuer die Uebersicht (#44). Fehlt sie, steht "Geraet". */
+  kind?: "smartphone" | "laptop" | "tablet" | "storage";
+  /** Wo das Geraet sichergestellt wurde (#44), z. B. "Schreibtisch, Buero 4.12". */
+  seizedAt?: string;
   messages: ChatMessage[];
 }
 

@@ -60,12 +60,15 @@ describe("Fortschritt speichern und laden", () => {
       insightRatings: { "insight-1": 3 },
       contradictions: [],
       markedMessageIds: [],
+      reviewedDeviceIds: ["smartphone-vogt"],
       alibiVerdicts: { "daniel-keller": "zweifelhaft" },
       suspicion: { "monica-brandt": 4 },
       accusation: { suspectId: "monica-brandt", evidenceIds: ["tasse-lippenstift"] },
       photos: {},
     });
     const loaded = loadProgress(storage, "ABC-123");
+    // Ausgewertete Geraete bleiben ausgewertet (#44).
+    expect(loaded.reviewedDeviceIds).toEqual(["smartphone-vogt"]);
     // Der Verdachtsgrad bleibt erhalten (#43).
     expect(loaded.suspicion).toEqual({ "monica-brandt": 4 });
     // Das Urteil ueber ein Alibi bleibt erhalten (#42).
