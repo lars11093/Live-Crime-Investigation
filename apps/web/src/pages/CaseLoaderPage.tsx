@@ -22,6 +22,7 @@ import { SuspectProfile } from "../components/SuspectProfile";
 import { ContradictionOverview } from "../components/ContradictionOverview";
 import { ChatHistory } from "../components/ChatHistory";
 import { ForensicsTerminal } from "../components/ForensicsTerminal";
+import { DeviceFiles } from "../components/DeviceFiles";
 import { TeamPanel } from "../components/TeamPanel";
 import { shareMessage, useTeam } from "../lib/team";
 import { SharedFindings } from "../components/SharedFindings";
@@ -61,6 +62,8 @@ export function CaseLoaderPage() {
   const [openSuspectId, setOpenSuspectId] = useState<string | null>(null);
   // Welches Geraet im Forensik-Terminal ausgewertet wird (#18 -> #19).
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
+  // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
+  const [deviceTab, setDeviceTab] = useState<"chat" | "dateien">("chat");
   // Story #25 — Auswahl des Taeters fuer die Anklage.
   const [selectedSuspectId, setSelectedSuspectId] =
       useState<string | null>(null);
@@ -189,8 +192,22 @@ export function CaseLoaderPage() {
         <main className="app-shell">
           <ForensicsTerminal
             devices={devices}
-            onOpen={setOpenDeviceId}
+            onOpen={(id) => {
+              setDeviceTab("chat");
+              setOpenDeviceId(id);
+            }}
             onBack={() => setView("akte")}
+          />
+        </main>
+      );
+    }
+    if (deviceTab === "dateien") {
+      return (
+        <main className="app-shell">
+          <DeviceFiles
+            device={device}
+            onShowMessages={() => setDeviceTab("chat")}
+            onBack={() => setOpenDeviceId(null)}
           />
         </main>
       );
@@ -213,6 +230,7 @@ export function CaseLoaderPage() {
               collected: collectEvidence(prev.collected, messageToEvidence(device, message)),
             }))
           }
+          onShowFiles={device.files?.length ? () => setDeviceTab("dateien") : undefined}
           onBack={() => setOpenDeviceId(null)}
         />
       </main>

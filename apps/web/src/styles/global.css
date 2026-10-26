@@ -1199,6 +1199,7 @@ button:disabled:hover {
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--muted);
+}
 
 .suspect-selection__item {
     display: flex;
@@ -1347,4 +1348,100 @@ button:disabled:hover {
 .progress__open {
   color: var(--muted);
   font-size: 0.8rem;
+}
+
+/* ---------------------------------------------------------------
+   Story #20 — Dateien auf einem Geraet
+   --------------------------------------------------------------- */
+
+.device-files__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.device-files {
+  display: grid;
+  grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 720px) {
+  .device-files {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.device-files__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+}
+
+.device-files__item {
+  display: grid;
+  gap: 0.25rem;
+  width: 100%;
+  text-align: left;
+  color: var(--ink);
+  border-color: var(--border);
+}
+
+.device-files__item:hover,
+.device-files__item:focus-visible,
+.device-files__item--open {
+  border-color: var(--accent);
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.device-files__name {
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.device-files__viewer {
+  min-height: 12rem;
+  padding: 1rem;
+  background: #0a0f14;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.device-files__viewer-name {
+  margin: 0 0 0.75rem;
+  color: var(--accent);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+}
+
+.device-files__text {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.device-files__figure {
+  margin: 0;
+}
+
+.device-files__figure figcaption {
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.device-files__unreadable {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--danger);
+  border-radius: 3px;
+  color: var(--danger);
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
