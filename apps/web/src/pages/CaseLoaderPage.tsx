@@ -38,6 +38,7 @@ import { loadAccount } from "../lib/account";
 import { ROLE_LABEL, playerIdentity } from "../lib/player";
 import { TeamRoles } from "../components/TeamRoles";
 import { ObjectiveDock } from "../components/ObjectiveDock";
+import { storePhoto } from "../lib/photos";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View =
@@ -256,6 +257,10 @@ export function CaseLoaderPage() {
           onCollect={(evidence) =>
             setProgress((prev) => ({ ...prev, collected: collectEvidence(prev.collected, evidence) }))
           }
+          photographedIds={Object.keys(progress.photos)}
+          onPhoto={(photo) =>
+            setProgress((prev) => ({ ...prev, photos: storePhoto(prev.photos, photo) }))
+          }
           onBack={() => setView("akte")}
         />
       );
@@ -358,6 +363,7 @@ export function CaseLoaderPage() {
             <EvidenceDetail
               evidence={open}
               note={notes[open.id] ?? ""}
+              photo={progress.photos[open.id]}
               onSaveNote={(text) =>
                 setProgress((prev) => ({ ...prev, notes: setNote(prev.notes, open.id, text) }))
               }
@@ -368,6 +374,7 @@ export function CaseLoaderPage() {
               <EvidenceList
                 evidence={collected}
                 notes={notes}
+                photos={progress.photos}
                 onOpen={setOpenEvidenceId}
                 onBack={() => setView("akte")}
               />

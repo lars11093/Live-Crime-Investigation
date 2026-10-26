@@ -1446,3 +1446,75 @@ div.account-bar {
   opacity: 0.4;
   cursor: default;
 }
+
+/* Story #35 — Tatortfotos */
+.evidence-photo,
+.evidence-photo__frame,
+.evidence-photo__caption {
+  display: block;
+}
+
+.evidence-photo {
+  margin: 0;
+  display: grid;
+  gap: 0.3rem;
+  justify-items: start;
+}
+
+.evidence-photo__frame {
+  position: relative;
+  width: 120px;
+  aspect-ratio: 4 / 3;
+  border: 4px solid var(--ink);
+  border-bottom-width: 14px;
+  background-color: #04060a;
+  background-repeat: no-repeat;
+}
+
+/* Absperrband-Raster wie beim Szenen-Platzhalter. Als eigene Ebene, weil das
+   Szenenbild inline als background-image gesetzt wird; fehlt es, bleibt das
+   Raster sichtbar. */
+.evidence-photo__frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(34, 197, 94, 0.08) 0px,
+    rgba(34, 197, 94, 0.08) 8px,
+    transparent 8px,
+    transparent 18px
+  );
+}
+
+.evidence-photo--large .evidence-photo__frame {
+  width: min(320px, 100%);
+}
+
+.evidence-photo__crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 28%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+}
+
+.evidence-photo__stamp {
+  position: absolute;
+  right: 4px;
+  bottom: -13px;
+  font-size: 0.6rem;
+  color: #05070a;
+}
+
+.evidence-photo__caption {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.evidence-detail__photo {
+  margin: 1rem 0;
+}

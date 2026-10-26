@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import type { CollectedEvidence } from "@case-zero/shared";
 import { KIND_LABEL } from "./evidenceKind";
+import { EvidencePhotoView } from "./EvidencePhotoView";
+import type { EvidencePhoto } from "../lib/photos";
 
 interface Props {
   evidence: CollectedEvidence;
   /** Gespeicherte Notiz zu diesem Beweis (#12), leer wenn keine da ist. */
   note: string;
+  /** Eigenes Tatortfoto (#35), falls aufgenommen. */
+  photo?: EvidencePhoto;
   onSaveNote: (text: string) => void;
   onBack: () => void;
 }
@@ -16,7 +20,7 @@ interface Props {
  * steht hier ein Platzhalter mit dem Titel statt einer leeren Flaeche — wie
  * bei der Szene in #7.
  */
-export function EvidenceDetail({ evidence, note, onSaveNote, onBack }: Props) {
+export function EvidenceDetail({ evidence, note, photo, onSaveNote, onBack }: Props) {
   const [imageFailed, setImageFailed] = useState(!evidence.imagePath);
   const [draft, setDraft] = useState(note);
   const [saved, setSaved] = useState(false);
@@ -63,6 +67,13 @@ export function EvidenceDetail({ evidence, note, onSaveNote, onBack }: Props) {
           />
         )}
       </div>
+
+      {photo && (
+        <div className="evidence-detail__photo">
+          <p className="team-code__label">Mein Tatortfoto</p>
+          <EvidencePhotoView photo={photo} size="large" />
+        </div>
+      )}
 
       <p className="evidence-detail__description">{evidence.description}</p>
 
