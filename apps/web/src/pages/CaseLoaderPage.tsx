@@ -52,6 +52,7 @@ import { ShareNoteButton, SharedNotesList } from "../components/SharedNotes";
 import { ProgressPanel } from "../components/ProgressPanel";
 import { HintPanel } from "../components/HintPanel";
 import { summarizeProgress } from "../lib/progress";
+import { SystemLogView } from "../components/SystemLogView";
 import { messageToEvidence } from "../lib/digitalTrace";
 import { markReviewed } from "../lib/forensics";
 import { AccusationPanel } from "../components/AccusationPanel";
@@ -516,6 +517,13 @@ export function CaseLoaderPage() {
           {/* #72 — Standortverlauf desselben Geraets, gegen die Tatzeit gelesen. */}
           <div style={{ marginTop: "1rem" }}>
             <DeviceLocations device={device} timeOfCrime={caseData.briefing?.timeOfCrime} />
+          </div>
+          {/* #46 — das Systemprotokoll gehoert zur Auswertung desselben Geraets. */}
+          <div style={{ marginTop: "1rem" }}>
+            <SystemLogView
+              log={device.systemLog ?? []}
+              crimeWindow={caseData.briefing?.crimeWindow}
+            />
           </div>
         </main>
       );

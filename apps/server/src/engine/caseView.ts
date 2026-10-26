@@ -25,7 +25,8 @@ export function toPublicCase(caseDef: CaseDefinition): PublicCase {
     devices: publicCase.devices.map(({ unlockSecret: _secret, deletedMessages, ...device }) => {
       const deletedCount = device.locked ? 0 : (deletedMessages?.length ?? 0);
       const view = deletedCount > 0 ? { ...device, deletedCount } : device;
-      return device.locked ? { ...view, messages: [], files: [], locations: [] } : view;
+      // Gesperrt: weder Nachrichten (#18) noch Systemprotokoll (#46).
+      return device.locked ? { ...view, messages: [], files: [], locations: [], systemLog: [] } : view;
     }),
   };
 }
