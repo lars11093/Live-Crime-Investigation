@@ -1834,3 +1834,49 @@ div.account-bar {
   margin: 0;
   color: var(--accent);
 }
+
+/* Story #46 — Systemprotokoll */
+.syslog {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0.5rem 0.75rem;
+  background: #05070a;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 0.8rem;
+  display: grid;
+  gap: 0.15rem;
+  max-height: 22rem;
+  overflow-y: auto;
+}
+
+.syslog__row {
+  display: grid;
+  grid-template-columns: 7.5rem 6.5rem 1fr;
+  gap: 0.75rem;
+  padding: 0.15rem 0.25rem;
+}
+
+.syslog__time {
+  color: var(--muted);
+}
+
+.syslog__cat {
+  color: var(--accent);
+}
+
+.syslog__row--window {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.syslog__row--window .syslog__time {
+  color: var(--danger);
+}
+
+@media (max-width: 560px) {
+  .syslog__row {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0.35rem 0.25rem;
+  }
+}

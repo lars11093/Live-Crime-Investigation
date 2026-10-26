@@ -18,7 +18,8 @@ export function toPublicCase(caseDef: CaseDefinition): PublicCase {
   return {
     ...publicCase,
     devices: publicCase.devices.map((device) =>
-      device.locked ? { ...device, messages: [] } : device
+      // Gesperrt: weder Nachrichten (#18) noch Systemprotokoll (#46).
+      device.locked ? { ...device, messages: [], systemLog: [] } : device
     ),
   };
 }
