@@ -57,12 +57,15 @@ describe("Fortschritt speichern und laden", () => {
       notes: { "tasse-lippenstift": "Lippenstift passt nicht zum Opfer." },
       noteEditedAt: {},
       insights: [{ id: "insight-1", title: "Zweite Person", body: "Jemand sass mit am Tisch." }],
+      insightRatings: { "insight-1": 3 },
       contradictions: [],
       markedMessageIds: [],
       accusation: { suspectId: "monica-brandt", evidenceIds: ["tasse-lippenstift"] },
       photos: {},
     });
     const loaded = loadProgress(storage, "ABC-123");
+    // Die eigene Bewertung einer Verknuepfung bleibt erhalten (#39).
+    expect(loaded.insightRatings).toEqual({ "insight-1": 3 });
     // Taeterauswahl und angehaengte Beweise ueberstehen ein Neuladen (#25, #26).
     expect(loaded.accusation).toEqual({
       suspectId: "monica-brandt",
