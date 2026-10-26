@@ -1378,8 +1378,9 @@ div.account-bar {
 /* Story #32 — Ermittlungsziel jederzeit */
 .objective-dock {
   position: fixed;
+  /* Oben rechts: unten liegt im Tatort die Szenenleiste mit "Zurueck". */
   right: 1rem;
-  bottom: 1rem;
+  top: 1rem;
   z-index: 50;
   display: grid;
   gap: 0.5rem;
