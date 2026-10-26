@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { PublicCase } from "@case-zero/shared";
-import { combineEvidence, fetchCase, findRoom, submitAccusation } from "../lib/api";
+import type { PublicCase, Role, TeamView } from "@case-zero/shared";
+import {
+  combineEvidence,
+  fetchCase,
+  fetchTeam,
+  findRoom,
+  joinTeam,
+  setRole,
+  submitAccusation,
+} from "../lib/api";
 import {
   browserStorage,
   collectEvidence,
@@ -26,9 +34,19 @@ import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import { ROLE_LABEL, playerIdentity } from "../lib/player";
+import { TeamRoles } from "../components/TeamRoles";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
-type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik" | "anklage";
+type View =
+  | "briefing"
+  | "akte"
+  | "tatort"
+  | "beweise"
+  | "verdaechtige"
+  | "forensik"
+  | "anklage"
+  | "team";
 
 type LoadState =
   | { status: "loading" }
@@ -49,6 +67,10 @@ export function CaseLoaderPage() {
   // Angemeldet (#29) gehoert der Fortschritt dem Konto, sonst dem Gast.
   // Einmal beim Oeffnen gelesen: ein Kontowechsel passiert auf der Startseite.
   const [account] = useState(() => loadAccount(browserStorage()));
+  // Wer im Team auftritt (#31): Konto oder Gast mit fester ID.
+  const [me] = useState(() => playerIdentity(browserStorage(), account));
+  const [team, setTeam] = useState<TeamView | null>(null);
+  const [teamError, setTeamError] = useState<string | null>(null);
   // Fortschritt kommt gespeichert herein und wird bei jeder Aenderung
   // zurueckgeschrieben, damit Notizen ein Neuladen ueberleben (#12).
   const [progress, setProgress] = useState<CaseProgress>(() =>
@@ -101,6 +123,48 @@ export function CaseLoaderPage() {
   }, [code]);
 
   useEffect(() => load(), [load]);
+
+  const refreshTeam = useCallback(() => {
+    fetchTeam(code)
+      .then((result) => {
+        if (result.ok) setTeam(result.team);
+      })
+      .catch(() => setTeamError("Server nicht erreichbar. Bitte erneut versuchen."));
+  }, [code]);
+
+  // Beim Oeffnen des Falls dem Team beitreten (#31). Schlaegt das fehl, laeuft
+  // der Fall trotzdem — nur die Team-Funktionen fehlen dann.
+  useEffect(() => {
+    if (state.status !== "ready") return;
+    joinTeam(code, me.id, me.name)
+      .then((result) => {
+        if (result.ok) setTeam(result.team);
+      })
+      .catch(() => {});
+  }, [state.status, code, me]);
+
+  // Solange die Teamansicht offen ist, alle paar Sekunden nachladen — ohne
+  // Socket sieht man sonst nicht, wenn jemand anderes eine Rolle nimmt.
+  useEffect(() => {
+    if (view !== "team") return;
+    refreshTeam();
+    const timer = setInterval(refreshTeam, 5000);
+    return () => clearInterval(timer);
+  }, [view, refreshTeam]);
+
+  async function changeRole(targetId: string, role: Role | null) {
+    setTeamError(null);
+    try {
+      const result = await setRole(code, me.id, targetId, role);
+      if (result.ok) setTeam(result.team);
+      else {
+        setTeamError(result.message);
+        refreshTeam();
+      }
+    } catch {
+      setTeamError("Server nicht erreichbar. Bitte erneut versuchen.");
+    }
+  }
 
   if (state.status === "loading") {
     return (
@@ -328,6 +392,23 @@ export function CaseLoaderPage() {
     );
   }
 
+  if (view === "team") {
+    return (
+      <main className="app-shell">
+        <TeamRoles
+          me={me}
+          team={team}
+          error={teamError}
+          onChoose={(role) => changeRole(me.id, role)}
+          onRefresh={refreshTeam}
+          onBack={() => setView("akte")}
+        />
+      </main>
+    );
+  }
+
+  const myRole = team?.players.find((p) => p.id === me.id)?.role ?? null;
+
   if (view === "anklage") {
     return (
       <main className="app-shell">
@@ -387,7 +468,10 @@ export function CaseLoaderPage() {
 
   return (
     <main className="app-shell">
-      <p className="terminal-title">Fallakte geoeffnet</p>
+      <p className="terminal-title">
+        Fallakte geoeffnet
+        {myRole && <span className="role-badge">{ROLE_LABEL[myRole]}</span>}
+      </p>
       <div className="panel case-status">
         <h1 className="case-title">{caseData.title}</h1>
         <p className="case-status__hint">
@@ -434,6 +518,9 @@ export function CaseLoaderPage() {
           <button onClick={() => setView("anklage")}>
             Anklage ({accusation.evidenceIds.length}{" "}
             {accusation.evidenceIds.length === 1 ? "Beweis" : "Beweise"})
+          </button>
+          <button onClick={() => setView("team")}>
+            {myRole ? `Team · ${ROLE_LABEL[myRole]}` : "Team · Rolle waehlen"}
           </button>
           <button onClick={() => setView("briefing")}>Briefing</button>
         </div>

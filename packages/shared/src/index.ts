@@ -324,6 +324,14 @@ export interface ScoreResult {
   evidenceTotal: number;
 }
 
+/** Das Team einer Session, wie der Client es sieht (#31). */
+export interface TeamView {
+  players: Player[];
+}
+
+/** Antwort der Team-Endpoints (#31). */
+export type TeamResult = { ok: true; team: TeamView } | { ok: false; message: string };
+
 export interface RoomState {
   code: string;
   caseId: string;
