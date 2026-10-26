@@ -22,6 +22,7 @@ import {
   roomCount,
   type Room,
 } from "./engine/rooms.js";
+import { joinTeam, leaveTeam, teamOf } from "./engine/team.js";
 
 const CASES: Record<string, CaseDefinition> = {
   "case-01": case01 as CaseDefinition,
@@ -175,9 +176,27 @@ io.on("connection", (socket) => {
     cb(scoreAccusation(room, accusation));
   });
 
+  // Story #22 — Team beitreten. Die neue Liste geht an alle im Raum, damit
+  // jede Teamliste ohne Neuladen aktuell ist.
+  socket.on("team:join", ({ code, playerName }, cb) => {
+    const room = getRoom(code);
+    if (!room) {
+      cb({ ok: false, error: "Ungueltiger Team-Code" });
+      return;
+    }
+    const result = joinTeam(room, socket.id, String(playerName ?? ""));
+    cb(result);
+    if (!result.ok) return;
+    socket.join(room.state.code);
+    io.to(room.state.code).emit("team:update", teamOf(room));
+  });
+
   socket.on("disconnect", () => {
     for (const room of allRooms()) {
-      room.state.players = room.state.players.filter((p) => p.id !== socket.id);
+      // Wer geht, verschwindet auch aus den Teamlisten der anderen (#22).
+      if (leaveTeam(room, socket.id)) {
+        io.to(room.state.code).emit("team:update", teamOf(room));
+      }
     }
   });
 });
