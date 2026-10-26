@@ -11,7 +11,7 @@ import type {
   Role,
 } from "@case-zero/shared";
 import case01 from "./data/case-01.json" with { type: "json" };
-import { toPublicCase } from "./engine/caseView.js";
+import { toCaseSummaries, toPublicCase } from "./engine/caseView.js";
 import { combineEvidence } from "./engine/combine.js";
 import { submitAccusation } from "./engine/accusation.js";
 import {
@@ -49,6 +49,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.get("/health", (_req, res) => res.json({ ok: true, rooms: roomCount() }));
+
+// Story #30 — Uebersicht der verfuegbaren Faelle. Ohne Loesung, wie ueberall.
+app.get("/api/cases", (_req, res) => {
+  res.json(toCaseSummaries(Object.values(CASES)));
+});
 
 // Story #2 — Fall laden. Liefert den Fall ohne die Loesung (siehe engine/caseView.ts).
 app.get("/api/cases/:caseId", (req, res) => {

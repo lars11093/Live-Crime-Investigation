@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createRoom } from "../lib/api";
 import { TeamCodeForm } from "../components/TeamCodeForm";
 import { AccountBar } from "../components/AccountBar";
 import { loadAccount, login, logout, type Account } from "../lib/account";
@@ -13,23 +12,7 @@ import { browserStorage } from "../lib/caseProgress";
  */
 export function StartPage() {
   const navigate = useNavigate();
-  const [starting, setStarting] = useState(false);
-  const [startError, setStartError] = useState<string | null>(null);
   const [account, setAccount] = useState<Account | null>(() => loadAccount(browserStorage()));
-
-  async function startCase() {
-    setStarting(true);
-    setStartError(null);
-    try {
-      // Ein Fallstart legt eine Team-Session an — der Code ist das, was man
-      // den Mitspielern gibt (#5).
-      const room = await createRoom("case-01");
-      navigate(`/fall/${room.code}`);
-    } catch {
-      setStartError("Fall konnte nicht gestartet werden. Server nicht erreichbar.");
-      setStarting(false);
-    }
-  }
 
   return (
     <main className="start-screen">
@@ -54,15 +37,10 @@ export function StartPage() {
           }}
         />
 
-        <button className="button--primary" onClick={startCase} disabled={starting}>
-          {starting ? "Fall wird gestartet…" : "Fall starten"}
+        {/* Ein Fall wird jetzt aus der Uebersicht gewaehlt (#30); dort entsteht die Team-Session (#5). */}
+        <button className="button--primary" onClick={() => navigate("/faelle")}>
+          Fall starten
         </button>
-
-        {startError && (
-          <p className="team-code__error" role="alert">
-            {startError}
-          </p>
-        )}
 
         <div className="start-screen__divider">
           <span>oder einem Team beitreten</span>

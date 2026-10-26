@@ -1,5 +1,6 @@
 import type {
   AccusationSubmission,
+  CaseSummary,
   CombineResult,
   PublicCase,
   SubmitAccusationResult,
@@ -20,6 +21,15 @@ export async function fetchCase(caseId: string): Promise<PublicCase> {
     throw new Error(`Fall ${caseId} konnte nicht geladen werden (HTTP ${response.status})`);
   }
   return (await response.json()) as PublicCase;
+}
+
+/** Alle Faelle fuer die Auswahl (#30). Wirft, wenn der Server nicht antwortet. */
+export async function fetchCaseList(): Promise<CaseSummary[]> {
+  const response = await fetch(`${SERVER_URL}/api/cases`);
+  if (!response.ok) {
+    throw new Error(`Fallliste konnte nicht geladen werden (HTTP ${response.status})`);
+  }
+  return (await response.json()) as CaseSummary[];
 }
 
 export interface RoomSummary {
