@@ -1,4 +1,5 @@
 import type { CollectedEvidence, Insight } from "@case-zero/shared";
+import { EMPTY_ACCUSATION, parseAccusation, type AccusationDraft } from "./accusation";
 
 /**
  * Der Ermittlungsfortschritt einer Person in einer Team-Session.
@@ -18,6 +19,8 @@ export interface CaseProgress {
   contradictions: Contradiction[];
   /** Als relevant markierte Chatnachrichten (#19), per Nachrichten-ID. */
   markedMessageIds: string[];
+  /** Entwurf der Anklage: Taeter (#25) und angehaengte Beweise (#26). */
+  accusation: AccusationDraft;
 }
 
 /**
@@ -77,6 +80,7 @@ export const EMPTY_PROGRESS: CaseProgress = {
   insights: [],
   contradictions: [],
   markedMessageIds: [],
+  accusation: EMPTY_ACCUSATION,
 };
 
 /**
@@ -128,6 +132,7 @@ export function loadProgress(storage: ProgressStorage, roomCode: string): CasePr
       insights: Array.isArray(parsed.insights) ? parsed.insights : [],
       contradictions: Array.isArray(parsed.contradictions) ? parsed.contradictions : [],
       markedMessageIds: Array.isArray(parsed.markedMessageIds) ? parsed.markedMessageIds : [],
+      accusation: parseAccusation(parsed.accusation),
     };
   } catch {
     return EMPTY_PROGRESS;
