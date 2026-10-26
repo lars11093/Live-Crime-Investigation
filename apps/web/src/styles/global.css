@@ -1606,3 +1606,42 @@ div.account-bar {
   color: var(--accent);
   background: rgba(34, 197, 94, 0.1);
 }
+
+/* Story #40 — Verdaechtige vergleichen */
+.suspect-compare__table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.suspect-compare__table th,
+.suspect-compare__table td {
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 0.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.suspect-compare__table thead th {
+  display: table-cell;
+}
+
+.suspect-compare__table thead th > * {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.suspect-compare__table tbody th {
+  color: var(--muted);
+  font-weight: normal;
+  width: 28%;
+}
+
+.suspect-compare__row--differs td {
+  color: var(--accent);
+}
+
+.suspect-compare__statement {
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
