@@ -4,6 +4,8 @@ import { KIND_LABEL } from "./evidenceKind";
 import { EvidencePhotoView } from "./EvidencePhotoView";
 import type { EvidencePhoto } from "../lib/photos";
 import { NoteEditor } from "./NoteEditor";
+import { RelevancePicker } from "./RelevancePicker";
+import { isDigitalTrace, type Relevance } from "../lib/relevance";
 
 interface Props {
   evidence: CollectedEvidence;
@@ -13,6 +15,9 @@ interface Props {
   noteEditedAt?: string;
   /** Eigenes Tatortfoto (#35), falls aufgenommen. */
   photo?: EvidencePhoto;
+  /** Relevanz, falls es eine digitale Spur ist (#47). */
+  relevance?: Relevance;
+  onRelevance: (relevance: Relevance) => void;
   onSaveNote: (text: string) => void;
   onBack: () => void;
 }
@@ -28,6 +33,8 @@ export function EvidenceDetail({
   note,
   noteEditedAt,
   photo,
+  relevance,
+  onRelevance,
   onSaveNote,
   onBack,
 }: Props) {
@@ -82,6 +89,10 @@ export function EvidenceDetail({
           <dd>{evidence.foundAt.hotspotLabel}</dd>
         </div>
       </dl>
+
+      {isDigitalTrace(evidence) && (
+        <RelevancePicker label={evidence.label} value={relevance} onChange={onRelevance} />
+      )}
 
       <NoteEditor
         evidenceId={evidence.id}

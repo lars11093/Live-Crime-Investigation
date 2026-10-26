@@ -215,6 +215,11 @@ export interface CollectedEvidence extends CollectableEvidence {
    * #37 keinen haben.
    */
   collectedAt?: string;
+  /**
+   * Woher der Fund stammt (#47): aus einem Tatort oder von einem Geraet.
+   * Optional, weil aeltere Spielstaende das Feld nicht haben.
+   */
+  source?: "scene" | "device";
 }
 
 export interface Scene {

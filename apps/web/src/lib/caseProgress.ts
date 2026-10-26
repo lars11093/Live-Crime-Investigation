@@ -4,6 +4,7 @@ import { parsePhotos, type EvidencePhoto } from "./photos";
 import { parseRatings, type InsightStrength } from "./insightRating";
 import { parseAlibiVerdicts, type AlibiVerdict } from "./alibi";
 import { parseSuspicion, type SuspicionLevel } from "./suspicion";
+import { parseRelevance, type Relevance } from "./relevance";
 
 /**
  * Der Ermittlungsfortschritt einer Person in einer Team-Session.
@@ -31,6 +32,8 @@ export interface CaseProgress {
   reviewedDeviceIds: string[];
   /** Nachrichten, deren Bild-Metadaten ausgelesen sind (#45). */
   metadataReadIds: string[];
+  /** Relevanz digitaler Spuren, pro Beweis-ID (#47). */
+  relevance: Record<string, Relevance>;
   /** Eigenes Urteil ueber das Alibi, pro Verdaechtigem (#42). */
   alibiVerdicts: Record<string, AlibiVerdict>;
   /** Eigener Verdachtsgrad pro Verdaechtigem (#43). */
@@ -115,6 +118,7 @@ export const EMPTY_PROGRESS: CaseProgress = {
   markedMessageIds: [],
   reviewedDeviceIds: [],
   metadataReadIds: [],
+  relevance: {},
   alibiVerdicts: {},
   suspicion: {},
   accusation: EMPTY_ACCUSATION,
@@ -187,6 +191,7 @@ export function loadProgress(
       markedMessageIds: Array.isArray(parsed.markedMessageIds) ? parsed.markedMessageIds : [],
       reviewedDeviceIds: Array.isArray(parsed.reviewedDeviceIds) ? parsed.reviewedDeviceIds : [],
       metadataReadIds: Array.isArray(parsed.metadataReadIds) ? parsed.metadataReadIds : [],
+      relevance: parseRelevance(parsed.relevance),
       alibiVerdicts: parseAlibiVerdicts(parsed.alibiVerdicts),
       suspicion: parseSuspicion(parsed.suspicion),
       accusation: parseAccusation(parsed.accusation),

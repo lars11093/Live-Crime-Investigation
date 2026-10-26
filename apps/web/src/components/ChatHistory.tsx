@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import type { ChatMessage, Device } from "@case-zero/shared";
 import { ImageAttachment } from "./ImageAttachment";
+import { RelevancePicker } from "./RelevancePicker";
+import { countByRelevance, type Relevance } from "../lib/relevance";
 
 interface Props {
   device: Device;
@@ -14,6 +16,9 @@ interface Props {
   /** Nachrichten, deren Bildanhang schon ausgelesen ist (#45). */
   metadataReadIds: string[];
   onReadMetadata: (messageId: string) => void;
+  /** Relevanz der gesicherten Nachrichten (#47). */
+  relevance: Record<string, Relevance>;
+  onRelevance: (messageId: string, relevance: Relevance) => void;
   onBack: () => void;
 }
 
@@ -38,13 +43,17 @@ export function ChatHistory({
   onSecure,
   metadataReadIds,
   onReadMetadata,
+  relevance,
+  onRelevance,
   onBack,
 }: Props) {
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const marked = new Set(markedIds);
   const collected = new Set(collectedIds);
   const markedCount = device.messages.filter((m) => marked.has(m.id)).length;
-  const securedCount = device.messages.filter((m) => collected.has(m.id)).length;
+  const securedIds = device.messages.filter((m) => collected.has(m.id)).map((m) => m.id);
+  const securedCount = securedIds.length;
+  const counts = countByRelevance(securedIds, relevance);
 
   // Die Bestaetigung verschwindet von selbst, wie beim Einsammeln im Tatort (#9).
   useEffect(() => {
@@ -71,6 +80,8 @@ export function ChatHistory({
         Besitzer: {device.owner} &middot; {device.messages.length}{" "}
         {device.messages.length === 1 ? "Nachricht" : "Nachrichten"} &middot; {markedCount}{" "}
         markiert &middot; {securedCount} gesichert
+        {securedCount > 0 &&
+          ` (${counts.hoch} wichtig, ${counts.mittel} mittel, ${counts.niedrig} nebensaechlich, ${counts.offen} unbewertet)`}
       </p>
 
       {confirmation && (
@@ -115,9 +126,17 @@ export function ChatHistory({
                       />
                     )}
                     {isSecured ? (
-                      <button className="chat__secure" disabled>
-                        In der Beweisakte
-                      </button>
+                      <>
+                        <button className="chat__secure" disabled>
+                          In der Beweisakte
+                        </button>
+                        {/* #47 — nur gesicherte Spuren werden bewertet; Markieren bleibt die Lesehilfe. */}
+                        <RelevancePicker
+                          label={`Nachricht von ${message.sender}, ${message.sentAt}`}
+                          value={relevance[message.id]}
+                          onChange={(level) => onRelevance(message.id, level)}
+                        />
+                      </>
                     ) : (
                       <button className="chat__secure" onClick={() => secure(message)}>
                         Als Beweis sichern

@@ -90,6 +90,7 @@ export function SceneView({
     onCollect({
       ...evidence,
       foundAt: { sceneName: scene.name, hotspotLabel: hotspot.label },
+      source: "scene",
     });
     setConfirmation(`"${evidence.label}" ist in deiner Beweisakte.`);
     setOpenHotspot(null);
