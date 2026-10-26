@@ -61,12 +61,15 @@ describe("Fortschritt speichern und laden", () => {
       contradictions: [],
       markedMessageIds: [],
       reviewedDeviceIds: ["smartphone-vogt"],
+      metadataReadIds: ["msg-vogt-06"],
       alibiVerdicts: { "daniel-keller": "zweifelhaft" },
       suspicion: { "monica-brandt": 4 },
       accusation: { suspectId: "monica-brandt", evidenceIds: ["tasse-lippenstift"] },
       photos: {},
     });
     const loaded = loadProgress(storage, "ABC-123");
+    // Ausgelesene Metadaten bleiben ausgelesen (#45).
+    expect(loaded.metadataReadIds).toEqual(["msg-vogt-06"]);
     // Ausgewertete Geraete bleiben ausgewertet (#44).
     expect(loaded.reviewedDeviceIds).toEqual(["smartphone-vogt"]);
     // Der Verdachtsgrad bleibt erhalten (#43).

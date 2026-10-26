@@ -29,6 +29,8 @@ export interface CaseProgress {
   markedMessageIds: string[];
   /** Im Forensik-Terminal bereits geoeffnete Geraete (#44). */
   reviewedDeviceIds: string[];
+  /** Nachrichten, deren Bild-Metadaten ausgelesen sind (#45). */
+  metadataReadIds: string[];
   /** Eigenes Urteil ueber das Alibi, pro Verdaechtigem (#42). */
   alibiVerdicts: Record<string, AlibiVerdict>;
   /** Eigener Verdachtsgrad pro Verdaechtigem (#43). */
@@ -112,6 +114,7 @@ export const EMPTY_PROGRESS: CaseProgress = {
   contradictions: [],
   markedMessageIds: [],
   reviewedDeviceIds: [],
+  metadataReadIds: [],
   alibiVerdicts: {},
   suspicion: {},
   accusation: EMPTY_ACCUSATION,
@@ -183,6 +186,7 @@ export function loadProgress(
       contradictions: Array.isArray(parsed.contradictions) ? parsed.contradictions : [],
       markedMessageIds: Array.isArray(parsed.markedMessageIds) ? parsed.markedMessageIds : [],
       reviewedDeviceIds: Array.isArray(parsed.reviewedDeviceIds) ? parsed.reviewedDeviceIds : [],
+      metadataReadIds: Array.isArray(parsed.metadataReadIds) ? parsed.metadataReadIds : [],
       alibiVerdicts: parseAlibiVerdicts(parsed.alibiVerdicts),
       suspicion: parseSuspicion(parsed.suspicion),
       accusation: parseAccusation(parsed.accusation),
