@@ -5,6 +5,7 @@ import type {
   Scenario,
   VerdictFinding,
 } from "@case-zero/shared";
+import { scoreAccusation } from "./score.js";
 
 /**
  * Alle Beweise eines Falls mit ihrem Anzeigenamen — aus dem Tatort und aus den
@@ -36,7 +37,9 @@ export function evidenceLabels(caseDef: CaseDefinition): Map<string, string> {
 export function judgeAccusation(
   caseDef: CaseDefinition,
   scenario: Scenario,
-  submission: AccusationSubmission
+  submission: AccusationSubmission,
+  /** Minuten seit Beginn der Session (#54); `null`, wenn unbekannt. */
+  elapsedMinutes: number | null = null
 ): AccusationVerdict {
   const labels = evidenceLabels(caseDef);
   const label = (id: string) => labels.get(id) ?? id;
@@ -76,5 +79,6 @@ export function judgeAccusation(
     culprit: { id: scenario.suspectId, name: nameOf(scenario.suspectId) },
     resolution: scenario.resolution,
     findings,
+    score: scoreAccusation(scenario, submission, elapsedMinutes),
   };
 }
