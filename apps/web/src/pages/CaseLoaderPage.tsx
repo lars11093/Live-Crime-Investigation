@@ -56,6 +56,9 @@ export function CaseLoaderPage() {
   const [openSuspectId, setOpenSuspectId] = useState<string | null>(null);
   // Welches Geraet im Forensik-Terminal ausgewertet wird (#18 -> #19).
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
+  // Story #25 — Auswahl des Taeters fuer die Anklage.
+  const [selectedSuspectId, setSelectedSuspectId] =
+      useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -238,6 +241,8 @@ export function CaseLoaderPage() {
               suspects={caseData.suspects}
               onOpen={setOpenSuspectId}
               onBack={() => setView("akte")}
+              selectedSuspectId={selectedSuspectId}
+              onSelectSuspect={setSelectedSuspectId}
             />
             <div style={{ marginTop: "1rem" }}>
               <ContradictionOverview contradictions={contradictions} />
