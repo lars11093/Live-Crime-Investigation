@@ -324,8 +324,8 @@ Reflexion und Lernjournal.
 
 | Person | Mein Beitrag | Wichtigste Erkenntnis | Nächster Lernschritt |
 |---|---|---|---|
-| Lars | | | |
+| Lars |Reviewen und mergen |Es ist gut wenn alle arbeiten sonst hart |letzte c |
 | Loris | | | |
 | Elina | | | |
-| Nehir | | | |
+| Nehir | | | |hanges mergen
 | Chime | Story #18 Forensik-Terminal umgesetzt (PR #120, von Loris reviewt, gemergt) | Vor dem Start `master` holen, sonst baut man auf einem veralteten Stand und muss umbasen | PRs von anderen reviewen und im PR «Closes #…» schreiben, damit das Issue automatisch schliesst |
