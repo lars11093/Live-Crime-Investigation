@@ -81,6 +81,7 @@ import { EvidenceTagFilter } from "../components/EvidenceTagFilter";
 import { loadExcluded, saveExcluded, toggleExcluded } from "../lib/excludedSuspects";
 import { storePhoto } from "../lib/photos";
 import { rateInsight } from "../lib/insightRating";
+import { setAlibiVerdict } from "../lib/alibi";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View =
@@ -519,6 +520,14 @@ export function CaseLoaderPage() {
                     sentenceIndex,
                     text,
                   }),
+                }))
+              }
+              crimeWindow={caseData.briefing?.crimeWindow}
+              alibiVerdict={progress.alibiVerdicts[openSuspect.id]}
+              onAlibiVerdict={(verdict) =>
+                setProgress((prev) => ({
+                  ...prev,
+                  alibiVerdicts: setAlibiVerdict(prev.alibiVerdicts, openSuspect.id, verdict),
                 }))
               }
               onBack={() => setOpenSuspectId(null)}
