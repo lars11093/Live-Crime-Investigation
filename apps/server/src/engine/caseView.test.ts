@@ -24,7 +24,7 @@ describe("toPublicCase", () => {
 
   // Das Forensik-Terminal listet gesperrte Geraete auf (#18), ihr Inhalt
   // bleibt aber auf dem Server, bis sie entsperrt sind.
-  it("listet gesperrte Geraete ohne ihre Nachrichten", () => {
+  it("listet gesperrte Geraete ohne ihre Nachrichten und Dateien", () => {
     const view = toPublicCase(caseDef);
     const locked = caseDef.devices?.filter((d) => d.locked) ?? [];
     expect(locked.length).toBeGreaterThan(0);
@@ -33,10 +33,14 @@ describe("toPublicCase", () => {
       expect(publicDevice?.label).toBe(device.label);
       expect(publicDevice?.locked).toBe(true);
       expect(publicDevice?.messages).toEqual([]);
+      expect(publicDevice?.files ?? []).toEqual([]);
     }
     const serialized = JSON.stringify(view);
     for (const message of locked.flatMap((d) => d.messages)) {
       expect(serialized).not.toContain(message.text);
+    }
+    for (const file of locked.flatMap((d) => d.files ?? [])) {
+      expect(serialized).not.toContain(file.name);
     }
   });
 

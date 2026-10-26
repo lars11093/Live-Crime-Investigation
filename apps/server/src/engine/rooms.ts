@@ -1,5 +1,5 @@
 import { customAlphabet } from "nanoid";
-import type { CaseDefinition, RoomState } from "@case-zero/shared";
+import type { CaseDefinition, RoomState, SharedFinding } from "@case-zero/shared";
 
 /**
  * In-Memory Room Store (Story #5).
@@ -13,6 +13,8 @@ export interface Room {
   state: RoomState;
   caseDef: CaseDefinition;
   scenario: CaseDefinition["scenarios"][number];
+  /** Mit dem Team geteilte Funde (#23), in der Reihenfolge des Teilens. */
+  findings: SharedFinding[];
 }
 
 /** Ohne I, O, 0 und 1 — die verwechselt man beim Vorlesen im Team. */
@@ -47,6 +49,7 @@ export function createRoom(caseDef: CaseDefinition): Room {
   const room: Room = {
     caseDef,
     scenario: pickScenario(caseDef),
+    findings: [],
     state: {
       code,
       caseId: caseDef.id,
