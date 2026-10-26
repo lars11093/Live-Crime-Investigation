@@ -22,14 +22,20 @@ Methode: Starfish (Keep / More / Less / Start / Stop), verdichtet auf die drei P
 **Was besser wurde als in Sprint 1:** Statt einem gibt es jetzt vier PR-Autoren
 (Lars, Loris, Chime, Elina), und alle Stories auf dem Weg zum Sprintziel sind reviewt und gemergt.
 
-**Was im Weg stand:** `_<aus dem Starfish ergänzen>_`
+**Was im Weg stand** (aus dem Starfish): Reviewen und Mergen lag bei zwei Personen
+(«Reviewer aufteilen»), die PRs waren zu gross, und es wurde an Stories anderer weitergearbeitet,
+ohne Abhängigkeiten abzusprechen.
 
 ## 2. Starfish-Board
 
 | Keep | More Of | Less Of | Stop | Start |
 | --- | --- | --- | --- | --- |
-| ___ | ___ | ___ | ___ | ___ |
-| ___ | ___ | ___ | ___ | ___ |
+| Regelmässige Kommunikation (4 👍) — _Lars_ | Mehr kommunizieren, welche User Stories von anderen abhängig sind, im Daily (4 👍) — _Loris_ | Zu grosse Pull Requests (3 👍) — _Lars_ | An Stories von anderen arbeiten (2 👍) — _Loris_ | Reviewer aufteilen (3 👍) — _Chime_ |
+| Reviewen von PRs (3 👍) — _Loris_ | Frühzeitiges Feedback zu Aufgaben (1 👍) — _Lars_ |  |  |  |
+| Gegenseitige Unterstützung (2 👍) — _Nehir_ |  |  |  |  |
+| Gute Zusammenarbeit im Team (1 👍) — _Lars_ |  |  |  |  |
+
+**Action Item des Teams:** Mergen aufteilen.
 
 ## 3. Was hat funktioniert?
 
@@ -39,7 +45,8 @@ Methode: Starfish (Keep / More / Less / Start / Stop), verdichtet auf die drei P
   (#26 – #28); in Sprint 1 kam alles von einem Konto.
 - **Reviews mit Inhalt.** Die Approves enthalten, was lokal geprüft wurde (z. B. bei #120:
   Tests, Durchklicken, API-Payload) und Hinweise für Folge-PRs.
-- `_<weitere Punkte aus dem Starfish>_`
+- **Kommunikation und Zusammenarbeit** (Starfish Keep, 4 und 1 👍): Wir reden regelmässig
+  miteinander und unterstützen uns gegenseitig (2 👍).
 
 ## 4. Was hat gebremst?
 
@@ -55,21 +62,26 @@ Methode: Starfish (Keep / More / Less / Start / Stop), verdichtet auf die drei P
   sich so umgehen, weil `master` nicht geschützt ist.
 - **Veraltete Branches.** Wer nicht zuerst `master` holt, baut auf altem Stand und muss umbasen
   (z. B. #18, Umlaut-Fix #115).
-- `_<weitere Punkte aus dem Starfish>_`
+- **Zu grosse PRs** (Starfish Less Of, 3 👍): Grosse PRs sind schwer zu reviewen und blieben liegen.
+- **Abhängigkeiten nicht abgesprochen** (More Of, 4 👍; Stop, 2 👍): Es wurde an Stories anderer
+  weitergearbeitet, ohne dass klar war, welche Story auf welcher aufbaut (z. B. #22 → #23 → #24).
 
 ## 5. Verbesserungsmassnahme für Sprint 3 (genau eine)
 
-> **Bis 11:30 hat jede Person im Team mindestens einen PR einer anderen Person mit dem eigenen
-> GitHub-Konto reviewt (Approve oder Request changes, mit Kommentar, was geprüft wurde).**
+Action Item des Teams: **«Mergen aufteilen»**, konkret gemacht, damit es um 11:30 prüfbar ist:
 
-- **Verantwortlich:** Scrum Master (fragt um 10:30 nach, wer noch kein Review hat)
-- **Nachprüfbar um 11:30:** In den PRs von Sprint 3 stehen Reviews von fünf verschiedenen Konten.
-  Fünf = erfüllt, weniger = nicht erfüllt.
-- **Warum diese:** Die Sprint-1-Massnahme ist an genau diesem Punkt gescheitert — drei Personen
-  haben nie reviewt. Mit einem Modultag ist «ein Review pro Person» realistisch und sofort prüfbar.
-- **Nicht gewählt:** «Mehr kommunizieren» (nicht prüfbar), die Sprint-1-Massnahme unverändert
-  wiederholen (zwei Reviews pro Person an einem halben Tag ist zu viel), «keine neuen Stories
-  anfangen» (wichtig, aber in Sprint 3 ohnehin durch das Planning begrenzt).
+> **Bis 11:30 hat jede Person im Team mindestens einen PR einer anderen Person mit dem eigenen
+> GitHub-Konto reviewt und gemergt.**
+
+- **Verantwortlich:** Scrum Master (fragt um 10:30 nach, wer noch keinen PR gemergt hat)
+- **Nachprüfbar um 11:30:** Bei den gemergten PRs von Sprint 3 stehen fünf verschiedene Konten als
+  Reviewer und Merger. Fünf = erfüllt, weniger = nicht erfüllt.
+- **Warum diese:** «Reviewer aufteilen» war der stärkste Start-Punkt (3 👍), und das Team hat sich
+  auf «Mergen aufteilen» geeinigt. Die Sprint-1-Massnahme ist genau hier gescheitert: Reviews und
+  Merges lagen bei Loris und Lars. Mit einem Modultag ist «ein PR pro Person» realistisch.
+- **Nicht gewählt:** «Mehr kommunizieren» (nicht prüfbar), «kleinere PRs» (wichtig, aber an einem
+  Tag schwer messbar), die Sprint-1-Massnahme unverändert wiederholen (zwei Reviews pro Person an
+  einem halben Tag ist zu viel).
 
 ## 6. Was daraus sofort folgt
 
@@ -79,6 +91,7 @@ Methode: Starfish (Keep / More / Less / Start / Stop), verdichtet auf die drei P
 | #25 ohne Review auf `master` | Folge-PR für #25, der die ganze Story ins Review bringt | Sprint 3 |
 | Veraltete Branches | Vor jedem neuen Branch `git pull` auf `master` | Arbeitsweise |
 | Offene PRs #123 – #126 (Elina) | Im Planning entscheiden, ob sie in Sprint 3 kommen | Sprint 3 Planning |
+| Abhängigkeiten unklar | Im Daily sagt jede Person, auf welcher Story ihre Arbeit aufbaut | Daily Sprint 3 |
 | Umlaute | Neue Story «Texte mit korrekten Umlauten» im Backlog | Product Backlog |
 
 **Protokoll:** Chime Dongkar (SM)
