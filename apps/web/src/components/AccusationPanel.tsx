@@ -3,6 +3,8 @@ import type { CollectedEvidence, Suspect } from "@case-zero/shared";
 import { missingForAccusation, type AccusationDraft } from "../lib/accusation";
 import { KIND_LABEL } from "./evidenceKind";
 import { CaseResolution } from "./CaseResolution";
+import { AccusationReview } from "./AccusationReview";
+import type { ReviewFinding } from "../lib/accusationReview";
 
 interface Props {
   draft: AccusationDraft;
@@ -20,6 +22,8 @@ interface Props {
    * Fehlertext fuer den Spieler.
    */
   onSubmit: () => Promise<string | null>;
+  /** Ergebnis der Pruefung auf offensichtliche Luecken (#52), laufend aktuell. */
+  review: ReviewFinding[];
   onBack: () => void;
 }
 
@@ -48,9 +52,12 @@ export function AccusationPanel({
   onChooseSuspect,
   onChangeSuspect,
   onSubmit,
+  review,
   onBack,
 }: Props) {
   const [sending, setSending] = useState(false);
+  // #52 — die Pruefung erscheint erst auf Wunsch und rechnet dann bei jeder Aenderung neu.
+  const [showReview, setShowReview] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const suspect = suspects.find((s) => s.id === draft.suspectId);
   const attached = draft.evidenceIds
@@ -198,7 +205,17 @@ export function AccusationPanel({
         </ul>
       )}
 
+      {showReview && (
+        <div className="accusation__block">
+          <p className="team-code__label">Pruefung</p>
+          <AccusationReview findings={review} />
+        </div>
+      )}
+
       <div className="case-status__actions">
+        <button onClick={() => setShowReview((prev) => !prev)} aria-expanded={showReview}>
+          {showReview ? "Pruefung ausblenden" : "Anklage pruefen lassen"}
+        </button>
         <button
           className="button--primary"
           onClick={submit}
