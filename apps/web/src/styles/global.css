@@ -1411,3 +1411,38 @@ div.account-bar {
   padding: 0.25rem 0 0.25rem 0.9rem;
   margin: 1rem 0;
 }
+
+/* Story #33 — Zoom im Tatort */
+.scene__viewport {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  /* Scrollbalken im Terminal-Look statt hellgrau. */
+  scrollbar-color: var(--accent) transparent;
+}
+
+.scene__stage {
+  position: relative;
+  min-width: 100%;
+  min-height: 100%;
+  transition: width 0.2s ease-out, height 0.2s ease-out;
+}
+
+.scene__zoom {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  z-index: 5;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.scene__zoom button {
+  background: rgba(5, 7, 10, 0.85);
+  min-width: 2.5rem;
+}
+
+.scene__zoom button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
