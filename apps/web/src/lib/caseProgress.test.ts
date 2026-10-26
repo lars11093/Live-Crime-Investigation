@@ -179,7 +179,10 @@ describe("Chatnachrichten markieren", () => {
 
 describe("Beweise einsammeln", () => {
   it("legt einen neuen Fund in die Akte", () => {
-    expect(collectEvidence([], evidence)).toEqual([evidence]);
+    const now = new Date("2026-10-26T20:00:00Z");
+    expect(collectEvidence([], evidence, now)).toEqual([
+      { ...evidence, collectedAt: "2026-10-26T20:00:00.000Z" },
+    ]);
   });
 
   it("sichert denselben Fund nicht doppelt", () => {

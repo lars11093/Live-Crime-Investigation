@@ -81,9 +81,12 @@ export function toggleMarkedMessage(ids: string[], messageId: string): string[] 
  */
 export function collectEvidence(
   list: CollectedEvidence[],
-  evidence: CollectedEvidence
+  evidence: CollectedEvidence,
+  now: Date = new Date()
 ): CollectedEvidence[] {
-  return list.some((e) => e.id === evidence.id) ? list : [...list, evidence];
+  if (list.some((e) => e.id === evidence.id)) return list;
+  // Der Zeitstempel entsteht hier, an einer Stelle fuer Tatort und Geraete (#37).
+  return [...list, { ...evidence, collectedAt: evidence.collectedAt ?? now.toISOString() }];
 }
 
 export const EMPTY_PROGRESS: CaseProgress = {

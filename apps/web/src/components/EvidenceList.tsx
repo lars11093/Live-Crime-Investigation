@@ -10,6 +10,7 @@ import {
   type EvidenceFilter,
   type EvidenceKind,
 } from "../lib/evidenceFilter";
+import { SORT_LABEL, formatCollectedAt, sortEvidence, type EvidenceSort } from "../lib/evidenceSort";
 
 interface Props {
   evidence: CollectedEvidence[];
@@ -32,10 +33,14 @@ interface Props {
  * Story #36 — filtern. Suchfeld (Titel, Beschreibung, Fundort, Notiz) und
  * Arten zum An- und Abwaehlen. Angeboten werden nur Arten, die in der Akte
  * auch vorkommen.
+ *
+ * Story #37 — sortieren nach Fundzeit (beide Richtungen), Art oder Name.
+ * Sortiert wird nur die Anzeige; die Akte selbst bleibt in Fundreihenfolge.
  */
 export function EvidenceList({ evidence, notes = {}, photos = {}, onOpen, onBack }: Props) {
   const [filter, setFilter] = useState<EvidenceFilter>(NO_FILTER);
-  const shown = filterEvidence(evidence, filter, notes);
+  const [sort, setSort] = useState<EvidenceSort>("found-asc");
+  const shown = sortEvidence(filterEvidence(evidence, filter, notes), sort);
   const kindsInAkte = (Object.keys(KIND_LABEL) as EvidenceKind[]).filter((kind) =>
     evidence.some((e) => e.kind === kind)
   );
@@ -60,6 +65,16 @@ export function EvidenceList({ evidence, notes = {}, photos = {}, onOpen, onBack
             value={filter.query}
             onChange={(e) => setFilter((prev) => ({ ...prev, query: e.target.value }))}
           />
+          <label className="evidence-filter__sort">
+            <span className="team-code__label">Sortieren</span>
+            <select value={sort} onChange={(e) => setSort(e.target.value as EvidenceSort)}>
+              {(Object.keys(SORT_LABEL) as EvidenceSort[]).map((key) => (
+                <option key={key} value={key}>
+                  {SORT_LABEL[key]}
+                </option>
+              ))}
+            </select>
+          </label>
           <div className="evidence-filter__kinds" role="group" aria-label="Nach Art filtern">
             {kindsInAkte.map((kind) => {
               const on = filter.kinds.includes(kind);
@@ -104,6 +119,7 @@ export function EvidenceList({ evidence, notes = {}, photos = {}, onOpen, onBack
                 )}
                 <span className="evidence-list__found">
                   Gefunden: {item.foundAt.sceneName} · {item.foundAt.hotspotLabel}
+                  {item.collectedAt && ` · gesichert ${formatCollectedAt(item.collectedAt)}`}
                 </span>
               </button>
             </li>

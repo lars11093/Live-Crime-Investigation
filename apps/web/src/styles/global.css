@@ -1547,3 +1547,14 @@ div.account-bar {
   border-color: var(--accent);
   background: rgba(34, 197, 94, 0.1);
 }
+
+/* Story #37 — Akte sortieren */
+.evidence-filter__sort {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.evidence-filter__sort .team-code__label {
+  margin: 0;
+}
