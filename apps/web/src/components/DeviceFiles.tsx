@@ -28,7 +28,7 @@ export function DeviceFiles({ device, onShowMessages, onBack }: Props) {
         </p>
         <span className="device-files__actions">
           <button onClick={onShowMessages}>Nachrichten</button>
-          <button onClick={onBack}>Zurueck zur Fallakte</button>
+          <button onClick={onBack}>Zurueck zum Forensik-Terminal</button>
         </span>
       </div>
 

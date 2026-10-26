@@ -65,7 +65,7 @@ export function ChatHistory({
           {onShowFiles && (
             <button onClick={onShowFiles}>Dateien ({device.files?.length ?? 0})</button>
           )}
-          <button onClick={onBack}>Zurueck zur Fallakte</button>
+          <button onClick={onBack}>Zurueck zum Forensik-Terminal</button>
         </span>
       </div>
 

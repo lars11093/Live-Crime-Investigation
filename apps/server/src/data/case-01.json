@@ -269,6 +269,35 @@
           "unreadableReason": "Verschluesselt. Ohne Passwort laesst sich die Datei nicht oeffnen."
         }
       ]
+    },
+    {
+      "id": "smartphone-fischer",
+      "label": "Smartphone Leo Fischer",
+      "owner": "Leo Fischer",
+      "locked": true,
+      "lockType": "PIN, 4 Ziffern",
+      "messages": [
+        {
+          "id": "msg-fischer-01",
+          "sender": "Leo Fischer",
+          "sentAt": "12.09. 22:18",
+          "text": "Update dauert laenger. Bin erst gegen Mitternacht fertig, warte nicht."
+        },
+        {
+          "id": "msg-fischer-02",
+          "sender": "Sara Fischer",
+          "sentAt": "12.09. 22:20",
+          "text": "Ok. Schreib, wenn du losfaehrst."
+        }
+      ]
+    },
+    {
+      "id": "laptop-vogt",
+      "label": "Laptop Thomas Vogt",
+      "owner": "Thomas Vogt",
+      "locked": true,
+      "lockType": "Passwort",
+      "messages": []
     }
   ],
   "scenarios": [

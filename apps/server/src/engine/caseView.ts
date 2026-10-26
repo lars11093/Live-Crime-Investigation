@@ -9,8 +9,17 @@ import type { CaseDefinition, PublicCase } from "@case-zero/shared";
  *   - `combinations`: welche Beweispaare etwas ergeben. Mit dieser Liste
  *     liesse sich jede Verknuepfung aus der Netzwerk-Konsole ablesen, statt
  *     sie zu finden. Kombiniert wird deshalb serverseitig (#13).
+ * Ausserdem bleiben gesperrte Geraete leer: Das Forensik-Terminal (#18) listet
+ * sie auf, ihre Nachrichten und Dateien (#20) stehen aber erst nach dem
+ * Entsperren zur Verfuegung.
  */
 export function toPublicCase(caseDef: CaseDefinition): PublicCase {
   const { scenarios: _scenarios, combinations: _combinations, ...publicCase } = caseDef;
-  return publicCase;
+  if (!publicCase.devices) return publicCase;
+  return {
+    ...publicCase,
+    devices: publicCase.devices.map((device) =>
+      device.locked ? { ...device, messages: [], files: [] } : device
+    ),
+  };
 }

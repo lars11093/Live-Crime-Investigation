@@ -21,11 +21,12 @@ import { SuspectList } from "../components/SuspectList";
 import { SuspectProfile } from "../components/SuspectProfile";
 import { ContradictionOverview } from "../components/ContradictionOverview";
 import { ChatHistory } from "../components/ChatHistory";
+import { ForensicsTerminal } from "../components/ForensicsTerminal";
 import { DeviceFiles } from "../components/DeviceFiles";
 import { messageToEvidence } from "../lib/digitalTrace";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
-type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "chat" | "dateien";
+type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik";
 
 type LoadState =
   | { status: "loading" }
@@ -54,6 +55,10 @@ export function CaseLoaderPage() {
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
   // Welcher Verdaechtige im Profil offen ist (#15).
   const [openSuspectId, setOpenSuspectId] = useState<string | null>(null);
+  // Welches Geraet im Forensik-Terminal ausgewertet wird (#18 -> #19).
+  const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
+  // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
+  const [deviceTab, setDeviceTab] = useState<"chat" | "dateien">("chat");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -166,23 +171,37 @@ export function CaseLoaderPage() {
     );
   }
 
-  // Solange es kein Forensik-Terminal mit Geraeteliste gibt (#18), oeffnet
-  // die Fallakte direkt das erste Geraet.
-  const device = caseData.devices?.at(0);
+  const devices = caseData.devices ?? [];
 
-  if (view === "dateien" && device) {
-    return (
-      <main className="app-shell">
-        <DeviceFiles
-          device={device}
-          onShowMessages={() => setView("chat")}
-          onBack={() => setView("akte")}
-        />
-      </main>
-    );
-  }
-
-  if (view === "chat" && device) {
+  if (view === "forensik") {
+    // Gesperrte Geraete kommen ohne Nachrichten vom Server und lassen sich im
+    // Terminal nicht oeffnen — hier landet nur ein auswertbares Geraet.
+    const device = devices.find((d) => d.id === openDeviceId && !d.locked);
+    if (!device) {
+      return (
+        <main className="app-shell">
+          <ForensicsTerminal
+            devices={devices}
+            onOpen={(id) => {
+              setDeviceTab("chat");
+              setOpenDeviceId(id);
+            }}
+            onBack={() => setView("akte")}
+          />
+        </main>
+      );
+    }
+    if (deviceTab === "dateien") {
+      return (
+        <main className="app-shell">
+          <DeviceFiles
+            device={device}
+            onShowMessages={() => setDeviceTab("chat")}
+            onBack={() => setOpenDeviceId(null)}
+          />
+        </main>
+      );
+    }
     return (
       <main className="app-shell">
         <ChatHistory
@@ -201,8 +220,8 @@ export function CaseLoaderPage() {
               collected: collectEvidence(prev.collected, messageToEvidence(device, message)),
             }))
           }
-          onShowFiles={device.files?.length ? () => setView("dateien") : undefined}
-          onBack={() => setView("akte")}
+          onShowFiles={device.files?.length ? () => setDeviceTab("dateien") : undefined}
+          onBack={() => setOpenDeviceId(null)}
         />
       </main>
     );
@@ -350,7 +369,11 @@ export function CaseLoaderPage() {
           <button onClick={() => setView("verdaechtige")}>
             Verdaechtige ({caseData.suspects.length})
           </button>
-          {device && <button onClick={() => setView("chat")}>{device.label}</button>}
+          {devices.length > 0 && (
+            <button onClick={() => setView("forensik")}>
+              Forensik-Terminal ({devices.length})
+            </button>
+          )}
           <button onClick={() => setView("briefing")}>Briefing</button>
         </div>
       </div>
