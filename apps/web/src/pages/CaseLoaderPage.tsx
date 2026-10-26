@@ -500,7 +500,7 @@ export function CaseLoaderPage() {
             me={me}
             team={team}
             error={teamError}
-            onChoose={(role) => changeRole(me.id, role)}
+            onAssign={(playerId, role) => changeRole(playerId, role)}
             onRefresh={refreshTeam}
             onBack={() => setView("akte")}
           />

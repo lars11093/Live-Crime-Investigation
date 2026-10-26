@@ -397,6 +397,11 @@ export interface ScoreResult {
 /** Das Team einer Session, wie der Client es sieht (#31). */
 export interface TeamView {
   players: Player[];
+  /**
+   * Wer das Team leitet (#48): wer der Session zuerst beigetreten ist, also in
+   * aller Regel, wer den Fall gestartet hat. `null`, solange niemand da ist.
+   */
+  leaderId: string | null;
 }
 
 /** Antwort der Team-Endpoints (#31). */

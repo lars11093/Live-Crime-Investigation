@@ -1901,3 +1901,26 @@ div.account-bar {
   margin-top: 0.3rem;
   font-size: 0.8rem;
 }
+
+/* Story #48 — Teamleitung vergibt Rollen */
+.team-assign {
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+}
+
+.team-assign__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.team-assign__row {
+  display: grid;
+  grid-template-columns: 1fr minmax(180px, 240px);
+  align-items: center;
+  gap: 1rem;
+}
