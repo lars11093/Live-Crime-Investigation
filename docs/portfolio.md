@@ -198,11 +198,11 @@ trotzdem wieder auf, weil nur Review und Merge fehlen; neu gebaut wird nur #8. #
 
 **Ergebnis:** `_<am 26.10. ergänzen: Sprintziel erreicht? Velocity: _ von _ SP>_`
 
-**Review (Modultag 7, 26.10.2026)** — vollständig in [Sprint-Review-2.md](Sprint-Review-2.md):
+**Review (Modultag 8, 26.10.2026)** — vollständig in [Sprint-Review-2.md](Sprint-Review-2.md):
 
-Gezeigt: `_<was gezeigt>_`
-Feedback: `_<welches Feedback>_`
-Ins Backlog: `_<was zurück oder neu ins Backlog>_`
+Gezeigt: Auf `master` live durchgeklickt: Startseite → Fall laden → Briefing → Tatort → Stellen untersuchen, dazu Beweisakte, Verdächtige und Forensik-Terminal. Sprintziel erreicht.
+Feedback: Texte zeigen ae/oe/ue statt Umlauten. _<weiteres Feedback aus dem Review>_
+Ins Backlog: #20, #22, #23, #24 (offene PRs ohne Review) ohne Sprint-Zuordnung zurück; neue Story «Texte mit korrekten Umlauten».
 
 **Retrospective (Modultag 7, 26.10.2026)** — vollständig in
 [retrospective-sprint-2.md](retrospective-sprint-2.md):
