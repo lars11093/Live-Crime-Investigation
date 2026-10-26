@@ -86,7 +86,9 @@ export interface ChatMessage {
  * angezeigt werden — chronologisch, die aelteste zuerst. Der Client
  * sortiert nicht um, weil `sentAt` ein Anzeigetext ist und kein Datum.
  *
- * Auflisten und Sperren der Geraete ist #18 (Forensik-Terminal).
+ * Story #18 — im Forensik-Terminal werden alle Geraete aufgelistet. Ein
+ * gesperrtes Geraet (`locked`) ist dort sichtbar, aber nicht auswertbar; der
+ * Server schickt seine Nachrichten gar nicht erst an den Client.
  */
 export interface Device {
   id: string;
@@ -94,6 +96,10 @@ export interface Device {
   label: string;
   /** Wem das Geraet gehoert. Gleich geschrieben wie `ChatMessage.sender`, damit eigene Nachrichten erkennbar sind. */
   owner: string;
+  /** Gesperrt, bis es entsperrt wird (#18). Fehlt das Feld, ist das Geraet offen. */
+  locked?: boolean;
+  /** Art der Sperre, wie sie im Terminal steht — z. B. "PIN, 4 Ziffern" (#18). */
+  lockType?: string;
   messages: ChatMessage[];
 }
 

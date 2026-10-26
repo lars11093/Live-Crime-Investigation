@@ -653,6 +653,33 @@ button:disabled:hover {
 }
 
 /* ---------------------------------------------------------------
+   Story #18 — Forensik-Terminal
+   --------------------------------------------------------------- */
+
+.device__status {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.device__status--locked {
+  color: var(--danger);
+}
+
+.evidence-list__item--button.device--locked {
+  border-left-color: var(--danger);
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.evidence-list__item--button.device--locked:hover {
+  border-color: var(--border);
+  border-left-color: var(--danger);
+  background: #0a0f14;
+}
+
+/* ---------------------------------------------------------------
    Story #11 — Beweis im Detail
    --------------------------------------------------------------- */
 
