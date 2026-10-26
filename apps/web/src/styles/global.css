@@ -1794,3 +1794,43 @@ div.account-bar {
   gap: 0.4rem;
   margin-top: 0.6rem;
 }
+
+/* Story #45 — Bild-Metadaten */
+.attachment {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px dashed var(--border);
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+.attachment__file {
+  margin: 0;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  word-break: break-all;
+}
+
+.attachment__meta {
+  margin: 0;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.attachment__meta div {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 0.5rem;
+}
+
+.attachment__meta dt {
+  color: var(--muted);
+}
+
+.attachment__meta dd {
+  margin: 0;
+  color: var(--accent);
+}

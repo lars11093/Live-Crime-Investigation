@@ -84,6 +84,31 @@ export interface ChatMessage {
   /** Zeitpunkt, wie er auf dem Geraet steht — z. B. "12.09. 20:31". */
   sentAt: string;
   text: string;
+  /** Mitgeschicktes Bild (#45). Nur die Metadaten, kein Bild-Asset. */
+  attachment?: ChatAttachment;
+}
+
+/**
+ * EXIF-artige Metadaten eines Bildes (Story #45).
+ *
+ * `takenAt` ist wie `sentAt` ein Anzeigetext. Der Unterschied zwischen
+ * Aufnahme und Versand ist oft genau der Hinweis.
+ */
+export interface ImageMetadata {
+  takenAt: string;
+  /** Kamera bzw. Geraetemodell, z. B. "Google Pixel 7". */
+  camera?: string;
+  gps?: { lat: number; lng: number; place?: string };
+  /** GPS war ausgeschaltet — anders als "keine Angabe". */
+  gpsDisabled?: boolean;
+  resolution?: string;
+  software?: string;
+}
+
+/** Ein Bildanhang an einer Chatnachricht (#45). */
+export interface ChatAttachment {
+  fileName: string;
+  metadata: ImageMetadata;
 }
 
 /**

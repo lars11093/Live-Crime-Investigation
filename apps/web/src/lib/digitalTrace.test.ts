@@ -39,3 +39,29 @@ describe("Chatnachricht als Beweis", () => {
     });
   });
 });
+
+describe("Anhang mit Metadaten in der Akte (#45)", () => {
+  const device = { id: "d", label: "Smartphone Thomas Vogt", owner: "Thomas Vogt", messages: [] };
+  const message = {
+    id: "m",
+    sender: "Leo Fischer",
+    sentAt: "12.09. 20:47",
+    text: "Soll ich vorbeikommen?",
+    attachment: {
+      fileName: "PXL_1.jpg",
+      metadata: { takenAt: "12.09. 20:44", camera: "Google Pixel 7" },
+    },
+  };
+
+  it("nennt den Anhang, solange die Metadaten nicht ausgelesen sind", () => {
+    expect(messageToEvidence(device, message).description).toBe(
+      "«Soll ich vorbeikommen?» Anhang: PXL_1.jpg."
+    );
+  });
+
+  it("nimmt ausgelesene Metadaten mit", () => {
+    expect(messageToEvidence(device, message, true).description).toBe(
+      "«Soll ich vorbeikommen?» Anhang PXL_1.jpg: aufgenommen 12.09. 20:44 · Google Pixel 7."
+    );
+  });
+});

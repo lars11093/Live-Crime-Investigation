@@ -221,13 +221,32 @@
           "id": "msg-vogt-06",
           "sender": "Leo Fischer",
           "sentAt": "12.09. 20:47",
-          "text": "Bin heute ohnehin fuer das Update im Haus. Soll ich vorher noch bei dir vorbeikommen?"
+          "text": "Bin heute ohnehin fuer das Update im Haus. Soll ich vorher noch bei dir vorbeikommen?",
+          "attachment": {
+            "fileName": "PXL_20260912_184402.jpg",
+            "metadata": {
+              "takenAt": "12.09. 20:44",
+              "camera": "Google Pixel 7",
+              "gps": { "lat": 47.39183, "lng": 8.51127, "place": "Hardturmstrasse 61, Zuerich" },
+              "resolution": "4080 x 3072"
+            }
+          }
         },
         {
           "id": "msg-vogt-07",
           "sender": "Monica Brandt",
           "sentAt": "12.09. 21:15",
-          "text": "Ich komme. Aber das bleibt unter uns."
+          "text": "Ich komme. Aber das bleibt unter uns.",
+          "attachment": {
+            "fileName": "IMG_4471.HEIC",
+            "metadata": {
+              "takenAt": "12.09. 21:09",
+              "camera": "Apple iPhone 13",
+              "gpsDisabled": true,
+              "resolution": "4032 x 3024",
+              "software": "iOS 17.6"
+            }
+          }
         },
         {
           "id": "msg-vogt-08",
