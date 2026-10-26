@@ -1,8 +1,9 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import type { CollectedEvidence, Difficulty, Hotspot, Scene, SceneTool } from "@case-zero/shared";
 import { sceneProgressText } from "../lib/difficulty";
 import { TOOL_LABEL, toolsIn, visibleHotspots } from "../lib/sceneTools";
+import { ZOOM_LEVELS, keepCenter, zoomIn, zoomOut } from "../lib/zoom";
 
 // three.js ist gross — erst laden, wenn ein Tatort wirklich ein 3D-Modell hat.
 const Scene3D = lazy(() => import("./Scene3D"));
@@ -30,6 +31,11 @@ interface Props {
  * nicht gibt — echte Bilder werden in der MVP-Phase bewusst nicht committet
  * (Copyright/Repo-Groesse). Bis dahin greift der Platzhalter, der deshalb
  * kein Randfall ist, sondern der Normalzustand.
+ *
+ * Story #33 — Zoom. Bild und Stellen liegen gemeinsam auf einer "Buehne", die
+ * mit der Zoomstufe waechst; der Ausschnitt darum herum scrollt. Weil die
+ * Stellen in Prozent der Buehne positioniert sind, bleiben sie beim Zoomen
+ * genau auf ihrem Bilddetail. Das 3D-Modell (#156) zoomt selbst per Mausrad.
  */
 export function SceneView({
   scene,
@@ -51,6 +57,33 @@ export function SceneView({
   const tools = toolsIn(scene.hotspots);
   const activeTool = tool && tools.includes(tool) ? tool : null;
   const shown = visibleHotspots(scene.hotspots, activeTool, investigatedIds);
+  const show3d = Boolean(scene.modelPath) && !modelFailed;
+  const [zoom, setZoom] = useState<number>(ZOOM_LEVELS[0]);
+  const viewportRef = useRef<HTMLDivElement>(null);
+
+  function changeZoom(next: number) {
+    const viewport = viewportRef.current;
+    if (viewport && next !== zoom) {
+      const left = keepCenter(viewport.scrollLeft, viewport.clientWidth, zoom, next);
+      const top = keepCenter(viewport.scrollTop, viewport.clientHeight, zoom, next);
+      // Erst nach dem Neuzeichnen scrollen, sonst ist die Buehne noch zu klein.
+      requestAnimationFrame(() => viewport.scrollTo({ left, top }));
+    }
+    setZoom(next);
+  }
+
+  // Tastatur: + / - zoomen, 0 setzt zurueck — nicht, solange ein Dialog offen ist.
+  useEffect(() => {
+    if (show3d) return;
+    function onKey(event: KeyboardEvent) {
+      if (openHotspot || event.target instanceof HTMLInputElement) return;
+      if (event.key === "+" || event.key === "=") changeZoom(zoomIn(zoom));
+      else if (event.key === "-") changeZoom(zoomOut(zoom));
+      else if (event.key === "0") changeZoom(ZOOM_LEVELS[0]);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
   const investigated = new Set(investigatedIds);
   const collected = new Set(collectedIds);
@@ -100,8 +133,6 @@ export function SceneView({
     );
   }
 
-  const show3d = Boolean(scene.modelPath) && !modelFailed;
-
   return (
     <section className={`scene scene--${difficulty}${activeTool ? ` scene--${activeTool}` : ""}`} aria-label={`Tatort: ${scene.name}`}>
       {show3d ? (
@@ -113,27 +144,53 @@ export function SceneView({
             onError={() => setModelFailed(true)}
           />
         </Suspense>
-      ) : imageFailed ? (
-        <div className="scene__placeholder">
-          <p className="scene__placeholder-mark" aria-hidden="true">
-            [ ! ]
-          </p>
-          <p className="scene__placeholder-name">{scene.name}</p>
-          <p className="scene__placeholder-hint">Szenenbild nicht verfuegbar</p>
-        </div>
       ) : (
-        <img
-          className="scene__image"
-          src={scene.imagePath}
-          alt={scene.name}
-          onError={() => setImageFailed(true)}
-        />
+        <div className="scene__viewport" ref={viewportRef}>
+          <div
+            className="scene__stage"
+            style={{ width: `${zoom * 100}%`, height: `${zoom * 100}%` }}
+          >
+            {imageFailed ? (
+              <div className="scene__placeholder">
+                <p className="scene__placeholder-mark" aria-hidden="true">
+                  [ ! ]
+                </p>
+                <p className="scene__placeholder-name">{scene.name}</p>
+                <p className="scene__placeholder-hint">Szenenbild nicht verfuegbar</p>
+              </div>
+            ) : (
+              <img
+                className="scene__image"
+                src={scene.imagePath}
+                alt={scene.name}
+                onError={() => setImageFailed(true)}
+              />
+            )}
+
+            {shown.map((hotspot) =>
+              hotspotButton(hotspot, { left: `${hotspot.x}%`, top: `${hotspot.y}%` })
+            )}
+          </div>
+        </div>
       )}
 
-      {!show3d &&
-        shown.map((hotspot) =>
-          hotspotButton(hotspot, { left: `${hotspot.x}%`, top: `${hotspot.y}%` })
-        )}
+      {!show3d && (
+        <div className="scene__zoom" role="group" aria-label="Zoom">
+          <button onClick={() => changeZoom(zoomOut(zoom))} disabled={zoom === ZOOM_LEVELS[0]} aria-label="Herauszoomen">
+            −
+          </button>
+          <button onClick={() => changeZoom(ZOOM_LEVELS[0])} aria-label="Zoom zuruecksetzen">
+            {Math.round(zoom * 100)} %
+          </button>
+          <button
+            onClick={() => changeZoom(zoomIn(zoom))}
+            disabled={zoom === ZOOM_LEVELS[ZOOM_LEVELS.length - 1]}
+            aria-label="Hineinzoomen"
+          >
+            +
+          </button>
+        </div>
+      )}
 
       <div className="scene__overlay">
         <p className="scene__name">{scene.name}</p>
