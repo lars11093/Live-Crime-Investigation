@@ -1,6 +1,6 @@
 # Sprint Review – Sprint 2
 
-**Datum:** 26.10.2026 · **Zeit:** ___ · **Ort:** TBZ
+**Datum:** 26.10.2026 · **Ort:** TBZ
 **Sprint:** 28.09.2026 – 26.10.2026 (Arbeitstage 28.09. und 19.10., dazwischen Herbstferien)
 **Teilnehmende:** PO Lars · SM Chime · Devs: Loris, Elina, Nehir · Stakeholder: N. Fricker
 
@@ -17,7 +17,7 @@ lassen sich die Stellen anklicken, sie zeigen einen Detailtext und werden als un
 
 ## 2. Gezeigtes Inkrement
 
-Gezeigt live auf ___ von `master` (kein Arbeitsbranch): Startseite → Fall laden → Briefing →
+Gezeigt live auf localhost:5173 von `master` (kein Arbeitsbranch): Startseite → Fall laden → Briefing →
 Tatort → Stellen untersuchen. Gezeigt hat jeweils, wer die Story gebaut hat.
 
 **Sprint Backlog**
@@ -30,7 +30,7 @@ Tatort → Stellen untersuchen. Gezeigt hat jeweils, wer die Story gebaut hat.
 | #7 Tatort als Szene sehen | 5 | #100 | ✅ | ✅ gemergt, Review Loris |
 | #8 Stellen im Tatort untersuchen | ___ | #102 | ✅ | ✅ gemergt, Review Loris |
 
-**Velocity Sprint 2:** ___ SP (geplant 11 SP + #8)
+**Velocity Sprint 2:** 11 SP (geplant 11 SP + #8)
 
 **Zusätzlich gemergt, nicht im Sprint Backlog geplant:**
 
