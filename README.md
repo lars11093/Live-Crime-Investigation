@@ -68,6 +68,7 @@ Live-Crime-Investigation/
 3. Server pusht rollenspezifische Payloads (`role:payload`) — jeder Client sieht nur, was seine Rolle darf.
 4. Aktionen (Board verbinden, Beweis anzeigen, Verhör-Antwort) gehen als Socket-Events zum Server, der validiert + an alle im Room broadcastet (`board:update`, `event:new`).
    Team-Chat (#49): `chat:join` `{ code, playerId, name }` tritt dem Socket-Room `case:<code>` bei (und dem Team, #31), Antwort `chat:history`. `chat:send` `{ code, playerId, name, text }` (1–500 Zeichen, Callback mit `{ ok }` oder `{ ok: false, reason }`), der Server broadcastet `chat:message` an den Room. Der Verlauf (max. 200 Nachrichten) liegt im Room-Store.
+   Aufgabenliste (#50): `tasks:join` `{ code, playerId, name }` abonniert, `tasks:add` / `tasks:update` (`{ done?, assigneeId? }`) / `tasks:remove` (nur Ersteller oder Teamleitung) mit Callback `{ ok }` bzw. `{ ok: false, reason }`. Nach jeder Änderung broadcastet der Server `tasks:state` `{ tasks, team }` an `case:<code>`.
 5. Case-Engine feuert zeitbasierte Live-Events (`NEW_EVIDENCE`, `STATEMENT_CHANGED`, `SERVER_BREACH`) nach Skript im Case-JSON.
 6. Lead Detective reicht Accusation ein → Server vergleicht mit dem aktiven Szenario → `CASE SOLVED` Score-Payload an alle.
    Umgesetzt (#27) als `POST /api/rooms/:code/accusation` mit `{ suspectId, evidenceIds }`: Der Server prüft Täter und mindestens einen Beweis und speichert die Anklage einmal pro Team-Session (`201`). Jeder weitere Versuch bekommt `409` mit der ersten Quittung zurück, danach ist die Anklage gesperrt.

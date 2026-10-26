@@ -419,6 +419,27 @@ export interface TeamChatMessage {
   sentAt: string;
 }
 
+/** Eine Aufgabe auf der gemeinsamen Liste (#50). */
+export interface TeamTask {
+  id: string;
+  text: string;
+  /** Spieler-ID, wer sie angelegt hat. */
+  createdBy: string;
+  /** Wer sie uebernimmt — `null`, solange niemand. */
+  assigneeId: string | null;
+  done: boolean;
+  createdAt: string;
+}
+
+/** Was sich an einer Aufgabe aendern laesst (#50). */
+export interface TeamTaskPatch {
+  done?: boolean;
+  assigneeId?: string | null;
+}
+
+/** Antwort auf eine Aenderung an der Aufgabenliste (#50). */
+export type TaskAck = { ok: true } | { ok: false; reason: string };
+
 export interface RoomState {
   code: string;
   caseId: string;
@@ -446,6 +467,17 @@ export interface ClientToServerEvents {
     payload: { code: string; playerId: string; name: string; text: string },
     cb: (result: { ok: true } | { ok: false; reason: string }) => void
   ) => void;
+  /** Aufgabenliste abonnieren (#50) — Antwort ist `tasks:state`. */
+  "tasks:join": (payload: { code: string; playerId: string; name: string }) => void;
+  "tasks:add": (payload: { code: string; playerId: string; text: string }, cb: (ack: TaskAck) => void) => void;
+  "tasks:update": (
+    payload: { code: string; playerId: string; taskId: string; patch: TeamTaskPatch },
+    cb: (ack: TaskAck) => void
+  ) => void;
+  "tasks:remove": (
+    payload: { code: string; playerId: string; taskId: string },
+    cb: (ack: TaskAck) => void
+  ) => void;
 }
 
 export interface ServerToClientEvents {
@@ -457,4 +489,6 @@ export interface ServerToClientEvents {
   "chat:history": (messages: TeamChatMessage[]) => void;
   /** Neue Nachricht an alle im Room `case:<code>` (#49). */
   "chat:message": (message: TeamChatMessage) => void;
+  /** Die ganze Aufgabenliste nach jeder Aenderung (#50), an alle im Room. */
+  "tasks:state": (payload: { tasks: TeamTask[]; team: TeamView }) => void;
 }
