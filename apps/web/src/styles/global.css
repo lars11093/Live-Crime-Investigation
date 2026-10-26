@@ -1374,3 +1374,40 @@ div.account-bar {
   color: var(--muted);
   font-size: 0.85rem;
 }
+
+/* Story #32 — Ermittlungsziel jederzeit */
+.objective-dock {
+  position: fixed;
+  /* Oben rechts: unten liegt im Tatort die Szenenleiste mit "Zurueck". */
+  right: 1rem;
+  top: 1rem;
+  z-index: 50;
+  display: grid;
+  gap: 0.5rem;
+  justify-items: end;
+  max-width: min(380px, calc(100vw - 2rem));
+}
+
+.objective-dock__toggle {
+  background: var(--panel);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.objective-dock__panel {
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 0.9rem 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.objective-dock__text {
+  margin: 0.5rem 0 0;
+  line-height: 1.5;
+}
+
+.briefing__objective {
+  border-left: 3px solid var(--accent);
+  padding: 0.25rem 0 0.25rem 0.9rem;
+  margin: 1rem 0;
+}
