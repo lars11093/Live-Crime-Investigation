@@ -15,6 +15,8 @@ const TOPIC_LABEL = {
  *
  * Zuoberst und unuebersehbar: geloest oder nicht. Darunter, was tatsaechlich
  * passiert ist, und welche Schluesse richtig oder falsch waren.
+ *
+ * Story #54 — die Punktzahl mit Einordnung und Aufschluesselung.
  */
 export function CaseResolution({ verdict }: Props) {
   return (
@@ -28,6 +30,38 @@ export function CaseResolution({ verdict }: Props) {
       <p className="case-status__hint">
         Taeter: <strong>{verdict.culprit.name}</strong>
       </p>
+
+      {verdict.score && (
+        <div className="score" aria-label="Punktzahl">
+          <p className="score__points">
+            {verdict.score.points}
+            <span className="score__max"> / {verdict.score.maxPoints} Punkte</span>
+          </p>
+          <p className="score__rank">{verdict.score.rank}</p>
+          <div
+            className="score__bar"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={verdict.score.maxPoints}
+            aria-valuenow={verdict.score.points}
+          >
+            <span
+              style={{ width: `${(verdict.score.points / Math.max(1, verdict.score.maxPoints)) * 100}%` }}
+            />
+          </div>
+          <ul className="score__breakdown">
+            {verdict.score.breakdown.map((item) => (
+              <li key={item.label}>
+                <span>{item.label}</span>
+                <span className={item.points < 0 ? "score__minus" : "score__plus"}>
+                  {item.points > 0 ? "+" : ""}
+                  {item.points}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <p className="team-code__label">Was wirklich geschah</p>
       <p className="briefing__text">{verdict.resolution}</p>

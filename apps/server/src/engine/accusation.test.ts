@@ -59,3 +59,17 @@ describe("Anklage absenden (#27)", () => {
     expect(room.accusation?.suspectId).toBe("monica-brandt");
   });
 });
+
+describe("Punktzahl mit der Quittung (#54)", () => {
+  it("rechnet die Dauer seit dem Anlegen der Session ein", () => {
+    const room = createRoom(caseDef);
+    room.createdAt = new Date("2026-10-26T10:00:00Z");
+    const result = submitAccusation(
+      room,
+      { suspectId: room.scenario.suspectId, evidenceIds: [room.scenario.keyEvidenceIds[0]] },
+      new Date("2026-10-26T10:20:00Z")
+    );
+    const labels = result.ok ? result.receipt.verdict.score?.breakdown.map((b) => b.label) : [];
+    expect(labels).toContain("Schnell geloest (< 30 Min.)");
+  });
+});

@@ -30,6 +30,8 @@ export interface Room {
   chat?: TeamChatMessage[];
   /** Gemeinsame Aufgabenliste (#50). */
   tasks?: TeamTask[];
+  /** Wann die Session angelegt wurde — fuer den Tempobonus (#54). */
+  createdAt: Date;
 }
 
 /** Ohne I, O, 0 und 1 — die verwechselt man beim Vorlesen im Team. */
@@ -62,6 +64,7 @@ export function createRoom(caseDef: CaseDefinition): Room {
   }
 
   const room: Room = {
+    createdAt: new Date(),
     caseDef,
     scenario: pickScenario(caseDef),
     findings: [],
