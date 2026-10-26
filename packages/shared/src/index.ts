@@ -407,6 +407,18 @@ export interface TeamView {
 /** Antwort der Team-Endpoints (#31). */
 export type TeamResult = { ok: true; team: TeamView } | { ok: false; message: string };
 
+/** Eine Nachricht im Team-Chat (#49). */
+export interface TeamChatMessage {
+  id: string;
+  playerId: string;
+  name: string;
+  /** Rolle zum Zeitpunkt des Schreibens (#31), falls vergeben. */
+  role: Role | null;
+  text: string;
+  /** ISO-Zeitpunkt, vom Server gesetzt. */
+  sentAt: string;
+}
+
 export interface RoomState {
   code: string;
   caseId: string;
@@ -427,6 +439,13 @@ export interface ClientToServerEvents {
   "board:moveNode": (payload: { code: string; nodeId: string; x: number; y: number }) => void;
   "board:connect": (payload: { code: string; fromId: string; toId: string }) => void;
   "case:accuse": (payload: { code: string; accusation: Accusation }, cb: (result: ScoreResult) => void) => void;
+  /** Team-Chat betreten (#49) — Antwort ist `chat:history`. */
+  "chat:join": (payload: { code: string; playerId: string; name: string }) => void;
+  /** Nachricht schreiben (#49). Der Callback meldet eine Ablehnung, z. B. zu lang. */
+  "chat:send": (
+    payload: { code: string; playerId: string; name: string; text: string },
+    cb: (result: { ok: true } | { ok: false; reason: string }) => void
+  ) => void;
 }
 
 export interface ServerToClientEvents {
@@ -434,4 +453,8 @@ export interface ServerToClientEvents {
   "event:new": (event: TimedEvent) => void;
   "board:update": (board: RoomState["board"]) => void;
   "error:message": (message: string) => void;
+  /** Bisheriger Verlauf, direkt nach `chat:join` (#49). */
+  "chat:history": (messages: TeamChatMessage[]) => void;
+  /** Neue Nachricht an alle im Room `case:<code>` (#49). */
+  "chat:message": (message: TeamChatMessage) => void;
 }

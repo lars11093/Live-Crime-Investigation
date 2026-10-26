@@ -1924,3 +1924,11 @@ div.account-bar {
   align-items: center;
   gap: 1rem;
 }
+
+/* Story #49 — Team-Chat */
+.team-chat__form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
