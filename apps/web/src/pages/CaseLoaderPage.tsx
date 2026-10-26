@@ -77,6 +77,7 @@ import { addTag, allTags, filterByTag, loadTags, removeTag, saveTags } from "../
 import { EvidenceTagEditor } from "../components/EvidenceTagEditor";
 import { EvidenceTagFilter } from "../components/EvidenceTagFilter";
 import { loadExcluded, saveExcluded, toggleExcluded } from "../lib/excludedSuspects";
+import { storePhoto } from "../lib/photos";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View =
@@ -382,6 +383,10 @@ export function CaseLoaderPage() {
               })
             );
           }}
+          photographedIds={Object.keys(progress.photos)}
+          onPhoto={(photo) =>
+            setProgress((prev) => ({ ...prev, photos: storePhoto(prev.photos, photo) }))
+          }
           onBack={() => setView("akte")}
           difficulty={difficulty}
         />
@@ -570,6 +575,7 @@ export function CaseLoaderPage() {
             <EvidenceDetail
               evidence={open}
               note={notes[open.id] ?? ""}
+              photo={progress.photos[open.id]}
               onSaveNote={(text) =>
                 setProgress((prev) => ({ ...prev, notes: setNote(prev.notes, open.id, text) }))
               }
@@ -619,6 +625,7 @@ export function CaseLoaderPage() {
                 evidence={filterByTag(collected, tags, activeTag)}
                 notes={notes}
                 tags={tags}
+                photos={progress.photos}
                 onOpen={setOpenEvidenceId}
                 onBack={() => setView("akte")}
               />

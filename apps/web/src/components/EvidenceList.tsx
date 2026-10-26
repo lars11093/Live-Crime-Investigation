@@ -1,5 +1,7 @@
 import type { CollectedEvidence } from "@case-zero/shared";
 import { KIND_LABEL } from "./evidenceKind";
+import { EvidencePhotoView } from "./EvidencePhotoView";
+import type { EvidencePhoto } from "../lib/photos";
 
 interface Props {
   evidence: CollectedEvidence[];
@@ -7,6 +9,8 @@ interface Props {
   notes?: Record<string, string>;
   /** Eigene Tags pro Beweis (#62). */
   tags?: Record<string, string[]>;
+  /** Tatortfotos (#35), pro Beweis-ID. */
+  photos?: Record<string, EvidencePhoto>;
   /** Oeffnet die Detailansicht (#11). */
   onOpen?: (id: string) => void;
   /** Zurueck in die Fallakte. Fehlt, wenn die Liste eingebettet gezeigt wird. */
@@ -19,7 +23,7 @@ interface Props {
  * Die Liste haengt am State der Fallseite, nicht an einem eigenen Ladevorgang:
  * ein neu eingesammelter Fund erscheint dadurch sofort, ohne Neuladen.
  */
-export function EvidenceList({ evidence, notes = {}, tags = {}, onOpen, onBack }: Props) {
+export function EvidenceList({ evidence, notes = {}, tags = {}, photos = {}, onOpen, onBack }: Props) {
   return (
     <section className="panel evidence-list">
       <div className="evidence-list__bar">
@@ -41,6 +45,7 @@ export function EvidenceList({ evidence, notes = {}, tags = {}, onOpen, onBack }
                 className="evidence-list__item evidence-list__item--button"
                 onClick={() => onOpen?.(item.id)}
               >
+                {photos[item.id] && <EvidencePhotoView photo={photos[item.id]} />}
                 <span className="evidence-list__head">
                   <span className="evidence-list__label">{item.label}</span>
                   <span className="evidence-list__kind">{KIND_LABEL[item.kind]}</span>
