@@ -168,6 +168,11 @@ export interface CollectedEvidence extends CollectableEvidence {
     sceneName: string;
     hotspotLabel: string;
   };
+  /**
+   * ISO-Zeitpunkt der Sicherung (#37). Optional, weil Funde aus der Zeit vor
+   * #37 keinen haben.
+   */
+  collectedAt?: string;
 }
 
 export interface Scene {
