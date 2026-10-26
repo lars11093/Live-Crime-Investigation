@@ -87,20 +87,6 @@ oder der Autor des PRs** und wechseln, damit die Retro-Massnahme erfüllt wird.
 
 10 Minuten, im Stehen. Scrum Master hält die Timebox. Hindernisse werden benannt, nicht gelöst, und
 bekommen im Board das Label `Impediment`. **Fester Punkt:** auf welcher Story baut meine Arbeit auf?
-
-| Person | Woran arbeite ich als Erstes? | Was brauche ich von jemandem? | Was blockiert mich? |
-|---|---|---|---|
-| Lars | | | |
-| Loris | | | |
-| Elina | | | |
-| Nehir | | | |
-| Chime | | | |
-
-## 7. Fertig, wenn (Auftrag 8.2)
-
-- [ ] Sprintziel steht in einem Satz im Board und im Portfolio
-- [ ] Sprint 3 zeigt im Board die geschätzten Stories, die Retro-Massnahme und die Einträge für Demo und Präsentation
-- [ ] Offene Einträge im Product Backlog sind als verschoben oder verworfen gekennzeichnet
 - [ ] Das Produkt läuft auf `master` im Zustand vom 2. November, die Demo ist einmal durchgespielt
 - [ ] Portfolio: Abschnitte 5 und 8 ausgefüllt, Block Sprint 3 mit Sprintziel und Stories, KI-Nachweis geprüft
 - [ ] Alle wissen, wer am 2. November was zeigt und sagt
