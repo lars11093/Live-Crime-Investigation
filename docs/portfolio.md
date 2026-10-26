@@ -324,7 +324,7 @@ Reflexion und Lernjournal.
 
 | Person | Mein Beitrag | Wichtigste Erkenntnis | Nächster Lernschritt |
 |---|---|---|---|
-| Lars |Reviewen und mergen |Es ist gut wenn alle arbeiten sonst hart |letzte c |
+| Lars |Reviewen und mergen |Es ist gut wenn alle arbeiten sonst hart |letzte changes reviewen und mergen |
 | Loris | | | |
 | Elina | | | |
 | Nehir | | | |hanges mergen
