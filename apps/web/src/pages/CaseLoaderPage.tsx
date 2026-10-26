@@ -37,6 +37,7 @@ import { SuspectList } from "../components/SuspectList";
 import { SuspectProfile } from "../components/SuspectProfile";
 import { ContradictionOverview } from "../components/ContradictionOverview";
 import { StatementTimeline } from "../components/StatementTimeline";
+import { SuspectCompare } from "../components/SuspectCompare";
 import { ChatHistory } from "../components/ChatHistory";
 import { ForensicsTerminal } from "../components/ForensicsTerminal";
 import { DeviceFiles } from "../components/DeviceFiles";
@@ -554,6 +555,9 @@ export function CaseLoaderPage() {
                 excludedIds={excludedIds}
                 onToggleExcluded={(id) => setExcludedIds((prev) => toggleExcluded(prev, id))}
               />
+              <div style={{ marginTop: "1rem" }}>
+                <SuspectCompare suspects={caseData.suspects} contradictions={contradictions} />
+              </div>
               <div style={{ marginTop: "1rem" }}>
                 <ContradictionOverview contradictions={contradictions} />
               </div>
