@@ -3,6 +3,7 @@ import { EMPTY_ACCUSATION, parseAccusation, type AccusationDraft } from "./accus
 import { parsePhotos, type EvidencePhoto } from "./photos";
 import { parseRatings, type InsightStrength } from "./insightRating";
 import { parseAlibiVerdicts, type AlibiVerdict } from "./alibi";
+import { parseSuspicion, type SuspicionLevel } from "./suspicion";
 
 /**
  * Der Ermittlungsfortschritt einer Person in einer Team-Session.
@@ -28,6 +29,8 @@ export interface CaseProgress {
   markedMessageIds: string[];
   /** Eigenes Urteil ueber das Alibi, pro Verdaechtigem (#42). */
   alibiVerdicts: Record<string, AlibiVerdict>;
+  /** Eigener Verdachtsgrad pro Verdaechtigem (#43). */
+  suspicion: Record<string, SuspicionLevel>;
   /** Entwurf der Anklage: Taeter (#25) und angehaengte Beweise (#26). */
   accusation: AccusationDraft;
   /** Tatortfotos der Funde (#35), pro Beweis-ID eins. */
@@ -107,6 +110,7 @@ export const EMPTY_PROGRESS: CaseProgress = {
   contradictions: [],
   markedMessageIds: [],
   alibiVerdicts: {},
+  suspicion: {},
   accusation: EMPTY_ACCUSATION,
   photos: {},
 };
@@ -176,6 +180,7 @@ export function loadProgress(
       contradictions: Array.isArray(parsed.contradictions) ? parsed.contradictions : [],
       markedMessageIds: Array.isArray(parsed.markedMessageIds) ? parsed.markedMessageIds : [],
       alibiVerdicts: parseAlibiVerdicts(parsed.alibiVerdicts),
+      suspicion: parseSuspicion(parsed.suspicion),
       accusation: parseAccusation(parsed.accusation),
       photos: parsePhotos(parsed.photos),
     };
