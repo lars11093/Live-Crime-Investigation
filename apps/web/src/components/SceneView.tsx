@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { CollectedEvidence, Hotspot, Scene } from "@case-zero/shared";
 import { ZOOM_LEVELS, keepCenter, zoomIn, zoomOut } from "../lib/zoom";
+import type { EvidencePhoto } from "../lib/photos";
 
 interface Props {
   scene: Scene;
@@ -12,6 +13,9 @@ interface Props {
   /** IDs bereits eingesammelter Funde (#9). */
   collectedIds: string[];
   onCollect: (evidence: CollectedEvidence) => void;
+  /** IDs bereits fotografierter Funde (#35). */
+  photographedIds: string[];
+  onPhoto: (photo: EvidencePhoto) => void;
   onBack: () => void;
 }
 
@@ -35,6 +39,8 @@ export function SceneView({
   onToggleInvestigated,
   collectedIds,
   onCollect,
+  photographedIds,
+  onPhoto,
   onBack,
 }: Props) {
   const [imageFailed, setImageFailed] = useState(false);
@@ -87,6 +93,21 @@ export function SceneView({
     });
     setConfirmation(`"${evidence.label}" ist in deiner Beweisakte.`);
     setOpenHotspot(null);
+  }
+
+  // #35 — das Foto merkt sich Stelle und Zoom; die Akte zeichnet daraus den Ausschnitt.
+  function photograph(hotspot: Hotspot, evidence: NonNullable<Hotspot["evidence"]>) {
+    onPhoto({
+      evidenceId: evidence.id,
+      takenAt: new Date().toISOString(),
+      sceneName: scene.name,
+      sceneImagePath: scene.imagePath,
+      hotspotLabel: hotspot.label,
+      x: hotspot.x,
+      y: hotspot.y,
+      zoom,
+    });
+    setConfirmation(`Foto von "${evidence.label}" aufgenommen.`);
   }
 
   function open(hotspot: Hotspot) {
@@ -206,6 +227,13 @@ export function SceneView({
                     Einsammeln
                   </button>
                 ))}
+              {openHotspot.evidence && (
+                <button onClick={() => photograph(openHotspot, openHotspot.evidence!)}>
+                  {photographedIds.includes(openHotspot.evidence.id)
+                    ? "Neues Foto aufnehmen"
+                    : "Fotografieren"}
+                </button>
+              )}
               {/* #34 — Markierung bewusst zuruecknehmen, z. B. nach einem Hinweis aus dem Team. */}
               <button
                 onClick={() => {
