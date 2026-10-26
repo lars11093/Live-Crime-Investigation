@@ -23,6 +23,11 @@ import { ContradictionOverview } from "../components/ContradictionOverview";
 import { ChatHistory } from "../components/ChatHistory";
 import { ForensicsTerminal } from "../components/ForensicsTerminal";
 import { DeviceFiles } from "../components/DeviceFiles";
+import { TeamPanel } from "../components/TeamPanel";
+import { shareMessage, useTeam } from "../lib/team";
+import { SharedFindings } from "../components/SharedFindings";
+import { ProgressPanel } from "../components/ProgressPanel";
+import { summarizeProgress } from "../lib/progress";
 import { messageToEvidence } from "../lib/digitalTrace";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
@@ -59,7 +64,12 @@ export function CaseLoaderPage() {
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
   // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
   const [deviceTab, setDeviceTab] = useState<"chat" | "dateien">("chat");
+  // Story #25 — Auswahl des Taeters fuer die Anklage.
+  const [selectedSuspectId, setSelectedSuspectId] =
+      useState<string | null>(null);
   const navigate = useNavigate();
+  // Wer sonst noch in dieser Session ermittelt (#22).
+  const team = useTeam(code);
 
   useEffect(() => {
     saveProgress(browserStorage(), code, progress);
@@ -256,6 +266,8 @@ export function CaseLoaderPage() {
               suspects={caseData.suspects}
               onOpen={setOpenSuspectId}
               onBack={() => setView("akte")}
+              selectedSuspectId={selectedSuspectId}
+              onSelectSuspect={setSelectedSuspectId}
             />
             <div style={{ marginTop: "1rem" }}>
               <ContradictionOverview contradictions={contradictions} />
@@ -277,6 +289,11 @@ export function CaseLoaderPage() {
             onSaveNote={(text) =>
               setProgress((prev) => ({ ...prev, notes: setNote(prev.notes, open.id, text) }))
             }
+            share={{
+              sharedBy: team.findings.find((f) => f.evidence.id === open.id)?.sharedBy ?? null,
+              joined: team.name !== "",
+              onShare: async () => shareMessage(await team.share(open)),
+            }}
             onBack={() => setOpenEvidenceId(null)}
           />
         ) : (
@@ -318,6 +335,9 @@ export function CaseLoaderPage() {
                 }}
               />
             </div>
+            <div style={{ marginTop: "1rem" }}>
+              <SharedFindings findings={team.findings} myId={team.myId} />
+            </div>
           </>
         )}
       </main>
@@ -349,11 +369,6 @@ export function CaseLoaderPage() {
         <p className="case-status__hint">
           Team-Code zum Teilen: <strong className="case-code">{code}</strong>
         </p>
-        {scene && (
-          <p className="case-status__hint">
-            {investigatedIds.length} von {scene.hotspots.length} Stellen im Tatort untersucht
-          </p>
-        )}
         <p className="case-status__hint">
           {collected.length} {collected.length === 1 ? "Beweis" : "Beweise"} gesichert
         </p>
@@ -376,6 +391,25 @@ export function CaseLoaderPage() {
           )}
           <button onClick={() => setView("briefing")}>Briefing</button>
         </div>
+      </div>
+      <div style={{ marginTop: "1rem" }}>
+        <ProgressPanel
+          summary={summarizeProgress(
+            // Nur der Tatort, den die Fallakte anbietet — mehrere Tatorte sind #59.
+            scene ? [scene] : [],
+            [...collected.map((e) => e.id), ...team.findings.map((f) => f.evidence.id)],
+            investigatedIds
+          )}
+        />
+      </div>
+      <div style={{ marginTop: "1rem" }}>
+        <TeamPanel
+          name={team.name}
+          players={team.players}
+          myId={team.myId}
+          error={team.error}
+          onJoin={team.joinAs}
+        />
       </div>
     </main>
   );

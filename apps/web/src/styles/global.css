@@ -1156,6 +1156,201 @@ button:disabled:hover {
 }
 
 /* ---------------------------------------------------------------
+   Story #22 — wer ist im Team
+   --------------------------------------------------------------- */
+
+.team {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.team__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.team__member {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: #0a0f14;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 0.9rem;
+}
+
+.team__member--me {
+  border-color: var(--accent);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.team__member--me .team__name {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.team__you {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.suspect-selection__item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color, #454545);
+}
+
+.suspect-selection__item > .suspect {
+    flex: 1;
+    min-width: 180px;
+}
+
+.suspect-selection__button {
+    margin-top: 0.5rem;
+    border: 1px solid #777;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    padding: 0.55rem 0.8rem;
+}
+
+.suspect-selection__button:hover {
+    border-color: #d69b45;
+}
+
+.suspect-selection__button.is-selected {
+    border-color: #d69b45;
+    color: #e5b86a;
+}
+
+.suspect-selection__summary {
+    margin-top: 1.25rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color, #454545);
+    border-left: 3px solid #d69b45;
+    background: rgba(214, 155, 69, 0.06);
+}
+
+.suspect-selection__summary p {
+    margin-bottom: 0.5rem;
+}
+
+.suspect-selection__summary p:last-child {
+    margin-bottom: 0;
+}
+
+.suspect-selection__hint {
+    opacity: 0.75;
+}
+
+/* ---------------------------------------------------------------
+   Story #23 — Fund mit dem Team teilen
+   --------------------------------------------------------------- */
+
+.evidence-share {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+  margin: 1rem 0;
+}
+
+.evidence-share__done {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.shared-finding {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.shared-finding__by {
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.shared-finding__by strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------
+   Story #24 — Ermittlungsfortschritt
+   --------------------------------------------------------------- */
+
+.progress {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.progress__percent {
+  color: var(--accent);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.progress__bar {
+  height: 0.6rem;
+  background: #0a0f14;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress__fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress__fill {
+    transition: none;
+  }
+}
+
+.progress__areas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.progress__area {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.7rem 0.9rem;
+  background: #0a0f14;
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--danger);
+  border-radius: 3px;
+}
+
+.progress__area--done {
+  border-left-color: var(--accent);
+}
+
+.progress__open {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* ---------------------------------------------------------------
    Story #20 — Dateien auf einem Geraet
    --------------------------------------------------------------- */
 
