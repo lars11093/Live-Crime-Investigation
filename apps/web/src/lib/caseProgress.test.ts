@@ -61,10 +61,13 @@ describe("Fortschritt speichern und laden", () => {
       contradictions: [],
       markedMessageIds: [],
       alibiVerdicts: { "daniel-keller": "zweifelhaft" },
+      suspicion: { "monica-brandt": 4 },
       accusation: { suspectId: "monica-brandt", evidenceIds: ["tasse-lippenstift"] },
       photos: {},
     });
     const loaded = loadProgress(storage, "ABC-123");
+    // Der Verdachtsgrad bleibt erhalten (#43).
+    expect(loaded.suspicion).toEqual({ "monica-brandt": 4 });
     // Das Urteil ueber ein Alibi bleibt erhalten (#42).
     expect(loaded.alibiVerdicts).toEqual({ "daniel-keller": "zweifelhaft" });
     // Die eigene Bewertung einer Verknuepfung bleibt erhalten (#39).

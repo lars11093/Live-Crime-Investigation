@@ -43,6 +43,7 @@ import { ObjectiveDock } from "../components/ObjectiveDock";
 import { storePhoto } from "../lib/photos";
 import { rateInsight } from "../lib/insightRating";
 import { setAlibiVerdict } from "../lib/alibi";
+import { setSuspicion } from "../lib/suspicion";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View =
@@ -340,6 +341,13 @@ export function CaseLoaderPage() {
                   alibiVerdicts: setAlibiVerdict(prev.alibiVerdicts, openSuspect.id, verdict),
                 }))
               }
+              suspicion={progress.suspicion[openSuspect.id]}
+              onSuspicion={(level) =>
+                setProgress((prev) => ({
+                  ...prev,
+                  suspicion: setSuspicion(prev.suspicion, openSuspect.id, level),
+                }))
+              }
               onBack={() => setOpenSuspectId(null)}
             />
           ) : (
@@ -357,6 +365,7 @@ export function CaseLoaderPage() {
                   }))
                 }
                 selectionLocked={Boolean(accusation.receipt)}
+                suspicion={progress.suspicion}
               />
               <div style={{ marginTop: "1rem" }}>
                 <StatementSearch suspects={caseData.suspects} onOpen={setOpenSuspectId} />

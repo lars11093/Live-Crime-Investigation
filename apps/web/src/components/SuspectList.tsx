@@ -1,5 +1,7 @@
 import type { Suspect } from "@case-zero/shared";
 import { SuspectPortrait } from "./SuspectPortrait";
+import { SuspicionMeter } from "./SuspicionMeter";
+import { SUSPICION_LABEL, primeSuspect, type SuspicionLevel } from "../lib/suspicion";
 
 interface Props {
     suspects: Suspect[];
@@ -9,6 +11,8 @@ interface Props {
     onSelectSuspect: (id: string) => void;
     /** Nach dem Absenden der Anklage ist die Auswahl gesperrt (#27). */
     selectionLocked?: boolean;
+    /** Eigener Verdachtsgrad pro Person (#43) — nur Anzeige, gesetzt wird im Profil. */
+    suspicion?: Record<string, SuspicionLevel>;
 }
 
 /**
@@ -23,7 +27,9 @@ export function SuspectList({
   selectedSuspectId,
   onSelectSuspect,
   selectionLocked = false,
+  suspicion = {},
 }: Props) {
+  const prime = primeSuspect(suspects, suspicion);
     const selectedSuspect = suspects.find((suspect) => suspect.id === selectedSuspectId) ?? null;
 
   return (
@@ -48,6 +54,7 @@ export function SuspectList({
                 <span className="suspect__text">
                   <span className="suspect__name">{suspect.name}</span>
                   <span className="suspect__relation">{suspect.relationToVictim}</span>
+                  <SuspicionMeter name={suspect.name} level={suspicion[suspect.id]} />
                 </span>
               </button>
               <button
@@ -75,6 +82,12 @@ export function SuspectList({
           <p>Noch kein Täter ausgewählt.</p>
         )}
         {selectionLocked && <p>Die Anklage ist abgesendet. Die Auswahl ist gesperrt.</p>}
+        {prime && (
+          <p className="suspect-selection__hint">
+            Dein Hauptverdacht: <strong>{prime.name}</strong> (
+            {SUSPICION_LABEL[suspicion[prime.id]]})
+          </p>
+        )}
       </section>
     </section>
   );

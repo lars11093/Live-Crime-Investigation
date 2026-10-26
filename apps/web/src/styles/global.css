@@ -1746,3 +1746,51 @@ div.account-bar {
   border-color: var(--danger);
   color: var(--danger);
 }
+
+/* Story #43 — Verdachtsgrad */
+.suspicion {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.suspicion__bar,
+.suspicion__step {
+  width: 8px;
+  background: var(--border);
+  border: none;
+  border-radius: 1px;
+  padding: 0;
+}
+
+.suspicion__bar:nth-child(1), .suspicion__step:nth-child(1) { height: 6px; }
+.suspicion__bar:nth-child(2), .suspicion__step:nth-child(2) { height: 10px; }
+.suspicion__bar:nth-child(3), .suspicion__step:nth-child(3) { height: 14px; }
+.suspicion__bar:nth-child(4), .suspicion__step:nth-child(4) { height: 18px; }
+
+.suspicion__step {
+  width: 22px;
+  cursor: pointer;
+}
+
+.suspicion__step:nth-child(1) { height: 12px; }
+.suspicion__step:nth-child(2) { height: 18px; }
+.suspicion__step:nth-child(3) { height: 24px; }
+.suspicion__step:nth-child(4) { height: 30px; }
+
+.suspicion__bar--on.suspicion__bar--1 { background: var(--muted); }
+.suspicion__bar--on.suspicion__bar--2 { background: #eab308; }
+.suspicion__bar--on.suspicion__bar--3 { background: #f97316; }
+.suspicion__bar--on.suspicion__bar--4 { background: var(--danger); }
+
+.suspicion__label {
+  margin-left: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.suspicion-picker {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
