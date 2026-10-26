@@ -7,6 +7,8 @@ interface Props {
   /** IDs bereits untersuchter Stellen — bleibt beim Verlassen der Szene erhalten. */
   investigatedIds: string[];
   onInvestigate: (hotspotId: string) => void;
+  /** Markierung bewusst setzen oder zuruecknehmen (#34). */
+  onToggleInvestigated: (hotspotId: string) => void;
   /** IDs bereits eingesammelter Funde (#9). */
   collectedIds: string[];
   onCollect: (evidence: CollectedEvidence) => void;
@@ -30,6 +32,7 @@ export function SceneView({
   scene,
   investigatedIds,
   onInvestigate,
+  onToggleInvestigated,
   collectedIds,
   onCollect,
   onBack,
@@ -38,6 +41,8 @@ export function SceneView({
   const [openHotspot, setOpenHotspot] = useState<Hotspot | null>(null);
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const [zoom, setZoom] = useState<number>(ZOOM_LEVELS[0]);
+  // Untersuchte Stellen ausblenden, damit nur noch Offenes im Bild steht (#34).
+  const [hideDone, setHideDone] = useState(false);
   const viewportRef = useRef<HTMLDivElement>(null);
 
   function changeZoom(next: number) {
@@ -115,6 +120,7 @@ export function SceneView({
 
           {scene.hotspots.map((hotspot) => {
             const done = investigated.has(hotspot.id);
+            if (done && hideDone) return null;
             return (
               <button
                 key={hotspot.id}
@@ -156,6 +162,14 @@ export function SceneView({
         <p className="scene__progress">
           {investigated.size} / {scene.hotspots.length} untersucht
         </p>
+        <button
+          className="scene__back"
+          aria-pressed={hideDone}
+          onClick={() => setHideDone((prev) => !prev)}
+          disabled={investigated.size === 0}
+        >
+          {hideDone ? "Alle Stellen zeigen" : "Untersuchte ausblenden"}
+        </button>
         <button className="scene__back" onClick={onBack}>
           Zurueck
         </button>
@@ -192,6 +206,15 @@ export function SceneView({
                     Einsammeln
                   </button>
                 ))}
+              {/* #34 — Markierung bewusst zuruecknehmen, z. B. nach einem Hinweis aus dem Team. */}
+              <button
+                onClick={() => {
+                  onToggleInvestigated(openHotspot.id);
+                  setOpenHotspot(null);
+                }}
+              >
+                Als offen markieren
+              </button>
               <button onClick={() => setOpenHotspot(null)}>Schliessen</button>
             </div>
           </div>

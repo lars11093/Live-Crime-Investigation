@@ -17,6 +17,7 @@ import {
   saveProgress,
   setNote,
   toggleContradiction,
+  toggleInvestigated,
   toggleMarkedMessage,
   type CaseProgress,
 } from "../lib/caseProgress";
@@ -244,6 +245,12 @@ export function CaseLoaderPage() {
                 ? prev
                 : { ...prev, investigatedIds: [...prev.investigatedIds, id] }
             )
+          }
+          onToggleInvestigated={(id) =>
+            setProgress((prev) => ({
+              ...prev,
+              investigatedIds: toggleInvestigated(prev.investigatedIds, id),
+            }))
           }
           collectedIds={collected.map((e) => e.id)}
           onCollect={(evidence) =>

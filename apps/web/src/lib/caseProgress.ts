@@ -54,6 +54,16 @@ export function toggleContradiction(
   return [...list, entry];
 }
 
+/**
+ * Markiert eine Stelle im Tatort als untersucht oder wieder als offen (#34).
+ *
+ * Das Oeffnen einer Stelle markiert sie weiterhin automatisch (#8); hier
+ * kann der Ermittler die Markierung bewusst setzen oder zuruecknehmen.
+ */
+export function toggleInvestigated(ids: string[], hotspotId: string): string[] {
+  return ids.includes(hotspotId) ? ids.filter((id) => id !== hotspotId) : [...ids, hotspotId];
+}
+
 /** Markiert eine Chatnachricht als relevant oder nimmt die Markierung zurueck (#19). */
 export function toggleMarkedMessage(ids: string[], messageId: string): string[] {
   return ids.includes(messageId) ? ids.filter((id) => id !== messageId) : [...ids, messageId];
