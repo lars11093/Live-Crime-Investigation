@@ -225,6 +225,7 @@ gegenseitiges reviewen
 | INVEST-Check / Story-Splitting | 3 | [backlog-priorisierung.md](backlog-priorisierung.md), Abschnitt 3 und 4 |
 | Refinement der obersten fünf Stories (freiwillig) | 4 | [refinement-sprint-1.md](refinement-sprint-1.md) |
 | Review-Protokoll und Retro-Dokumentation Sprint 1 strukturieren (Claude) | 6 | [Sprint-Review-1.md](Sprint-Review-1.md), [retrospective-sprint-1.md](retrospective-sprint-1.md) |
+| Story #18 Forensik-Terminal umsetzen und vor dem PR prüfen (Claude Code) | 7 | PR #120 |
 
 **Modultag 4 — übernommen:**
 
@@ -250,6 +251,24 @@ gegenseitiges reviewen
 | Sprint-Stories streng gegen die DoD prüfen statt gegen «läuft auf dem Branch» | Offene PRs ohne Review sind nach unserer DoD nicht fertig — das Review muss das ehrlich zeigen. |
 | Die Retro-Doku im selben Aufbau wie Sprint 0 führen | Die zwei Retros sind so direkt vergleichbar. |
 
+**Modultag 7 — übernommen (#18 Forensik-Terminal):**
+
+| Vorschlag | Warum übernommen |
+|---|---|
+| Nachrichten gesperrter Geräte schon auf dem Server entfernen (`toPublicCase`) | Sonst liessen sie sich in der Netzwerk-Konsole lesen, bevor das Gerät entsperrt ist. Gleiche Regel wie bei `combinations` (#13). |
+| Gerätestatus als reine Funktion (`lib/forensics.ts`) mit eigenen Tests | So ist «gesperrt = nicht auswertbar» ohne Browser prüfbar. |
+| Vor dem PR auf das aktuelle `master` umbasen | `master` hatte sich seit Arbeitsbeginn verändert (#108 – #113 gemergt). Der PR enthält so nur die eigene Story. |
+
+**Modultag 7 — verworfen:**
+
+| Vorschlag | Warum verworfen |
+|---|---|
+| Die Story auf dem noch nicht gemergten Branch `fix/umlaute` aufbauen | Der PR hätte die Umlaut-Korrektur (#115) ungefragt mitgezogen. Eine Story pro PR. |
+| Alle Umlaute per Skript automatisch umschreiben | Das Skript hat auch fremde Zeilen im README geändert. Zurückgenommen und nur die eigenen Zeilen angepasst. |
+
+*Selbst entschieden:* Basis `master` statt Feature-Branch, PR im gleichen Format wie die anderen,
+Review durch Loris, lokal durchgeklickt, Issue #18 von Hand geschlossen.
+
 ---
 
 ## 6. Persönliche Kurzreflexion
@@ -266,3 +285,13 @@ Reflexion und Lernjournal.
 | Elina |emotionale unterstüzung |weniger reden |zu arbeiten |
 | Nehir | Unterstützung | Gegenseitige Unterstützung ist ein grosser Teil von SCRUM | Mehr User Stories übernehmen |
 | Chime | Unterstützung | Eine Story ist erst fertig, wenn sie reviewt und gemergt ist | User Stories besser zuteilen und evt. übernehmen|
+
+### Sprint 2
+
+| Person | Mein Beitrag | Wichtigste Erkenntnis | Nächster Lernschritt |
+|---|---|---|---|
+| Lars | | | |
+| Loris | | | |
+| Elina | | | |
+| Nehir | | | |
+| Chime | Story #18 Forensik-Terminal umgesetzt (PR #120, von Loris reviewt, gemergt) | Vor dem Start `master` holen, sonst baut man auf einem veralteten Stand und muss umbasen | PRs von anderen reviewen und im PR «Closes #…» schreiben, damit das Issue automatisch schliesst |
