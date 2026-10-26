@@ -14,6 +14,8 @@ export interface CaseProgress {
   collected: CollectedEvidence[];
   /** Beweis-ID -> Notiztext. */
   notes: Record<string, string>;
+  /** Beweis-ID -> ISO-Zeitpunkt der letzten Aenderung der Notiz (#38). */
+  noteEditedAt: Record<string, string>;
   /** Bereits aufgedeckte Verknuepfungen (#13). */
   insights: Insight[];
   /** Als widerspruechlich markierte Saetze aus Aussagen (#17). */
@@ -93,6 +95,7 @@ export const EMPTY_PROGRESS: CaseProgress = {
   investigatedIds: [],
   collected: [],
   notes: {},
+  noteEditedAt: {},
   insights: [],
   contradictions: [],
   markedMessageIds: [],
@@ -154,6 +157,12 @@ export function loadProgress(
         parsed.notes && typeof parsed.notes === "object" && !Array.isArray(parsed.notes)
           ? parsed.notes
           : {},
+      noteEditedAt:
+        parsed.noteEditedAt &&
+        typeof parsed.noteEditedAt === "object" &&
+        !Array.isArray(parsed.noteEditedAt)
+          ? parsed.noteEditedAt
+          : {},
       insights: Array.isArray(parsed.insights) ? parsed.insights : [],
       contradictions: Array.isArray(parsed.contradictions) ? parsed.contradictions : [],
       markedMessageIds: Array.isArray(parsed.markedMessageIds) ? parsed.markedMessageIds : [],
@@ -190,6 +199,28 @@ export function setNote(
     return rest;
   }
   return { ...notes, [evidenceId]: trimmed };
+}
+
+/**
+ * Speichert, aendert oder loescht eine Notiz samt Zeitpunkt (#12, #38).
+ *
+ * Unveraenderter Text laesst auch den Zeitpunkt stehen — "zuletzt geaendert"
+ * soll nicht springen, nur weil jemand ohne Aenderung speichert.
+ */
+export function saveNote(
+  progress: CaseProgress,
+  evidenceId: string,
+  text: string,
+  now: Date = new Date()
+): CaseProgress {
+  const notes = setNote(progress.notes, evidenceId, text);
+  if (notes[evidenceId] === progress.notes[evidenceId]) return progress;
+  const { [evidenceId]: _old, ...rest } = progress.noteEditedAt;
+  return {
+    ...progress,
+    notes,
+    noteEditedAt: notes[evidenceId] ? { ...rest, [evidenceId]: now.toISOString() } : rest,
+  };
 }
 
 /** Der Browser-Storage, sofern es ihn gibt. */

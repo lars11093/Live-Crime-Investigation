@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { CollectedEvidence } from "@case-zero/shared";
 import { KIND_LABEL } from "./evidenceKind";
 import { EvidencePhotoView } from "./EvidencePhotoView";
 import type { EvidencePhoto } from "../lib/photos";
+import { NoteEditor } from "./NoteEditor";
 
 interface Props {
   evidence: CollectedEvidence;
   /** Gespeicherte Notiz zu diesem Beweis (#12), leer wenn keine da ist. */
   note: string;
+  /** Wann die Notiz zuletzt gespeichert wurde (#38). */
+  noteEditedAt?: string;
   /** Eigenes Tatortfoto (#35), falls aufgenommen. */
   photo?: EvidencePhoto;
   onSaveNote: (text: string) => void;
@@ -20,23 +23,15 @@ interface Props {
  * steht hier ein Platzhalter mit dem Titel statt einer leeren Flaeche — wie
  * bei der Szene in #7.
  */
-export function EvidenceDetail({ evidence, note, photo, onSaveNote, onBack }: Props) {
+export function EvidenceDetail({
+  evidence,
+  note,
+  noteEditedAt,
+  photo,
+  onSaveNote,
+  onBack,
+}: Props) {
   const [imageFailed, setImageFailed] = useState(!evidence.imagePath);
-  const [draft, setDraft] = useState(note);
-  const [saved, setSaved] = useState(false);
-
-  // Beim Wechsel auf einen anderen Beweis dessen Notiz in den Entwurf holen.
-  useEffect(() => {
-    setDraft(note);
-    setSaved(false);
-  }, [evidence.id, note]);
-
-  const dirty = draft.trim() !== note.trim();
-
-  function save() {
-    onSaveNote(draft);
-    setSaved(true);
-  }
 
   return (
     <section className="panel evidence-detail">
@@ -88,32 +83,12 @@ export function EvidenceDetail({ evidence, note, photo, onSaveNote, onBack }: Pr
         </div>
       </dl>
 
-      <div className="evidence-note">
-        <label className="team-code__label" htmlFor={`note-${evidence.id}`}>
-          Meine Notiz
-        </label>
-        <textarea
-          id={`note-${evidence.id}`}
-          className="evidence-note__input"
-          value={draft}
-          rows={4}
-          placeholder="Was faellt dir an diesem Beweis auf?"
-          onChange={(e) => {
-            setDraft(e.target.value);
-            setSaved(false);
-          }}
-        />
-        <div className="case-status__actions">
-          <button className="button--primary" onClick={save} disabled={!dirty}>
-            Notiz speichern
-          </button>
-          {saved && !dirty && (
-            <span className="evidence-note__saved" role="status">
-              Gespeichert
-            </span>
-          )}
-        </div>
-      </div>
+      <NoteEditor
+        evidenceId={evidence.id}
+        note={note}
+        editedAt={noteEditedAt}
+        onSave={onSaveNote}
+      />
     </section>
   );
 }

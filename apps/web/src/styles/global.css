@@ -1558,3 +1558,17 @@ div.account-bar {
 .evidence-filter__sort .team-code__label {
   margin: 0;
 }
+
+/* Story #38 — Notiz bearbeiten */
+.evidence-note__text {
+  white-space: pre-wrap;
+  border-left: 3px solid var(--accent);
+  padding-left: 0.8rem;
+  margin: 0.25rem 0;
+}
+
+.evidence-note__meta {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin: 0;
+}

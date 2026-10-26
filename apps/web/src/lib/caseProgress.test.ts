@@ -5,6 +5,7 @@ import {
   collectEvidence,
   loadProgress,
   saveProgress,
+  saveNote,
   setNote,
   toggleContradiction,
   toggleInvestigated,
@@ -54,6 +55,7 @@ describe("Fortschritt speichern und laden", () => {
       investigatedIds: ["schreibtisch"],
       collected: [evidence],
       notes: { "tasse-lippenstift": "Lippenstift passt nicht zum Opfer." },
+      noteEditedAt: {},
       insights: [{ id: "insight-1", title: "Zweite Person", body: "Jemand sass mit am Tisch." }],
       contradictions: [],
       markedMessageIds: [],
@@ -198,5 +200,29 @@ describe("Untersuchte Stellen markieren (#34)", () => {
 
   it("nimmt die Markierung wieder zurueck", () => {
     expect(toggleInvestigated(["fenster", "papierkorb"], "fenster")).toEqual(["papierkorb"]);
+  });
+});
+
+describe("Notiz bearbeiten (#38)", () => {
+  const t1 = new Date("2026-10-26T20:00:00Z");
+  const t2 = new Date("2026-10-26T21:00:00Z");
+
+  it("haelt fest, wann die Notiz zuletzt geaendert wurde", () => {
+    const first = saveNote(EMPTY_PROGRESS, "tasse", "Lippenstift", t1);
+    const edited = saveNote(first, "tasse", "Lippenstift - Monica?", t2);
+    expect(edited.notes.tasse).toBe("Lippenstift - Monica?");
+    expect(edited.noteEditedAt.tasse).toBe("2026-10-26T21:00:00.000Z");
+  });
+
+  it("aendert ohne neuen Text auch den Zeitpunkt nicht", () => {
+    const first = saveNote(EMPTY_PROGRESS, "tasse", "Lippenstift", t1);
+    expect(saveNote(first, "tasse", "  Lippenstift ", t2)).toBe(first);
+  });
+
+  it("loescht mit der Notiz auch den Zeitpunkt", () => {
+    const first = saveNote(EMPTY_PROGRESS, "tasse", "Lippenstift", t1);
+    const removed = saveNote(first, "tasse", "", t2);
+    expect(removed.notes).toEqual({});
+    expect(removed.noteEditedAt).toEqual({});
   });
 });
