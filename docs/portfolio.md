@@ -328,6 +328,6 @@ Reflexion und Lernjournal.
 | Loris | Stories #19, #20, #21, #22, #23, #24 umgesetzt (PRs #112, #113, #116 – #119, von Lars reviewt, gemergt), PR #120 von Chime reviewt | Je länger ein PR offen ist, desto mehr Konflikte gibt es, vor allem wenn alle in `CaseLoaderPage.tsx` arbeiten. Aufeinander gestapelte PRs machen das noch schlimmer | PRs kleiner halten und früher zum Review geben, Abhängigkeiten zwischen Stories vorher im Daily absprechen |
 | Lars |Reviewen und mergen |Es ist gut wenn alle arbeiten sonst hart |letzte changes reviewen und mergen |
 | Loris | | | |
-| Elina | | | |
+| Elina | Ich war in den Ferien | Ich war in den Ferien | Mitarbeiten am Projekt |
 | Nehir | Story #25 | - | Ich muss mein Tempo verbessern. |hanges mergen
 | Chime | Story #18 Forensik-Terminal umgesetzt (PR #120, von Loris reviewt, gemergt) | Vor dem Start `master` holen, sonst baut man auf einem veralteten Stand und muss umbasen | PRs von anderen reviewen und im PR «Closes #…» schreiben, damit das Issue automatisch schliesst |
