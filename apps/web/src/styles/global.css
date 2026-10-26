@@ -1340,3 +1340,37 @@ div.account-bar {
   gap: 0.75rem;
   justify-items: start;
 }
+
+/* Story #31 — Rollen im Team */
+.role-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.role-card {
+  display: grid;
+  gap: 0.4rem;
+  align-content: start;
+  justify-items: start;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.75rem;
+}
+
+.role-card--mine {
+  border-color: var(--accent);
+}
+
+.role-card__name {
+  font-weight: bold;
+}
+
+.role-card__focus,
+.role-card__holder {
+  color: var(--muted);
+  font-size: 0.85rem;
+}

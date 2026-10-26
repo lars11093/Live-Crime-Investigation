@@ -14,6 +14,7 @@ import case01 from "./data/case-01.json" with { type: "json" };
 import { toCaseSummaries, toPublicCase } from "./engine/caseView.js";
 import { combineEvidence } from "./engine/combine.js";
 import { submitAccusation } from "./engine/accusation.js";
+import { chooseRole, joinTeam, teamView } from "./engine/team.js";
 import {
   allRooms,
   createRoom,
@@ -118,6 +119,27 @@ app.post("/api/rooms/:code/accusation", (req, res) => {
   const result = submitAccusation(room, req.body);
   if (result.ok) return res.status(201).json(result);
   return res.status(result.reason === "already-submitted" ? 409 : 400).json(result);
+});
+
+// Story #31 — Team: beitreten, ansehen, Rolle waehlen.
+app.get("/api/rooms/:code/team", (req, res) => {
+  const room = getRoom(req.params.code);
+  if (!room) return res.status(404).json({ ok: false, message: "Ungueltiger Team-Code" });
+  return res.json({ ok: true, team: teamView(room) });
+});
+
+app.post("/api/rooms/:code/team", (req, res) => {
+  const room = getRoom(req.params.code);
+  if (!room) return res.status(404).json({ ok: false, message: "Ungueltiger Team-Code" });
+  const result = joinTeam(room, req.body?.playerId, req.body?.name);
+  return res.status(result.ok ? 200 : 400).json(result);
+});
+
+app.put("/api/rooms/:code/team/:playerId/role", (req, res) => {
+  const room = getRoom(req.params.code);
+  if (!room) return res.status(404).json({ ok: false, message: "Ungueltiger Team-Code" });
+  const result = chooseRole(room, req.body?.actorId, req.params.playerId, req.body?.role ?? null);
+  return res.status(result.ok ? 200 : 409).json(result);
 });
 
 const httpServer = createServer(app);

@@ -64,6 +64,7 @@ Live-Crime-Investigation/
 **Datenfluss (Kernloop):**
 1. Lead Detective erstellt Case → Server generiert `CASE CODE` (z.B. `7K4-XP9`), wählt Täter-Szenario, hält Room-State im Speicher.
 2. Andere 4 Spieler joinen mit Code + wählen Rolle → Socket-Room `case:<code>` beitreten.
+   Umgesetzt (#31) über REST: `POST /api/rooms/:code/team` (`{ playerId, name }`, idempotent) tritt bei, `GET …/team` liefert das Team, `PUT …/team/:playerId/role` (`{ actorId, role | null }`) setzt die Rolle. Jede Rolle gibt es einmal pro Session (`409` sonst). Die `playerId` ist die Konto-ID (#29) oder eine im Browser gespeicherte Gast-ID.
 3. Server pusht rollenspezifische Payloads (`role:payload`) — jeder Client sieht nur, was seine Rolle darf.
 4. Aktionen (Board verbinden, Beweis anzeigen, Verhör-Antwort) gehen als Socket-Events zum Server, der validiert + an alle im Room broadcastet (`board:update`, `event:new`).
 5. Case-Engine feuert zeitbasierte Live-Events (`NEW_EVIDENCE`, `STATEMENT_CHANGED`, `SERVER_BREACH`) nach Skript im Case-JSON.

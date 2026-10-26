@@ -3,7 +3,9 @@ import type {
   CaseSummary,
   CombineResult,
   PublicCase,
+  Role,
   SubmitAccusationResult,
+  TeamResult,
 } from "@case-zero/shared";
 
 export const SERVER_URL = import.meta.env.VITE_SERVER_URL ?? "http://localhost:4000";
@@ -123,4 +125,40 @@ export async function submitAccusation(
     throw new Error(`Anklage konnte nicht abgesendet werden (HTTP ${response.status})`);
   }
   return (await response.json()) as SubmitAccusationResult;
+}
+
+async function teamRequest(path: string, init?: RequestInit): Promise<TeamResult> {
+  const response = await fetch(`${SERVER_URL}${path}`, {
+    ...init,
+    headers: { "Content-Type": "application/json" },
+  });
+  if (![200, 400, 404, 409].includes(response.status)) {
+    throw new Error(`Team-Anfrage fehlgeschlagen (HTTP ${response.status})`);
+  }
+  return (await response.json()) as TeamResult;
+}
+
+/** Tritt dem Team bei — mehrfach aufrufen ist unschaedlich (#31). */
+export function joinTeam(code: string, playerId: string, name: string): Promise<TeamResult> {
+  return teamRequest(`/api/rooms/${normalizeRoomCode(code)}/team`, {
+    method: "POST",
+    body: JSON.stringify({ playerId, name }),
+  });
+}
+
+export function fetchTeam(code: string): Promise<TeamResult> {
+  return teamRequest(`/api/rooms/${normalizeRoomCode(code)}/team`);
+}
+
+/** Setzt die Rolle von `playerId`; `actorId` ist, wer klickt (#31, #48). */
+export function setRole(
+  code: string,
+  actorId: string,
+  playerId: string,
+  role: Role | null
+): Promise<TeamResult> {
+  return teamRequest(
+    `/api/rooms/${normalizeRoomCode(code)}/team/${encodeURIComponent(playerId)}/role`,
+    { method: "PUT", body: JSON.stringify({ actorId, role }) }
+  );
 }
