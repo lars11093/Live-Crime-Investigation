@@ -15,6 +15,7 @@ import { toCaseSummaries, toPublicCase } from "./engine/caseView.js";
 import { combineEvidence } from "./engine/combine.js";
 import { submitAccusation } from "./engine/accusation.js";
 import { chooseRole, joinTeam, teamView } from "./engine/team.js";
+import { addChatMessage, caseChannel } from "./engine/chat.js";
 import {
   allRooms,
   createRoom,
@@ -212,6 +213,34 @@ io.on("connection", (socket) => {
     const room = getRoom(code);
     if (!room) return;
     cb(scoreAccusation(room, accusation));
+  });
+
+  // Story #49 — Team-Chat. Ein Socket-Room pro Session: case:<code>.
+  socket.on("chat:join", ({ code, playerId, name }) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      socket.emit("error:message", "Ungueltiger Team-Code");
+      return;
+    }
+    // Wer chattet, gehoert zum Team — sonst fehlt er in der Rollenansicht (#31).
+    joinTeam(room, playerId, name);
+    socket.join(caseChannel(room.state.code));
+    socket.emit("chat:history", room.chat ?? []);
+  });
+
+  socket.on("chat:send", ({ code, playerId, name, text }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      cb?.({ ok: false, reason: "Ungueltiger Team-Code" });
+      return;
+    }
+    const result = addChatMessage(room, playerId, name, text);
+    if (!result.ok) {
+      cb?.({ ok: false, reason: result.reason });
+      return;
+    }
+    io.to(caseChannel(room.state.code)).emit("chat:message", result.message);
+    cb?.({ ok: true });
   });
 
   socket.on("disconnect", () => {

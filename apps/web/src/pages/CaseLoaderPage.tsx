@@ -42,6 +42,9 @@ import { loadAccount } from "../lib/account";
 import { ROLE_LABEL, playerIdentity } from "../lib/player";
 import { TeamRoles } from "../components/TeamRoles";
 import { ObjectiveDock } from "../components/ObjectiveDock";
+import { TeamChat } from "../components/TeamChat";
+import { useTeamChat } from "../lib/useTeamChat";
+import { unreadCount } from "../lib/teamChat";
 import { storePhoto } from "../lib/photos";
 import { rateInsight } from "../lib/insightRating";
 import { setAlibiVerdict } from "../lib/alibi";
@@ -57,7 +60,8 @@ type View =
   | "verdaechtige"
   | "forensik"
   | "anklage"
-  | "team";
+  | "team"
+  | "chat";
 
 type LoadState =
   | { status: "loading" }
@@ -162,6 +166,15 @@ export function CaseLoaderPage() {
     const timer = setInterval(refreshTeam, 5000);
     return () => clearInterval(timer);
   }, [view, refreshTeam]);
+
+  // Team-Chat (#49): verbunden, sobald der Fall geladen ist — so zaehlen auch
+  // Nachrichten, die ankommen, waehrend man im Tatort ist.
+  const chat = useTeamChat(code, me, state.status === "ready");
+  const [chatReadCount, setChatReadCount] = useState(0);
+  useEffect(() => {
+    if (view === "chat") setChatReadCount(chat.messages.length);
+  }, [view, chat.messages.length]);
+  const chatUnread = unreadCount(chat.messages, me.id, chatReadCount);
 
   async function changeRole(targetId: string, role: Role | null) {
     setTeamError(null);
@@ -493,6 +506,20 @@ export function CaseLoaderPage() {
       );
     }
 
+    if (view === "chat") {
+      return (
+        <main className="app-shell">
+          <TeamChat
+            myId={me.id}
+            messages={chat.messages}
+            connected={chat.connected}
+            onSend={chat.send}
+            onBack={() => setView("akte")}
+          />
+        </main>
+      );
+    }
+
     if (view === "team") {
       return (
         <main className="app-shell">
@@ -623,6 +650,9 @@ export function CaseLoaderPage() {
             </button>
             <button onClick={() => setView("team")}>
               {myRole ? `Team · ${ROLE_LABEL[myRole]}` : "Team · Rolle waehlen"}
+            </button>
+            <button onClick={() => setView("chat")}>
+              Team-Chat{chatUnread > 0 ? ` (${chatUnread} neu)` : ""}
             </button>
             <button onClick={() => setView("briefing")}>Briefing</button>
           </div>
