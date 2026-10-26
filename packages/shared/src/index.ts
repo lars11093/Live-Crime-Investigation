@@ -575,6 +575,27 @@ export interface TeamChatMessage {
   sentAt: string;
 }
 
+/** Eine Aufgabe auf der gemeinsamen Liste (#50). */
+export interface TeamTask {
+  id: string;
+  text: string;
+  /** Spieler-ID, wer sie angelegt hat. */
+  createdBy: string;
+  /** Wer sie uebernimmt — `null`, solange niemand. */
+  assigneeId: string | null;
+  done: boolean;
+  createdAt: string;
+}
+
+/** Was sich an einer Aufgabe aendern laesst (#50). */
+export interface TeamTaskPatch {
+  done?: boolean;
+  assigneeId?: string | null;
+}
+
+/** Antwort auf eine Aenderung an der Aufgabenliste (#50). */
+export type TaskAck = { ok: true } | { ok: false; reason: string };
+
 export interface RoomState {
   code: string;
   caseId: string;
@@ -616,6 +637,13 @@ export interface ClientToServerEvents {
     payload: { code: string; text: string },
     cb: (result: { ok: true } | { ok: false; reason: string }) => void
   ) => void;
+  /** Story #50 — Aufgabenliste: anlegen, aendern, loeschen. Die Liste kommt per `tasks:state`. */
+  "tasks:add": (payload: { code: string; text: string }, cb: (ack: TaskAck) => void) => void;
+  "tasks:update": (
+    payload: { code: string; taskId: string; patch: TeamTaskPatch },
+    cb: (ack: TaskAck) => void
+  ) => void;
+  "tasks:remove": (payload: { code: string; taskId: string }, cb: (ack: TaskAck) => void) => void;
 }
 
 /** Die Teamliste mit der Teamleitung (#48): wer zuerst beigetreten ist. */
@@ -645,4 +673,6 @@ export interface ServerToClientEvents {
   "chat:history": (messages: TeamChatMessage[]) => void;
   /** Story #49 — neue Nachricht an alle im Raum. */
   "chat:message": (message: TeamChatMessage) => void;
+  /** Story #50 — die ganze Aufgabenliste nach jeder Aenderung an alle, beim Beitritt an den Neuen. */
+  "tasks:state": (tasks: TeamTask[]) => void;
 }

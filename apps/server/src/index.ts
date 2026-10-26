@@ -18,6 +18,7 @@ import { hintState, revealHint } from "./engine/hints.js";
 import { unlockDevice } from "./engine/unlock.js";
 import { recoverDeleted } from "./engine/recover.js";
 import { addChatMessage } from "./engine/chat.js";
+import { addTask, releaseTasks, removeTask, updateTask } from "./engine/tasks.js";
 import {
   allRooms,
   createRoom,
@@ -296,6 +297,7 @@ io.on("connection", (socket) => {
     socket.emit("team:findings", room.findings);
     socket.emit("team:notes", notesOf(room));
     socket.emit("chat:history", room.chat ?? []);
+    socket.emit("tasks:state", room.tasks ?? []);
   });
 
   // Story #31 — eigene Rolle waehlen, #48 — als Teamleitung fuer andere.
@@ -367,11 +369,48 @@ io.on("connection", (socket) => {
     cb({ ok: true });
   });
 
+  // Story #50 — gemeinsame Aufgabenliste im selben Raum wie die Teamliste.
+  // Nach jeder Aenderung geht die ganze Liste an alle: bei hoechstens 50
+  // Aufgaben einfacher und robuster als einzelne Deltas. Wer handelt, ist
+  // immer die Socket-ID (#22) — nie eine ID aus dem Payload.
+  function broadcastTasks(room: Room) {
+    io.to(room.state.code).emit("tasks:state", room.tasks ?? []);
+  }
+
+  socket.on("tasks:add", ({ code, text }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) return cb({ ok: false, reason: "Ungueltiger Team-Code" });
+    const result = addTask(room, socket.id, text);
+    if (!result.ok) return cb({ ok: false, reason: result.reason });
+    broadcastTasks(room);
+    cb({ ok: true });
+  });
+
+  socket.on("tasks:update", ({ code, taskId, patch }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) return cb({ ok: false, reason: "Ungueltiger Team-Code" });
+    const result = updateTask(room, socket.id, taskId, patch ?? {});
+    if (!result.ok) return cb({ ok: false, reason: result.reason });
+    broadcastTasks(room);
+    cb({ ok: true });
+  });
+
+  socket.on("tasks:remove", ({ code, taskId }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) return cb({ ok: false, reason: "Ungueltiger Team-Code" });
+    const result = removeTask(room, socket.id, taskId);
+    if (!result.ok) return cb({ ok: false, reason: result.reason });
+    broadcastTasks(room);
+    cb({ ok: true });
+  });
+
   socket.on("disconnect", () => {
     for (const room of allRooms()) {
       // Wer geht, verschwindet auch aus den Teamlisten der anderen (#22).
       if (leaveTeam(room, socket.id)) {
         io.to(room.state.code).emit("team:update", teamStateOf(room));
+        // Uebernommene Aufgaben werden wieder frei (#50).
+        if (releaseTasks(room, socket.id)) broadcastTasks(room);
       }
     }
   });
