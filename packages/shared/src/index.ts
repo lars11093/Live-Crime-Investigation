@@ -163,6 +163,25 @@ export interface CollectedEvidence extends CollectableEvidence {
   };
 }
 
+/**
+ * Ein Fund, den jemand mit dem Team geteilt hat (Story #23).
+ *
+ * Liegt auf dem Server im Raum, nicht im localStorage: geteilt heisst, alle
+ * sehen denselben Stand — auch wer spaeter beitritt.
+ */
+export interface SharedFinding {
+  evidence: CollectedEvidence;
+  /** Name der Person, die geteilt hat — so ist der Urheber erkennbar. */
+  sharedBy: string;
+  /** Verbindungs-ID beim Teilen, damit der Client "du" anzeigen kann. */
+  sharedById: string;
+}
+
+/** Antwort auf `evidence:share` (#23). */
+export type ShareResult =
+  | { ok: true }
+  | { ok: false; reason: "invalid-room" | "not-in-team" | "unknown-evidence" | "already-shared" };
+
 export interface Scene {
   id: string;
   /** Anzeigename, dauerhaft als Overlay sichtbar. */
@@ -274,6 +293,8 @@ export interface ClientToServerEvents {
   "case:accuse": (payload: { code: string; accusation: Accusation }, cb: (result: ScoreResult) => void) => void;
   /** Story #22 — mit Namen dem Team einer Session beitreten. */
   "team:join": (payload: { code: string; playerName: string }, cb: (result: TeamJoinResult) => void) => void;
+  /** Story #23 — einen Fund aus der eigenen Akte mit dem Team teilen. */
+  "evidence:share": (payload: { code: string; evidence: CollectedEvidence }, cb: (result: ShareResult) => void) => void;
 }
 
 /** Antwort auf `team:join` (#22). */
@@ -286,4 +307,6 @@ export interface ServerToClientEvents {
   "error:message": (message: string) => void;
   /** Story #22 — die aktuelle Teamliste, nach jedem Beitritt und Verlassen an alle im Raum. */
   "team:update": (players: Player[]) => void;
+  /** Story #23 — alle geteilten Funde, nach jedem Teilen an alle und beim Beitritt an den Neuen. */
+  "team:findings": (findings: SharedFinding[]) => void;
 }

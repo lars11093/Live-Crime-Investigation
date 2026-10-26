@@ -5,7 +5,7 @@ import type { ProgressStorage } from "./caseProgress";
 // reinen Funktionen hier wird sie nicht gebraucht.
 vi.mock("./socket", () => ({ socket: {} }));
 
-const { MAX_NAME_LENGTH, loadName, nameError, saveName } = await import("./team");
+const { MAX_NAME_LENGTH, loadName, nameError, saveName, shareMessage } = await import("./team");
 
 function fakeStorage(): ProgressStorage {
   const data: Record<string, string> = {};
@@ -56,5 +56,17 @@ describe("Name speichern", () => {
     };
     expect(loadName(broken, "ABC-123")).toBe("");
     expect(() => saveName(broken, "ABC-123", "Loris")).not.toThrow();
+  });
+});
+
+describe("Meldung nach dem Teilen", () => {
+  it("bestaetigt ein erfolgreiches Teilen", () => {
+    expect(shareMessage({ ok: true })).toBe("Mit dem Team geteilt.");
+  });
+
+  it("hat fuer jeden Absagegrund einen eigenen Text", () => {
+    const reasons = ["invalid-room", "not-in-team", "unknown-evidence", "already-shared"] as const;
+    const texts = reasons.map((reason) => shareMessage({ ok: false, reason }));
+    expect(new Set(texts).size).toBe(reasons.length);
   });
 });

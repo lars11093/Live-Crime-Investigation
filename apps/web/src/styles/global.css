@@ -1252,3 +1252,36 @@ button:disabled:hover {
 .suspect-selection__hint {
     opacity: 0.75;
 }
+
+/* ---------------------------------------------------------------
+   Story #23 — Fund mit dem Team teilen
+   --------------------------------------------------------------- */
+
+.evidence-share {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+  margin: 1rem 0;
+}
+
+.evidence-share__done {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.shared-finding {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.shared-finding__by {
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.shared-finding__by strong {
+  color: var(--accent);
+  font-weight: 600;
+}
