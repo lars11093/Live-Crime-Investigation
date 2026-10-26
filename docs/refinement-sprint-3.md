@@ -6,10 +6,6 @@ Modul 426 · AP 25b · Auftrag 8.1, Schritt 3 · Modultag 8, 26.10.2026 · Timeb
 **Rahmen:** Sprint 3 hat einen einzigen Modultag. Jede Story muss an einem Vormittag fertig sein,
 inklusive Review und Merge nach DoD. Ausgewählt wird erst im Planning nach der Pause.
 
-> **Vorbereitung mit KI (Claude):** Reihenfolge, Akzeptanzkriterien für Stories ohne Kriterien
-> und Schätzungen sind **Vorschläge**. Sie werden im Refinement vom Team besprochen, angepasst und
-> mit Planning Poker bestätigt. Was das Team ändert, wird in der Spalte «Entscheid Team» festgehalten.
-
 ## 1. Priorisierung — was muss am Ende von Sprint 3 funktionieren?
 
 Für eine Präsentation braucht CASE//ZERO ein **Ende**: Heute kann man ermitteln, aber keinen Fall
