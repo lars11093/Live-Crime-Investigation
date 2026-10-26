@@ -105,6 +105,14 @@ export interface ImageMetadata {
   software?: string;
 }
 
+/** Ein Eintrag im Systemprotokoll eines Geraets (#46). */
+export interface SystemLogEntry {
+  /** Zeitpunkt wie auf dem Geraet, z. B. "12.09. 22:31". */
+  at: string;
+  category: "unlock" | "app" | "network" | "call" | "power";
+  event: string;
+}
+
 /** Ein Bildanhang an einer Chatnachricht (#45). */
 export interface ChatAttachment {
   fileName: string;
@@ -136,6 +144,11 @@ export interface Device {
   kind?: "smartphone" | "laptop" | "tablet" | "storage";
   /** Wo das Geraet sichergestellt wurde (#44), z. B. "Schreibtisch, Buero 4.12". */
   seizedAt?: string;
+  /**
+   * Systemprotokoll (#46), chronologisch wie die Nachrichten. Bei gesperrten
+   * Geraeten entfernt der Server es wie die Nachrichten.
+   */
+  systemLog?: SystemLogEntry[];
   messages: ChatMessage[];
 }
 

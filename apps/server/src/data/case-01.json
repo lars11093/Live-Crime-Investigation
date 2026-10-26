@@ -186,6 +186,19 @@
       "owner": "Thomas Vogt",
       "kind": "smartphone",
       "seizedAt": "Jackentasche des Opfers, Buero 4.12",
+      "systemLog": [
+        { "at": "12.09. 20:29", "category": "unlock", "event": "Bildschirm entsperrt (Face ID)" },
+        { "at": "12.09. 20:30", "category": "app", "event": "Nachrichten: Nachricht an 3 Empfaenger gesendet" },
+        { "at": "12.09. 21:58", "category": "network", "event": "WLAN verbunden: CORP-4OG" },
+        { "at": "12.09. 22:02", "category": "network", "event": "Nachricht empfangen (Daniel Keller)" },
+        { "at": "12.09. 22:31", "category": "unlock", "event": "Bildschirm entsperrt (Face ID)" },
+        { "at": "12.09. 22:32", "category": "app", "event": "Notizen geoeffnet" },
+        { "at": "12.09. 22:36", "category": "call", "event": "Eingehender Anruf abgelehnt (unbekannte Nummer)" },
+        { "at": "12.09. 22:41", "category": "network", "event": "Nachricht empfangen (Leo Fischer)" },
+        { "at": "12.09. 22:43", "category": "unlock", "event": "Entsperrversuch fehlgeschlagen (Face ID nicht erkannt)" },
+        { "at": "12.09. 22:44", "category": "power", "event": "Bildschirm automatisch gesperrt" },
+        { "at": "12.09. 23:52", "category": "power", "event": "Akku unter 20 %" }
+      ],
       "messages": [
         {
           "id": "msg-vogt-01",
@@ -291,6 +304,9 @@
       "owner": "Thomas Vogt",
       "kind": "laptop",
       "seizedAt": "Dockingstation, Buero 4.12",
+      "systemLog": [
+        { "at": "12.09. 22:33", "category": "app", "event": "Mail-Entwurf gespeichert: An Revisionsstelle" }
+      ],
       "locked": true,
       "lockType": "Passwort",
       "messages": []

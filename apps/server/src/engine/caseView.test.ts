@@ -97,3 +97,21 @@ describe("Ermittlungsziel (#32)", () => {
     }
   });
 });
+
+describe("Systemprotokolle (#46)", () => {
+  it("liefert das Protokoll offener Geraete aus", () => {
+    const open = toPublicCase(caseDef).devices?.find((d) => d.id === "smartphone-vogt");
+    expect(open?.systemLog?.length).toBeGreaterThan(0);
+  });
+
+  it("schickt kein Protokoll gesperrter Geraete an den Client", () => {
+    const view = toPublicCase(caseDef);
+    const lockedWithLog = caseDef.devices?.filter((d) => d.locked && d.systemLog?.length) ?? [];
+    expect(lockedWithLog.length).toBeGreaterThan(0);
+    for (const device of lockedWithLog) {
+      expect(view.devices?.find((d) => d.id === device.id)?.systemLog).toEqual([]);
+    }
+    const json = JSON.stringify(view);
+    expect(json).not.toContain("Revisionsstelle");
+  });
+});

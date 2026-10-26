@@ -33,6 +33,7 @@ import { SuspectCompare } from "../components/SuspectCompare";
 import { StatementSearch } from "../components/StatementSearch";
 import { ChatHistory } from "../components/ChatHistory";
 import { ForensicsTerminal } from "../components/ForensicsTerminal";
+import { SystemLogView } from "../components/SystemLogView";
 import { messageToEvidence } from "../lib/digitalTrace";
 import { markReviewed } from "../lib/forensics";
 import { AccusationPanel } from "../components/AccusationPanel";
@@ -329,6 +330,13 @@ export function CaseLoaderPage() {
             }
             onBack={() => setOpenDeviceId(null)}
           />
+          {/* #46 — das Systemprotokoll gehoert zur Auswertung desselben Geraets. */}
+          <div style={{ marginTop: "1rem" }}>
+            <SystemLogView
+              log={device.systemLog ?? []}
+              crimeWindow={caseData.briefing?.crimeWindow}
+            />
+          </div>
         </main>
       );
     }
