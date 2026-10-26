@@ -9,7 +9,7 @@ import type { Room } from "./rooms.js";
  * einzige stabile Identitaet, die wir haben.
  */
 export function teamView(room: Room): TeamView {
-  return { players: room.state.players };
+  return { players: room.state.players, leaderId: room.leaderId ?? null };
 }
 
 const NAME_MAX = 24;
@@ -27,6 +27,8 @@ export function joinTeam(room: Room, playerId: unknown, name: unknown): TeamResu
     existing.name = cleanName;
   } else {
     room.state.players.push({ id: playerId, name: cleanName, role: null });
+    // Wer zuerst kommt, leitet das Team (#48).
+    room.leaderId ??= playerId;
   }
   return { ok: true, team: teamView(room) };
 }
@@ -38,8 +40,8 @@ function isRole(value: unknown): value is Role {
 /**
  * Setzt die Rolle eines Spielers (#31). `null` gibt die Rolle wieder frei.
  *
- * Jede Rolle gibt es pro Team genau einmal. Hier darf nur jeder seine eigene
- * Rolle waehlen — Rollen an andere vergeben ist #48.
+ * Jede Rolle gibt es pro Team genau einmal. Jeder darf seine eigene Rolle
+ * waehlen (#31); die Teamleitung darf Rollen an alle vergeben (#48).
  */
 export function chooseRole(
   room: Room,
@@ -49,8 +51,8 @@ export function chooseRole(
 ): TeamResult {
   const target = room.state.players.find((p) => p.id === targetId);
   if (!target) return { ok: false, message: "Diese Person ist nicht im Team." };
-  if (actorId !== targetId) {
-    return { ok: false, message: "Du kannst nur deine eigene Rolle waehlen." };
+  if (actorId !== targetId && actorId !== room.leaderId) {
+    return { ok: false, message: "Nur die Teamleitung kann Rollen an andere vergeben." };
   }
   if (role !== null && !isRole(role)) return { ok: false, message: "Unbekannte Rolle." };
 

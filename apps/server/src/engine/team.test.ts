@@ -60,14 +60,47 @@ describe("Rolle waehlen (#31)", () => {
     expect(room.state.players[0].role).toBeNull();
   });
 
-  it("laesst niemanden die Rolle eines anderen setzen", () => {
+  it("laesst Mitspieler nicht die Rolle eines anderen setzen", () => {
     const room = roomWith("Anna", "Ben");
-    expect(chooseRole(room, "anna", "ben", "lead").ok).toBe(false);
+    // Anna leitet (#48), Ben nicht.
+    expect(chooseRole(room, "ben", "anna", "lead")).toEqual({
+      ok: false,
+      message: "Nur die Teamleitung kann Rollen an andere vergeben.",
+    });
   });
 
   it("weist unbekannte Rollen und Personen ab", () => {
     const room = roomWith("Anna");
     expect(chooseRole(room, "anna", "anna", "koch").ok).toBe(false);
     expect(chooseRole(room, "zoe", "zoe", "lead").ok).toBe(false);
+  });
+});
+
+describe("Teamleitung vergibt Rollen (#48)", () => {
+  it("macht die erste Person im Team zur Teamleitung", () => {
+    const room = roomWith("Anna", "Ben");
+    expect(room.leaderId).toBe("anna");
+    // Ein erneuter Beitritt aendert daran nichts.
+    joinTeam(room, "ben", "Ben");
+    expect(room.leaderId).toBe("anna");
+  });
+
+  it("laesst die Teamleitung Rollen an andere vergeben", () => {
+    const room = roomWith("Anna", "Ben");
+    expect(chooseRole(room, "anna", "ben", "cyber").ok).toBe(true);
+    expect(room.state.players.find((p) => p.id === "ben")?.role).toBe("cyber");
+  });
+
+  it("haelt auch fuer die Teamleitung jede Rolle exklusiv", () => {
+    const room = roomWith("Anna", "Ben");
+    chooseRole(room, "anna", "anna", "lead");
+    expect(chooseRole(room, "anna", "ben", "lead").ok).toBe(false);
+  });
+
+  it("laesst die Teamleitung eine Rolle wieder entziehen", () => {
+    const room = roomWith("Anna", "Ben");
+    chooseRole(room, "ben", "ben", "field");
+    chooseRole(room, "anna", "ben", null);
+    expect(room.state.players.find((p) => p.id === "ben")?.role).toBeNull();
   });
 });
