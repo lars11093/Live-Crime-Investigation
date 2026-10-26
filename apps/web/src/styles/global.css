@@ -1199,4 +1199,56 @@ button:disabled:hover {
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--muted);
+
+.suspect-selection__item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color, #454545);
+}
+
+.suspect-selection__item > .suspect {
+    flex: 1;
+    min-width: 180px;
+}
+
+.suspect-selection__button {
+    margin-top: 0.5rem;
+    border: 1px solid #777;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    padding: 0.55rem 0.8rem;
+}
+
+.suspect-selection__button:hover {
+    border-color: #d69b45;
+}
+
+.suspect-selection__button.is-selected {
+    border-color: #d69b45;
+    color: #e5b86a;
+}
+
+.suspect-selection__summary {
+    margin-top: 1.25rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color, #454545);
+    border-left: 3px solid #d69b45;
+    background: rgba(214, 155, 69, 0.06);
+}
+
+.suspect-selection__summary p {
+    margin-bottom: 0.5rem;
+}
+
+.suspect-selection__summary p:last-child {
+    margin-bottom: 0;
+}
+
+.suspect-selection__hint {
+    opacity: 0.75;
 }
