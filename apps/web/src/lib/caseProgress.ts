@@ -1,6 +1,7 @@
 import type { CollectedEvidence, Insight } from "@case-zero/shared";
 import { EMPTY_ACCUSATION, parseAccusation, type AccusationDraft } from "./accusation";
 import { parsePhotos, type EvidencePhoto } from "./photos";
+import { parseRatings, type InsightStrength } from "./insightRating";
 
 /**
  * Der Ermittlungsfortschritt einer Person in einer Team-Session.
@@ -18,6 +19,8 @@ export interface CaseProgress {
   noteEditedAt: Record<string, string>;
   /** Bereits aufgedeckte Verknuepfungen (#13). */
   insights: Insight[];
+  /** Eigene Einschaetzung, wie stark eine Verknuepfung ist (#39). */
+  insightRatings: Record<string, InsightStrength>;
   /** Als widerspruechlich markierte Saetze aus Aussagen (#17). */
   contradictions: Contradiction[];
   /** Als relevant markierte Chatnachrichten (#19), per Nachrichten-ID. */
@@ -97,6 +100,7 @@ export const EMPTY_PROGRESS: CaseProgress = {
   notes: {},
   noteEditedAt: {},
   insights: [],
+  insightRatings: {},
   contradictions: [],
   markedMessageIds: [],
   accusation: EMPTY_ACCUSATION,
@@ -164,6 +168,7 @@ export function loadProgress(
           ? parsed.noteEditedAt
           : {},
       insights: Array.isArray(parsed.insights) ? parsed.insights : [],
+      insightRatings: parseRatings(parsed.insightRatings),
       contradictions: Array.isArray(parsed.contradictions) ? parsed.contradictions : [],
       markedMessageIds: Array.isArray(parsed.markedMessageIds) ? parsed.markedMessageIds : [],
       accusation: parseAccusation(parsed.accusation),
