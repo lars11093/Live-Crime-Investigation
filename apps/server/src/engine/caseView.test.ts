@@ -83,3 +83,17 @@ describe("Fallauswahl (#30)", () => {
     }
   });
 });
+
+describe("Ermittlungsziel (#32)", () => {
+  it("geht an den Client, weil es jederzeit sichtbar sein soll", () => {
+    expect(toPublicCase(caseDef).objective).toBe(caseDef.objective);
+    expect(caseDef.objective).toBeTruthy();
+  });
+
+  it("nennt keinen Taeter", () => {
+    for (const scenario of caseDef.scenarios) {
+      const culprit = caseDef.suspects.find((s) => s.id === scenario.suspectId)!;
+      expect(caseDef.objective).not.toContain(culprit.name);
+    }
+  });
+});
