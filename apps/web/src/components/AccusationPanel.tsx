@@ -11,8 +11,10 @@ interface Props {
   evidence: CollectedEvidence[];
   onAttach: (evidenceId: string) => void;
   onDetach: (evidenceId: string) => void;
-  /** Fuehrt zur Verdaechtigenliste, wo der Taeter ausgewaehlt wird (#25). */
+  /** Fuehrt zur Verdaechtigenliste mit Profilen und Vergleich (#25). */
   onChooseSuspect: () => void;
+  /** Taeter direkt hier wechseln oder mit `null` aufheben (#51). */
+  onChangeSuspect: (suspectId: string | null) => void;
   /**
    * Sendet die Anklage ab (#27). Liefert `null` bei Erfolg, sonst den
    * Fehlertext fuer den Spieler.
@@ -44,6 +46,7 @@ export function AccusationPanel({
   onAttach,
   onDetach,
   onChooseSuspect,
+  onChangeSuspect,
   onSubmit,
   onBack,
 }: Props) {
@@ -122,9 +125,23 @@ export function AccusationPanel({
         ) : (
           <p className="briefing__empty">Noch kein Taeter ausgewaehlt.</p>
         )}
-        <button onClick={onChooseSuspect}>
-          {suspect ? "Andere Person waehlen" : "Taeter auswaehlen"}
-        </button>
+        {/* #51 — bis zum Absenden jederzeit aenderbar, ohne die Ansicht zu verlassen. */}
+        <div className="case-status__actions" style={{ margin: 0 }}>
+          <select
+            aria-label="Taeter aendern"
+            value={draft.suspectId ?? ""}
+            onChange={(e) => onChangeSuspect(e.target.value || null)}
+          >
+            <option value="">— niemand ausgewaehlt —</option>
+            {suspects.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+          {suspect && <button onClick={() => onChangeSuspect(null)}>Auswahl aufheben</button>}
+          <button onClick={onChooseSuspect}>Zu den Verdaechtigen</button>
+        </div>
       </div>
 
       <div className="accusation__block">

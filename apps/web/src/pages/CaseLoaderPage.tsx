@@ -37,7 +37,13 @@ import { SystemLogView } from "../components/SystemLogView";
 import { messageToEvidence } from "../lib/digitalTrace";
 import { markReviewed } from "../lib/forensics";
 import { AccusationPanel } from "../components/AccusationPanel";
-import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
+import {
+  attachEvidence,
+  chooseSuspect,
+  clearSuspect,
+  detachEvidence,
+  toggleSuspect,
+} from "../lib/accusation";
 import { loadAccount } from "../lib/account";
 import { ROLE_LABEL, playerIdentity } from "../lib/player";
 import { TeamRoles } from "../components/TeamRoles";
@@ -417,7 +423,8 @@ export function CaseLoaderPage() {
                   // Story #25 — die Auswahl liegt im Anklage-Entwurf und ueberlebt so ein Neuladen.
                   setProgress((prev) => ({
                     ...prev,
-                    accusation: chooseSuspect(prev.accusation, id),
+                    // #51 — zweiter Klick auf dieselbe Person hebt die Auswahl auf.
+                    accusation: toggleSuspect(prev.accusation, id),
                   }))
                 }
                 selectionLocked={Boolean(accusation.receipt)}
@@ -573,6 +580,12 @@ export function CaseLoaderPage() {
               setProgress((prev) => ({ ...prev, accusation: detachEvidence(prev.accusation, id) }))
             }
             onChooseSuspect={() => setView("verdaechtige")}
+            onChangeSuspect={(id) =>
+              setProgress((prev) => ({
+                ...prev,
+                accusation: id ? chooseSuspect(prev.accusation, id) : clearSuspect(prev.accusation),
+              }))
+            }
             onSubmit={async () => {
               if (!accusation.suspectId) return "Waehle zuerst einen Taeter.";
               try {
