@@ -312,8 +312,20 @@ export function CaseLoaderPage() {
             onSecure={(message) =>
               setProgress((prev) => ({
                 ...prev,
-                collected: collectEvidence(prev.collected, messageToEvidence(device, message)),
+                collected: collectEvidence(
+                  prev.collected,
+                  // Ausgelesene Metadaten (#45) kommen mit in die Akte.
+                  messageToEvidence(device, message, prev.metadataReadIds.includes(message.id))
+                ),
               }))
+            }
+            metadataReadIds={progress.metadataReadIds}
+            onReadMetadata={(messageId) =>
+              setProgress((prev) =>
+                prev.metadataReadIds.includes(messageId)
+                  ? prev
+                  : { ...prev, metadataReadIds: [...prev.metadataReadIds, messageId] }
+              )
             }
             onBack={() => setOpenDeviceId(null)}
           />

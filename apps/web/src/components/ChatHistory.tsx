@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ChatMessage, Device } from "@case-zero/shared";
+import { ImageAttachment } from "./ImageAttachment";
 
 interface Props {
   device: Device;
@@ -10,6 +11,9 @@ interface Props {
   collectedIds: string[];
   /** Sichert eine Nachricht als Beweis (#21). */
   onSecure: (message: ChatMessage) => void;
+  /** Nachrichten, deren Bildanhang schon ausgelesen ist (#45). */
+  metadataReadIds: string[];
+  onReadMetadata: (messageId: string) => void;
   onBack: () => void;
 }
 
@@ -32,6 +36,8 @@ export function ChatHistory({
   onToggleMessage,
   collectedIds,
   onSecure,
+  metadataReadIds,
+  onReadMetadata,
   onBack,
 }: Props) {
   const [confirmation, setConfirmation] = useState<string | null>(null);
@@ -101,6 +107,13 @@ export function ChatHistory({
                       </span>
                       <span className="chat__text">{message.text}</span>
                     </button>
+                    {message.attachment && (
+                      <ImageAttachment
+                        attachment={message.attachment}
+                        read={metadataReadIds.includes(message.id)}
+                        onRead={() => onReadMetadata(message.id)}
+                      />
+                    )}
                     {isSecured ? (
                       <button className="chat__secure" disabled>
                         In der Beweisakte
