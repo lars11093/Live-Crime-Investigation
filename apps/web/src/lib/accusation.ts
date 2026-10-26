@@ -1,3 +1,5 @@
+import type { AccusationReceipt } from "@case-zero/shared";
+
 /**
  * Der Entwurf einer Anklage, solange sie noch nicht abgesendet ist.
  *
@@ -10,19 +12,35 @@ export interface AccusationDraft {
   suspectId: string | null;
   /** IDs der angehaengten Beweise aus der Akte (#26), in Anhaenge-Reihenfolge. */
   evidenceIds: string[];
+  /**
+   * Die Quittung des Servers, sobald die Anklage abgesendet ist (#27).
+   * Ab dann ist der Entwurf gesperrt.
+   */
+  receipt?: AccusationReceipt;
 }
 
 export const EMPTY_ACCUSATION: AccusationDraft = { suspectId: null, evidenceIds: [] };
 
+/** Ist die Anklage abgesendet, laesst sie sich nicht mehr aendern (#27). */
+export function isSubmitted(draft: AccusationDraft): boolean {
+  return Boolean(draft.receipt);
+}
+
+/** Waehlt den Taeter — nur solange nicht abgesendet ist (#25, #27). */
+export function chooseSuspect(draft: AccusationDraft, suspectId: string): AccusationDraft {
+  if (isSubmitted(draft) || draft.suspectId === suspectId) return draft;
+  return { ...draft, suspectId };
+}
+
 /** Haengt einen Beweis an — jeder nur einmal (#26). */
 export function attachEvidence(draft: AccusationDraft, evidenceId: string): AccusationDraft {
-  if (draft.evidenceIds.includes(evidenceId)) return draft;
+  if (isSubmitted(draft) || draft.evidenceIds.includes(evidenceId)) return draft;
   return { ...draft, evidenceIds: [...draft.evidenceIds, evidenceId] };
 }
 
 /** Nimmt einen angehaengten Beweis wieder weg (#26). */
 export function detachEvidence(draft: AccusationDraft, evidenceId: string): AccusationDraft {
-  if (!draft.evidenceIds.includes(evidenceId)) return draft;
+  if (isSubmitted(draft) || !draft.evidenceIds.includes(evidenceId)) return draft;
   return { ...draft, evidenceIds: draft.evidenceIds.filter((id) => id !== evidenceId) };
 }
 
@@ -41,11 +59,15 @@ export function missingForAccusation(draft: AccusationDraft): string[] {
 /** Liest einen gespeicherten Entwurf robust ein — fremde oder kaputte Daten werden leer. */
 export function parseAccusation(raw: unknown): AccusationDraft {
   if (!raw || typeof raw !== "object") return EMPTY_ACCUSATION;
-  const { suspectId, evidenceIds } = raw as Partial<AccusationDraft>;
-  return {
+  const { suspectId, evidenceIds, receipt } = raw as Partial<AccusationDraft>;
+  const draft: AccusationDraft = {
     suspectId: typeof suspectId === "string" ? suspectId : null,
     evidenceIds: Array.isArray(evidenceIds)
       ? evidenceIds.filter((id): id is string => typeof id === "string")
       : [],
   };
+  if (receipt && typeof receipt === "object" && typeof receipt.submittedAt === "string") {
+    draft.receipt = receipt;
+  }
+  return draft;
 }

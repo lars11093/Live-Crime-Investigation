@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { PublicCase } from "@case-zero/shared";
-import { combineEvidence, fetchCase, findRoom } from "../lib/api";
+import { combineEvidence, fetchCase, findRoom, submitAccusation } from "../lib/api";
 import {
   browserStorage,
   collectEvidence,
@@ -24,7 +24,7 @@ import { ChatHistory } from "../components/ChatHistory";
 import { ForensicsTerminal } from "../components/ForensicsTerminal";
 import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
-import { attachEvidence, detachEvidence } from "../lib/accusation";
+import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik" | "anklage";
@@ -252,9 +252,10 @@ export function CaseLoaderPage() {
                 // Story #25 — die Auswahl liegt im Anklage-Entwurf und ueberlebt so ein Neuladen.
                 setProgress((prev) => ({
                   ...prev,
-                  accusation: { ...prev.accusation, suspectId: id },
+                  accusation: chooseSuspect(prev.accusation, id),
                 }))
               }
+              selectionLocked={Boolean(accusation.receipt)}
             />
             <div style={{ marginTop: "1rem" }}>
               <ContradictionOverview contradictions={contradictions} />
@@ -337,6 +338,30 @@ export function CaseLoaderPage() {
             setProgress((prev) => ({ ...prev, accusation: detachEvidence(prev.accusation, id) }))
           }
           onChooseSuspect={() => setView("verdaechtige")}
+          onSubmit={async () => {
+            if (!accusation.suspectId) return "Waehle zuerst einen Taeter.";
+            try {
+              const result = await submitAccusation(code, {
+                suspectId: accusation.suspectId,
+                evidenceIds: accusation.evidenceIds,
+              });
+              if (!result.ok && result.reason === "invalid") return result.message;
+              // Auch "schon abgesendet" sperrt: dann hat jemand im Team zuerst
+              // abgesendet, und dessen Anklage gilt (#27).
+              const { receipt } = result;
+              setProgress((prev) => ({
+                ...prev,
+                accusation: {
+                  suspectId: receipt.suspectId,
+                  evidenceIds: receipt.evidenceIds,
+                  receipt,
+                },
+              }));
+              return null;
+            } catch {
+              return "Server nicht erreichbar. Bitte erneut versuchen.";
+            }
+          }}
           onBack={() => setView("akte")}
         />
       </main>

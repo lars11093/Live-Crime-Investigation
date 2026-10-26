@@ -1,4 +1,9 @@
-import type { CombineResult, PublicCase } from "@case-zero/shared";
+import type {
+  AccusationSubmission,
+  CombineResult,
+  PublicCase,
+  SubmitAccusationResult,
+} from "@case-zero/shared";
 
 export const SERVER_URL = import.meta.env.VITE_SERVER_URL ?? "http://localhost:4000";
 
@@ -87,4 +92,25 @@ export async function combineEvidence(
     throw new Error(`Kombination fehlgeschlagen (HTTP ${response.status})`);
   }
   return (await response.json()) as CombineResult;
+}
+
+/**
+ * Sendet die Anklage der Team-Session ab (#27).
+ *
+ * "Schon abgesendet" und "ungueltig" sind Antworten, keine Fehler — sie kommen
+ * als Ergebnis zurueck. Geworfen wird nur, wenn der Server nicht antwortet.
+ */
+export async function submitAccusation(
+  code: string,
+  submission: AccusationSubmission
+): Promise<SubmitAccusationResult> {
+  const response = await fetch(`${SERVER_URL}/api/rooms/${normalizeRoomCode(code)}/accusation`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(submission),
+  });
+  if (![201, 400, 409].includes(response.status)) {
+    throw new Error(`Anklage konnte nicht abgesendet werden (HTTP ${response.status})`);
+  }
+  return (await response.json()) as SubmitAccusationResult;
 }

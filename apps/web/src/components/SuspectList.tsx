@@ -7,6 +7,8 @@ interface Props {
     onBack: () => void;
     selectedSuspectId: string | null;
     onSelectSuspect: (id: string) => void;
+    /** Nach dem Absenden der Anklage ist die Auswahl gesperrt (#27). */
+    selectionLocked?: boolean;
 }
 
 /**
@@ -14,7 +16,14 @@ interface Props {
  * Name und Bild pro Person, Anzahl in der Kopfzeile, Klick oeffnet das Profil.
  * Story #25 — Einen Verdaechtigen als Taeter auswaehlen.
  */
-export function SuspectList({ suspects, onOpen, onBack, selectedSuspectId, onSelectSuspect }: Props) {
+export function SuspectList({
+  suspects,
+  onOpen,
+  onBack,
+  selectedSuspectId,
+  onSelectSuspect,
+  selectionLocked = false,
+}: Props) {
     const selectedSuspect = suspects.find((suspect) => suspect.id === selectedSuspectId) ?? null;
 
   return (
@@ -45,6 +54,7 @@ export function SuspectList({ suspects, onOpen, onBack, selectedSuspectId, onSel
                 type="button"
                 className={isSelected ? "suspect-selection__button is-selected" : "suspect-selection__button"}
                 aria-pressed={isSelected}
+                disabled={selectionLocked}
                 onClick={() => onSelectSuspect(suspect.id)}
               >
                 {isSelected ? "Ausgewählt ✓" : "Als Täter auswählen"}
@@ -64,6 +74,7 @@ export function SuspectList({ suspects, onOpen, onBack, selectedSuspectId, onSel
         ) : (
           <p>Noch kein Täter ausgewählt.</p>
         )}
+        {selectionLocked && <p>Die Anklage ist abgesendet. Die Auswahl ist gesperrt.</p>}
       </section>
     </section>
   );

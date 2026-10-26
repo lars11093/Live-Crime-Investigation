@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   EMPTY_ACCUSATION,
   attachEvidence,
+  chooseSuspect,
   detachEvidence,
   missingForAccusation,
   parseAccusation,
@@ -43,5 +44,31 @@ describe("Beweise an die Anklage haengen (#26)", () => {
       suspectId: null,
       evidenceIds: ["a"],
     });
+  });
+});
+
+describe("Abgesendete Anklage (#27)", () => {
+  const submitted = {
+    suspectId: "monica-brandt",
+    evidenceIds: ["a"],
+    receipt: {
+      suspectId: "monica-brandt",
+      evidenceIds: ["a"],
+      submittedAt: "2026-10-26T10:00:00.000Z",
+    },
+  };
+
+  it("laesst sich nach dem Absenden nicht mehr aendern", () => {
+    expect(attachEvidence(submitted, "b")).toBe(submitted);
+    expect(detachEvidence(submitted, "a")).toBe(submitted);
+    expect(chooseSuspect(submitted, "daniel-keller")).toBe(submitted);
+  });
+
+  it("behaelt die Quittung beim Neuladen", () => {
+    expect(parseAccusation(JSON.parse(JSON.stringify(submitted)))).toEqual(submitted);
+  });
+
+  it("waehlt vor dem Absenden einen Taeter", () => {
+    expect(chooseSuspect(EMPTY_ACCUSATION, "leo-fischer").suspectId).toBe("leo-fischer");
   });
 });

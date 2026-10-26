@@ -1,5 +1,5 @@
 import { customAlphabet } from "nanoid";
-import type { CaseDefinition, RoomState } from "@case-zero/shared";
+import type { AccusationReceipt, CaseDefinition, RoomState } from "@case-zero/shared";
 
 /**
  * In-Memory Room Store (Story #5).
@@ -13,6 +13,8 @@ export interface Room {
   state: RoomState;
   caseDef: CaseDefinition;
   scenario: CaseDefinition["scenarios"][number];
+  /** Die abgesendete Anklage des Teams (#27). Fehlt, solange niemand abgesendet hat. */
+  accusation?: AccusationReceipt;
 }
 
 /** Ohne I, O, 0 und 1 — die verwechselt man beim Vorlesen im Team. */

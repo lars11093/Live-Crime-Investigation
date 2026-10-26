@@ -1247,3 +1247,11 @@ button:disabled:hover {
   border-radius: 3px;
   color: var(--danger);
 }
+
+/* Story #27 — Bestaetigung nach dem Absenden */
+.accusation__confirmation {
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  padding: 0.75rem 1rem;
+  color: var(--accent);
+}
