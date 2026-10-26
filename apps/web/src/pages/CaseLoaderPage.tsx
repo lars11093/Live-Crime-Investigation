@@ -58,6 +58,7 @@ import { rateInsight } from "../lib/insightRating";
 import { setAlibiVerdict } from "../lib/alibi";
 import { setSuspicion } from "../lib/suspicion";
 import { setRelevance } from "../lib/relevance";
+import { reviewAccusation } from "../lib/accusationReview";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View =
@@ -580,6 +581,12 @@ export function CaseLoaderPage() {
               setProgress((prev) => ({ ...prev, accusation: detachEvidence(prev.accusation, id) }))
             }
             onChooseSuspect={() => setView("verdaechtige")}
+            review={reviewAccusation({
+              draft: accusation,
+              suspects: caseData.suspects,
+              collected,
+              progress,
+            })}
             onChangeSuspect={(id) =>
               setProgress((prev) => ({
                 ...prev,

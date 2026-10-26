@@ -1985,3 +1985,44 @@ div.account-bar {
   padding: 0.3rem 0.6rem;
   font-size: 0.8rem;
 }
+
+/* Story #52 — Anklage pruefen */
+.review {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.review__item {
+  border-left: 3px solid var(--muted);
+  padding: 0.35rem 0.75rem;
+  line-height: 1.45;
+}
+
+.review__level {
+  display: inline-block;
+  min-width: 5.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.review__item--fehler {
+  border-left-color: var(--danger);
+}
+
+.review__item--fehler .review__level {
+  color: var(--danger);
+}
+
+.review__item--warnung {
+  border-left-color: #eab308;
+}
+
+.review__item--warnung .review__level {
+  color: #eab308;
+}
