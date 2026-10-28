@@ -87,6 +87,29 @@ export interface ChatMessage {
 }
 
 /**
+ * Eine Datei auf einem Geraet (Story #20).
+ *
+ * `type` sagt, wie der Client sie oeffnet:
+ *   - "text":       `content` wird als Text gezeigt
+ *   - "image":      `imagePath` als Bild, mit Platzhalter wie ueberall (kein Asset im Repo)
+ *   - "unreadable": verschluesselt oder beschaedigt — der Client zeigt `unreadableReason`
+ */
+export interface DeviceFile {
+  id: string;
+  /** Dateiname inkl. Endung, z. B. "notizen.txt". */
+  name: string;
+  type: "text" | "image" | "unreadable";
+  /** Zuletzt geaendert, als Anzeigetext — wie `ChatMessage.sentAt`. */
+  modifiedAt: string;
+  content?: string;
+  imagePath?: string;
+  /** Was auf dem Bild zu sehen ist. Steht unter dem Platzhalter, solange es kein Asset gibt. */
+  caption?: string;
+  /** Warum die Datei nicht lesbar ist, z. B. "Verschluesselt". */
+  unreadableReason?: string;
+}
+
+/**
  * Ein sichergestelltes Geraet (Story #19).
  *
  * Die Nachrichten stehen in der Reihenfolge im Case-JSON, in der sie
@@ -108,6 +131,8 @@ export interface Device {
   /** Art der Sperre, wie sie im Terminal steht — z. B. "PIN, 4 Ziffern" (#18). */
   lockType?: string;
   messages: ChatMessage[];
+  /** Dateien auf dem Geraet (#20). Optional: nicht jedes Geraet hat welche. */
+  files?: DeviceFile[];
 }
 
 /**
@@ -169,6 +194,25 @@ export interface CollectedEvidence extends CollectableEvidence {
     hotspotLabel: string;
   };
 }
+
+/**
+ * Ein Fund, den jemand mit dem Team geteilt hat (Story #23).
+ *
+ * Liegt auf dem Server im Raum, nicht im localStorage: geteilt heisst, alle
+ * sehen denselben Stand — auch wer spaeter beitritt.
+ */
+export interface SharedFinding {
+  evidence: CollectedEvidence;
+  /** Name der Person, die geteilt hat — so ist der Urheber erkennbar. */
+  sharedBy: string;
+  /** Verbindungs-ID beim Teilen, damit der Client "du" anzeigen kann. */
+  sharedById: string;
+}
+
+/** Antwort auf `evidence:share` (#23). */
+export type ShareResult =
+  | { ok: true }
+  | { ok: false; reason: "invalid-room" | "not-in-team" | "unknown-evidence" | "already-shared" };
 
 export interface Scene {
   id: string;
@@ -331,11 +375,22 @@ export interface ClientToServerEvents {
   "board:moveNode": (payload: { code: string; nodeId: string; x: number; y: number }) => void;
   "board:connect": (payload: { code: string; fromId: string; toId: string }) => void;
   "case:accuse": (payload: { code: string; accusation: Accusation }, cb: (result: ScoreResult) => void) => void;
+  /** Story #22 — mit Namen dem Team einer Session beitreten. */
+  "team:join": (payload: { code: string; playerName: string }, cb: (result: TeamJoinResult) => void) => void;
+  /** Story #23 — einen Fund aus der eigenen Akte mit dem Team teilen. */
+  "evidence:share": (payload: { code: string; evidence: CollectedEvidence }, cb: (result: ShareResult) => void) => void;
 }
+
+/** Antwort auf `team:join` (#22). */
+export type TeamJoinResult = { ok: true } | { ok: false; error: string };
 
 export interface ServerToClientEvents {
   "room:state": (state: RoomState) => void;
   "event:new": (event: TimedEvent) => void;
   "board:update": (board: RoomState["board"]) => void;
   "error:message": (message: string) => void;
+  /** Story #22 — die aktuelle Teamliste, nach jedem Beitritt und Verlassen an alle im Raum. */
+  "team:update": (players: Player[]) => void;
+  /** Story #23 — alle geteilten Funde, nach jedem Teilen an alle und beim Beitritt an den Neuen. */
+  "team:findings": (findings: SharedFinding[]) => void;
 }

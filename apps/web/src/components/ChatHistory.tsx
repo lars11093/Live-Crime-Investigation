@@ -10,6 +10,8 @@ interface Props {
   collectedIds: string[];
   /** Sichert eine Nachricht als Beweis (#21). */
   onSecure: (message: ChatMessage) => void;
+  /** Wechselt zu den Dateien desselben Geraets (#20). Fehlt, wenn es keine gibt. */
+  onShowFiles?: () => void;
   onBack: () => void;
 }
 
@@ -32,6 +34,7 @@ export function ChatHistory({
   onToggleMessage,
   collectedIds,
   onSecure,
+  onShowFiles,
   onBack,
 }: Props) {
   const [confirmation, setConfirmation] = useState<string | null>(null);
@@ -58,7 +61,12 @@ export function ChatHistory({
         <p className="terminal-title" style={{ margin: 0 }}>
           {device.label}
         </p>
-        <button onClick={onBack}>Zurueck zum Forensik-Terminal</button>
+        <span className="device-files__actions">
+          {onShowFiles && (
+            <button onClick={onShowFiles}>Dateien ({device.files?.length ?? 0})</button>
+          )}
+          <button onClick={onBack}>Zurueck zum Forensik-Terminal</button>
+        </span>
       </div>
 
       <p className="case-status__hint">
