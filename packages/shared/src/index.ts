@@ -289,6 +289,31 @@ export interface Accusation {
   evidenceIds: string[];
 }
 
+/**
+ * Was die Fallseite beim Absenden der Anklage schickt (Story #27).
+ *
+ * Bewusst schmaler als `Accusation`: Motiv, Waffe und Tatzeit fragt die
+ * Oberflaeche (noch) nicht ab — der Prototyp-Socket-Event `case:accuse`
+ * bleibt davon unberuehrt.
+ */
+export type AccusationSubmission = Pick<Accusation, "suspectId" | "evidenceIds">;
+
+/**
+ * Die Quittung einer abgesendeten Anklage (Story #27).
+ *
+ * Pro Team-Session gibt es genau eine: danach ist die Anklage gesperrt.
+ */
+export interface AccusationReceipt extends AccusationSubmission {
+  /** ISO-Zeitpunkt, zu dem der Server die Anklage angenommen hat. */
+  submittedAt: string;
+}
+
+/** Antwort des Servers auf `POST /api/rooms/:code/accusation` (Story #27). */
+export type SubmitAccusationResult =
+  | { ok: true; receipt: AccusationReceipt }
+  | { ok: false; reason: "already-submitted"; receipt: AccusationReceipt }
+  | { ok: false; reason: "invalid"; message: string };
+
 export interface ScoreResult {
   correct: boolean;
   accuracy: number;

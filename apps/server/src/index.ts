@@ -13,6 +13,7 @@ import type {
 import case01 from "./data/case-01.json" with { type: "json" };
 import { toPublicCase } from "./engine/caseView.js";
 import { combineEvidence } from "./engine/combine.js";
+import { submitAccusation } from "./engine/accusation.js";
 import {
   allRooms,
   createRoom,
@@ -103,6 +104,17 @@ app.get("/api/rooms/:code", (req, res) => {
     caseId: room.state.caseId,
     caseTitle: room.caseDef.title,
   });
+});
+
+// Story #27 — Anklage absenden. Einmal pro Team-Session; danach gesperrt.
+app.post("/api/rooms/:code/accusation", (req, res) => {
+  const room = getRoom(req.params.code);
+  if (!room) {
+    return res.status(404).json({ error: "Ungueltiger Team-Code" });
+  }
+  const result = submitAccusation(room, req.body);
+  if (result.ok) return res.status(201).json(result);
+  return res.status(result.reason === "already-submitted" ? 409 : 400).json(result);
 });
 
 const httpServer = createServer(app);
