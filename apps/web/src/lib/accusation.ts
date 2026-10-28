@@ -66,7 +66,16 @@ export function parseAccusation(raw: unknown): AccusationDraft {
       ? evidenceIds.filter((id): id is string => typeof id === "string")
       : [],
   };
-  if (receipt && typeof receipt === "object" && typeof receipt.submittedAt === "string") {
+  // Ohne Aufloesung (#28) ist die Quittung unvollstaendig — etwa aus einem
+  // Stand vor #28. Dann faellt sie weg; beim erneuten Absenden liefert der
+  // Server mit 409 die vollstaendige Quittung nach.
+  if (
+    receipt &&
+    typeof receipt === "object" &&
+    typeof receipt.submittedAt === "string" &&
+    receipt.verdict &&
+    typeof receipt.verdict === "object"
+  ) {
     draft.receipt = receipt;
   }
   return draft;

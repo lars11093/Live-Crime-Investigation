@@ -105,15 +105,23 @@ export interface ProgressStorage {
  * Sobald #23 ("Fund mit dem Team teilen") kommt, zieht der geteilte Teil in den
  * Room-State auf dem Server; diese Datei bleibt dann fuer das Private zustaendig.
  */
-function storageKey(roomCode: string): string {
-  return `case-zero:progress:${roomCode}`;
+function storageKey(roomCode: string, accountId?: string): string {
+  // Mit Konto (#29) liegt der Stand unter dem Konto; als Gast wie bisher nur
+  // unter dem Team-Code, damit bestehende Spielstaende erhalten bleiben.
+  return accountId
+    ? `case-zero:progress:${accountId}:${roomCode}`
+    : `case-zero:progress:${roomCode}`;
 }
 
 /** Faengt alles ab, was kaputt sein kann: gesperrter Storage, kaputtes JSON, fremde Daten. */
-export function loadProgress(storage: ProgressStorage, roomCode: string): CaseProgress {
+export function loadProgress(
+  storage: ProgressStorage,
+  roomCode: string,
+  accountId?: string
+): CaseProgress {
   let raw: string | null;
   try {
-    raw = storage.getItem(storageKey(roomCode));
+    raw = storage.getItem(storageKey(roomCode, accountId));
   } catch {
     // Privater Modus oder blockierte Site-Daten — dann eben ohne Fortschritt.
     return EMPTY_PROGRESS;
@@ -142,10 +150,11 @@ export function loadProgress(storage: ProgressStorage, roomCode: string): CasePr
 export function saveProgress(
   storage: ProgressStorage,
   roomCode: string,
-  progress: CaseProgress
+  progress: CaseProgress,
+  accountId?: string
 ): void {
   try {
-    storage.setItem(storageKey(roomCode), JSON.stringify(progress));
+    storage.setItem(storageKey(roomCode, accountId), JSON.stringify(progress));
   } catch {
     // Voller oder gesperrter Storage darf das Spiel nicht anhalten.
   }
