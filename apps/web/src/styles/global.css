@@ -1493,3 +1493,58 @@ button:disabled:hover {
   padding: 0.75rem 1rem;
   color: var(--accent);
 }
+
+/* Story #28 — Aufloesung */
+.resolution {
+  display: grid;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.resolution__result {
+  margin: 0;
+  font-size: 1.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  padding: 0.75rem 1rem;
+  text-align: center;
+}
+
+.resolution__result--failed {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.resolution__findings {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.resolution__finding {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.resolution__mark {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+.resolution__finding--wrong .resolution__mark {
+  color: var(--danger);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

@@ -5,6 +5,7 @@ import type {
   SubmitAccusationResult,
 } from "@case-zero/shared";
 import type { Room } from "./rooms.js";
+import { judgeAccusation } from "./verdict.js";
 
 /**
  * Prueft eine Anklage, bevor der Server sie annimmt (Story #27).
@@ -51,7 +52,13 @@ export function submitAccusation(
   if (!checked.ok) {
     return { ok: false, reason: "invalid", message: checked.message };
   }
-  const receipt: AccusationReceipt = { ...checked.submission, submittedAt: now.toISOString() };
+  const receipt: AccusationReceipt = {
+    ...checked.submission,
+    submittedAt: now.toISOString(),
+    // Die Aufloesung haengt an der Quittung (#28): berechnet genau dann, wenn
+    // die Anklage gesperrt ist, und nie davor.
+    verdict: judgeAccusation(room.caseDef, room.scenario, checked.submission),
+  };
   room.accusation = receipt;
   return { ok: true, receipt };
 }

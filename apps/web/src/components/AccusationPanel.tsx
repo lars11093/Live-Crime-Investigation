@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { CollectedEvidence, Suspect } from "@case-zero/shared";
 import { missingForAccusation, type AccusationDraft } from "../lib/accusation";
 import { KIND_LABEL } from "./evidenceKind";
+import { CaseResolution } from "./CaseResolution";
 
 interface Props {
   draft: AccusationDraft;
@@ -78,7 +79,7 @@ export function AccusationPanel({
           uebermittelt. Sie kann nicht mehr geaendert werden.
         </p>
         <div className="accusation__block">
-          <p className="team-code__label">Taeter</p>
+          <p className="team-code__label">Angeklagt</p>
           <p className="accusation__suspect">
             <strong>{suspect?.name ?? receipt.suspectId}</strong>
           </p>
@@ -92,6 +93,12 @@ export function AccusationPanel({
               </li>
             ))}
           </ul>
+        </div>
+        <div className="accusation__block">
+          <p className="terminal-title" style={{ margin: 0 }}>
+            Aufloesung
+          </p>
+          <CaseResolution verdict={receipt.verdict} />
         </div>
       </section>
     );

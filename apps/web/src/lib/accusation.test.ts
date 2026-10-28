@@ -55,6 +55,12 @@ describe("Abgesendete Anklage (#27)", () => {
       suspectId: "monica-brandt",
       evidenceIds: ["a"],
       submittedAt: "2026-10-26T10:00:00.000Z",
+      verdict: {
+        solved: true,
+        culprit: { id: "monica-brandt", name: "Monica Brandt" },
+        resolution: "Sie war es.",
+        findings: [],
+      },
     },
   };
 
@@ -70,5 +76,16 @@ describe("Abgesendete Anklage (#27)", () => {
 
   it("waehlt vor dem Absenden einen Taeter", () => {
     expect(chooseSuspect(EMPTY_ACCUSATION, "leo-fischer").suspectId).toBe("leo-fischer");
+  });
+});
+
+describe("Aufloesung im gespeicherten Stand (#28)", () => {
+  it("verwirft eine Quittung ohne Aufloesung", () => {
+    const old = {
+      suspectId: "monica-brandt",
+      evidenceIds: ["a"],
+      receipt: { suspectId: "monica-brandt", evidenceIds: ["a"], submittedAt: "2026-10-26" },
+    };
+    expect(parseAccusation(old).receipt).toBeUndefined();
   });
 });

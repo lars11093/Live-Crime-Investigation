@@ -307,7 +307,9 @@
       "motive": "Blackmail",
       "weapon": "Kitchen Knife",
       "timeOfCrime": "22:46",
-      "requiredEdgeIds": ["edge-fingerprint-daniel", "edge-message-daniel", "edge-cctv-daniel"]
+      "requiredEdgeIds": ["edge-fingerprint-daniel", "edge-message-daniel", "edge-cctv-daniel"],
+      "keyEvidenceIds": ["badge-protokoll", "msg-vogt-08", "msg-vogt-03", "kratzer-fensterrahmen", "zettel-zahlenreihe"],
+      "resolution": "Daniel Keller hat das Buero um 22:10 nicht verlassen. Er wartete auf der Etage, bis Monica Brandt um 22:41 gegangen war, und betrat Buero 4.12 mit seinem eigenen Badge ein zweites Mal - deshalb zeigt das Protokoll denselben Badge zweimal im Abstand von vier Minuten. Vogt hatte ihm am Abend klargemacht, dass die Befoerderung erneut an ihm vorbeigehen wuerde. Der Streit eskalierte, Keller griff zum Messer aus der Teekueche. Das Messer reichte er durch das Kippfenster nach aussen auf den Sims - daher die frischen Kratzer am Rahmen - und holte es spaeter ueber das Treppenhaus. Das Telefonat mit seiner Schwester um 22:40 hat nie stattgefunden."
     },
     {
       "id": "scenario-monica",
@@ -315,7 +317,9 @@
       "motive": "Revenge",
       "weapon": "Letter Opener",
       "timeOfCrime": "22:39",
-      "requiredEdgeIds": ["edge-fingerprint-monica", "edge-message-monica"]
+      "requiredEdgeIds": ["edge-fingerprint-monica", "edge-message-monica"],
+      "keyEvidenceIds": ["tasse-lippenstift", "notebook-kuendigung", "msg-vogt-01", "msg-vogt-07", "badge-protokoll"],
+      "resolution": "Monica Brandt kam um 22:30 wie verabredet - sie wusste aus seiner Antwort auf ihre Q3-Nachricht, worum es gehen wuerde. Auf dem Notebook sah sie die Kuendigung und den Entwurf einer Mail, mit der Vogt die geschoenten Q3-Zahlen offenlegen wollte. Sie trank Tee mit ihm, um Zeit zu gewinnen, und versuchte ihn umzustimmen. Als er sich weigerte, griff sie zum Briefoeffner vom Schreibtisch. Sie verliess das Gebaeude nicht um 22:45, sondern ging kurz hinaus und mit ihrem Badge noch einmal hinein, um ihre Tasse zu holen - die vergass sie in der Eile trotzdem. Ihr Lippenstift am Tassenrand und ihre Nachricht \"Das bleibt unter uns\" verraten sie."
     }
   ],
   "seedEvidence": [
