@@ -1,4 +1,4 @@
-import type { CaseDefinition, PublicCase } from "@case-zero/shared";
+import type { CaseDefinition, CaseSummary, PublicCase } from "@case-zero/shared";
 
 /**
  * Filtert einen Fall auf das, was der Client sehen darf.
@@ -22,4 +22,23 @@ export function toPublicCase(caseDef: CaseDefinition): PublicCase {
       device.locked ? { ...device, messages: [], files: [] } : device
     ),
   };
+}
+
+/**
+ * Die Fallauswahl (Story #30): ein Eintrag pro Fall, alphabetisch nach Titel.
+ * Baut auf `toPublicCase` auf, damit hier nie etwas aus der Loesung landet.
+ */
+export function toCaseSummaries(cases: Iterable<CaseDefinition>): CaseSummary[] {
+  return [...cases]
+    .map((caseDef) => {
+      const publicCase = toPublicCase(caseDef);
+      return {
+        id: publicCase.id,
+        title: publicCase.title,
+        location: publicCase.briefing?.location,
+        timeOfCrime: publicCase.briefing?.timeOfCrime,
+        suspectCount: publicCase.suspects.length,
+      };
+    })
+    .sort((a, b) => a.title.localeCompare(b.title, "de"));
 }

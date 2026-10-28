@@ -5,6 +5,7 @@ import { socket } from "./lib/socket";
 import { EvidenceBoard } from "./components/EvidenceBoard";
 import { StartPage } from "./pages/StartPage";
 import { CaseLoaderPage } from "./pages/CaseLoaderPage";
+import { CaseOverviewPage } from "./pages/CaseOverviewPage";
 
 function JoinPage() {
   const [name, setName] = useState("");
@@ -142,6 +143,7 @@ export function App() {
   return (
     <Routes>
       <Route path="/" element={<StartPage />} />
+      <Route path="/faelle" element={<CaseOverviewPage />} />
       <Route path="/fall/:code" element={<CaseLoaderPage />} />
       {/* Prototyp aus Sprint 0 — Team-Beitritt wird mit #5 zur richtigen Story ausgebaut. */}
       <Route path="/lobby" element={<JoinPage />} />

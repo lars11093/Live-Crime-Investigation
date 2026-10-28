@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CaseDefinition } from "@case-zero/shared";
-import { toPublicCase } from "./caseView.js";
+import { toCaseSummaries, toPublicCase } from "./caseView.js";
 import case01 from "../data/case-01.json" with { type: "json" };
 
 const caseDef = case01 as CaseDefinition;
@@ -56,6 +56,34 @@ describe("toPublicCase", () => {
       for (const edgeId of scenario.requiredEdgeIds) {
         expect(serialized).not.toContain(edgeId);
       }
+    }
+  });
+});
+
+describe("Fallauswahl (#30)", () => {
+  it("listet jeden Fall mit Titel, Tatort, Tatzeit und Verdaechtigen", () => {
+    expect(toCaseSummaries([caseDef])).toEqual([
+      {
+        id: "case-01",
+        title: caseDef.title,
+        location: caseDef.briefing?.location,
+        timeOfCrime: caseDef.briefing?.timeOfCrime,
+        suspectCount: caseDef.suspects.length,
+      },
+    ]);
+  });
+
+  it("sortiert nach Titel und kommt ohne Briefing aus", () => {
+    const other: CaseDefinition = { ...caseDef, id: "case-00", title: "A Quiet Night", briefing: undefined };
+    const list = toCaseSummaries([caseDef, other]);
+    expect(list.map((c) => c.id)).toEqual(["case-00", "case-01"]);
+    expect(list[0].location).toBeUndefined();
+  });
+
+  it("verraet nichts aus der Loesung", () => {
+    const json = JSON.stringify(toCaseSummaries([caseDef]));
+    for (const scenario of caseDef.scenarios) {
+      expect(json).not.toContain(scenario.resolution);
     }
   });
 });

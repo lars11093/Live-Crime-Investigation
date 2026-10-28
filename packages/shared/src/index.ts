@@ -288,6 +288,19 @@ export interface CaseDefinition {
  */
 export type PublicCase = Omit<CaseDefinition, "scenarios" | "combinations">;
 
+/**
+ * Ein Eintrag in der Fallauswahl (Story #30) — nur, was man zum Waehlen
+ * braucht. Tatort und Tatzeit kommen aus dem Briefing, fehlen also, wenn der
+ * Fall keins hat.
+ */
+export interface CaseSummary {
+  id: string;
+  title: string;
+  location?: string;
+  timeOfCrime?: string;
+  suspectCount: number;
+}
+
 export interface Accusation {
   suspectId: string;
   motive: string;
