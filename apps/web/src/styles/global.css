@@ -1548,3 +1548,18 @@ button:disabled:hover {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* Story #29 — Anmelden */
+.account-bar {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  justify-items: start;
+}
+
+div.account-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}

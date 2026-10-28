@@ -31,6 +31,7 @@ import { summarizeProgress } from "../lib/progress";
 import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
+import { loadAccount } from "../lib/account";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik" | "anklage";
@@ -51,10 +52,13 @@ export function CaseLoaderPage() {
   const [state, setState] = useState<LoadState>({ status: "loading" });
   // Nach dem Laden erscheint zuerst das Briefing (#2 -> #6).
   const [view, setView] = useState<View>("briefing");
+  // Angemeldet (#29) gehoert der Fortschritt dem Konto, sonst dem Gast.
+  // Einmal beim Oeffnen gelesen: ein Kontowechsel passiert auf der Startseite.
+  const [account] = useState(() => loadAccount(browserStorage()));
   // Fortschritt kommt gespeichert herein und wird bei jeder Aenderung
   // zurueckgeschrieben, damit Notizen ein Neuladen ueberleben (#12).
   const [progress, setProgress] = useState<CaseProgress>(() =>
-    loadProgress(browserStorage(), code)
+    loadProgress(browserStorage(), code, account?.id)
   );
   const {
     investigatedIds,
@@ -78,8 +82,8 @@ export function CaseLoaderPage() {
   const team = useTeam(code);
 
   useEffect(() => {
-    saveProgress(browserStorage(), code, progress);
-  }, [code, progress]);
+    saveProgress(browserStorage(), code, progress, account?.id);
+  }, [code, progress, account]);
 
   const load = useCallback(() => {
     let cancelled = false;
@@ -425,6 +429,15 @@ export function CaseLoaderPage() {
         </p>
         <p className="case-status__hint">
           Team-Code zum Teilen: <strong className="case-code">{code}</strong>
+        </p>
+        <p className="case-status__hint">
+          {account ? (
+            <>
+              Ermittelt als <strong>{account.name}</strong>
+            </>
+          ) : (
+            "Ermittelt als Gast — Fortschritt nur auf diesem Geraet"
+          )}
         </p>
         <p className="case-status__hint">
           {collected.length} {collected.length === 1 ? "Beweis" : "Beweise"} gesichert
