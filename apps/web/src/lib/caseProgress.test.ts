@@ -56,8 +56,14 @@ describe("Fortschritt speichern und laden", () => {
       insights: [{ id: "insight-1", title: "Zweite Person", body: "Jemand sass mit am Tisch." }],
       contradictions: [],
       markedMessageIds: [],
+      accusation: { suspectId: "monica-brandt", evidenceIds: ["tasse-lippenstift"] },
     });
     const loaded = loadProgress(storage, "ABC-123");
+    // Taeterauswahl und angehaengte Beweise ueberstehen ein Neuladen (#25, #26).
+    expect(loaded.accusation).toEqual({
+      suspectId: "monica-brandt",
+      evidenceIds: ["tasse-lippenstift"],
+    });
     expect(loaded.notes["tasse-lippenstift"]).toBe("Lippenstift passt nicht zum Opfer.");
     expect(loaded.collected).toHaveLength(1);
     expect(loaded.investigatedIds).toEqual(["schreibtisch"]);

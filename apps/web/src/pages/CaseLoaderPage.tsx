@@ -29,9 +29,11 @@ import { SharedFindings } from "../components/SharedFindings";
 import { ProgressPanel } from "../components/ProgressPanel";
 import { summarizeProgress } from "../lib/progress";
 import { messageToEvidence } from "../lib/digitalTrace";
+import { AccusationPanel } from "../components/AccusationPanel";
+import { attachEvidence, detachEvidence } from "../lib/accusation";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
-type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik";
+type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik" | "anklage";
 
 type LoadState =
   | { status: "loading" }
@@ -54,8 +56,15 @@ export function CaseLoaderPage() {
   const [progress, setProgress] = useState<CaseProgress>(() =>
     loadProgress(browserStorage(), code)
   );
-  const { investigatedIds, collected, notes, insights, contradictions, markedMessageIds } =
-    progress;
+  const {
+    investigatedIds,
+    collected,
+    notes,
+    insights,
+    contradictions,
+    markedMessageIds,
+    accusation,
+  } = progress;
   // Welcher Beweis im Detail offen ist (#11).
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
   // Welcher Verdaechtige im Profil offen ist (#15).
@@ -64,9 +73,6 @@ export function CaseLoaderPage() {
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
   // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
   const [deviceTab, setDeviceTab] = useState<"chat" | "dateien">("chat");
-  // Story #25 — Auswahl des Taeters fuer die Anklage.
-  const [selectedSuspectId, setSelectedSuspectId] =
-      useState<string | null>(null);
   const navigate = useNavigate();
   // Wer sonst noch in dieser Session ermittelt (#22).
   const team = useTeam(code);
@@ -266,8 +272,14 @@ export function CaseLoaderPage() {
               suspects={caseData.suspects}
               onOpen={setOpenSuspectId}
               onBack={() => setView("akte")}
-              selectedSuspectId={selectedSuspectId}
-              onSelectSuspect={setSelectedSuspectId}
+              selectedSuspectId={accusation.suspectId}
+              onSelectSuspect={(id) =>
+                // Story #25 — die Auswahl liegt im Anklage-Entwurf und ueberlebt so ein Neuladen.
+                setProgress((prev) => ({
+                  ...prev,
+                  accusation: { ...prev.accusation, suspectId: id },
+                }))
+              }
             />
             <div style={{ marginTop: "1rem" }}>
               <ContradictionOverview contradictions={contradictions} />
@@ -344,6 +356,26 @@ export function CaseLoaderPage() {
     );
   }
 
+  if (view === "anklage") {
+    return (
+      <main className="app-shell">
+        <AccusationPanel
+          draft={accusation}
+          suspects={caseData.suspects}
+          evidence={collected}
+          onAttach={(id) =>
+            setProgress((prev) => ({ ...prev, accusation: attachEvidence(prev.accusation, id) }))
+          }
+          onDetach={(id) =>
+            setProgress((prev) => ({ ...prev, accusation: detachEvidence(prev.accusation, id) }))
+          }
+          onChooseSuspect={() => setView("verdaechtige")}
+          onBack={() => setView("akte")}
+        />
+      </main>
+    );
+  }
+
   if (view === "briefing") {
     return (
       <main className="app-shell">
@@ -389,6 +421,10 @@ export function CaseLoaderPage() {
               Forensik-Terminal ({devices.length})
             </button>
           )}
+          <button onClick={() => setView("anklage")}>
+            Anklage ({accusation.evidenceIds.length}{" "}
+            {accusation.evidenceIds.length === 1 ? "Beweis" : "Beweise"})
+          </button>
           <button onClick={() => setView("briefing")}>Briefing</button>
         </div>
       </div>
