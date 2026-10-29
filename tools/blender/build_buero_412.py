@@ -3,49 +3,23 @@
 Ausführen (Blender ohne Oberfläche):
     blender --background --factory-startup --python tools/blender/build_buero_412.py -- <ausgabe.glb> [vorschau.png]
 
-Konventionen für alle Tatort-Modelle:
-- Blender-Einheiten = Meter, Z oben (der glTF-Export dreht auf Y oben).
-- Pro Spur ein Empty namens `hotspot_<hotspot-id>` aus dem Fall-JSON. Der Client
-  setzt dort die anklickbare Markierung; die IDs müssen exakt passen.
-- Keine Lichter/Kameras im Export: Licht und Kamera setzt der Client.
+Konventionen (Masse, Marker `hotspot_<id>`, Export): siehe tatort_lib.py.
 """
 
 import math
+import os
 import sys
 
 import bpy
-from mathutils import Vector
 
-argv = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
-OUT_GLB = argv[0] if argv else "buero-412.glb"
-OUT_PREVIEW = argv[1] if len(argv) > 1 else None
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from tatort_lib import H, T, X0, X1, Y0, Y1, D, W  # noqa: E402
+from tatort_lib import box, cli_args, cyl, export_glb, hotspot, mat, render_preview, reset_scene  # noqa: E402
 
-# --- Szene leeren -----------------------------------------------------------
-bpy.ops.wm.read_factory_settings(use_empty=True)
-scene = bpy.context.scene
+OUT_GLB, OUT_PREVIEW = cli_args()
+reset_scene()
 
 # --- Materialien ------------------------------------------------------------
-_materials = {}
-
-
-def mat(name, color, roughness=0.8, metallic=0.0, emission=None, alpha=1.0):
-    if name in _materials:
-        return _materials[name]
-    m = bpy.data.materials.new(name)
-    m.use_nodes = True
-    bsdf = m.node_tree.nodes["Principled BSDF"]
-    bsdf.inputs["Base Color"].default_value = (*color, 1.0)
-    bsdf.inputs["Roughness"].default_value = roughness
-    bsdf.inputs["Metallic"].default_value = metallic
-    if emission:
-        bsdf.inputs["Emission Color"].default_value = (*emission, 1.0)
-        bsdf.inputs["Emission Strength"].default_value = 1.5
-    if alpha < 1.0:
-        bsdf.inputs["Alpha"].default_value = alpha
-        m.surface_render_method = "BLENDED"
-    _materials[name] = m
-    return m
-
 
 FLOOR = mat("Teppich", (0.06, 0.06, 0.055), 0.95)
 WALL = mat("Wand", (0.32, 0.31, 0.28), 0.9)
@@ -68,37 +42,7 @@ PLANT = mat("Pflanze", (0.05, 0.16, 0.04), 0.8)
 TAPE = mat("Absperrband", (0.8, 0.6, 0.02), 0.6)
 
 
-# --- Bausteine --------------------------------------------------------------
-def box(name, size, loc, material, rot=(0, 0, 0)):
-    """Quader mit Kantenlängen `size` (m), Mittelpunkt `loc`."""
-    bpy.ops.mesh.primitive_cube_add(size=1, location=loc, rotation=rot)
-    o = bpy.context.active_object
-    o.name = name
-    o.scale = size
-    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-    o.data.materials.append(material)
-    return o
-
-
-def cyl(name, radius, depth, loc, material, verts=16, rot=(0, 0, 0)):
-    bpy.ops.mesh.primitive_cylinder_add(
-        vertices=verts, radius=radius, depth=depth, location=loc, rotation=rot
-    )
-    o = bpy.context.active_object
-    o.name = name
-    o.data.materials.append(material)
-    return o
-
-
-def hotspot(hotspot_id, loc):
-    bpy.ops.object.empty_add(type="SPHERE", radius=0.1, location=loc)
-    bpy.context.active_object.name = f"hotspot_{hotspot_id}"
-
-
 # --- Raum: 5 x 4 m, Höhe 2.8 m, offen nach vorne und rechts (Diorama) --------
-W, D, H, T = 5.0, 4.0, 2.8, 0.12  # Breite (x), Tiefe (y), Höhe, Wandstärke
-X0, X1, Y0, Y1 = -W / 2, W / 2, -D / 2, D / 2
-
 box("Boden", (W + T, D + T, 0.1), (T / -2, T / 2, -0.05), FLOOR)
 box("Wand_links", (T, D + T, H), (X0 - T / 2, T / 2, H / 2), WALL)
 
@@ -242,32 +186,6 @@ box("Absperrband_a", (1.6, 0.05, 0.003), (-0.4, -0.2, 0.002), TAPE, rot=(0, 0, m
 box("Absperrband_b", (1.2, 0.05, 0.003), (0.1, 0.25, 0.002), TAPE, rot=(0, 0, math.radians(-70)))
 
 # --- Export -------------------------------------------------------------------
-bpy.ops.export_scene.gltf(
-    filepath=OUT_GLB,
-    export_format="GLB",
-    export_apply=True,
-    export_yup=True,
-    export_lights=False,
-    export_cameras=False,
-)
-print(f"GLB geschrieben: {OUT_GLB}")
-
-# --- Optionale Vorschau (nur für Review, wird nicht exportiert) ---------------
+export_glb(OUT_GLB)
 if OUT_PREVIEW:
-    bpy.ops.object.camera_add(location=(4.6, -5.2, 3.6))
-    cam = bpy.context.active_object
-    cam.rotation_euler = (cam.location - Vector((-0.2, 0.6, 0.6))).to_track_quat("Z", "Y").to_euler()
-    scene.camera = cam
-    bpy.ops.object.light_add(type="SUN", rotation=(math.radians(50), 0, math.radians(30)))
-    bpy.context.active_object.data.energy = 3.0
-    bpy.ops.object.light_add(type="POINT", location=(-0.5, 0.5, 2.5))
-    bpy.context.active_object.data.energy = 300
-    world = bpy.data.worlds.new("Welt")
-    world.use_nodes = True
-    world.node_tree.nodes["Background"].inputs["Color"].default_value = (0.02, 0.02, 0.02, 1)
-    scene.world = world
-    scene.render.engine = "BLENDER_EEVEE"
-    scene.render.resolution_x, scene.render.resolution_y = 1280, 800
-    scene.render.filepath = OUT_PREVIEW
-    bpy.ops.render.render(write_still=True)
-    print(f"Vorschau geschrieben: {OUT_PREVIEW}")
+    render_preview(OUT_PREVIEW)
