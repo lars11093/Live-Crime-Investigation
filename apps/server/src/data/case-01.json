@@ -11,6 +11,7 @@
       "id": "buero-412",
       "name": "Buero 4.12 - Fundort",
       "imagePath": "/scenes/case-01/buero-412.jpg",
+      "modelPath": "/models/case-01/buero-412.glb",
       "hotspots": [
         {
           "id": "schreibtisch",

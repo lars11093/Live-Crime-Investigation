@@ -73,6 +73,12 @@ Live-Crime-Investigation/
    Umgesetzt (#27) als `POST /api/rooms/:code/accusation` mit `{ suspectId, evidenceIds }`: Der Server prüft Täter und mindestens einen Beweis und speichert die Anklage einmal pro Team-Session (`201`). Jeder weitere Versuch bekommt `409` mit der ersten Quittung zurück, danach ist die Anklage gesperrt.
    Die Quittung enthält die Auflösung (#28): Ergebnis gelöst/nicht gelöst, wahrer Täter, Auflösungstext und eine Liste richtiger/falscher/übersehener Schlüsse. Grundlage sind die neuen Szenario-Felder `resolution` und `keyEvidenceIds` im Case-JSON. Wie das ganze Szenario verlassen sie den Server vor dem Absenden nie.
 
+**3D-Tatort:** Eine Szene im Case-JSON kann optional `modelPath` haben (z.B. `/models/case-01/buero-412.glb`, liegt unter `apps/web/public/`). Ist es gesetzt, zeigt der Client den Tatort als drehbares 3D-Modell (three.js / react-three-fiber, lazy geladen) statt als Bild. Die Hotspot-Positionen stecken im Modell: pro Hotspot ein Objekt `hotspot_<id>`. Hotspots ohne passendes Objekt erscheinen an ihren `x`/`y`-Prozentwerten. Ohne `modelPath`, ohne WebGL oder bei einem Ladefehler bleibt alles beim Bild. Die Modelle werden per Skript gebaut, ohne fremde Assets:
+
+```bash
+blender --background --factory-startup --python tools/blender/build_buero_412.py -- apps/web/public/models/case-01/buero-412.glb
+```
+
 ## 4. Scrum-Setup
 
 - **Rollen:** Product Owner (Anforderungen/Abnahme), Scrum Master (Prozess), 5 Entwickler (auch Product-Owner/SM sind gleichzeitig Devs im Team).

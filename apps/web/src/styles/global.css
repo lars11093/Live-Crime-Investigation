@@ -517,6 +517,47 @@ button:disabled:hover {
   color: var(--accent);
 }
 
+/* ---------------------------------------------------------------
+   3D-Tatort: Canvas fuellt die Szene, Hotspots haengen an den
+   Markierungen im Modell (drei <Html>) statt an Prozentwerten.
+   --------------------------------------------------------------- */
+
+.scene__canvas {
+  position: absolute !important;
+  inset: 0;
+  /* Eigener Stapelkontext: die z-indizes der drei-<Html>-Hotspots bleiben
+     unter Detail-Dialog und Bestaetigung. */
+  z-index: 0;
+  cursor: grab;
+  touch-action: none;
+}
+
+.scene__canvas:active {
+  cursor: grabbing;
+}
+
+.scene__loading {
+  display: grid;
+  place-content: center;
+  height: 100%;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* drei zentriert das <Html> selbst — keine eigene Verschiebung. */
+.hotspot--3d {
+  position: static;
+  transform: none;
+}
+
+.scene__hotspot-fallback {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
 .scene__progress {
   margin: 0;
   color: var(--muted);
