@@ -553,6 +553,14 @@ button:disabled:hover {
   transform: none;
 }
 
+/* #157: oben rechts, ausserhalb der Overlay-Leiste unten. */
+.scene__reset {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background: rgba(5, 7, 10, 0.85);
+}
+
 .scene__hotspot-fallback {
   position: absolute;
   transform: translate(-50%, -50%);
