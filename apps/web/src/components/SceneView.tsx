@@ -7,6 +7,9 @@ const Scene3D = lazy(() => import("./Scene3D"));
 
 interface Props {
   scene: Scene;
+  /** Alle Tatorte des Falls (#159) — ab zwei erscheint die Umschaltung. */
+  scenes: Scene[];
+  onSwitchScene: (sceneId: string) => void;
   /** IDs bereits untersuchter Stellen — bleibt beim Verlassen der Szene erhalten. */
   investigatedIds: string[];
   onInvestigate: (hotspotId: string) => void;
@@ -26,6 +29,8 @@ interface Props {
  */
 export function SceneView({
   scene,
+  scenes,
+  onSwitchScene,
   investigatedIds,
   onInvestigate,
   collectedIds,
@@ -121,8 +126,24 @@ export function SceneView({
       <div className="scene__overlay">
         <p className="scene__name">{scene.name}</p>
         <p className="scene__progress">
-          {investigated.size} / {scene.hotspots.length} untersucht
+          {/* Nur die Stellen dieses Tatorts — investigatedIds gilt fuer den ganzen Fall. */}
+          {scene.hotspots.filter((h) => investigated.has(h.id)).length} / {scene.hotspots.length}{" "}
+          untersucht
         </p>
+        {scenes.length > 1 && (
+          <nav className="scene__switch" aria-label="Tatort wechseln">
+            {scenes.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => onSwitchScene(s.id)}
+                aria-current={s.id === scene.id ? "page" : undefined}
+                disabled={s.id === scene.id}
+              >
+                {s.name}
+              </button>
+            ))}
+          </nav>
+        )}
         <button className="scene__back" onClick={onBack}>
           Zurueck
         </button>
