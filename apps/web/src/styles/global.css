@@ -1649,6 +1649,15 @@ div.account-bar {
   justify-items: start;
 }
 
+/* Story #69 — ausgeschlossene Verdaechtige */
+.suspect--excluded .suspect {
+  opacity: 0.45;
+}
+
+.suspect--excluded .suspect__name {
+  text-decoration: line-through;
+}
+
 /* Story #70 — Geraet entsperren */
 .unlock {
   margin: 0.5rem 0 1rem;
