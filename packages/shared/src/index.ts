@@ -84,6 +84,8 @@ export interface ChatMessage {
   /** Zeitpunkt, wie er auf dem Geraet steht — z. B. "12.09. 20:31". */
   sentAt: string;
   text: string;
+  /** Gelöscht und per Forensik wiederhergestellt (#71). */
+  recovered?: boolean;
 }
 
 /**
@@ -133,6 +135,14 @@ export interface Device {
   messages: ChatMessage[];
   /** Dateien auf dem Geraet (#20). Optional: nicht jedes Geraet hat welche. */
   files?: DeviceFile[];
+  /**
+   * Geloeschte Nachrichten (#71). Bleiben auf dem Server, bis sie per
+   * `POST .../recover` wiederhergestellt werden; der Client sieht vorher nur
+   * `deletedCount`.
+   */
+  deletedMessages?: ChatMessage[];
+  /** Wie viele geloeschte Nachrichten sich wiederherstellen lassen (#71). Setzt nur der Server. */
+  deletedCount?: number;
 }
 
 /**
@@ -213,6 +223,11 @@ export interface SharedFinding {
 export type ShareResult =
   | { ok: true }
   | { ok: false; reason: "invalid-room" | "not-in-team" | "unknown-evidence" | "already-shared" };
+
+/** Antwort auf `POST /api/cases/:caseId/devices/:deviceId/recover` (#71). */
+export type RecoverResult =
+  | { ok: true; messages: ChatMessage[] }
+  | { ok: false; reason: "unknown-device" | "locked" };
 
 export interface Scene {
   id: string;

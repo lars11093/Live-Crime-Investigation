@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { PublicCase } from "@case-zero/shared";
-import { combineEvidence, fetchCase, findRoom, submitAccusation } from "../lib/api";
+import { combineEvidence, fetchCase, findRoom, recoverDeleted, submitAccusation } from "../lib/api";
+import { loadRecovered, saveRecovered, withRecovered } from "../lib/recoveredMessages";
+import { RecoverDeleted } from "../components/RecoverDeleted";
 import {
   browserStorage,
   collectEvidence,
@@ -77,6 +79,8 @@ export function CaseLoaderPage() {
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
   // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
   const [deviceTab, setDeviceTab] = useState<"chat" | "dateien">("chat");
+  // Wiederhergestellte, geloeschte Nachrichten pro Geraet (#71).
+  const [recovered, setRecovered] = useState(() => loadRecovered(browserStorage(), code));
   const navigate = useNavigate();
   // Wer sonst noch in dieser Session ermittelt (#22).
   const team = useTeam(code);
@@ -84,6 +88,10 @@ export function CaseLoaderPage() {
   useEffect(() => {
     saveProgress(browserStorage(), code, progress, account?.id);
   }, [code, progress, account]);
+
+  useEffect(() => {
+    saveRecovered(browserStorage(), code, recovered);
+  }, [code, recovered]);
 
   const load = useCallback(() => {
     let cancelled = false;
@@ -191,7 +199,7 @@ export function CaseLoaderPage() {
     );
   }
 
-  const devices = caseData.devices ?? [];
+  const devices = (caseData.devices ?? []).map((d) => withRecovered(d, recovered));
 
   if (view === "forensik") {
     // Gesperrte Geraete kommen ohne Nachrichten vom Server und lassen sich im
@@ -243,6 +251,21 @@ export function CaseLoaderPage() {
           onShowFiles={device.files?.length ? () => setDeviceTab("dateien") : undefined}
           onBack={() => setOpenDeviceId(null)}
         />
+        <div style={{ marginTop: "1rem" }}>
+          <RecoverDeleted
+            deletedCount={device.deletedCount ?? 0}
+            onRecover={async () => {
+              try {
+                const result = await recoverDeleted(caseData.id, device.id);
+                if (!result.ok) return "Auf diesem Geraet laesst sich nichts wiederherstellen.";
+                setRecovered((prev) => ({ ...prev, [device.id]: result.messages }));
+                return null;
+              } catch {
+                return "Server nicht erreichbar. Bitte erneut versuchen.";
+              }
+            }}
+          />
+        </div>
       </main>
     );
   }

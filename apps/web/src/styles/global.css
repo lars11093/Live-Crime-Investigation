@@ -1578,3 +1578,15 @@ div.account-bar {
   gap: 0.75rem;
   justify-items: start;
 }
+
+/* Story #71 — wiederhergestellte Nachrichten */
+.chat__recovered {
+  margin-left: 0.5rem;
+  padding: 0 0.4rem;
+  border: 1px dashed var(--danger);
+  border-radius: 3px;
+  color: var(--danger);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}

@@ -11,16 +11,19 @@ import type { CaseDefinition, CaseSummary, PublicCase } from "@case-zero/shared"
  *     sie zu finden. Kombiniert wird deshalb serverseitig (#13).
  * Ausserdem bleiben gesperrte Geraete leer: Das Forensik-Terminal (#18) listet
  * sie auf, ihre Nachrichten und Dateien (#20) stehen aber erst nach dem
- * Entsperren zur Verfuegung.
+ * Entsperren zur Verfuegung. Geloeschte Nachrichten (#71) gehen nie mit,
+ * nur ihre Anzahl — wiederhergestellt wird ueber engine/recover.ts.
  */
 export function toPublicCase(caseDef: CaseDefinition): PublicCase {
   const { scenarios: _scenarios, combinations: _combinations, ...publicCase } = caseDef;
   if (!publicCase.devices) return publicCase;
   return {
     ...publicCase,
-    devices: publicCase.devices.map((device) =>
-      device.locked ? { ...device, messages: [], files: [] } : device
-    ),
+    devices: publicCase.devices.map(({ deletedMessages, ...device }) => {
+      const deletedCount = device.locked ? 0 : (deletedMessages?.length ?? 0);
+      const view = deletedCount > 0 ? { ...device, deletedCount } : device;
+      return device.locked ? { ...view, messages: [], files: [] } : view;
+    }),
   };
 }
 

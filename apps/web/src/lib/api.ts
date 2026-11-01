@@ -3,6 +3,7 @@ import type {
   CaseSummary,
   CombineResult,
   PublicCase,
+  RecoverResult,
   SubmitAccusationResult,
 } from "@case-zero/shared";
 
@@ -123,4 +124,15 @@ export async function submitAccusation(
     throw new Error(`Anklage konnte nicht abgesendet werden (HTTP ${response.status})`);
   }
   return (await response.json()) as SubmitAccusationResult;
+}
+
+/** Stellt die geloeschten Nachrichten eines Geraets wieder her (#71). Wirft nur ohne Server. */
+export async function recoverDeleted(caseId: string, deviceId: string): Promise<RecoverResult> {
+  const response = await fetch(`${SERVER_URL}/api/cases/${caseId}/devices/${deviceId}/recover`, {
+    method: "POST",
+  });
+  if (![200, 400, 404].includes(response.status)) {
+    throw new Error(`Wiederherstellen fehlgeschlagen (HTTP ${response.status})`);
+  }
+  return (await response.json()) as RecoverResult;
 }
