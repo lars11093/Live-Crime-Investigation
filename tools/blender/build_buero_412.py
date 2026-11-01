@@ -143,7 +143,8 @@ box(
 for i, (ox, oz, a) in enumerate([(-0.15, 0.0, 20), (0.05, 0.02, -15), (0.2, -0.01, 35)]):
     box(f"Kratzer_{i}", (0.18, 0.005, 0.008), (sx + ox, Y1 + T + 0.03, WZ0 + 0.03 + oz), SCRATCH,
         rot=(0, math.radians(a), 0))
-hotspot("fenster", (sx, Y1, fz))
+# Vor den nach innen gekippten Flügel, sonst verdeckt das Glas die Spur (#158).
+hotspot("fenster", (sx, Y1 - 0.25, fz))
 
 # --- Schreibtisch mit Notebook (Spur: schreibtisch) --------------------------
 dx, dy, dw, dd, dh = -1.0, 1.35, 1.6, 0.8, 0.75

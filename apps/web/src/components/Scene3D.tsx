@@ -112,7 +112,9 @@ function Model({
       {placed.map(
         ({ hotspot, position }) =>
           position && (
-            <Html key={hotspot.id} position={position} center zIndexRange={[20, 0]}>
+            // #158: `occlude` prueft per Raycast gegen das Modell, ob etwas zwischen
+            // Kamera und Spur steht, und blendet sie dann aus (nicht klickbar).
+            <Html key={hotspot.id} position={position} center occlude zIndexRange={[20, 0]}>
               {renderHotspot(hotspot)}
             </Html>
           )
