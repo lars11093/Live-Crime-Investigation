@@ -1578,3 +1578,12 @@ div.account-bar {
   gap: 0.75rem;
   justify-items: start;
 }
+
+/* Story #69 — ausgeschlossene Verdaechtige */
+.suspect--excluded .suspect {
+  opacity: 0.45;
+}
+
+.suspect--excluded .suspect__name {
+  text-decoration: line-through;
+}

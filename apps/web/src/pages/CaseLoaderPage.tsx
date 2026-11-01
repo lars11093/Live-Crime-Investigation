@@ -32,6 +32,7 @@ import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import { loadExcluded, saveExcluded, toggleExcluded } from "../lib/excludedSuspects";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik" | "anklage";
@@ -73,6 +74,8 @@ export function CaseLoaderPage() {
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
   // Welcher Verdaechtige im Profil offen ist (#15).
   const [openSuspectId, setOpenSuspectId] = useState<string | null>(null);
+  // Ausgeschlossene Verdaechtige (#69), pro Team-Code im Browser.
+  const [excludedIds, setExcludedIds] = useState(() => loadExcluded(browserStorage(), code));
   // Welches Geraet im Forensik-Terminal ausgewertet wird (#18 -> #19).
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
   // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
@@ -84,6 +87,10 @@ export function CaseLoaderPage() {
   useEffect(() => {
     saveProgress(browserStorage(), code, progress, account?.id);
   }, [code, progress, account]);
+
+  useEffect(() => {
+    saveExcluded(browserStorage(), code, excludedIds);
+  }, [code, excludedIds]);
 
   const load = useCallback(() => {
     let cancelled = false;
@@ -285,6 +292,8 @@ export function CaseLoaderPage() {
                 }))
               }
               selectionLocked={Boolean(accusation.receipt)}
+              excludedIds={excludedIds}
+              onToggleExcluded={(id) => setExcludedIds((prev) => toggleExcluded(prev, id))}
             />
             <div style={{ marginTop: "1rem" }}>
               <ContradictionOverview contradictions={contradictions} />
