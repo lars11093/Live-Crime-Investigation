@@ -22,3 +22,4 @@ apps/web/public/evidence/*
 # Portraets werden nicht committet (siehe apps/web/public/suspects/README.md)
 apps/web/public/suspects/*
 !apps/web/public/suspects/README.md
+__pycache__/
