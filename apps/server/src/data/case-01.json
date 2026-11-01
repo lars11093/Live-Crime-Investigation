@@ -276,6 +276,8 @@
       "owner": "Leo Fischer",
       "locked": true,
       "lockType": "PIN, 4 Ziffern",
+      "lockHint": "Laut IT-Abteilung nimmt Leo Fischer fuer alles dieselbe Nummer wie auf seinem Ersatzbadge.",
+      "unlockSecret": "0417",
       "messages": [
         {
           "id": "msg-fischer-01",
@@ -297,7 +299,25 @@
       "owner": "Thomas Vogt",
       "locked": true,
       "lockType": "Passwort",
-      "messages": []
+      "lockHint": "Am Bildschirmrand klebt ein Post-it: \"PW = Ordner mit den echten Zahlen\".",
+      "unlockSecret": "finanzenq3original",
+      "messages": [],
+      "files": [
+        {
+          "id": "file-laptop-mail-entwurf",
+          "name": "entwurf_revisionsstelle.eml",
+          "type": "text",
+          "modifiedAt": "12.09. 22:33",
+          "content": "An: Revisionsstelle\nBetreff: Q3-Zahlen (Entwurf, nicht gesendet)\n\nIch habe heute Abend um 22:30 noch ein Gespraech mit der verantwortlichen Person. Wenn sich danach nichts aendert, schicke ich Ihnen am Montag die Originaldaten.\n\nT. Vogt"
+        },
+        {
+          "id": "file-laptop-badge-liste",
+          "name": "badge_ausgabe.csv",
+          "type": "text",
+          "modifiedAt": "11.09. 17:40",
+          "content": "Badge;Ausgegeben an;Rueckgabe\n0412;Reinigung;-\n0415;Empfang;-\n0417;L. Fischer (IT);offen - mehrfach gemahnt"
+        }
+      ]
     }
   ],
   "scenarios": [
