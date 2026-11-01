@@ -34,6 +34,9 @@ import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import { addTag, allTags, filterByTag, loadTags, removeTag, saveTags } from "../lib/evidenceTags";
+import { EvidenceTagEditor } from "../components/EvidenceTagEditor";
+import { EvidenceTagFilter } from "../components/EvidenceTagFilter";
 import { loadExcluded, saveExcluded, toggleExcluded } from "../lib/excludedSuspects";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
@@ -74,6 +77,9 @@ export function CaseLoaderPage() {
   } = progress;
   // Welcher Beweis im Detail offen ist (#11).
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
+  // Eigene Tags (#62) und welcher davon die Akte gerade filtert.
+  const [tags, setTags] = useState(() => loadTags(browserStorage(), code));
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
   // Welcher Verdaechtige im Profil offen ist (#15).
   const [openSuspectId, setOpenSuspectId] = useState<string | null>(null);
   // Ausgeschlossene Verdaechtige (#69), pro Team-Code im Browser.
@@ -93,6 +99,10 @@ export function CaseLoaderPage() {
   useEffect(() => {
     saveProgress(browserStorage(), code, progress, account?.id);
   }, [code, progress, account]);
+
+  useEffect(() => {
+    saveTags(browserStorage(), code, tags);
+  }, [code, tags]);
 
   useEffect(() => {
     saveExcluded(browserStorage(), code, excludedIds);
@@ -341,6 +351,8 @@ export function CaseLoaderPage() {
 
   if (view === "beweise") {
     const open = collected.find((e) => e.id === openEvidenceId);
+    // Ein Filter auf einen inzwischen geloeschten Tag zeigt wieder alles (#62).
+    const activeTag = tagFilter && allTags(tags).includes(tagFilter) ? tagFilter : null;
     return (
       <main className="app-shell">
         {open ? (
@@ -357,11 +369,28 @@ export function CaseLoaderPage() {
             }}
             onBack={() => setOpenEvidenceId(null)}
           />
-        ) : (
+        ) : null}
+        {open && (
+          <div style={{ marginTop: "1rem" }}>
+            <EvidenceTagEditor
+              tags={tags[open.id] ?? []}
+              suggestions={allTags(tags)}
+              onAdd={(tag) => setTags((prev) => addTag(prev, open.id, tag))}
+              onRemove={(tag) => setTags((prev) => removeTag(prev, open.id, tag))}
+            />
+          </div>
+        )}
+        {!open && (
           <>
+            <EvidenceTagFilter
+              tags={allTags(tags)}
+              active={activeTag}
+              onChange={setTagFilter}
+            />
             <EvidenceList
-              evidence={collected}
+              evidence={filterByTag(collected, tags, activeTag)}
               notes={notes}
+              tags={tags}
               onOpen={setOpenEvidenceId}
               onBack={() => setView("akte")}
             />

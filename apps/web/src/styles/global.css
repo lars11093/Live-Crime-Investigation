@@ -1649,6 +1649,45 @@ div.account-bar {
   justify-items: start;
 }
 
+/* Story #62 — eigene Tags */
+.evidence-tags__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.evidence-tags__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.2rem 0.15rem 0.6rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.evidence-tags__tag button {
+  padding: 0 0.4rem;
+  border: 0;
+}
+
+.evidence-tags__filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.evidence-tags__chip--on {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 /* Story #68 — Zeitachse der Aussagen */
 .statement-timeline {
   list-style: none;
