@@ -55,6 +55,21 @@
           }
         },
         {
+          "id": "boden-uv",
+          "label": "Boden vor dem Schreibtisch",
+          "x": 52,
+          "y": 86,
+          "requiresTool": "uv",
+          "detail": "Unter der UV-Lampe leuchten breite, gleichmaessige Wischspuren auf dem Boden vor dem Schreibtisch. Hier wurde nach Arbeitsschluss nass aufgewischt, aber nur auf diesem einen Quadratmeter.",
+          "evidence": {
+            "id": "wischspuren-uv",
+            "label": "Wischspuren unter UV-Licht",
+            "kind": "fact",
+            "description": "Frische Wischspuren vor dem Schreibtisch, nur unter UV-Licht sichtbar. Jemand hat dort nach der Reinigung noch einmal gewischt.",
+            "imagePath": "/evidence/case-01/wischspuren-uv.jpg"
+          }
+        },
+        {
           "id": "teetasse",
           "label": "Tasse auf der Ablage",
           "x": 55,

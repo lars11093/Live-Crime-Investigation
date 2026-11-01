@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import type { CollectedEvidence, Hotspot, Scene } from "@case-zero/shared";
+import type { CollectedEvidence, Hotspot, Scene, SceneTool } from "@case-zero/shared";
+import { TOOL_LABEL, toolsIn, visibleHotspots } from "../lib/sceneTools";
 
 interface Props {
   scene: Scene;
@@ -31,6 +32,8 @@ export function SceneView({
   const [imageFailed, setImageFailed] = useState(false);
   const [openHotspot, setOpenHotspot] = useState<Hotspot | null>(null);
   const [confirmation, setConfirmation] = useState<string | null>(null);
+  // #60 — eingeschaltetes Werkzeug, z. B. die UV-Lampe.
+  const [tool, setTool] = useState<SceneTool | null>(null);
 
   const investigated = new Set(investigatedIds);
   const collected = new Set(collectedIds);
@@ -59,7 +62,7 @@ export function SceneView({
   }
 
   return (
-    <section className="scene" aria-label={`Tatort: ${scene.name}`}>
+    <section className={`scene${tool ? ` scene--${tool}` : ""}`} aria-label={`Tatort: ${scene.name}`}>
       {imageFailed ? (
         <div className="scene__placeholder">
           <p className="scene__placeholder-mark" aria-hidden="true">
@@ -77,7 +80,7 @@ export function SceneView({
         />
       )}
 
-      {scene.hotspots.map((hotspot) => {
+      {visibleHotspots(scene.hotspots, tool, investigatedIds).map((hotspot) => {
         const done = investigated.has(hotspot.id);
         return (
           <button
@@ -102,6 +105,16 @@ export function SceneView({
         <p className="scene__progress">
           {investigated.size} / {scene.hotspots.length} untersucht
         </p>
+        {toolsIn(scene.hotspots).map((t) => (
+          <button
+            key={t}
+            className="scene__back"
+            aria-pressed={tool === t}
+            onClick={() => setTool((prev) => (prev === t ? null : t))}
+          >
+            {TOOL_LABEL[t]} {tool === t ? "aus" : "an"}
+          </button>
+        ))}
         <button className="scene__back" onClick={onBack}>
           Zurueck
         </button>
