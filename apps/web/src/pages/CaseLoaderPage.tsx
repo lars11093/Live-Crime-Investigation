@@ -32,6 +32,7 @@ import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import { downloadText, exportAkte, exportFileName } from "../lib/akteExport";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik" | "anklage";
@@ -464,6 +465,14 @@ export function CaseLoaderPage() {
             {accusation.evidenceIds.length === 1 ? "Beweis" : "Beweise"})
           </button>
           <button onClick={() => setView("briefing")}>Briefing</button>
+          {/* #63 — die eigene Akte als Markdown-Datei mitnehmen. */}
+          <button
+            onClick={() =>
+              downloadText(exportFileName(caseData.title, code), exportAkte(caseData, progress, code))
+            }
+          >
+            Akte exportieren
+          </button>
         </div>
       </div>
       <div style={{ marginTop: "1rem" }}>
