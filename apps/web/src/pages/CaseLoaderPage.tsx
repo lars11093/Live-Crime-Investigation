@@ -77,6 +77,8 @@ export function CaseLoaderPage() {
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
   // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
   const [deviceTab, setDeviceTab] = useState<"chat" | "dateien">("chat");
+  // Welcher Tatort offen ist (#159); null = der erste des Falls.
+  const [sceneId, setSceneId] = useState<string | null>(null);
   const navigate = useNavigate();
   // Wer sonst noch in dieser Session ermittelt (#22).
   const team = useTeam(code);
@@ -166,14 +168,22 @@ export function CaseLoaderPage() {
 
   const { caseData } = state;
 
-  // Solange nur ein Tatort pro Fall angezeigt wird, ist es der erste.
-  // Mehrere Tatorte zur Auswahl sind #59.
-  const scene = caseData.scenes.at(0);
+  const scenes = caseData.scenes;
+  const scene = scenes.find((s) => s.id === sceneId) ?? scenes.at(0);
+
+  function openScene(id: string) {
+    setSceneId(id);
+    setView("tatort");
+  }
 
   if (view === "tatort" && scene) {
     return (
       <SceneView
+        // Neuer Tatort = frischer Zustand (offener Dialog, Bild-/Modellfehler).
+        key={scene.id}
         scene={scene}
+        scenes={scenes}
+        onSwitchScene={setSceneId}
         investigatedIds={investigatedIds}
         onInvestigate={(id) =>
           setProgress((prev) =>
@@ -443,11 +453,17 @@ export function CaseLoaderPage() {
           {collected.length} {collected.length === 1 ? "Beweis" : "Beweise"} gesichert
         </p>
         <div className="case-status__actions">
-          {scene && (
-            <button className="button--primary" onClick={() => setView("tatort")}>
+          {scenes.length === 1 && (
+            <button className="button--primary" onClick={() => openScene(scenes[0].id)}>
               Zum Tatort
             </button>
           )}
+          {scenes.length > 1 &&
+            scenes.map((s) => (
+              <button key={s.id} className="button--primary" onClick={() => openScene(s.id)}>
+                Tatort: {s.name}
+              </button>
+            ))}
           <button onClick={() => setView("beweise")}>
             Beweisakte ({collected.length})
           </button>
@@ -469,8 +485,8 @@ export function CaseLoaderPage() {
       <div style={{ marginTop: "1rem" }}>
         <ProgressPanel
           summary={summarizeProgress(
-            // Nur der Tatort, den die Fallakte anbietet — mehrere Tatorte sind #59.
-            scene ? [scene] : [],
+            // Alle Tatorte, die die Fallakte anbietet (#159).
+            scenes,
             [...collected.map((e) => e.id), ...team.findings.map((f) => f.evidence.id)],
             investigatedIds
           )}

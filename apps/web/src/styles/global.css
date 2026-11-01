@@ -561,6 +561,27 @@ button:disabled:hover {
   background: rgba(5, 7, 10, 0.85);
 }
 
+/* #159: Tatort-Umschaltung in der Overlay-Leiste. */
+.scene__switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.scene__switch button {
+  background: rgba(5, 7, 10, 0.85);
+}
+
+/* Der aktive Tatort ist kein ausgegrauter Fehlerzustand, sondern markiert. */
+.scene__switch button[aria-current="page"],
+.scene__switch button[aria-current="page"]:hover {
+  opacity: 1;
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(34, 197, 94, 0.18);
+  cursor: default;
+}
+
 .scene__hotspot-fallback {
   position: absolute;
   transform: translate(-50%, -50%);
