@@ -11,14 +11,15 @@ import type { CaseDefinition, CaseSummary, PublicCase } from "@case-zero/shared"
  *     sie zu finden. Kombiniert wird deshalb serverseitig (#13).
  * Ausserdem bleiben gesperrte Geraete leer: Das Forensik-Terminal (#18) listet
  * sie auf, ihre Nachrichten, Dateien (#20) und Standortdaten (#72) stehen aber
- * erst nach dem Entsperren zur Verfuegung.
+ * erst nach dem Entsperren zur Verfuegung. PIN und Passwort (`unlockSecret`, #70)
+ * fehlen bei jedem Geraet: geprueft wird nur auf dem Server (engine/unlock.ts).
  */
 export function toPublicCase(caseDef: CaseDefinition): PublicCase {
   const { scenarios: _scenarios, combinations: _combinations, ...publicCase } = caseDef;
   if (!publicCase.devices) return publicCase;
   return {
     ...publicCase,
-    devices: publicCase.devices.map((device) =>
+    devices: publicCase.devices.map(({ unlockSecret: _secret, ...device }) =>
       device.locked ? { ...device, messages: [], files: [], locations: [] } : device
     ),
   };

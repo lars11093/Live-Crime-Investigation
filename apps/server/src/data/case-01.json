@@ -11,6 +11,7 @@
       "id": "buero-412",
       "name": "Buero 4.12 - Fundort",
       "imagePath": "/scenes/case-01/buero-412.jpg",
+      "modelPath": "/models/case-01/buero-412.glb",
       "hotspots": [
         {
           "id": "schreibtisch",
@@ -74,6 +75,7 @@
       "id": "flur-4og",
       "name": "Flur 4. OG - Badge-Leser",
       "imagePath": "/scenes/case-01/flur-4og.jpg",
+      "modelPath": "/models/case-01/flur-4og.glb",
       "hotspots": [
         {
           "id": "badge-leser",
@@ -288,6 +290,8 @@
         { "at": "12.09. 22:47", "place": "Serverraum UG, Hardturmstrasse 61", "source": "WLAN CORP-UG" },
         { "at": "12.09. 23:52", "place": "Parkhaus Hardturm, Ebene -2", "source": "GPS" }
       ],
+      "lockHint": "Laut IT-Abteilung nimmt Leo Fischer fuer alles dieselbe Nummer wie auf seinem Ersatzbadge.",
+      "unlockSecret": "0417",
       "messages": [
         {
           "id": "msg-fischer-01",
@@ -309,7 +313,25 @@
       "owner": "Thomas Vogt",
       "locked": true,
       "lockType": "Passwort",
-      "messages": []
+      "lockHint": "Am Bildschirmrand klebt ein Post-it: \"PW = Ordner mit den echten Zahlen\".",
+      "unlockSecret": "finanzenq3original",
+      "messages": [],
+      "files": [
+        {
+          "id": "file-laptop-mail-entwurf",
+          "name": "entwurf_revisionsstelle.eml",
+          "type": "text",
+          "modifiedAt": "12.09. 22:33",
+          "content": "An: Revisionsstelle\nBetreff: Q3-Zahlen (Entwurf, nicht gesendet)\n\nIch habe heute Abend um 22:30 noch ein Gespraech mit der verantwortlichen Person. Wenn sich danach nichts aendert, schicke ich Ihnen am Montag die Originaldaten.\n\nT. Vogt"
+        },
+        {
+          "id": "file-laptop-badge-liste",
+          "name": "badge_ausgabe.csv",
+          "type": "text",
+          "modifiedAt": "11.09. 17:40",
+          "content": "Badge;Ausgegeben an;Rueckgabe\n0412;Reinigung;-\n0415;Empfang;-\n0417;L. Fischer (IT);offen - mehrfach gemahnt"
+        }
+      ]
     }
   ],
   "scenarios": [
