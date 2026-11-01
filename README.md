@@ -72,6 +72,7 @@ Live-Crime-Investigation/
 6. Lead Detective reicht Accusation ein → Server vergleicht mit dem aktiven Szenario → `CASE SOLVED` Score-Payload an alle.
    Umgesetzt (#27) als `POST /api/rooms/:code/accusation` mit `{ suspectId, evidenceIds }`: Der Server prüft Täter und mindestens einen Beweis und speichert die Anklage einmal pro Team-Session (`201`). Jeder weitere Versuch bekommt `409` mit der ersten Quittung zurück, danach ist die Anklage gesperrt.
    Die Quittung enthält die Auflösung (#28): Ergebnis gelöst/nicht gelöst, wahrer Täter, Auflösungstext und eine Liste richtiger/falscher/übersehener Schlüsse. Grundlage sind die neuen Szenario-Felder `resolution` und `keyEvidenceIds` im Case-JSON. Wie das ganze Szenario verlassen sie den Server vor dem Absenden nie.
+   Umgesetzt (#74): Hinweise stehen als `hints` im Case-JSON und werden von `toPublicCase` entfernt. `GET /api/rooms/:code/hints` liefert die freigegebenen Hinweise der Session, `POST` gibt den nächsten für das ganze Team frei (`201`, `409` wenn keine mehr übrig sind).
 
 ## 4. Scrum-Setup
 

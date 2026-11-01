@@ -14,7 +14,8 @@ import type { CaseDefinition, CaseSummary, PublicCase } from "@case-zero/shared"
  * Entsperren zur Verfuegung.
  */
 export function toPublicCase(caseDef: CaseDefinition): PublicCase {
-  const { scenarios: _scenarios, combinations: _combinations, ...publicCase } = caseDef;
+  // Hinweise (#74) gehen nur einzeln ueber engine/hints.ts raus.
+  const { scenarios: _scenarios, combinations: _combinations, hints: _hints, ...publicCase } = caseDef;
   if (!publicCase.devices) return publicCase;
   return {
     ...publicCase,

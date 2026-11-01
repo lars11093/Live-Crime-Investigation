@@ -1578,3 +1578,14 @@ div.account-bar {
   gap: 0.75rem;
   justify-items: start;
 }
+
+/* Story #74 — Hinweise */
+.hints {
+  margin: 0 0 1rem;
+  padding-left: 1.2rem;
+  line-height: 1.5;
+}
+
+.hints li + li {
+  margin-top: 0.4rem;
+}

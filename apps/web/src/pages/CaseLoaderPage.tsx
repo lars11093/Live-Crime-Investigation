@@ -27,6 +27,7 @@ import { TeamPanel } from "../components/TeamPanel";
 import { shareMessage, useTeam } from "../lib/team";
 import { SharedFindings } from "../components/SharedFindings";
 import { ProgressPanel } from "../components/ProgressPanel";
+import { HintPanel } from "../components/HintPanel";
 import { summarizeProgress } from "../lib/progress";
 import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
@@ -475,6 +476,9 @@ export function CaseLoaderPage() {
             investigatedIds
           )}
         />
+      </div>
+      <div style={{ marginTop: "1rem" }}>
+        <HintPanel code={code} />
       </div>
       <div style={{ marginTop: "1rem" }}>
         <TeamPanel

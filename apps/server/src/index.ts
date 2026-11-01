@@ -14,6 +14,7 @@ import case01 from "./data/case-01.json" with { type: "json" };
 import { toCaseSummaries, toPublicCase } from "./engine/caseView.js";
 import { combineEvidence } from "./engine/combine.js";
 import { submitAccusation } from "./engine/accusation.js";
+import { hintState, revealHint } from "./engine/hints.js";
 import {
   allRooms,
   createRoom,
@@ -109,6 +110,20 @@ app.get("/api/rooms/:code", (req, res) => {
     caseId: room.state.caseId,
     caseTitle: room.caseDef.title,
   });
+});
+
+// Story #74 — Hinweise der Team-Session lesen und den naechsten freigeben.
+app.get("/api/rooms/:code/hints", (req, res) => {
+  const room = getRoom(req.params.code);
+  if (!room) return res.status(404).json({ error: "Ungueltiger Team-Code" });
+  return res.json(hintState(room));
+});
+
+app.post("/api/rooms/:code/hints", (req, res) => {
+  const room = getRoom(req.params.code);
+  if (!room) return res.status(404).json({ error: "Ungueltiger Team-Code" });
+  const result = revealHint(room);
+  return res.status(result.ok ? 201 : 409).json(result.state);
 });
 
 // Story #27 — Anklage absenden. Einmal pro Team-Session; danach gesperrt.
