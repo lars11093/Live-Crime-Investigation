@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { PublicCase } from "@case-zero/shared";
+import type { Difficulty, PublicCase } from "@case-zero/shared";
+import { DIFFICULTY_INFO } from "../lib/difficulty";
 import { combineEvidence, fetchCase, findRoom, submitAccusation } from "../lib/api";
 import {
   browserStorage,
@@ -40,7 +41,7 @@ type LoadState =
   | { status: "loading" }
   | { status: "error" }
   | { status: "invalidCode" }
-  | { status: "ready"; caseData: PublicCase };
+  | { status: "ready"; caseData: PublicCase; difficulty: Difficulty };
 
 /**
  * Story #2 — Fall laden.
@@ -98,7 +99,7 @@ export function CaseLoaderPage() {
           return;
         }
         return fetchCase(room.caseId).then((caseData) => {
-          if (!cancelled) setState({ status: "ready", caseData });
+          if (!cancelled) setState({ status: "ready", caseData, difficulty: room.difficulty ?? "normal" });
         });
       })
       .catch(() => {
@@ -164,7 +165,7 @@ export function CaseLoaderPage() {
     );
   }
 
-  const { caseData } = state;
+  const { caseData, difficulty } = state;
 
   // Solange nur ein Tatort pro Fall angezeigt wird, ist es der erste.
   // Mehrere Tatorte zur Auswahl sind #59.
@@ -187,6 +188,7 @@ export function CaseLoaderPage() {
           setProgress((prev) => ({ ...prev, collected: collectEvidence(prev.collected, evidence) }))
         }
         onBack={() => setView("akte")}
+        difficulty={difficulty}
       />
     );
   }
@@ -429,6 +431,9 @@ export function CaseLoaderPage() {
         </p>
         <p className="case-status__hint">
           Team-Code zum Teilen: <strong className="case-code">{code}</strong>
+        </p>
+        <p className="case-status__hint">
+          Schwierigkeit: <strong>{DIFFICULTY_INFO[difficulty].label}</strong>
         </p>
         <p className="case-status__hint">
           {account ? (

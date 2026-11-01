@@ -2,6 +2,7 @@ import type {
   AccusationSubmission,
   CaseSummary,
   CombineResult,
+  Difficulty,
   PublicCase,
   SubmitAccusationResult,
 } from "@case-zero/shared";
@@ -36,6 +37,8 @@ export interface RoomSummary {
   code: string;
   caseId: string;
   caseTitle: string;
+  /** Schwierigkeitsstufe der Session (#56). Fehlt bei aelteren Servern. */
+  difficulty?: Difficulty;
 }
 
 /** Code-Format aus CLAUDE.md, gespiegelt vom Server (engine/rooms.ts). */
@@ -50,11 +53,11 @@ export function isValidRoomCode(code: string): boolean {
 }
 
 /** Legt eine neue Team-Session an und gibt den teilbaren Code zurueck (#5). */
-export async function createRoom(caseId: string): Promise<RoomSummary> {
+export async function createRoom(caseId: string, difficulty?: Difficulty): Promise<RoomSummary> {
   const response = await fetch(`${SERVER_URL}/api/rooms`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ caseId }),
+    body: JSON.stringify({ caseId, difficulty }),
   });
   if (!response.ok) {
     throw new Error(`Team-Session konnte nicht angelegt werden (HTTP ${response.status})`);

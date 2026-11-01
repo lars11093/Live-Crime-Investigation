@@ -1578,3 +1578,39 @@ div.account-bar {
   gap: 0.75rem;
   justify-items: start;
 }
+
+/* Story #56 — Schwierigkeitsstufe */
+.difficulty {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  border: 1px solid var(--border);
+}
+
+.difficulty__option {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  cursor: pointer;
+}
+
+/* Leicht: Stellen mit Fund leuchten zusaetzlich auf. */
+.scene--leicht .hotspot--find .hotspot__ring {
+  border-color: var(--danger);
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* Schwer: Namen erst beim Darueberfahren, kein Pulsieren. */
+.scene--schwer .hotspot__label {
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.scene--schwer .hotspot:hover .hotspot__label,
+.scene--schwer .hotspot:focus-visible .hotspot__label {
+  opacity: 1;
+}
+
+.scene--schwer .hotspot__ring {
+  animation: none;
+}

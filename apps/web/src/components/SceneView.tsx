@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import type { CollectedEvidence, Hotspot, Scene } from "@case-zero/shared";
+import type { CollectedEvidence, Difficulty, Hotspot, Scene } from "@case-zero/shared";
+import { sceneProgressText } from "../lib/difficulty";
 
 interface Props {
   scene: Scene;
@@ -10,6 +11,8 @@ interface Props {
   collectedIds: string[];
   onCollect: (evidence: CollectedEvidence) => void;
   onBack: () => void;
+  /** Schwierigkeitsstufe der Session (#56). */
+  difficulty?: Difficulty;
 }
 
 /**
@@ -27,6 +30,7 @@ export function SceneView({
   collectedIds,
   onCollect,
   onBack,
+  difficulty = "normal",
 }: Props) {
   const [imageFailed, setImageFailed] = useState(false);
   const [openHotspot, setOpenHotspot] = useState<Hotspot | null>(null);
@@ -59,7 +63,7 @@ export function SceneView({
   }
 
   return (
-    <section className="scene" aria-label={`Tatort: ${scene.name}`}>
+    <section className={`scene scene--${difficulty}`} aria-label={`Tatort: ${scene.name}`}>
       {imageFailed ? (
         <div className="scene__placeholder">
           <p className="scene__placeholder-mark" aria-hidden="true">
@@ -79,10 +83,12 @@ export function SceneView({
 
       {scene.hotspots.map((hotspot) => {
         const done = investigated.has(hotspot.id);
+        // #56 — auf "leicht" sind Stellen mit noch nicht gesichertem Fund markiert.
+        const hint = difficulty === "leicht" && hotspot.evidence && !collected.has(hotspot.evidence.id);
         return (
           <button
             key={hotspot.id}
-            className={`hotspot${done ? " hotspot--done" : ""}`}
+            className={`hotspot${done ? " hotspot--done" : ""}${hint ? " hotspot--find" : ""}`}
             style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%` }}
             onClick={() => open(hotspot)}
             aria-pressed={done}
@@ -100,7 +106,7 @@ export function SceneView({
       <div className="scene__overlay">
         <p className="scene__name">{scene.name}</p>
         <p className="scene__progress">
-          {investigated.size} / {scene.hotspots.length} untersucht
+          {sceneProgressText(difficulty, investigated.size, scene.hotspots.length)}
         </p>
         <button className="scene__back" onClick={onBack}>
           Zurueck

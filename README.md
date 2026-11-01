@@ -63,6 +63,7 @@ Live-Crime-Investigation/
 
 **Datenfluss (Kernloop):**
 1. Lead Detective erstellt Case → Server generiert `CASE CODE` (z.B. `7K4-XP9`), wählt Täter-Szenario, hält Room-State im Speicher.
+   Umgesetzt (#56): `POST /api/rooms` nimmt `difficulty` (`leicht`, `normal`, `schwer`; sonst `normal`), `GET /api/rooms/:code` liefert sie zurück. Die Stufe gilt für die ganze Session; im Client markiert «leicht» Stellen mit Fund, «schwer» blendet Namen und die Gesamtzahl der Stellen aus.
 2. Andere 4 Spieler joinen mit Code + wählen Rolle → Socket-Room `case:<code>` beitreten.
    Umgesetzt (#22): In der Fallakte tritt man mit Namen bei (`team:join`); der Server schickt nach jedem Beitritt und Verlassen die Teamliste an alle im Raum (`team:update`). Die Rollenwahl folgt mit #31.
    Umgesetzt (#23): Funde teilen per `evidence:share`; der Server prüft Teammitgliedschaft und Fall-Zugehörigkeit, hält die geteilten Funde im Raum und schickt sie als `team:findings` an alle (auch an später Beitretende).

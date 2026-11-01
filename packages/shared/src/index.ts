@@ -3,6 +3,11 @@
 
 export type Role = "forensics" | "cyber" | "interrogation" | "field" | "lead";
 
+/** Schwierigkeitsstufe einer Team-Session (#56). */
+export type Difficulty = "leicht" | "normal" | "schwer";
+
+export const DIFFICULTIES: Difficulty[] = ["leicht", "normal", "schwer"];
+
 export const ROLES: Role[] = ["forensics", "cyber", "interrogation", "field", "lead"];
 
 export interface Player {
