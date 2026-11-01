@@ -34,6 +34,8 @@ import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import { buildForensicReport, forensicReportMarkdown } from "../lib/forensicReport";
+import { ForensicReportPanel } from "../components/ForensicReportPanel";
 import { downloadText, exportAkte, exportFileName } from "../lib/akteExport";
 import { appendSceneLog, loadSceneLog, saveSceneLog } from "../lib/sceneLog";
 import { SceneLogPanel } from "../components/SceneLogPanel";
@@ -286,6 +288,21 @@ export function CaseLoaderPage() {
             }}
             onBack={() => setView("akte")}
           />
+          <div style={{ marginTop: "1rem" }}>
+            <ForensicReportPanel
+              report={buildForensicReport(devices, collected, markedMessageIds)}
+              onDownload={() => {
+                const report = buildForensicReport(devices, collected, markedMessageIds);
+                const text = forensicReportMarkdown(report, caseData.title, notes);
+                const url = URL.createObjectURL(new Blob([text], { type: "text/markdown;charset=utf-8" }));
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = `forensik-report-${code}.md`;
+                link.click();
+                setTimeout(() => URL.revokeObjectURL(url), 0);
+              }}
+            />
+          </div>
         </main>
       );
     }
