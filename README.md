@@ -63,6 +63,7 @@ Live-Crime-Investigation/
 
 **Datenfluss (Kernloop):**
 1. Lead Detective erstellt Case → Server generiert `CASE CODE` (z.B. `7K4-XP9`), wählt Täter-Szenario, hält Room-State im Speicher.
+   Umgesetzt (#55): Konten mit Passwort per `POST /api/accounts` bzw. `POST /api/accounts/login` (scrypt-Hash mit Salt, Antwort mit Sitzungs-Token). Mit `Authorization: Bearer <token>` legt `PUT /api/accounts/me/progress/:code` den Spielstand ab, `GET` holt ihn auf jedem Gerät. Die Konten liegen in `.data/accounts.json` (Pfad über `ACCOUNTS_FILE`, nicht im Repo); ohne Passwort bleibt die Namens-Anmeldung aus #29 rein lokal.
 2. Andere 4 Spieler joinen mit Code + wählen Rolle → Socket-Room `case:<code>` beitreten.
    Umgesetzt (#22): In der Fallakte tritt man mit Namen bei (`team:join`); der Server schickt nach jedem Beitritt und Verlassen die Teamliste an alle im Raum (`team:update`). Die Rollenwahl folgt mit #31.
    Umgesetzt (#23): Funde teilen per `evidence:share`; der Server prüft Teammitgliedschaft und Fall-Zugehörigkeit, hält die geteilten Funde im Raum und schickt sie als `team:findings` an alle (auch an später Beitretende).

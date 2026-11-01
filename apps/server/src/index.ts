@@ -25,6 +25,7 @@ import {
 } from "./engine/rooms.js";
 import { joinTeam, leaveTeam, teamOf } from "./engine/team.js";
 import { shareFinding } from "./engine/sharing.js";
+import { AccountStore } from "./engine/accounts.js";
 
 const CASES: Record<string, CaseDefinition> = {
   "case-01": case01 as CaseDefinition,
@@ -47,6 +48,13 @@ function scoreAccusation(room: Room, accusation: Accusation): ScoreResult {
   };
 }
 
+// Story #55 — Konten. Die Datei liegt ausserhalb von src und ist in .gitignore.
+const accounts = new AccountStore(process.env.ACCOUNTS_FILE ?? ".data/accounts.json");
+
+function bearer(header: string | undefined): string | undefined {
+  return header?.startsWith("Bearer ") ? header.slice(7) : undefined;
+}
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -64,6 +72,35 @@ app.get("/api/cases/:caseId", (req, res) => {
     return res.status(404).json({ error: "Fall nicht gefunden" });
   }
   return res.json(toPublicCase(caseDef));
+});
+
+// Story #55 — Konto erstellen und anmelden.
+app.post("/api/accounts", (req, res) => {
+  const result = accounts.register(req.body?.name, req.body?.password);
+  return res.status(result.ok ? 201 : 400).json(result);
+});
+
+app.post("/api/accounts/login", (req, res) => {
+  const result = accounts.login(req.body?.name, req.body?.password);
+  return res.status(result.ok ? 200 : 401).json(result);
+});
+
+// Story #55 — Spielstand eines Kontos pro Team-Code, von jedem Geraet aus.
+app.get("/api/accounts/me/progress/:code", (req, res) => {
+  const progress = accounts.getProgress(bearer(req.headers.authorization), normalizeRoomCode(req.params.code));
+  if (progress === undefined) return res.status(401).json({ error: "Nicht angemeldet" });
+  return res.json({ progress });
+});
+
+app.put("/api/accounts/me/progress/:code", (req, res) => {
+  const result = accounts.saveProgress(
+    bearer(req.headers.authorization),
+    normalizeRoomCode(req.params.code),
+    req.body?.progress
+  );
+  if (result === "unauthorized") return res.status(401).json({ error: "Nicht angemeldet" });
+  if (result === "invalid") return res.status(400).json({ error: "Ungueltiger Spielstand" });
+  return res.status(204).end();
 });
 
 // Story #5 — Team-Session anlegen. Der Code ist das, was im Team geteilt wird.

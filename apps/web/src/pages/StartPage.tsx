@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TeamCodeForm } from "../components/TeamCodeForm";
 import { AccountBar } from "../components/AccountBar";
-import { loadAccount, login, logout, type Account } from "../lib/account";
+import { loadAccount, login, logout, rememberServerAccount, type Account } from "../lib/account";
+import { accountRequest } from "../lib/api";
 import { browserStorage } from "../lib/caseProgress";
 
 /**
@@ -31,6 +32,16 @@ export function StartPage() {
         <AccountBar
           account={account}
           onLogin={(name) => setAccount(login(browserStorage(), name))}
+          onServerAccount={async (mode, name, password) => {
+            try {
+              const result = await accountRequest(mode, name, password);
+              if (!result.ok) return result.error;
+              setAccount(rememberServerAccount(browserStorage(), result.account.name, result.token));
+              return null;
+            } catch {
+              return "Server nicht erreichbar. Bitte erneut versuchen.";
+            }
+          }}
           onLogout={() => {
             logout(browserStorage());
             setAccount(null);

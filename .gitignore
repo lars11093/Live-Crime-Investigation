@@ -22,3 +22,6 @@ apps/web/public/evidence/*
 # Portraets werden nicht committet (siehe apps/web/public/suspects/README.md)
 apps/web/public/suspects/*
 !apps/web/public/suspects/README.md
+
+# Konten (#55) werden lokal gespeichert, nie committet
+.data/
