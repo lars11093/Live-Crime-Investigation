@@ -36,12 +36,18 @@ export function saveInterrogations(storage: ProgressStorage, roomCode: string, l
   }
 }
 
-/** Stellt eine Frage. Jede Frage nur einmal, unbekannte gar nicht. */
+/** Stellt eine Frage — nur, wenn sie gerade waehlbar ist (#66, #67). */
 export function askQuestion(log: InterrogationLog, suspect: Suspect, questionId: string): InterrogationLog {
-  const asked = log[suspect.id] ?? [];
-  const known = suspect.interrogation?.some((q) => q.id === questionId);
-  if (!known || asked.includes(questionId)) return log;
-  return { ...log, [suspect.id]: [...asked, questionId] };
+  if (!openQuestions(log, suspect).some((q) => q.id === questionId)) return log;
+  return { ...log, [suspect.id]: [...(log[suspect.id] ?? []), questionId] };
+}
+
+/** Fragen, die durch eine Entscheidung verworfen sind (#67). */
+export function closedQuestionIds(log: InterrogationLog, suspect: Suspect): Set<string> {
+  const asked = new Set(log[suspect.id] ?? []);
+  return new Set(
+    (suspect.interrogation ?? []).filter((q) => asked.has(q.id)).flatMap((q) => q.closes ?? [])
+  );
 }
 
 /** Das bisherige Gespraech: gestellte Fragen mit Antwort, in Reihenfolge. */
@@ -50,8 +56,17 @@ export function transcript(log: InterrogationLog, suspect: Suspect): Interrogati
   return (log[suspect.id] ?? []).flatMap((id) => byId.get(id) ?? []);
 }
 
-/** Fragen, die noch gestellt werden koennen. */
+/**
+ * Fragen, die gerade gestellt werden koennen (#66).
+ *
+ * Story #67: Folgefragen (`after`) erscheinen erst nach ihrer Ausgangsfrage,
+ * und wer eine Variante waehlt, verwirft die anderen (`closes`) — so
+ * beeinflusst die Wahl den Verlauf.
+ */
 export function openQuestions(log: InterrogationLog, suspect: Suspect): InterrogationQuestion[] {
   const asked = new Set(log[suspect.id] ?? []);
-  return (suspect.interrogation ?? []).filter((q) => !asked.has(q.id));
+  const closed = closedQuestionIds(log, suspect);
+  return (suspect.interrogation ?? []).filter(
+    (q) => !asked.has(q.id) && !closed.has(q.id) && (!q.after || asked.has(q.after))
+  );
 }

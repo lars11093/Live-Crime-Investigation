@@ -84,6 +84,10 @@ export interface InterrogationQuestion {
   id: string;
   question: string;
   answer: string;
+  /** Erst waehlbar, nachdem diese Frage gestellt wurde (#67). */
+  after?: string;
+  /** Wer diese Frage stellt, verwirft diese Alternativen (#67) — eine Entscheidung. */
+  closes?: string[];
 }
 
 /**
