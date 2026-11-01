@@ -32,6 +32,8 @@ import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import { introSeen, markIntroSeen } from "../lib/intro";
+import { CaseIntro } from "../components/CaseIntro";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik" | "anklage";
@@ -77,6 +79,8 @@ export function CaseLoaderPage() {
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
   // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
   const [deviceTab, setDeviceTab] = useState<"chat" | "dateien">("chat");
+  // Intro (#58): einmal pro Team-Session vor dem ersten Briefing.
+  const [showIntro, setShowIntro] = useState(() => !introSeen(browserStorage(), code));
   const navigate = useNavigate();
   // Wer sonst noch in dieser Session ermittelt (#22).
   const team = useTeam(code);
@@ -165,6 +169,19 @@ export function CaseLoaderPage() {
   }
 
   const { caseData } = state;
+
+  if (showIntro && caseData.intro && view === "briefing") {
+    return (
+      <CaseIntro
+        title={caseData.title}
+        intro={caseData.intro}
+        onDone={() => {
+          markIntroSeen(browserStorage(), code);
+          setShowIntro(false);
+        }}
+      />
+    );
+  }
 
   // Solange nur ein Tatort pro Fall angezeigt wird, ist es der erste.
   // Mehrere Tatorte zur Auswahl sind #59.
@@ -464,6 +481,16 @@ export function CaseLoaderPage() {
             {accusation.evidenceIds.length === 1 ? "Beweis" : "Beweise"})
           </button>
           <button onClick={() => setView("briefing")}>Briefing</button>
+          {caseData.intro && (
+            <button
+              onClick={() => {
+                setShowIntro(true);
+                setView("briefing");
+              }}
+            >
+              Intro ansehen
+            </button>
+          )}
         </div>
       </div>
       <div style={{ marginTop: "1rem" }}>
