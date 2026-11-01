@@ -21,6 +21,7 @@ import { CombinePanel } from "../components/CombinePanel";
 import { SuspectList } from "../components/SuspectList";
 import { SuspectProfile } from "../components/SuspectProfile";
 import { ContradictionOverview } from "../components/ContradictionOverview";
+import { StatementTimeline } from "../components/StatementTimeline";
 import { ChatHistory } from "../components/ChatHistory";
 import { ForensicsTerminal } from "../components/ForensicsTerminal";
 import { DeviceFiles } from "../components/DeviceFiles";
@@ -328,6 +329,9 @@ export function CaseLoaderPage() {
             />
             <div style={{ marginTop: "1rem" }}>
               <ContradictionOverview contradictions={contradictions} />
+            </div>
+            <div style={{ marginTop: "1rem" }}>
+              <StatementTimeline suspects={caseData.suspects} onOpen={setOpenSuspectId} />
             </div>
           </>
         )}
