@@ -32,6 +32,8 @@ import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import { loadBoard, recordInsight, saveBoard, toggleOwnThread } from "../lib/board";
+import { InvestigationBoard } from "../components/InvestigationBoard";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik" | "anklage";
@@ -71,6 +73,8 @@ export function CaseLoaderPage() {
   } = progress;
   // Welcher Beweis im Detail offen ist (#11).
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
+  // Ermittlungstafel (#65): Faeden zwischen Beweisen.
+  const [board, setBoard] = useState(() => loadBoard(browserStorage(), code));
   // Welcher Verdaechtige im Profil offen ist (#15).
   const [openSuspectId, setOpenSuspectId] = useState<string | null>(null);
   // Welches Geraet im Forensik-Terminal ausgewertet wird (#18 -> #19).
@@ -84,6 +88,10 @@ export function CaseLoaderPage() {
   useEffect(() => {
     saveProgress(browserStorage(), code, progress, account?.id);
   }, [code, progress, account]);
+
+  useEffect(() => {
+    saveBoard(browserStorage(), code, board);
+  }, [code, board]);
 
   const load = useCallback(() => {
     let cancelled = false;
@@ -337,6 +345,8 @@ export function CaseLoaderPage() {
                         ...prev,
                         insights: [...prev.insights, result.insight],
                       }));
+                      // Fuer die Tafel (#65): aus welchem Paar die Erkenntnis entstand.
+                      setBoard((prev) => recordInsight(prev, result.insight.id, a, b));
                       return `Neue Erkenntnis: ${result.insight.title}`;
                     }
                     if (result.reason === "already-found") {
@@ -354,6 +364,14 @@ export function CaseLoaderPage() {
             </div>
             <div style={{ marginTop: "1rem" }}>
               <SharedFindings findings={team.findings} myId={team.myId} />
+            </div>
+            <div style={{ marginTop: "1rem" }}>
+              <InvestigationBoard
+                evidence={collected}
+                insights={insights}
+                board={board}
+                onToggleThread={(a, b) => setBoard((prev) => toggleOwnThread(prev, a, b))}
+              />
             </div>
           </>
         )}
