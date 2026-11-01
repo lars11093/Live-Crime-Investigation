@@ -25,6 +25,7 @@ import {
 } from "./engine/rooms.js";
 import { joinTeam, leaveTeam, teamOf } from "./engine/team.js";
 import { shareFinding } from "./engine/sharing.js";
+import { notesOf, shareNote } from "./engine/noteSharing.js";
 
 const CASES: Record<string, CaseDefinition> = {
   "case-01": case01 as CaseDefinition,
@@ -209,6 +210,19 @@ io.on("connection", (socket) => {
     io.to(room.state.code).emit("team:update", teamOf(room));
     // Wer spaeter dazukommt, sieht trotzdem alles, was schon geteilt wurde (#23).
     socket.emit("team:findings", room.findings);
+    socket.emit("team:notes", notesOf(room));
+  });
+
+  // Story #64 — Notiz teilen. Gepruefte Notiz geht an alle im Raum.
+  socket.on("note:share", ({ code, evidenceId, evidenceLabel, text }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      cb({ ok: false, reason: "invalid-room" });
+      return;
+    }
+    const result = shareNote(room, socket.id, { evidenceId, evidenceLabel, text });
+    cb(result);
+    if (result.ok) io.to(room.state.code).emit("team:notes", notesOf(room));
   });
 
   // Story #23 — Fund teilen. Gepruefter Fund geht an alle im Raum.

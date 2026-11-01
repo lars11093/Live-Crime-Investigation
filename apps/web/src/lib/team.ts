@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import type { CollectedEvidence, Player, SharedFinding, ShareResult } from "@case-zero/shared";
+import type {
+  CollectedEvidence,
+  NoteShareResult,
+  Player,
+  SharedFinding,
+  SharedNote,
+  ShareResult,
+} from "@case-zero/shared";
 import { socket } from "./socket";
 import type { ProgressStorage } from "./caseProgress";
 
@@ -84,6 +91,8 @@ export function useTeam(roomCode: string) {
   const [error, setError] = useState<string | null>(null);
   // Mit dem Team geteilte Funde (#23), live vom Server.
   const [findings, setFindings] = useState<SharedFinding[]>([]);
+  // Mit dem Team geteilte Notizen (#64), live vom Server.
+  const [notes, setNotes] = useState<SharedNote[]>([]);
 
   useEffect(() => {
     function onUpdate(list: Player[]) {
@@ -91,6 +100,9 @@ export function useTeam(roomCode: string) {
     }
     function onFindings(list: SharedFinding[]) {
       setFindings(list);
+    }
+    function onNotes(list: SharedNote[]) {
+      setNotes(list);
     }
     function join() {
       if (!name) return;
@@ -106,11 +118,13 @@ export function useTeam(roomCode: string) {
 
     socket.on("team:update", onUpdate);
     socket.on("team:findings", onFindings);
+    socket.on("team:notes", onNotes);
     socket.on("connect", join);
     if (socket.connected) join();
     return () => {
       socket.off("team:update", onUpdate);
       socket.off("team:findings", onFindings);
+      socket.off("team:notes", onNotes);
       socket.off("connect", join);
     };
   }, [roomCode, name]);
@@ -146,5 +160,20 @@ export function useTeam(roomCode: string) {
     [roomCode]
   );
 
-  return { name, players, myId, error, joinAs, findings, share };
+  /** Teilt eine Notiz (#64); die neue Liste kommt per `team:notes`. */
+  const shareNote = useCallback(
+    (evidence: CollectedEvidence, text: string) =>
+      new Promise<NoteShareResult>((resolve, reject) => {
+        socket
+          .timeout(5000)
+          .emit(
+            "note:share",
+            { code: roomCode, evidenceId: evidence.id, evidenceLabel: evidence.label, text },
+            (err, result) => (err ? reject(err) : resolve(result))
+          );
+      }),
+    [roomCode]
+  );
+
+  return { name, players, myId, error, joinAs, findings, share, notes, shareNote };
 }
