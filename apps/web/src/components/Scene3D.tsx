@@ -1,9 +1,13 @@
-import { Component, Suspense, useEffect, useMemo, useState } from "react";
-import type { ReactNode } from "react";
+import { Component, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import type { ElementRef, ReactNode } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Html, OrbitControls, useGLTF } from "@react-three/drei";
 import type { Hotspot } from "@case-zero/shared";
 import { placeHotspots } from "../lib/scenePlacement";
+
+/** Startansicht: schräg von vorne rechts in das offene Diorama. */
+const CAMERA_START: [number, number, number] = [4.6, 3.6, 5.2];
+const CAMERA_TARGET: [number, number, number] = [-0.2, 0.6, -0.6];
 
 interface Props {
   modelPath: string;
@@ -23,12 +27,22 @@ interface Props {
  */
 export default function Scene3D({ modelPath, hotspots, renderHotspot, onError }: Props) {
   const [missing, setMissing] = useState<Hotspot[]>([]);
+  const controls = useRef<ElementRef<typeof OrbitControls>>(null);
+
+  // #157: zurück in die Startansicht — Drehung und Zoom stecken beide in der Kameraposition.
+  function resetView() {
+    const c = controls.current;
+    if (!c) return;
+    c.object.position.set(...CAMERA_START);
+    c.target.set(...CAMERA_TARGET);
+    c.update();
+  }
 
   return (
     <ModelErrorBoundary onError={onError}>
       <Canvas
         className="scene__canvas"
-        camera={{ position: [4.6, 3.6, 5.2], fov: 45 }}
+        camera={{ position: CAMERA_START, fov: 45 }}
         dpr={[1, 2]}
         onCreated={({ gl }) => gl.setClearColor("#04060a")}
       >
@@ -50,8 +64,9 @@ export default function Scene3D({ modelPath, hotspots, renderHotspot, onError }:
           />
         </Suspense>
         <OrbitControls
+          ref={controls}
           makeDefault
-          target={[-0.2, 0.6, -0.6]}
+          target={CAMERA_TARGET}
           enablePan={false}
           minDistance={1.2}
           maxDistance={9}
@@ -61,6 +76,9 @@ export default function Scene3D({ modelPath, hotspots, renderHotspot, onError }:
           maxAzimuthAngle={Math.PI / 2 + 0.25}
         />
       </Canvas>
+      <button className="scene__reset" onClick={resetView}>
+        Ansicht zurücksetzen
+      </button>
       {missing.map((hotspot) => (
         <div
           key={hotspot.id}
