@@ -34,6 +34,8 @@ import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import { appendSceneLog, loadSceneLog, saveSceneLog } from "../lib/sceneLog";
+import { SceneLogPanel } from "../components/SceneLogPanel";
 import { addTag, allTags, filterByTag, loadTags, removeTag, saveTags } from "../lib/evidenceTags";
 import { EvidenceTagEditor } from "../components/EvidenceTagEditor";
 import { EvidenceTagFilter } from "../components/EvidenceTagFilter";
@@ -88,6 +90,8 @@ export function CaseLoaderPage() {
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
   // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
   const [deviceTab, setDeviceTab] = useState<"chat" | "dateien">("chat");
+  // Tatortprotokoll (#61): was wann wo untersucht und eingesammelt wurde.
+  const [sceneLog, setSceneLog] = useState(() => loadSceneLog(browserStorage(), code));
   // Entsperrte Geraete (#70) — so, wie der Server sie nach der richtigen PIN liefert.
   const [unlocked, setUnlocked] = useState(() => loadUnlocked(browserStorage(), code));
   // Welcher Tatort offen ist (#159); null = der erste des Falls.
@@ -99,6 +103,10 @@ export function CaseLoaderPage() {
   useEffect(() => {
     saveProgress(browserStorage(), code, progress, account?.id);
   }, [code, progress, account]);
+
+  useEffect(() => {
+    saveSceneLog(browserStorage(), code, sceneLog);
+  }, [code, sceneLog]);
 
   useEffect(() => {
     saveTags(browserStorage(), code, tags);
@@ -210,17 +218,37 @@ export function CaseLoaderPage() {
         scenes={scenes}
         onSwitchScene={setSceneId}
         investigatedIds={investigatedIds}
-        onInvestigate={(id) =>
+        onInvestigate={(id) => {
           setProgress((prev) =>
             prev.investigatedIds.includes(id)
               ? prev
               : { ...prev, investigatedIds: [...prev.investigatedIds, id] }
-          )
-        }
+          );
+          const hotspot = scene.hotspots.find((h) => h.id === id);
+          if (hotspot) {
+            setSceneLog((prev) =>
+              appendSceneLog(prev, {
+                at: new Date().toISOString(),
+                action: "untersucht",
+                sceneName: scene.name,
+                hotspotLabel: hotspot.label,
+              })
+            );
+          }
+        }}
         collectedIds={collected.map((e) => e.id)}
-        onCollect={(evidence) =>
-          setProgress((prev) => ({ ...prev, collected: collectEvidence(prev.collected, evidence) }))
-        }
+        onCollect={(evidence) => {
+          setProgress((prev) => ({ ...prev, collected: collectEvidence(prev.collected, evidence) }));
+          setSceneLog((prev) =>
+            appendSceneLog(prev, {
+              at: new Date().toISOString(),
+              action: "eingesammelt",
+              sceneName: evidence.foundAt.sceneName,
+              hotspotLabel: evidence.foundAt.hotspotLabel,
+              evidenceLabel: evidence.label,
+            })
+          );
+        }}
         onBack={() => setView("akte")}
       />
     );
@@ -554,6 +582,9 @@ export function CaseLoaderPage() {
             investigatedIds
           )}
         />
+      </div>
+      <div style={{ marginTop: "1rem" }}>
+        <SceneLogPanel log={sceneLog} />
       </div>
       <div style={{ marginTop: "1rem" }}>
         <TeamPanel
