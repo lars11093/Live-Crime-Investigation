@@ -133,6 +133,18 @@ export interface Device {
   messages: ChatMessage[];
   /** Dateien auf dem Geraet (#20). Optional: nicht jedes Geraet hat welche. */
   files?: DeviceFile[];
+  /** Standortverlauf (#72), chronologisch wie im Case-JSON. Bei gesperrten Geraeten leer. */
+  locations?: DeviceLocation[];
+}
+
+/** Ein Standortpunkt eines Geraets (#72). */
+export interface DeviceLocation {
+  /** Zeitpunkt als Anzeigetext, wie `ChatMessage.sentAt` — z. B. "12.09. 22:31". */
+  at: string;
+  /** Ort in Worten, z. B. "Buero 4.12, Hardturmstrasse 61". */
+  place: string;
+  /** Woher der Punkt stammt, z. B. "WLAN CORP-4OG" oder "GPS". */
+  source?: string;
 }
 
 /**

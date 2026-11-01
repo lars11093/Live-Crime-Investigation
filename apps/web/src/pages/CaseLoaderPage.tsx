@@ -32,6 +32,7 @@ import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import { DeviceLocations } from "../components/DeviceLocations";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik" | "anklage";
@@ -243,6 +244,10 @@ export function CaseLoaderPage() {
           onShowFiles={device.files?.length ? () => setDeviceTab("dateien") : undefined}
           onBack={() => setOpenDeviceId(null)}
         />
+        {/* #72 — Standortverlauf desselben Geraets, gegen die Tatzeit gelesen. */}
+        <div style={{ marginTop: "1rem" }}>
+          <DeviceLocations device={device} timeOfCrime={caseData.briefing?.timeOfCrime} />
+        </div>
       </main>
     );
   }
