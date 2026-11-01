@@ -219,6 +219,13 @@ export interface Scene {
   /** Anzeigename, dauerhaft als Overlay sichtbar. */
   name: string;
   imagePath: string;
+  /**
+   * 3D-Modell des Tatorts (GLB). Optional: ist es gesetzt, zeigt der Client
+   * die Szene in 3D statt als Bild. Das Modell enthaelt pro Stelle ein Objekt
+   * `hotspot_<id>`; Stellen ohne passendes Objekt bleiben nur in der Liste
+   * erreichbar. Erzeugt wird es per Skript unter `tools/blender/`.
+   */
+  modelPath?: string;
   hotspots: Hotspot[];
 }
 

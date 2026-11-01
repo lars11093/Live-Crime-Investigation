@@ -1,5 +1,9 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 import type { CollectedEvidence, Hotspot, Scene } from "@case-zero/shared";
+
+// three.js ist gross — erst laden, wenn ein Tatort wirklich ein 3D-Modell hat.
+const Scene3D = lazy(() => import("./Scene3D"));
 
 interface Props {
   scene: Scene;
@@ -29,6 +33,7 @@ export function SceneView({
   onBack,
 }: Props) {
   const [imageFailed, setImageFailed] = useState(false);
+  const [modelFailed, setModelFailed] = useState(false);
   const [openHotspot, setOpenHotspot] = useState<Hotspot | null>(null);
   const [confirmation, setConfirmation] = useState<string | null>(null);
 
@@ -58,9 +63,40 @@ export function SceneView({
     onInvestigate(hotspot.id);
   }
 
+  function hotspotButton(hotspot: Hotspot, style?: CSSProperties) {
+    const done = investigated.has(hotspot.id);
+    return (
+      <button
+        key={hotspot.id}
+        className={`hotspot${style ? "" : " hotspot--3d"}${done ? " hotspot--done" : ""}`}
+        style={style}
+        onClick={() => open(hotspot)}
+        aria-pressed={done}
+        aria-label={`${hotspot.label}${done ? " (bereits untersucht)" : ""}`}
+      >
+        <span className="hotspot__ring" aria-hidden="true" />
+        <span className="hotspot__label">
+          {hotspot.label}
+          {done && <span className="hotspot__check" aria-hidden="true"> ✓</span>}
+        </span>
+      </button>
+    );
+  }
+
+  const show3d = Boolean(scene.modelPath) && !modelFailed;
+
   return (
     <section className="scene" aria-label={`Tatort: ${scene.name}`}>
-      {imageFailed ? (
+      {show3d ? (
+        <Suspense fallback={<p className="scene__loading">Tatort wird geladen …</p>}>
+          <Scene3D
+            modelPath={scene.modelPath!}
+            hotspots={scene.hotspots}
+            renderHotspot={(hotspot) => hotspotButton(hotspot)}
+            onError={() => setModelFailed(true)}
+          />
+        </Suspense>
+      ) : imageFailed ? (
         <div className="scene__placeholder">
           <p className="scene__placeholder-mark" aria-hidden="true">
             [ ! ]
@@ -77,25 +113,10 @@ export function SceneView({
         />
       )}
 
-      {scene.hotspots.map((hotspot) => {
-        const done = investigated.has(hotspot.id);
-        return (
-          <button
-            key={hotspot.id}
-            className={`hotspot${done ? " hotspot--done" : ""}`}
-            style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%` }}
-            onClick={() => open(hotspot)}
-            aria-pressed={done}
-            aria-label={`${hotspot.label}${done ? " (bereits untersucht)" : ""}`}
-          >
-            <span className="hotspot__ring" aria-hidden="true" />
-            <span className="hotspot__label">
-              {hotspot.label}
-              {done && <span className="hotspot__check" aria-hidden="true"> ✓</span>}
-            </span>
-          </button>
-        );
-      })}
+      {!show3d &&
+        scene.hotspots.map((hotspot) =>
+          hotspotButton(hotspot, { left: `${hotspot.x}%`, top: `${hotspot.y}%` })
+        )}
 
       <div className="scene__overlay">
         <p className="scene__name">{scene.name}</p>
