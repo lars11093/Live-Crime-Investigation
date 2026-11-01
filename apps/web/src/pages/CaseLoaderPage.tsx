@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { PublicCase } from "@case-zero/shared";
-import { combineEvidence, fetchCase, findRoom, submitAccusation } from "../lib/api";
+import { combineEvidence, fetchCase, findRoom, submitAccusation, unlockDevice } from "../lib/api";
+import { loadUnlocked, saveUnlocked, withUnlocked } from "../lib/unlockedDevices";
 import {
   browserStorage,
   collectEvidence,
@@ -20,6 +21,7 @@ import { CombinePanel } from "../components/CombinePanel";
 import { SuspectList } from "../components/SuspectList";
 import { SuspectProfile } from "../components/SuspectProfile";
 import { ContradictionOverview } from "../components/ContradictionOverview";
+import { StatementTimeline } from "../components/StatementTimeline";
 import { ChatHistory } from "../components/ChatHistory";
 import { ForensicsTerminal } from "../components/ForensicsTerminal";
 import { DeviceFiles } from "../components/DeviceFiles";
@@ -35,6 +37,7 @@ import { loadAccount } from "../lib/account";
 import { addTag, allTags, filterByTag, loadTags, removeTag, saveTags } from "../lib/evidenceTags";
 import { EvidenceTagEditor } from "../components/EvidenceTagEditor";
 import { EvidenceTagFilter } from "../components/EvidenceTagFilter";
+import { loadExcluded, saveExcluded, toggleExcluded } from "../lib/excludedSuspects";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik" | "anklage";
@@ -79,10 +82,16 @@ export function CaseLoaderPage() {
   const [tagFilter, setTagFilter] = useState<string | null>(null);
   // Welcher Verdaechtige im Profil offen ist (#15).
   const [openSuspectId, setOpenSuspectId] = useState<string | null>(null);
+  // Ausgeschlossene Verdaechtige (#69), pro Team-Code im Browser.
+  const [excludedIds, setExcludedIds] = useState(() => loadExcluded(browserStorage(), code));
   // Welches Geraet im Forensik-Terminal ausgewertet wird (#18 -> #19).
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
   // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
   const [deviceTab, setDeviceTab] = useState<"chat" | "dateien">("chat");
+  // Entsperrte Geraete (#70) — so, wie der Server sie nach der richtigen PIN liefert.
+  const [unlocked, setUnlocked] = useState(() => loadUnlocked(browserStorage(), code));
+  // Welcher Tatort offen ist (#159); null = der erste des Falls.
+  const [sceneId, setSceneId] = useState<string | null>(null);
   const navigate = useNavigate();
   // Wer sonst noch in dieser Session ermittelt (#22).
   const team = useTeam(code);
@@ -94,6 +103,14 @@ export function CaseLoaderPage() {
   useEffect(() => {
     saveTags(browserStorage(), code, tags);
   }, [code, tags]);
+
+  useEffect(() => {
+    saveExcluded(browserStorage(), code, excludedIds);
+  }, [code, excludedIds]);
+
+  useEffect(() => {
+    saveUnlocked(browserStorage(), code, unlocked);
+  }, [code, unlocked]);
 
   const load = useCallback(() => {
     let cancelled = false;
@@ -176,14 +193,22 @@ export function CaseLoaderPage() {
 
   const { caseData } = state;
 
-  // Solange nur ein Tatort pro Fall angezeigt wird, ist es der erste.
-  // Mehrere Tatorte zur Auswahl sind #59.
-  const scene = caseData.scenes.at(0);
+  const scenes = caseData.scenes;
+  const scene = scenes.find((s) => s.id === sceneId) ?? scenes.at(0);
+
+  function openScene(id: string) {
+    setSceneId(id);
+    setView("tatort");
+  }
 
   if (view === "tatort" && scene) {
     return (
       <SceneView
+        // Neuer Tatort = frischer Zustand (offener Dialog, Bild-/Modellfehler).
+        key={scene.id}
         scene={scene}
+        scenes={scenes}
+        onSwitchScene={setSceneId}
         investigatedIds={investigatedIds}
         onInvestigate={(id) =>
           setProgress((prev) =>
@@ -201,7 +226,7 @@ export function CaseLoaderPage() {
     );
   }
 
-  const devices = caseData.devices ?? [];
+  const devices = withUnlocked(caseData.devices ?? [], unlocked);
 
   if (view === "forensik") {
     // Gesperrte Geraete kommen ohne Nachrichten vom Server und lassen sich im
@@ -215,6 +240,20 @@ export function CaseLoaderPage() {
             onOpen={(id) => {
               setDeviceTab("chat");
               setOpenDeviceId(id);
+            }}
+            onUnlock={async (deviceId, secret) => {
+              try {
+                const result = await unlockDevice(caseData.id, deviceId, secret);
+                if (result.ok) {
+                  setUnlocked((prev) => ({ ...prev, [deviceId]: result.device }));
+                  return null;
+                }
+                return result.reason === "wrong-secret"
+                  ? "PIN bzw. Passwort falsch. Das Geraet bleibt gesperrt."
+                  : "Dieses Geraet laesst sich nicht entsperren.";
+              } catch {
+                return "Server nicht erreichbar. Bitte erneut versuchen.";
+              }
             }}
             onBack={() => setView("akte")}
           />
@@ -295,9 +334,14 @@ export function CaseLoaderPage() {
                 }))
               }
               selectionLocked={Boolean(accusation.receipt)}
+              excludedIds={excludedIds}
+              onToggleExcluded={(id) => setExcludedIds((prev) => toggleExcluded(prev, id))}
             />
             <div style={{ marginTop: "1rem" }}>
               <ContradictionOverview contradictions={contradictions} />
+            </div>
+            <div style={{ marginTop: "1rem" }}>
+              <StatementTimeline suspects={caseData.suspects} onOpen={setOpenSuspectId} />
             </div>
           </>
         )}
@@ -472,11 +516,17 @@ export function CaseLoaderPage() {
           {collected.length} {collected.length === 1 ? "Beweis" : "Beweise"} gesichert
         </p>
         <div className="case-status__actions">
-          {scene && (
-            <button className="button--primary" onClick={() => setView("tatort")}>
+          {scenes.length === 1 && (
+            <button className="button--primary" onClick={() => openScene(scenes[0].id)}>
               Zum Tatort
             </button>
           )}
+          {scenes.length > 1 &&
+            scenes.map((s) => (
+              <button key={s.id} className="button--primary" onClick={() => openScene(s.id)}>
+                Tatort: {s.name}
+              </button>
+            ))}
           <button onClick={() => setView("beweise")}>
             Beweisakte ({collected.length})
           </button>
@@ -498,8 +548,8 @@ export function CaseLoaderPage() {
       <div style={{ marginTop: "1rem" }}>
         <ProgressPanel
           summary={summarizeProgress(
-            // Nur der Tatort, den die Fallakte anbietet — mehrere Tatorte sind #59.
-            scene ? [scene] : [],
+            // Alle Tatorte, die die Fallakte anbietet (#159).
+            scenes,
             [...collected.map((e) => e.id), ...team.findings.map((f) => f.evidence.id)],
             investigatedIds
           )}
