@@ -392,6 +392,8 @@ export interface ClientToServerEvents {
   "team:join": (payload: { code: string; playerName: string }, cb: (result: TeamJoinResult) => void) => void;
   /** Story #23 — einen Fund aus der eigenen Akte mit dem Team teilen. */
   "evidence:share": (payload: { code: string; evidence: CollectedEvidence }, cb: (result: ShareResult) => void) => void;
+  /** Story #57 — das ganze Team aus `code` in die neue Session `newCode` mitnehmen. */
+  "team:next": (payload: { code: string; newCode: string }, cb: (result: TeamJoinResult) => void) => void;
 }
 
 /** Antwort auf `team:join` (#22). */
@@ -406,4 +408,6 @@ export interface ServerToClientEvents {
   "team:update": (players: Player[]) => void;
   /** Story #23 — alle geteilten Funde, nach jedem Teilen an alle und beim Beitritt an den Neuen. */
   "team:findings": (findings: SharedFinding[]) => void;
+  /** Story #57 — das Team zieht in eine neue Session um; `by` hat sie angelegt. */
+  "team:moved": (payload: { code: string; by: string }) => void;
 }

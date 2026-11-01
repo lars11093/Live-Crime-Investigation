@@ -25,6 +25,7 @@ import {
 } from "./engine/rooms.js";
 import { joinTeam, leaveTeam, teamOf } from "./engine/team.js";
 import { shareFinding } from "./engine/sharing.js";
+import { canMoveTeam } from "./engine/teamMove.js";
 
 const CASES: Record<string, CaseDefinition> = {
   "case-01": case01 as CaseDefinition,
@@ -221,6 +222,20 @@ io.on("connection", (socket) => {
     const result = shareFinding(room, socket.id, evidence);
     cb(result);
     if (result.ok) io.to(room.state.code).emit("team:findings", room.findings);
+  });
+
+  // Story #57 — das Team in den naechsten Fall mitnehmen. Alle im alten Raum
+  // bekommen den neuen Code und treten dort mit ihrem Namen bei.
+  socket.on("team:next", ({ code, newCode }, cb) => {
+    const from = getRoom(String(code ?? ""));
+    const to = getRoom(String(newCode ?? ""));
+    const result = canMoveTeam(from, to, socket.id);
+    if (!result.ok) {
+      cb({ ok: false, error: result.error });
+      return;
+    }
+    cb({ ok: true });
+    io.to(from!.state.code).emit("team:moved", { code: to!.state.code, by: result.by });
   });
 
   socket.on("disconnect", () => {
