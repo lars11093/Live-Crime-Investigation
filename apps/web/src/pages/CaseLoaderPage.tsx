@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { PublicCase } from "@case-zero/shared";
-import { combineEvidence, fetchCase, findRoom, submitAccusation } from "../lib/api";
+import { combineEvidence, fetchCase, findRoom, submitAccusation, unlockDevice } from "../lib/api";
+import { loadUnlocked, saveUnlocked, withUnlocked } from "../lib/unlockedDevices";
 import {
   browserStorage,
   collectEvidence,
@@ -77,6 +78,8 @@ export function CaseLoaderPage() {
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
   // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
   const [deviceTab, setDeviceTab] = useState<"chat" | "dateien">("chat");
+  // Entsperrte Geraete (#70) — so, wie der Server sie nach der richtigen PIN liefert.
+  const [unlocked, setUnlocked] = useState(() => loadUnlocked(browserStorage(), code));
   // Welcher Tatort offen ist (#159); null = der erste des Falls.
   const [sceneId, setSceneId] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -86,6 +89,10 @@ export function CaseLoaderPage() {
   useEffect(() => {
     saveProgress(browserStorage(), code, progress, account?.id);
   }, [code, progress, account]);
+
+  useEffect(() => {
+    saveUnlocked(browserStorage(), code, unlocked);
+  }, [code, unlocked]);
 
   const load = useCallback(() => {
     let cancelled = false;
@@ -201,7 +208,7 @@ export function CaseLoaderPage() {
     );
   }
 
-  const devices = caseData.devices ?? [];
+  const devices = withUnlocked(caseData.devices ?? [], unlocked);
 
   if (view === "forensik") {
     // Gesperrte Geraete kommen ohne Nachrichten vom Server und lassen sich im
@@ -215,6 +222,20 @@ export function CaseLoaderPage() {
             onOpen={(id) => {
               setDeviceTab("chat");
               setOpenDeviceId(id);
+            }}
+            onUnlock={async (deviceId, secret) => {
+              try {
+                const result = await unlockDevice(caseData.id, deviceId, secret);
+                if (result.ok) {
+                  setUnlocked((prev) => ({ ...prev, [deviceId]: result.device }));
+                  return null;
+                }
+                return result.reason === "wrong-secret"
+                  ? "PIN bzw. Passwort falsch. Das Geraet bleibt gesperrt."
+                  : "Dieses Geraet laesst sich nicht entsperren.";
+              } catch {
+                return "Server nicht erreichbar. Bitte erneut versuchen.";
+              }
             }}
             onBack={() => setView("akte")}
           />

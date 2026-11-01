@@ -1649,6 +1649,30 @@ div.account-bar {
   justify-items: start;
 }
 
+/* Story #70 — Geraet entsperren */
+.unlock {
+  margin: 0.5rem 0 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+}
+
+.unlock__row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.unlock__input {
+  width: 12rem;
+  letter-spacing: 0.3em;
+}
+
+.unlock__hint {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 /* Story #53 — Bestaetigung vor dem Absenden */
 .confirm-dialog {
   position: fixed;

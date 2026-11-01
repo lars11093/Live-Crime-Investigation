@@ -130,6 +130,16 @@ export interface Device {
   locked?: boolean;
   /** Art der Sperre, wie sie im Terminal steht — z. B. "PIN, 4 Ziffern" (#18). */
   lockType?: string;
+  /**
+   * Hinweis zur Sperre, sichtbar im Terminal (#70) — z. B. woher die PIN
+   * kommen koennte. Verraet die PIN nicht selbst.
+   */
+  lockHint?: string;
+  /**
+   * PIN oder Passwort (#70). Bleibt auf dem Server: `toPublicCase` entfernt
+   * das Feld, geprueft wird nur in `engine/unlock.ts`.
+   */
+  unlockSecret?: string;
   messages: ChatMessage[];
   /** Dateien auf dem Geraet (#20). Optional: nicht jedes Geraet hat welche. */
   files?: DeviceFile[];
@@ -213,6 +223,11 @@ export interface SharedFinding {
 export type ShareResult =
   | { ok: true }
   | { ok: false; reason: "invalid-room" | "not-in-team" | "unknown-evidence" | "already-shared" };
+
+/** Antwort auf `POST /api/cases/:caseId/devices/:deviceId/unlock` (#70). */
+export type UnlockResult =
+  | { ok: true; device: Device }
+  | { ok: false; reason: "wrong-secret" | "unknown-device" | "not-locked" };
 
 export interface Scene {
   id: string;
