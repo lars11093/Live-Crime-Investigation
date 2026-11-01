@@ -32,6 +32,14 @@ import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import {
+  askQuestion,
+  loadInterrogations,
+  openQuestions,
+  saveInterrogations,
+  transcript,
+} from "../lib/interrogation";
+import { InterrogationPanel } from "../components/InterrogationPanel";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik" | "anklage";
@@ -73,6 +81,8 @@ export function CaseLoaderPage() {
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
   // Welcher Verdaechtige im Profil offen ist (#15).
   const [openSuspectId, setOpenSuspectId] = useState<string | null>(null);
+  // Befragungen (#66): welche Fragen an wen gestellt wurden.
+  const [interrogations, setInterrogations] = useState(() => loadInterrogations(browserStorage(), code));
   // Welches Geraet im Forensik-Terminal ausgewertet wird (#18 -> #19).
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
   // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
@@ -84,6 +94,10 @@ export function CaseLoaderPage() {
   useEffect(() => {
     saveProgress(browserStorage(), code, progress, account?.id);
   }, [code, progress, account]);
+
+  useEffect(() => {
+    saveInterrogations(browserStorage(), code, interrogations);
+  }, [code, interrogations]);
 
   const load = useCallback(() => {
     let cancelled = false;
@@ -270,7 +284,21 @@ export function CaseLoaderPage() {
             }
             onBack={() => setOpenSuspectId(null)}
           />
-        ) : (
+        ) : null}
+        {openSuspect && (
+          <div style={{ marginTop: "1rem" }}>
+            <InterrogationPanel
+              key={openSuspect.id}
+              suspect={openSuspect}
+              asked={transcript(interrogations, openSuspect)}
+              open={openQuestions(interrogations, openSuspect)}
+              onAsk={(questionId) =>
+                setInterrogations((prev) => askQuestion(prev, openSuspect, questionId))
+              }
+            />
+          </div>
+        )}
+        {!openSuspect && (
           <>
             <SuspectList
               suspects={caseData.suspects}

@@ -68,6 +68,7 @@ Live-Crime-Investigation/
    Umgesetzt (#23): Funde teilen per `evidence:share`; der Server prüft Teammitgliedschaft und Fall-Zugehörigkeit, hält die geteilten Funde im Raum und schickt sie als `team:findings` an alle (auch an später Beitretende).
 3. Server pusht rollenspezifische Payloads (`role:payload`) — jeder Client sieht nur, was seine Rolle darf.
 4. Aktionen (Board verbinden, Beweis anzeigen, Verhör-Antwort) gehen als Socket-Events zum Server, der validiert + an alle im Room broadcastet (`board:update`, `event:new`).
+   Umgesetzt (#66): Verdächtige haben im Case-JSON eine optionale Liste `interrogation` (`{ id, question, answer }`). Die Befragung läuft im Client; gemerkt wird pro Team-Code, welche Fragen gestellt wurden. Die Antworten passen zu jedem Szenario und verraten den Täter nicht.
 5. Case-Engine feuert zeitbasierte Live-Events (`NEW_EVIDENCE`, `STATEMENT_CHANGED`, `SERVER_BREACH`) nach Skript im Case-JSON.
 6. Lead Detective reicht Accusation ein → Server vergleicht mit dem aktiven Szenario → `CASE SOLVED` Score-Payload an alle.
    Umgesetzt (#27) als `POST /api/rooms/:code/accusation` mit `{ suspectId, evidenceIds }`: Der Server prüft Täter und mindestens einen Beweis und speichert die Anklage einmal pro Team-Session (`201`). Jeder weitere Versuch bekommt `409` mit der ersten Quittung zurück, danach ist die Anklage gesperrt.
