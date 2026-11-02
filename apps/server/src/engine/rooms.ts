@@ -5,6 +5,7 @@ import type {
   RoomState,
   SharedFinding,
   TeamChatMessage,
+  TeamTask,
 } from "@case-zero/shared";
 
 /**
@@ -27,6 +28,8 @@ export interface Room {
   leaderId?: string;
   /** Verlauf des Team-Chats (#49), die aelteste Nachricht zuerst. */
   chat?: TeamChatMessage[];
+  /** Gemeinsame Aufgabenliste (#50). */
+  tasks?: TeamTask[];
 }
 
 /** Ohne I, O, 0 und 1 — die verwechselt man beim Vorlesen im Team. */

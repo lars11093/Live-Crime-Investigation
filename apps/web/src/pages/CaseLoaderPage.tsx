@@ -86,6 +86,8 @@ import { ObjectiveDock } from "../components/ObjectiveDock";
 import { TeamChat } from "../components/TeamChat";
 import { useTeamChat } from "../lib/useTeamChat";
 import { unreadCount } from "../lib/teamChat";
+import { TeamTasks } from "../components/TeamTasks";
+import { useTeamTasks } from "../lib/useTeamTasks";
 import { storePhoto } from "../lib/photos";
 import { rateInsight } from "../lib/insightRating";
 import { setAlibiVerdict } from "../lib/alibi";
@@ -102,7 +104,8 @@ type View =
   | "forensik"
   | "anklage"
   | "team"
-  | "chat";
+  | "chat"
+  | "aufgaben";
 
 type LoadState =
   | { status: "loading" }
@@ -278,6 +281,9 @@ export function CaseLoaderPage() {
     if (view === "chat") setChatReadCount(chat.messages.length);
   }, [view, chat.messages.length]);
   const chatUnread = unreadCount(chat.messages, team.myId ?? "", chatReadCount);
+  // Gemeinsame Aufgabenliste (#50), ebenfalls live ueber das Team.
+  const teamTasks = useTeamTasks(code);
+  const openTaskCount = teamTasks.tasks.filter((t) => !t.done).length;
 
   if (state.status === "loading") {
     return (
@@ -773,6 +779,23 @@ export function CaseLoaderPage() {
       );
     }
 
+    if (view === "aufgaben") {
+      return (
+        <main className="app-shell">
+          <TeamTasks
+            myId={team.myId ?? ""}
+            joined={team.name !== ""}
+            tasks={teamTasks.tasks}
+            team={{ players: team.players, leaderId: team.leaderId }}
+            onAdd={teamTasks.add}
+            onUpdate={teamTasks.update}
+            onRemove={teamTasks.remove}
+            onBack={() => setView("akte")}
+          />
+        </main>
+      );
+    }
+
     if (view === "chat") {
       return (
         <main className="app-shell">
@@ -950,6 +973,7 @@ export function CaseLoaderPage() {
             <button onClick={() => setView("chat")}>
               Team-Chat{chatUnread > 0 ? ` (${chatUnread} neu)` : ""}
             </button>
+            <button onClick={() => setView("aufgaben")}>Aufgaben ({openTaskCount} offen)</button>
             <button onClick={() => setView("briefing")}>Briefing</button>
             {caseData.intro && (
               <button
