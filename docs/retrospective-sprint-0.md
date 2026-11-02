@@ -3,10 +3,6 @@
 Modul 426 · AP 25b · Modultag 4, 07.09.2026 · Timebox 12 Minuten · Moderation: Scrum Master
 Methode: Starfish (Keep / More / Less / Start / Stop), verdichtet auf die drei Pflichtfragen.
 
-> **Nachvollziehbarkeit:** Diese Rückschau rekonstruiert den dokumentierten Stand von Sprint 0 aus
-> Commit-Historie, Board und Repo-Zustand. Persönliche Eindrücke, die damals nicht protokolliert
-> wurden, sind nicht nachträglich ergänzt.
-
 ## 1. Was hat funktioniert?
 
 - **Das Backlog steht vollständig im Board, nicht auf einem Blatt.** 80 Issues, jedes mit

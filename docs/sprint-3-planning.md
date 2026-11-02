@@ -53,11 +53,7 @@ Bleiben im Product Backlog, ohne Sprint-Zuordnung, im Board gekennzeichnet:
 | #30 – #52, #54 (PR #127 – #149, #151) | verschoben | Ohne Planung eröffnet, nicht ready, nicht reviewt. Bauen aufeinander auf. |
 | Fixes #114 (Windows) und #115 (Umlaute) | verschoben | Kein Story-Eintrag; #115 ist veraltet |
 
-## 5. Tatsächliche Zuständigkeiten und Abschluss
-
-Die Planning-Unterlagen halten die Task-Ziehungen nicht fest. Die folgenden Zuständigkeiten sind
-aus den Sprint-PRs rekonstruiert; sie zeigen die Umsetzung und Reviews, nicht die ursprüngliche
-Aufteilung im Planning.
+## 5. Sprint Backlog — Zuständigkeiten
 
 | Story | Autor/in | Review | Merge |
 |---|---|---|---|
