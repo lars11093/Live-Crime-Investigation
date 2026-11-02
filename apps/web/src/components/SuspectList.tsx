@@ -78,7 +78,7 @@ export function SuspectList({
                 disabled={selectionLocked || isExcluded}
                 onClick={() => onSelectSuspect(suspect.id)}
               >
-                {isSelected ? "Ausgewählt ✓" : "Als Täter auswählen"}
+                {isSelected ? "Ausgewählt ✓ (aufheben)" : "Als Täter auswählen"}
               </button>
               {onToggleExcluded && (
                 <button

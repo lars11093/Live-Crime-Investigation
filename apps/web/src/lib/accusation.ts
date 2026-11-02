@@ -32,6 +32,23 @@ export function chooseSuspect(draft: AccusationDraft, suspectId: string): Accusa
   return { ...draft, suspectId };
 }
 
+/**
+ * Hebt die Taeterauswahl auf (#51) — nur solange nicht abgesendet ist.
+ * Die angehaengten Beweise bleiben: sie begruenden oft auch die naechste Wahl.
+ */
+export function clearSuspect(draft: AccusationDraft): AccusationDraft {
+  if (isSubmitted(draft) || draft.suspectId === null) return draft;
+  return { ...draft, suspectId: null };
+}
+
+/**
+ * Klick auf "Als Taeter auswaehlen" in der Liste (#25, #51): waehlt die
+ * Person, ein zweiter Klick auf dieselbe Person hebt die Auswahl wieder auf.
+ */
+export function toggleSuspect(draft: AccusationDraft, suspectId: string): AccusationDraft {
+  return draft.suspectId === suspectId ? clearSuspect(draft) : chooseSuspect(draft, suspectId);
+}
+
 /** Haengt einen Beweis an — jeder nur einmal (#26). */
 export function attachEvidence(draft: AccusationDraft, evidenceId: string): AccusationDraft {
   if (isSubmitted(draft) || draft.evidenceIds.includes(evidenceId)) return draft;
