@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { PublicCase } from "@case-zero/shared";
-import { combineEvidence, fetchCase, findRoom, submitAccusation, unlockDevice } from "../lib/api";
+import { combineEvidence, fetchCase, findRoom, recoverDeleted, submitAccusation, unlockDevice } from "../lib/api";
 import { loadUnlocked, saveUnlocked, withUnlocked } from "../lib/unlockedDevices";
+import { loadRecovered, saveRecovered, withRecovered } from "../lib/recoveredMessages";
+import { RecoverDeleted } from "../components/RecoverDeleted";
 import {
   browserStorage,
   collectEvidence,
@@ -94,6 +96,8 @@ export function CaseLoaderPage() {
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
   // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
   const [deviceTab, setDeviceTab] = useState<"chat" | "dateien">("chat");
+  // Wiederhergestellte, geloeschte Nachrichten pro Geraet (#71).
+  const [recovered, setRecovered] = useState(() => loadRecovered(browserStorage(), code));
   // Tatortprotokoll (#61): was wann wo untersucht und eingesammelt wurde.
   const [sceneLog, setSceneLog] = useState(() => loadSceneLog(browserStorage(), code));
   // Entsperrte Geraete (#70) — so, wie der Server sie nach der richtigen PIN liefert.
@@ -107,6 +111,10 @@ export function CaseLoaderPage() {
   useEffect(() => {
     saveProgress(browserStorage(), code, progress, account?.id);
   }, [code, progress, account]);
+
+  useEffect(() => {
+    saveRecovered(browserStorage(), code, recovered);
+  }, [code, recovered]);
 
   useEffect(() => {
     saveSceneLog(browserStorage(), code, sceneLog);
@@ -258,7 +266,7 @@ export function CaseLoaderPage() {
     );
   }
 
-  const devices = withUnlocked(caseData.devices ?? [], unlocked);
+  const devices = withUnlocked(caseData.devices ?? [], unlocked).map((d) => withRecovered(d, recovered));
 
   if (view === "forensik") {
     // Gesperrte Geraete kommen ohne Nachrichten vom Server und lassen sich im
@@ -339,6 +347,21 @@ export function CaseLoaderPage() {
           onShowFiles={device.files?.length ? () => setDeviceTab("dateien") : undefined}
           onBack={() => setOpenDeviceId(null)}
         />
+        <div style={{ marginTop: "1rem" }}>
+          <RecoverDeleted
+            deletedCount={device.deletedCount ?? 0}
+            onRecover={async () => {
+              try {
+                const result = await recoverDeleted(caseData.id, device.id);
+                if (!result.ok) return "Auf diesem Geraet laesst sich nichts wiederherstellen.";
+                setRecovered((prev) => ({ ...prev, [device.id]: result.messages }));
+                return null;
+              } catch {
+                return "Server nicht erreichbar. Bitte erneut versuchen.";
+              }
+            }}
+          />
+        </div>
         {/* #72 — Standortverlauf desselben Geraets, gegen die Tatzeit gelesen. */}
         <div style={{ marginTop: "1rem" }}>
           <DeviceLocations device={device} timeOfCrime={caseData.briefing?.timeOfCrime} />

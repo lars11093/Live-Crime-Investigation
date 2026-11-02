@@ -15,6 +15,7 @@ import { toCaseSummaries, toPublicCase } from "./engine/caseView.js";
 import { combineEvidence } from "./engine/combine.js";
 import { submitAccusation } from "./engine/accusation.js";
 import { unlockDevice } from "./engine/unlock.js";
+import { recoverDeleted } from "./engine/recover.js";
 import {
   allRooms,
   createRoom,
@@ -92,6 +93,17 @@ app.post("/api/cases/:caseId/combine", (req, res) => {
   }
   const found = Array.isArray(foundInsightIds) ? foundInsightIds.filter((x) => typeof x === "string") : [];
   return res.json(combineEvidence(caseDef, String(evidenceIds[0]), String(evidenceIds[1]), found));
+});
+
+// Story #71 — geloeschte Nachrichten eines Geraets wiederherstellen.
+app.post("/api/cases/:caseId/devices/:deviceId/recover", (req, res) => {
+  const caseDef = CASES[req.params.caseId];
+  if (!caseDef) {
+    return res.status(404).json({ error: "Fall nicht gefunden" });
+  }
+  const result = recoverDeleted(caseDef, req.params.deviceId);
+  if (result.ok) return res.json(result);
+  return res.status(result.reason === "unknown-device" ? 404 : 400).json(result);
 });
 
 // Story #70 — gesperrtes Geraet entsperren. PIN/Passwort bleiben auf dem

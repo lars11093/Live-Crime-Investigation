@@ -10,8 +10,9 @@ function normalizeSecret(input: string): string {
 
 /** Das Geraet, wie es nach dem Entsperren an den Client geht: offen, ohne Geheimnis. */
 export function unlockedView(device: Device): Device {
-  const { unlockSecret: _secret, ...rest } = device;
-  return { ...rest, locked: false };
+  const { unlockSecret: _secret, deletedMessages, ...rest } = device;
+  const deletedCount = deletedMessages?.length ?? 0;
+  return deletedCount > 0 ? { ...rest, deletedCount, locked: false } : { ...rest, locked: false };
 }
 
 /**
