@@ -1,8 +1,10 @@
 {
   "id": "case-01",
   "title": "The Office at 22:30",
+  "objective": "Finde heraus, wer Thomas Vogt am Freitagabend in Büro 4.12 getötet hat. Sichere genug Beweise, um die Anklage gegen eine der drei verdächtigen Personen zu begründen.",
   "briefing": {
     "timeOfCrime": "Freitag, 12.09., zwischen 22:30 und 22:50 Uhr",
+    "crimeWindow": { "from": "22:30", "to": "22:50" },
     "location": "Büro 4.12, Hardturmstrasse 61, Zürich",
     "text": "Die Reinigungskraft findet Thomas Vogt um 23:14 Uhr leblos in seinem Büro im vierten Stock. Die Büroetage war ab 22:00 Uhr offiziell leer, der Badge-Zutritt ist aber dreimal protokolliert. Auf dem Schreibtisch liegt ein aufgeklapptes Notebook mit einer halb geschriebenen Kündigung. Die Nachricht \"Meet me at the office. 22:30.\" ging zwei Stunden vor der Tat an drei Personen. Drei Verdächtige, drei Aussagen, und mindestens eine davon stimmt nicht mit den Spuren überein."
   },
@@ -11,6 +13,7 @@
       "id": "buero-412",
       "name": "Büro 4.12 - Fundort",
       "imagePath": "/scenes/case-01/buero-412.jpg",
+      "modelPath": "/models/case-01/buero-412.glb",
       "hotspots": [
         {
           "id": "schreibtisch",
@@ -45,13 +48,28 @@
           "label": "Papierkorb",
           "x": 18,
           "y": 78,
-          "detail": "Im Papierkorb liegt ein zerknuelltes Blatt mit einer handschriftlichen Zahlenreihe. Die letzte Zeile ist durchgestrichen und mit \"22:30\" überschrieben.",
+          "detail": "Im Papierkorb liegt ein zerknülltes Blatt mit einer handschriftlichen Zahlenreihe. Die letzte Zeile ist durchgestrichen und mit \"22:30\" überschrieben.",
           "evidence": {
             "id": "zettel-zahlenreihe",
-            "label": "Zerknuellter Zettel mit Zahlenreihe",
+            "label": "Zerknüllter Zettel mit Zahlenreihe",
             "kind": "object",
             "description": "Handschriftliche Zahlenreihe, letzte Zeile durchgestrichen und mit 22:30 überschrieben.",
             "imagePath": "/evidence/case-01/zettel-zahlenreihe.jpg"
+          }
+        },
+        {
+          "id": "boden-uv",
+          "label": "Boden vor dem Schreibtisch",
+          "x": 52,
+          "y": 86,
+          "requiresTool": "uv",
+          "detail": "Unter der UV-Lampe leuchten breite, gleichmässige Wischspuren auf dem Boden vor dem Schreibtisch. Hier wurde nach Arbeitsschluss nass aufgewischt, aber nur auf diesem einen Quadratmeter.",
+          "evidence": {
+            "id": "wischspuren-uv",
+            "label": "Wischspuren unter UV-Licht",
+            "kind": "fact",
+            "description": "Frische Wischspuren vor dem Schreibtisch, nur unter UV-Licht sichtbar. Jemand hat dort nach der Reinigung noch einmal gewischt.",
+            "imagePath": "/evidence/case-01/wischspuren-uv.jpg"
           }
         },
         {
@@ -74,6 +92,7 @@
       "id": "flur-4og",
       "name": "Flur 4. OG - Badge-Leser",
       "imagePath": "/scenes/case-01/flur-4og.jpg",
+      "modelPath": "/models/case-01/flur-4og.glb",
       "hotspots": [
         {
           "id": "badge-leser",
@@ -149,6 +168,22 @@
       }
     }
   ],
+  "intro": {
+    "videoPath": "/video/case-01/intro.mp4",
+    "lines": [
+      "Zürich · Freitag, 12. September · 23:14 Uhr",
+      "Hardturmstrasse 61, vierter Stock. Die Reinigungskraft wählt den Notruf.",
+      "Thomas Vogt liegt leblos in seinem Büro 4.12.",
+      "Drei Badge-Zutritte nach 22:00 Uhr. Drei Verdächtige. Eine Nachricht: «Meet me at the office. 22:30.»",
+      "Euer Team hat die Akte. Findet heraus, was passiert ist."
+    ]
+  },
+  "hints": [
+    "Wer hat die Nachricht \"Meet me at the office. 22:30.\" bekommen, und wer war nach 22:00 noch im Haus? Lies das Briefing und den Chatverlauf auf Vogts Smartphone nebeneinander.",
+    "Leg das Badge-Protokoll neben die Uhrzeiten in den Aussagen. Stimmen die Zeiten, zu denen jemand gegangen sein will?",
+    "Auf Vogts Smartphone liegt eine Datei mit Ersatzbadges. Sie erklärt einen Badge-Zutritt und hilft beim gesperrten Smartphone.",
+    "Zwei Beweise zusammen sagen oft mehr als einer: Kombiniere Funde aus dem Tatort mit Nachrichten in der Beweisakte."
+  ],
   "suspects": [
     {
       "id": "daniel-keller",
@@ -157,7 +192,14 @@
       "relationToVictim": "Kollege, teilte sich die Etage mit dem Opfer",
       "knownMotive": "Das Opfer hatte seine Beförderung zweimal blockiert.",
       "statement": "Ich war bis 22:10 im Büro und bin dann gegangen. Auf dem Weg nach draussen habe ich niemanden mehr gesehen. Gegen 22:40 war ich bereits zu Hause und habe mit meiner Schwester telefoniert. Von der Sache erfahren habe ich erst am nächsten Morgen.",
-      "imagePath": "/suspects/case-01/daniel-keller.jpg"
+      "imagePath": "/suspects/case-01/daniel-keller.jpg",
+      "interrogation": [
+        {"id": "dk-abend", "question": "Warum waren Sie am Abend noch im Haus?", "answer": "Ich wollte Thomas wegen der Beförderungsliste abfangen. Er hat mich auf nächste Woche vertröstet, wie immer."},
+        {"id": "dk-nachricht", "question": "Was meinten Sie um 22:02 mit «Wir müssen reden, heute noch»?", "answer": "Dass ich endlich wissen wollte, woran ich bin. Er hat nicht geantwortet, also bin ich gegangen."},
+        {"id": "dk-alibi", "question": "Wer kann bestätigen, dass Sie um 22:40 zu Hause waren?", "answer": "Meine Schwester. Wir haben telefoniert, fragen Sie sie. Die Nummer gebe ich Ihnen gerne."},
+        {"id": "dk-druck", "question": "Druck machen: «Ihre Schwester wird das sicher bestätigen, oder?»", "answer": "Wollen Sie mir etwas unterstellen? Ich sage nichts mehr ohne Anwalt. Rufen Sie sie halt an.", "after": "dk-alibi", "closes": ["dk-verstaendnis"]},
+        {"id": "dk-verstaendnis", "question": "Verständnis zeigen: «Die Beförderung muss Sie sehr belastet haben.»", "answer": "Ja. Zwei Jahre hingehalten. Ich war wütend, ja, aber deswegen tut man doch so etwas nicht. Ich bin um 22:10 raus, das schwöre ich.", "after": "dk-alibi", "closes": ["dk-druck"]}
+      ]
     },
     {
       "id": "monica-brandt",
@@ -166,7 +208,14 @@
       "relationToVictim": "Direkte Vorgesetzte des Opfers",
       "knownMotive": "Das Opfer wollte interne Zahlen offenlegen, für die sie verantwortlich war.",
       "statement": "Ich hatte um 22:30 einen Termin mit ihm, den er selbst angesetzt hat. Wir haben etwa zehn Minuten geredet, dann bin ich gegangen. Ich habe das Gebäude um 22:45 verlassen und bin direkt nach Hause gefahren. Als ich ging, hat er noch am Schreibtisch gesessen.",
-      "imagePath": "/suspects/case-01/monica-brandt.jpg"
+      "imagePath": "/suspects/case-01/monica-brandt.jpg",
+      "interrogation": [
+        {"id": "mb-termin", "question": "Worum ging es im Termin um 22:30?", "answer": "Um die Q3-Zahlen. Thomas wollte, dass ich sie zurückziehe. Ich habe gesagt, wir klären das am Montag mit der Geschäftsleitung."},
+        {"id": "mb-unter-uns", "question": "Warum sollte Ihr Treffen «unter uns» bleiben?", "answer": "Weil interne Zahlen nicht über den Flurfunk gehen. Das ist alles."},
+        {"id": "mb-ausgang", "question": "Wie haben Sie das Gebäude verlassen?", "answer": "Über den Haupteingang, mit meinem eigenen Badge. Das müssten Sie im Protokoll sehen."},
+        {"id": "mb-druck", "question": "Druck machen: «Sie hatten am meisten zu verlieren.»", "answer": "Sie haben keine Ahnung, wie solche Zahlen entstehen. Ich habe ihm zehn Minuten zugehört und bin gegangen. Ende.", "after": "mb-termin", "closes": ["mb-verstaendnis"]},
+        {"id": "mb-verstaendnis", "question": "Verständnis zeigen: «War das Gespräch schwierig?»", "answer": "Sehr. Er wollte zur Revisionsstelle. Ich habe ihn gebeten, bis Montag zu warten. Als ich ging, war er aufgebracht, aber er lebte.", "after": "mb-termin", "closes": ["mb-druck"]}
+      ]
     },
     {
       "id": "leo-fischer",
@@ -174,7 +223,14 @@
       "age": 28,
       "relationToVictim": "Externer IT-Dienstleister, betreute die Serverräume",
       "statement": "Ich war an dem Abend für ein Update im Haus, aber im Serverraum im Untergeschoss. Zwischen 22:00 und 23:00 habe ich das Untergeschoss nicht verlassen. Mit dem vierten Stock habe ich nichts zu tun.",
-      "imagePath": "/suspects/case-01/leo-fischer.jpg"
+      "imagePath": "/suspects/case-01/leo-fischer.jpg",
+      "interrogation": [
+        {"id": "lf-update", "question": "Was haben Sie im Serverraum gemacht?", "answer": "Ein Update eingespielt, das länger gedauert hat als geplant. Ich war bis nach elf unten."},
+        {"id": "lf-oben", "question": "Was meinten Sie mit «Brauchst du mich noch oben?»", "answer": "Thomas hatte mich am Nachmittag gebeten, nach seinem WLAN zu schauen. Er hat nicht geantwortet, also bin ich unten geblieben."},
+        {"id": "lf-badge", "question": "Warum haben Sie das Ersatzbadge noch nicht zurückgegeben?", "answer": "Vergessen. Es liegt irgendwo in meiner Tasche."},
+        {"id": "lf-druck", "question": "Druck machen: «Das klingt, als wären Sie doch oben gewesen.»", "answer": "Nein! Ich war unten. Fragen Sie die Logs vom Serverraum, ich habe die ganze Zeit Konsolenbefehle eingegeben.", "after": "lf-oben", "closes": ["lf-verstaendnis"]},
+        {"id": "lf-verstaendnis", "question": "Verständnis zeigen: «Sie wollten ihm helfen, oder?»", "answer": "Ja. Thomas war einer der wenigen, die mich nicht wie einen Externen behandelt haben. Ich hätte hochgehen sollen.", "after": "lf-oben", "closes": ["lf-druck"]}
+      ]
     }
   ],
   "devices": [
@@ -182,6 +238,41 @@
       "id": "smartphone-vogt",
       "label": "Smartphone Thomas Vogt",
       "owner": "Thomas Vogt",
+      "kind": "smartphone",
+      "seizedAt": "Jackentasche des Opfers, Büro 4.12",
+      "deletedMessages": [
+        {
+          "id": "msg-vogt-del-01",
+          "sender": "Thomas Vogt",
+          "sentAt": "12.09. 21:32",
+          "text": "Originaldaten sind gesichert. Falls etwas schiefläuft: alles liegt auf dem Server, nicht auf meinem Laptop."
+        },
+        {
+          "id": "msg-vogt-del-02",
+          "sender": "Thomas Vogt",
+          "sentAt": "12.09. 22:25",
+          "text": "Ich warte im Büro. Komm allein."
+        }
+      ],
+      "locations": [
+        { "at": "12.09. 18:02", "place": "Büro 4.12, Hardturmstrasse 61", "source": "WLAN CORP-4OG" },
+        { "at": "12.09. 20:29", "place": "Büro 4.12, Hardturmstrasse 61", "source": "WLAN CORP-4OG" },
+        { "at": "12.09. 22:31", "place": "Büro 4.12, Hardturmstrasse 61", "source": "WLAN CORP-4OG" },
+        { "at": "12.09. 22:44", "place": "Büro 4.12, Hardturmstrasse 61", "source": "WLAN CORP-4OG" }
+      ],
+      "systemLog": [
+        { "at": "12.09. 20:29", "category": "unlock", "event": "Bildschirm entsperrt (Face ID)" },
+        { "at": "12.09. 20:30", "category": "app", "event": "Nachrichten: Nachricht an 3 Empfänger gesendet" },
+        { "at": "12.09. 21:58", "category": "network", "event": "WLAN verbunden: CORP-4OG" },
+        { "at": "12.09. 22:02", "category": "network", "event": "Nachricht empfangen (Daniel Keller)" },
+        { "at": "12.09. 22:31", "category": "unlock", "event": "Bildschirm entsperrt (Face ID)" },
+        { "at": "12.09. 22:32", "category": "app", "event": "Notizen geöffnet" },
+        { "at": "12.09. 22:36", "category": "call", "event": "Eingehender Anruf abgelehnt (unbekannte Nummer)" },
+        { "at": "12.09. 22:41", "category": "network", "event": "Nachricht empfangen (Leo Fischer)" },
+        { "at": "12.09. 22:43", "category": "unlock", "event": "Entsperrversuch fehlgeschlagen (Face ID nicht erkannt)" },
+        { "at": "12.09. 22:44", "category": "power", "event": "Bildschirm automatisch gesperrt" },
+        { "at": "12.09. 23:52", "category": "power", "event": "Akku unter 20 %" }
+      ],
       "messages": [
         {
           "id": "msg-vogt-01",
@@ -217,13 +308,32 @@
           "id": "msg-vogt-06",
           "sender": "Leo Fischer",
           "sentAt": "12.09. 20:47",
-          "text": "Bin heute ohnehin für das Update im Haus. Soll ich vorher noch bei dir vorbeikommen?"
+          "text": "Bin heute ohnehin für das Update im Haus. Soll ich vorher noch bei dir vorbeikommen?",
+          "attachment": {
+            "fileName": "PXL_20260912_184402.jpg",
+            "metadata": {
+              "takenAt": "12.09. 20:44",
+              "camera": "Google Pixel 7",
+              "gps": { "lat": 47.39183, "lng": 8.51127, "place": "Hardturmstrasse 61, Zürich" },
+              "resolution": "4080 x 3072"
+            }
+          }
         },
         {
           "id": "msg-vogt-07",
           "sender": "Monica Brandt",
           "sentAt": "12.09. 21:15",
-          "text": "Ich komme. Aber das bleibt unter uns."
+          "text": "Ich komme. Aber das bleibt unter uns.",
+          "attachment": {
+            "fileName": "IMG_4471.HEIC",
+            "metadata": {
+              "takenAt": "12.09. 21:09",
+              "camera": "Apple iPhone 13",
+              "gpsDisabled": true,
+              "resolution": "4032 x 3024",
+              "software": "iOS 17.6"
+            }
+          }
         },
         {
           "id": "msg-vogt-08",
@@ -237,6 +347,99 @@
           "sentAt": "12.09. 22:41",
           "text": "Server läuft wieder. Brauchst du mich noch oben?"
         }
+      ],
+      "files": [
+        {
+          "id": "file-vogt-kuendigung",
+          "name": "kuendigung_entwurf_v2.txt",
+          "type": "text",
+          "modifiedAt": "12.09. 21:58",
+          "content": "An die Geschäftsleitung\n\nHiermit kündige ich mein Arbeitsverhältnis per Ende Dezember.\n\nDie Zahlen für Q3, die am Montag rausgehen sollen, stimmen nicht. Ich habe das mehrfach angesprochen und werde sie nicht mittragen. Die Unterlagen dazu liegen auf dem Server, Ordner /finanzen/q3/original.\n\nThomas Vogt"
+        },
+        {
+          "id": "file-vogt-zugaenge",
+          "name": "zugaenge_4og.txt",
+          "type": "text",
+          "modifiedAt": "10.09. 08:12",
+          "content": "Ersatzbadges 4. OG\n\n0412  Reinigung\n0415  Empfang (Reserve)\n0417  IT-Dienstleister, ausgegeben für Serverwartung\n\nRückgabe 0417 noch offen."
+        },
+        {
+          "id": "file-vogt-whiteboard",
+          "name": "IMG_2207.jpg",
+          "type": "image",
+          "modifiedAt": "12.09. 19:03",
+          "imagePath": "/devices/case-01/img-2207.jpg",
+          "caption": "Foto eines Whiteboards im Sitzungszimmer. Darauf drei Kürzel mit Pfeilen: \"MB -> Q3\", \"DK -> Beförderung?\", \"LF -> Badge zurück!\""
+        },
+        {
+          "id": "file-vogt-backup",
+          "name": "q3_original.xlsx.enc",
+          "type": "unreadable",
+          "modifiedAt": "12.09. 22:05",
+          "unreadableReason": "Verschlüsselt. Ohne Passwort lässt sich die Datei nicht öffnen."
+        }
+      ]
+    },
+    {
+      "id": "smartphone-fischer",
+      "label": "Smartphone Leo Fischer",
+      "owner": "Leo Fischer",
+      "kind": "smartphone",
+      "seizedAt": "Serverraum, Untergeschoss",
+      "locked": true,
+      "lockType": "PIN, 4 Ziffern",
+      "locations": [
+        { "at": "12.09. 21:48", "place": "Serverraum UG, Hardturmstrasse 61", "source": "WLAN CORP-UG" },
+        { "at": "12.09. 22:16", "place": "Serverraum UG, Hardturmstrasse 61", "source": "WLAN CORP-UG" },
+        { "at": "12.09. 22:47", "place": "Serverraum UG, Hardturmstrasse 61", "source": "WLAN CORP-UG" },
+        { "at": "12.09. 23:52", "place": "Parkhaus Hardturm, Ebene -2", "source": "GPS" }
+      ],
+      "lockHint": "Laut IT-Abteilung nimmt Leo Fischer für alles dieselbe Nummer wie auf seinem Ersatzbadge.",
+      "unlockSecret": "0417",
+      "messages": [
+        {
+          "id": "msg-fischer-01",
+          "sender": "Leo Fischer",
+          "sentAt": "12.09. 22:18",
+          "text": "Update dauert länger. Bin erst gegen Mitternacht fertig, warte nicht."
+        },
+        {
+          "id": "msg-fischer-02",
+          "sender": "Sara Fischer",
+          "sentAt": "12.09. 22:20",
+          "text": "Ok. Schreib, wenn du losfährst."
+        }
+      ]
+    },
+    {
+      "id": "laptop-vogt",
+      "label": "Laptop Thomas Vogt",
+      "owner": "Thomas Vogt",
+      "kind": "laptop",
+      "seizedAt": "Dockingstation, Büro 4.12",
+      "systemLog": [
+        { "at": "12.09. 22:33", "category": "app", "event": "Mail-Entwurf gespeichert: An Revisionsstelle" }
+      ],
+      "locked": true,
+      "lockType": "Passwort",
+      "lockHint": "Am Bildschirmrand klebt ein Post-it: \"PW = Ordner mit den echten Zahlen\".",
+      "unlockSecret": "finanzenq3original",
+      "messages": [],
+      "files": [
+        {
+          "id": "file-laptop-mail-entwurf",
+          "name": "entwurf_revisionsstelle.eml",
+          "type": "text",
+          "modifiedAt": "12.09. 22:33",
+          "content": "An: Revisionsstelle\nBetreff: Q3-Zahlen (Entwurf, nicht gesendet)\n\nIch habe heute Abend um 22:30 noch ein Gespräch mit der verantwortlichen Person. Wenn sich danach nichts ändert, schicke ich Ihnen am Montag die Originaldaten.\n\nT. Vogt"
+        },
+        {
+          "id": "file-laptop-badge-liste",
+          "name": "badge_ausgabe.csv",
+          "type": "text",
+          "modifiedAt": "11.09. 17:40",
+          "content": "Badge;Ausgegeben an;Rückgabe\n0412;Reinigung;-\n0415;Empfang;-\n0417;L. Fischer (IT);offen - mehrfach gemahnt"
+        }
       ]
     }
   ],
@@ -247,7 +450,31 @@
       "motive": "Blackmail",
       "weapon": "Kitchen Knife",
       "timeOfCrime": "22:46",
-      "requiredEdgeIds": ["edge-fingerprint-daniel", "edge-message-daniel", "edge-cctv-daniel"]
+      "requiredEdgeIds": ["edge-fingerprint-daniel", "edge-message-daniel", "edge-cctv-daniel"],
+      "keyEvidenceIds": ["badge-protokoll", "msg-vogt-08", "msg-vogt-03", "kratzer-fensterrahmen", "zettel-zahlenreihe"],
+      "resolution": "Daniel Keller hat das Büro um 22:10 nicht verlassen. Er wartete auf der Etage, bis Monica Brandt um 22:41 gegangen war, und betrat Büro 4.12 mit seinem eigenen Badge ein zweites Mal - deshalb zeigt das Protokoll denselben Badge zweimal im Abstand von vier Minuten. Vogt hatte ihm am Abend klargemacht, dass die Beförderung erneut an ihm vorbeigehen würde. Der Streit eskalierte, Keller griff zum Messer aus der Teeküche. Das Messer reichte er durch das Kippfenster nach aussen auf den Sims - daher die frischen Kratzer am Rahmen - und holte es später über das Treppenhaus. Das Telefonat mit seiner Schwester um 22:40 hat nie stattgefunden.",
+      "endings": [
+        {
+          "when": "solved",
+          "title": "Geständnis im Verhörraum",
+          "text": "Konfrontiert mit dem Badge-Protokoll und seiner eigenen Nachricht von 22:02 bricht Daniel Keller ein. Er gesteht, auf der Etage gewartet zu haben. Die Staatsanwaltschaft erhebt Anklage."
+        },
+        {
+          "when": "insufficient",
+          "title": "Freigelassen mangels Beweisen",
+          "text": "Daniel Keller kommt nach 48 Stunden frei. Der Verdacht stimmt, aber ohne tragfähige Beweiskette reicht er nicht. Eine Woche später kündigt er und zieht weg."
+        },
+        {
+          "when": "monica-brandt",
+          "title": "Die Falsche auf der Anklagebank",
+          "text": "Monica Brandt wird angeklagt, ihr Anwalt zerlegt die Beweise im Prozess. Während sie freigesprochen wird, löscht Daniel Keller die letzten Nachrichten auf seinem Telefon."
+        },
+        {
+          "when": "leo-fischer",
+          "title": "Ein Alibi aus Logdateien",
+          "text": "Leo Fischers Serverlogs belegen, dass er bis 23:00 im Untergeschoss Befehle eingab. Die Anklage fällt nach einem Tag in sich zusammen – und der wahre Täter hat Zeit gewonnen."
+        }
+      ]
     },
     {
       "id": "scenario-monica",
@@ -255,7 +482,31 @@
       "motive": "Revenge",
       "weapon": "Letter Opener",
       "timeOfCrime": "22:39",
-      "requiredEdgeIds": ["edge-fingerprint-monica", "edge-message-monica"]
+      "requiredEdgeIds": ["edge-fingerprint-monica", "edge-message-monica"],
+      "keyEvidenceIds": ["tasse-lippenstift", "notebook-kuendigung", "msg-vogt-01", "msg-vogt-07", "badge-protokoll"],
+      "resolution": "Monica Brandt kam um 22:30 wie verabredet - sie wusste aus seiner Antwort auf ihre Q3-Nachricht, worum es gehen würde. Auf dem Notebook sah sie die Kündigung und den Entwurf einer Mail, mit der Vogt die geschönten Q3-Zahlen offenlegen wollte. Sie trank Tee mit ihm, um Zeit zu gewinnen, und versuchte ihn umzustimmen. Als er sich weigerte, griff sie zum Brieföffner vom Schreibtisch. Sie verliess das Gebäude nicht um 22:45, sondern ging kurz hinaus und mit ihrem Badge noch einmal hinein, um ihre Tasse zu holen - die vergass sie in der Eile trotzdem. Ihr Lippenstift am Tassenrand und ihre Nachricht \"Das bleibt unter uns\" verraten sie.",
+      "endings": [
+        {
+          "when": "solved",
+          "title": "Die Zahlen lügen nicht",
+          "text": "Die Tasse, die Kündigung und ihre eigene Nachricht reichen: Monica Brandt legt ein Geständnis ab. Die Q3-Originaldaten gehen an die Revisionsstelle – so, wie Thomas Vogt es wollte."
+        },
+        {
+          "when": "insufficient",
+          "title": "Zurück im Chefbüro",
+          "text": "Monica Brandt wird nach der Befragung entlassen, die Beweise reichen nicht. Am Montag gehen die Q3-Zahlen raus, so wie besprochen."
+        },
+        {
+          "when": "daniel-keller",
+          "title": "Der Kollege mit Motiv",
+          "text": "Daniel Keller wird verhaftet: Sein Motiv passt, seine Spuren nicht. Im Prozess bricht die Anklage zusammen. Die geschönten Q3-Zahlen sind bis dahin längst veröffentlicht."
+        },
+        {
+          "when": "leo-fischer",
+          "title": "Ein Alibi aus Logdateien",
+          "text": "Leo Fischers Serverlogs belegen, dass er bis 23:00 im Untergeschoss Befehle eingab. Die Anklage fällt nach einem Tag in sich zusammen – und der wahre Täter hat Zeit gewonnen."
+        }
+      ]
     }
   ],
   "seedEvidence": [

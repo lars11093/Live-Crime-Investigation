@@ -50,7 +50,7 @@ export function timesIn(text: string): string[] {
  *
  * Markiert wird satzweise, nicht zeichengenau. Zwei Gründe: ein Widerspruch
  * ist praktisch immer ein ganzer Satz ("Gegen 22:40 war ich bereits zu Hause"),
- * und zeichengenaue Positionen halten kein Re-Rendern und keine Textänderung
+ * und zeichengenaü Positionen halten kein Re-Rendern und keine Textänderung
  * im Case-JSON aus.
  *
  * Bekannte Grenze: Abkürzungen mit Punkt ("z. B.") würden fälschlich

@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import type { ChatMessage, Device } from "@case-zero/shared";
+import { ImageAttachment } from "./ImageAttachment";
+import { RelevancePicker } from "./RelevancePicker";
+import { countByRelevance, type Relevance } from "../lib/relevance";
 
 interface Props {
   device: Device;
@@ -10,6 +13,14 @@ interface Props {
   collectedIds: string[];
   /** Sichert eine Nachricht als Beweis (#21). */
   onSecure: (message: ChatMessage) => void;
+  /** Wechselt zu den Dateien desselben Geräts (#20). Fehlt, wenn es keine gibt. */
+  onShowFiles?: () => void;
+  /** Nachrichten, deren Bildanhang schon ausgelesen ist (#45). */
+  metadataReadIds: string[];
+  onReadMetadata: (messageId: string) => void;
+  /** Relevanz der gesicherten Nachrichten (#47). */
+  relevance: Record<string, Relevance>;
+  onRelevance: (messageId: string, relevance: Relevance) => void;
   onBack: () => void;
 }
 
@@ -32,13 +43,20 @@ export function ChatHistory({
   onToggleMessage,
   collectedIds,
   onSecure,
+  onShowFiles,
+  metadataReadIds,
+  onReadMetadata,
+  relevance,
+  onRelevance,
   onBack,
 }: Props) {
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const marked = new Set(markedIds);
   const collected = new Set(collectedIds);
   const markedCount = device.messages.filter((m) => marked.has(m.id)).length;
-  const securedCount = device.messages.filter((m) => collected.has(m.id)).length;
+  const securedIds = device.messages.filter((m) => collected.has(m.id)).map((m) => m.id);
+  const securedCount = securedIds.length;
+  const counts = countByRelevance(securedIds, relevance);
 
   // Die Bestätigung verschwindet von selbst, wie beim Einsammeln im Tatort (#9).
   useEffect(() => {
@@ -58,13 +76,20 @@ export function ChatHistory({
         <p className="terminal-title" style={{ margin: 0 }}>
           {device.label}
         </p>
-        <button onClick={onBack}>Zurück zur Fallakte</button>
+        <span className="device-files__actions">
+          {onShowFiles && (
+            <button onClick={onShowFiles}>Dateien ({device.files?.length ?? 0})</button>
+          )}
+          <button onClick={onBack}>Zurück zum Forensik-Terminal</button>
+        </span>
       </div>
 
       <p className="case-status__hint">
         Besitzer: {device.owner} &middot; {device.messages.length}{" "}
         {device.messages.length === 1 ? "Nachricht" : "Nachrichten"} &middot; {markedCount}{" "}
         markiert &middot; {securedCount} gesichert
+        {securedCount > 0 &&
+          ` (${counts.hoch} wichtig, ${counts.mittel} mittel, ${counts.niedrig} nebensächlich, ${counts.offen} unbewertet)`}
       </p>
 
       {confirmation && (
@@ -98,13 +123,30 @@ export function ChatHistory({
                       <span className="chat__meta">
                         <span className="chat__sender">{message.sender}</span>
                         <time className="chat__time">{message.sentAt}</time>
+                        {/* #71 — wiederhergestellt, also vom Besitzer geloescht. */}
+                        {message.recovered && <span className="chat__recovered">wiederhergestellt</span>}
                       </span>
                       <span className="chat__text">{message.text}</span>
                     </button>
+                    {message.attachment && (
+                      <ImageAttachment
+                        attachment={message.attachment}
+                        read={metadataReadIds.includes(message.id)}
+                        onRead={() => onReadMetadata(message.id)}
+                      />
+                    )}
                     {isSecured ? (
-                      <button className="chat__secure" disabled>
-                        In der Beweisakte
-                      </button>
+                      <>
+                        <button className="chat__secure" disabled>
+                          In der Beweisakte
+                        </button>
+                        {/* #47 — nur gesicherte Spuren werden bewertet; Markieren bleibt die Lesehilfe. */}
+                        <RelevancePicker
+                          label={`Nachricht von ${message.sender}, ${message.sentAt}`}
+                          value={relevance[message.id]}
+                          onChange={(level) => onRelevance(message.id, level)}
+                        />
+                      </>
                     ) : (
                       <button className="chat__secure" onClick={() => secure(message)}>
                         Als Beweis sichern

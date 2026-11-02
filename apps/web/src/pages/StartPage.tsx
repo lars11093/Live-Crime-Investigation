@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createRoom } from "../lib/api";
 import { TeamCodeForm } from "../components/TeamCodeForm";
+import { AccountBar } from "../components/AccountBar";
+import { loadAccount, login, logout, rememberServerAccount, type Account } from "../lib/account";
+import { accountRequest } from "../lib/api";
+import { browserStorage } from "../lib/caseProgress";
+import { loadSavedTeam } from "../lib/savedTeam";
+import { rememberName } from "../lib/team";
 
 /**
  * Story #1 — Startseite.
@@ -10,22 +15,9 @@ import { TeamCodeForm } from "../components/TeamCodeForm";
  */
 export function StartPage() {
   const navigate = useNavigate();
-  const [starting, setStarting] = useState(false);
-  const [startError, setStartError] = useState<string | null>(null);
-
-  async function startCase() {
-    setStarting(true);
-    setStartError(null);
-    try {
-      // Ein Fallstart legt eine Team-Session an — der Code ist das, was man
-      // den Mitspielern gibt (#5).
-      const room = await createRoom("case-01");
-      navigate(`/fall/${room.code}`);
-    } catch {
-      setStartError("Fall konnte nicht gestartet werden. Server nicht erreichbar.");
-      setStarting(false);
-    }
-  }
+  const [account, setAccount] = useState<Account | null>(() => loadAccount(browserStorage()));
+  // Zuletzt genutztes Team (#57) — ein Klick, und man ist wieder drin.
+  const [savedTeam] = useState(() => loadSavedTeam(browserStorage()));
 
   return (
     <main className="start-screen">
@@ -41,19 +33,44 @@ export function StartPage() {
           nur zusammen lösen wir den Fall.
         </p>
 
-        <button className="button--primary" onClick={startCase} disabled={starting}>
-          {starting ? "Fall wird gestartet…" : "Fall starten"}
-        </button>
+        <AccountBar
+          account={account}
+          onLogin={(name) => setAccount(login(browserStorage(), name))}
+          onServerAccount={async (mode, name, password) => {
+            try {
+              const result = await accountRequest(mode, name, password);
+              if (!result.ok) return result.error;
+              setAccount(rememberServerAccount(browserStorage(), result.account.name, result.token));
+              return null;
+            } catch {
+              return "Server nicht erreichbar. Bitte erneut versuchen.";
+            }
+          }}
+          onLogout={() => {
+            logout(browserStorage());
+            setAccount(null);
+          }}
+        />
 
-        {startError && (
-          <p className="team-code__error" role="alert">
-            {startError}
-          </p>
-        )}
+        {/* Ein Fall wird jetzt aus der Uebersicht gewaehlt (#30); dort entsteht die Team-Session (#5). */}
+        <button className="button--primary" onClick={() => navigate("/faelle")}>
+          Fall starten
+        </button>
 
         <div className="start-screen__divider">
           <span>oder einem Team beitreten</span>
         </div>
+
+        {savedTeam && (
+          <button
+            onClick={() => {
+              rememberName(savedTeam.code, savedTeam.name);
+              navigate(`/fall/${savedTeam.code}`);
+            }}
+          >
+            Zurück zu deinem Team {savedTeam.code} (als {savedTeam.name})
+          </button>
+        )}
 
         <TeamCodeForm onJoined={(code) => navigate(`/fall/${code}`)} />
 

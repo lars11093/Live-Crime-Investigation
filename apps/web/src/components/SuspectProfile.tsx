@@ -1,4 +1,8 @@
-import type { Suspect } from "@case-zero/shared";
+import type { CrimeWindow, Suspect } from "@case-zero/shared";
+import { AlibiCheck } from "./AlibiCheck";
+import type { AlibiVerdict } from "../lib/alibi";
+import { SuspicionMeter } from "./SuspicionMeter";
+import type { SuspicionLevel } from "../lib/suspicion";
 import { SuspectPortrait } from "./SuspectPortrait";
 import { StatementView } from "./StatementView";
 
@@ -7,6 +11,13 @@ interface Props {
   /** Satznummern der markierten Widersprüche dieser Person (#17). */
   markedIndices: number[];
   onToggleSentence: (sentenceIndex: number, text: string) => void;
+  /** Tatzeitfenster aus dem Briefing, für die Alibi-Prüfung (#42). */
+  crimeWindow?: CrimeWindow;
+  alibiVerdict?: AlibiVerdict;
+  onAlibiVerdict: (verdict: AlibiVerdict) => void;
+  /** Eigener Verdachtsgrad (#43). */
+  suspicion?: SuspicionLevel;
+  onSuspicion: (level: SuspicionLevel) => void;
   onBack: () => void;
 }
 
@@ -17,7 +28,17 @@ interface Props {
  * `knownMotive` ist das öffentlich bekannte Motiv, nicht die Lösung: die
  * steht in `Scenario` und verlässt den Server nie (engine/caseView.ts).
  */
-export function SuspectProfile({ suspect, markedIndices, onToggleSentence, onBack }: Props) {
+export function SuspectProfile({
+  suspect,
+  markedIndices,
+  onToggleSentence,
+  crimeWindow,
+  alibiVerdict,
+  onAlibiVerdict,
+  suspicion,
+  onSuspicion,
+  onBack,
+}: Props) {
   return (
     <section className="panel">
       <div className="evidence-list__bar">
@@ -33,6 +54,7 @@ export function SuspectProfile({ suspect, markedIndices, onToggleSentence, onBac
           <h1 className="evidence-detail__title" style={{ margin: 0 }}>
             {suspect.name}
           </h1>
+          <SuspicionMeter name={suspect.name} level={suspicion} onChange={onSuspicion} />
         </div>
       </div>
 
@@ -64,6 +86,13 @@ export function SuspectProfile({ suspect, markedIndices, onToggleSentence, onBac
         statement={suspect.statement}
         markedIndices={markedIndices}
         onToggleSentence={onToggleSentence}
+      />
+
+      <AlibiCheck
+        statement={suspect.statement}
+        crimeWindow={crimeWindow}
+        verdict={alibiVerdict}
+        onVerdict={onAlibiVerdict}
       />
     </section>
   );

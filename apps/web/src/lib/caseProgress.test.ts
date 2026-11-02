@@ -5,8 +5,10 @@ import {
   collectEvidence,
   loadProgress,
   saveProgress,
+  saveNote,
   setNote,
   toggleContradiction,
+  toggleInvestigated,
   toggleMarkedMessage,
   type ProgressStorage,
 } from "./caseProgress";
@@ -53,11 +55,37 @@ describe("Fortschritt speichern und laden", () => {
       investigatedIds: ["schreibtisch"],
       collected: [evidence],
       notes: { "tasse-lippenstift": "Lippenstift passt nicht zum Opfer." },
+      noteEditedAt: {},
       insights: [{ id: "insight-1", title: "Zweite Person", body: "Jemand sass mit am Tisch." }],
+      insightRatings: { "insight-1": 3 },
       contradictions: [],
       markedMessageIds: [],
+      reviewedDeviceIds: ["smartphone-vogt"],
+      metadataReadIds: ["msg-vogt-06"],
+      relevance: { "msg-vogt-07": "hoch" },
+      alibiVerdicts: { "daniel-keller": "zweifelhaft" },
+      suspicion: { "monica-brandt": 4 },
+      accusation: { suspectId: "monica-brandt", evidenceIds: ["tasse-lippenstift"] },
+      photos: {},
     });
     const loaded = loadProgress(storage, "ABC-123");
+    // Die Relevanz digitaler Spuren bleibt erhalten (#47).
+    expect(loaded.relevance).toEqual({ "msg-vogt-07": "hoch" });
+    // Ausgelesene Metadaten bleiben ausgelesen (#45).
+    expect(loaded.metadataReadIds).toEqual(["msg-vogt-06"]);
+    // Ausgewertete Geräte bleiben ausgewertet (#44).
+    expect(loaded.reviewedDeviceIds).toEqual(["smartphone-vogt"]);
+    // Der Verdachtsgrad bleibt erhalten (#43).
+    expect(loaded.suspicion).toEqual({ "monica-brandt": 4 });
+    // Das Urteil über ein Alibi bleibt erhalten (#42).
+    expect(loaded.alibiVerdicts).toEqual({ "daniel-keller": "zweifelhaft" });
+    // Die eigene Bewertung einer Verknüpfung bleibt erhalten (#39).
+    expect(loaded.insightRatings).toEqual({ "insight-1": 3 });
+    // Täterauswahl und angehängte Beweise überstehen ein Neuladen (#25, #26).
+    expect(loaded.accusation).toEqual({
+      suspectId: "monica-brandt",
+      evidenceIds: ["tasse-lippenstift"],
+    });
     expect(loaded.notes["tasse-lippenstift"]).toBe("Lippenstift passt nicht zum Opfer.");
     expect(loaded.collected).toHaveLength(1);
     expect(loaded.investigatedIds).toEqual(["schreibtisch"]);
@@ -171,11 +199,48 @@ describe("Chatnachrichten markieren", () => {
 
 describe("Beweise einsammeln", () => {
   it("legt einen neuen Fund in die Akte", () => {
-    expect(collectEvidence([], evidence)).toEqual([evidence]);
+    const now = new Date("2026-10-26T20:00:00Z");
+    expect(collectEvidence([], evidence, now)).toEqual([
+      { ...evidence, collectedAt: "2026-10-26T20:00:00.000Z" },
+    ]);
   });
 
   it("sichert denselben Fund nicht doppelt", () => {
     const list = [evidence];
     expect(collectEvidence(list, { ...evidence })).toBe(list);
+  });
+});
+
+describe("Untersuchte Stellen markieren (#34)", () => {
+  it("markiert eine offene Stelle", () => {
+    expect(toggleInvestigated(["fenster"], "papierkorb")).toEqual(["fenster", "papierkorb"]);
+  });
+
+  it("nimmt die Markierung wieder zurück", () => {
+    expect(toggleInvestigated(["fenster", "papierkorb"], "fenster")).toEqual(["papierkorb"]);
+  });
+});
+
+describe("Notiz bearbeiten (#38)", () => {
+  const t1 = new Date("2026-10-26T20:00:00Z");
+  const t2 = new Date("2026-10-26T21:00:00Z");
+
+  it("hält fest, wann die Notiz zuletzt geändert wurde", () => {
+    const first = saveNote(EMPTY_PROGRESS, "tasse", "Lippenstift", t1);
+    const edited = saveNote(first, "tasse", "Lippenstift - Monica?", t2);
+    expect(edited.notes.tasse).toBe("Lippenstift - Monica?");
+    expect(edited.noteEditedAt.tasse).toBe("2026-10-26T21:00:00.000Z");
+  });
+
+  it("ändert ohne neuen Text auch den Zeitpunkt nicht", () => {
+    const first = saveNote(EMPTY_PROGRESS, "tasse", "Lippenstift", t1);
+    expect(saveNote(first, "tasse", "  Lippenstift ", t2)).toBe(first);
+  });
+
+  it("löscht mit der Notiz auch den Zeitpunkt", () => {
+    const first = saveNote(EMPTY_PROGRESS, "tasse", "Lippenstift", t1);
+    const removed = saveNote(first, "tasse", "", t2);
+    expect(removed.notes).toEqual({});
+    expect(removed.noteEditedAt).toEqual({});
   });
 });

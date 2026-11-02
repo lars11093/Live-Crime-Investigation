@@ -1,0 +1,91 @@
+import type {
+  AccusationSubmission,
+  AccusationVerdict,
+  CaseDefinition,
+  Scenario,
+  VerdictFinding,
+} from "@case-zero/shared";
+import { rateChain } from "./chainRating.js";
+import { pickEnding } from "./ending.js";
+import { scoreAccusation } from "./score.js";
+
+/**
+ * Alle Beweise eines Falls mit ihrem Anzeigenamen — aus dem Tatort und aus den
+ * Geräten. Nachrichten heissen wie in der Akte (web/src/lib/digitalTrace.ts),
+ * ergänzt um den Zeitstempel, damit zwei Nachrichten derselben Person
+ * unterscheidbar bleiben.
+ */
+export function evidenceLabels(caseDef: CaseDefinition): Map<string, string> {
+  const labels = new Map<string, string>();
+  for (const scene of caseDef.scenes) {
+    for (const hotspot of scene.hotspots) {
+      if (hotspot.evidence) labels.set(hotspot.evidence.id, hotspot.evidence.label);
+    }
+  }
+  for (const device of caseDef.devices ?? []) {
+    for (const message of [...device.messages, ...(device.deletedMessages ?? [])]) {
+      labels.set(message.id, `Nachricht von ${message.sender} (${message.sentAt})`);
+    }
+  }
+  return labels;
+}
+
+/**
+ * Vergleicht eine Anklage mit dem aktiven Szenario (Story #28).
+ *
+ * Gelöst ist der Fall, wenn der Täter stimmt und mindestens ein angehängter
+ * Beweis die Lösung trägt — ein richtiger Name ohne Begründung ist geraten.
+ */
+export function judgeAccusation(
+  caseDef: CaseDefinition,
+  scenario: Scenario,
+  submission: AccusationSubmission,
+  /** Minuten seit Beginn der Session (#54); `null`, wenn unbekannt. */
+  elapsedMinutes: number | null = null
+): AccusationVerdict {
+  const labels = evidenceLabels(caseDef);
+  const label = (id: string) => labels.get(id) ?? id;
+  const nameOf = (id: string) => caseDef.suspects.find((s) => s.id === id)?.name ?? id;
+  const key = new Set(scenario.keyEvidenceIds);
+
+  const findings: VerdictFinding[] = [];
+
+  const rightSuspect = submission.suspectId === scenario.suspectId;
+  findings.push({
+    topic: "suspect",
+    correct: rightSuspect,
+    text: rightSuspect
+      ? `Richtig angeklagt: ${nameOf(submission.suspectId)} hat die Tat begangen.`
+      : `${nameOf(submission.suspectId)} war es nicht — die Tat beging ${nameOf(scenario.suspectId)}.`,
+  });
+
+  for (const id of submission.evidenceIds) {
+    findings.push({
+      topic: "evidence",
+      correct: key.has(id),
+      text: key.has(id)
+        ? `${label(id)} stützt die Lösung.`
+        : `${label(id)} trägt nichts zur Lösung bei.`,
+    });
+  }
+
+  for (const id of scenario.keyEvidenceIds) {
+    if (!submission.evidenceIds.includes(id)) {
+      findings.push({ topic: "missed", correct: false, text: `Übersehen: ${label(id)}.` });
+    }
+  }
+
+  const supported = submission.evidenceIds.some((id) => key.has(id));
+  const solved = rightSuspect && supported;
+  return {
+    solved,
+    // #80 — eines von mehreren Enden, je nach Anklage.
+    ending: pickEnding(scenario, submission, solved),
+    culprit: { id: scenario.suspectId, name: nameOf(scenario.suspectId) },
+    resolution: scenario.resolution,
+    findings,
+    // #78 — wo die Begründung schwach war, erst nach dem Absenden berechnet.
+    chain: rateChain(caseDef, scenario, submission),
+    score: scoreAccusation(scenario, submission, elapsedMinutes),
+  };
+}

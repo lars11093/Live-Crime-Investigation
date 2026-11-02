@@ -1,5 +1,12 @@
 import { customAlphabet } from "nanoid";
-import type { CaseDefinition, RoomState } from "@case-zero/shared";
+import type {
+  AccusationReceipt,
+  CaseDefinition,
+  RoomState,
+  SharedFinding,
+  TeamChatMessage,
+  TeamTask,
+} from "@case-zero/shared";
 
 /**
  * In-Memory Room Store (Story #5).
@@ -13,6 +20,18 @@ export interface Room {
   state: RoomState;
   caseDef: CaseDefinition;
   scenario: CaseDefinition["scenarios"][number];
+  /** Mit dem Team geteilte Funde (#23), in der Reihenfolge des Teilens. */
+  findings: SharedFinding[];
+  /** Die abgesendete Anklage des Teams (#27). Fehlt, solange niemand abgesendet hat. */
+  accusation?: AccusationReceipt;
+  /** Teamleiter (#48) — der erste Spieler, der dem Team beitritt. */
+  leaderId?: string;
+  /** Verlauf des Team-Chats (#49), die älteste Nachricht zuerst. */
+  chat?: TeamChatMessage[];
+  /** Gemeinsame Aufgabenliste (#50). */
+  tasks?: TeamTask[];
+  /** Wann die Session angelegt wurde — für den Tempobonus (#54). */
+  createdAt: Date;
 }
 
 /** Ohne I, O, 0 und 1 — die verwechselt man beim Vorlesen im Team. */
@@ -45,8 +64,10 @@ export function createRoom(caseDef: CaseDefinition): Room {
   }
 
   const room: Room = {
+    createdAt: new Date(),
     caseDef,
     scenario: pickScenario(caseDef),
+    findings: [],
     state: {
       code,
       caseId: caseDef.id,

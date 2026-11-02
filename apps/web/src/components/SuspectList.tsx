@@ -1,22 +1,52 @@
 import type { Suspect } from "@case-zero/shared";
 import { SuspectPortrait } from "./SuspectPortrait";
+import { SuspicionMeter } from "./SuspicionMeter";
+import { SUSPICION_LABEL, primeSuspect, type SuspicionLevel } from "../lib/suspicion";
+import { orderSuspects } from "../lib/excludedSuspects";
 
 interface Props {
-  suspects: Suspect[];
-  onOpen: (id: string) => void;
-  onBack: () => void;
+    suspects: Suspect[];
+    onOpen: (id: string) => void;
+    onBack: () => void;
+    selectedSuspectId: string | null;
+    onSelectSuspect: (id: string) => void;
+    /** Nach dem Absenden der Anklage ist die Auswahl gesperrt (#27). */
+    selectionLocked?: boolean;
+    /** Eigener Verdachtsgrad pro Person (#43) — nur Anzeige, gesetzt wird im Profil. */
+    suspicion?: Record<string, SuspicionLevel>;
+    /** Ausgeschlossene Personen (#69) — erscheinen ausgegraut am Ende. */
+    excludedIds?: string[];
+    onToggleExcluded?: (id: string) => void;
 }
 
 /**
  * Story #14 — Liste der Verdächtigen.
  * Name und Bild pro Person, Anzahl in der Kopfzeile, Klick öffnet das Profil.
+ * Story #25 — Einen Verdächtigen als Täter auswählen.
+ * Story #69 — Verdächtige ausschliessen: Sie bleiben sichtbar, aber
+ * ausgegraut am Ende der Liste und lassen sich nicht anklagen.
  */
-export function SuspectList({ suspects, onOpen, onBack }: Props) {
+export function SuspectList({
+  suspects,
+  onOpen,
+  onBack,
+  selectedSuspectId,
+  onSelectSuspect,
+  selectionLocked = false,
+  suspicion = {},
+  excludedIds = [],
+  onToggleExcluded,
+}: Props) {
+  const prime = primeSuspect(suspects, suspicion);
+  const excluded = new Set(excludedIds);
+  const remaining = suspects.filter((s) => !excluded.has(s.id)).length;
+    const selectedSuspect = suspects.find((suspect) => suspect.id === selectedSuspectId) ?? null;
+
   return (
     <section className="panel">
       <div className="evidence-list__bar">
         <p className="terminal-title" style={{ margin: 0 }}>
-          Verdächtige · {suspects.length}
+          Verdächtige · {excluded.size > 0 ? `${remaining} von ${suspects.length} verbleibend` : suspects.length}
         </p>
         <button onClick={onBack}>Zurück zur Fallakte</button>
       </div>
@@ -25,19 +55,66 @@ export function SuspectList({ suspects, onOpen, onBack }: Props) {
         <p className="evidence-list__empty">In diesem Fall ist niemand als verdächtig geführt.</p>
       ) : (
         <ul className="suspect-list">
-          {suspects.map((suspect) => (
-            <li key={suspect.id}>
+            {orderSuspects(suspects, excludedIds).map((suspect) => {
+              const isSelected = suspect.id === selectedSuspectId;
+              const isExcluded = excluded.has(suspect.id);
+              return (
+            <li key={suspect.id} className={isExcluded ? "suspect--excluded" : undefined}>
               <button className="suspect" onClick={() => onOpen(suspect.id)}>
                 <SuspectPortrait suspect={suspect} />
                 <span className="suspect__text">
                   <span className="suspect__name">{suspect.name}</span>
-                  <span className="suspect__relation">{suspect.relationToVictim}</span>
+                  <span className="suspect__relation">
+                    {suspect.relationToVictim}
+                    {isExcluded && " · ausgeschlossen"}
+                  </span>
+                  <SuspicionMeter name={suspect.name} level={suspicion[suspect.id]} />
                 </span>
               </button>
+              <button
+                type="button"
+                className={isSelected ? "suspect-selection__button is-selected" : "suspect-selection__button"}
+                aria-pressed={isSelected}
+                disabled={selectionLocked || isExcluded}
+                onClick={() => onSelectSuspect(suspect.id)}
+              >
+                {isSelected ? "Ausgewählt ✓ (aufheben)" : "Als Täter auswählen"}
+              </button>
+              {onToggleExcluded && (
+                <button
+                  type="button"
+                  className="suspect-selection__button"
+                  aria-pressed={isExcluded}
+                  // Wer angeklagt ist, lässt sich nicht gleichzeitig ausschliessen.
+                  disabled={isSelected && !isExcluded}
+                  onClick={() => onToggleExcluded(suspect.id)}
+                >
+                  {isExcluded ? "Wieder aufnehmen" : "Ausschliessen"}
+                </button>
+              )}
             </li>
-          ))}
+          );
+        })}
         </ul>
       )}
+
+    <section className="suspect-selection__summary" aria-live="polite">
+        <p className="terminal-title">Anklage · Zusammenfassung</p>
+        {selectedSuspect ? (
+          <p>
+            Ausgewählter Täter: <strong>{selectedSuspect.name}</strong>
+          </p>
+        ) : (
+          <p>Noch kein Täter ausgewählt.</p>
+        )}
+        {selectionLocked && <p>Die Anklage ist abgesendet. Die Auswahl ist gesperrt.</p>}
+        {prime && (
+          <p className="suspect-selection__hint">
+            Dein Hauptverdacht: <strong>{prime.name}</strong> (
+            {SUSPICION_LABEL[suspicion[prime.id]]})
+          </p>
+        )}
+      </section>
     </section>
   );
 }

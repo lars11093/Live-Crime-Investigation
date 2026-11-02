@@ -1,12 +1,33 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { CollectedEvidence } from "@case-zero/shared";
 import { KIND_LABEL } from "./evidenceKind";
+import { EvidencePhotoView } from "./EvidencePhotoView";
+import type { EvidencePhoto } from "../lib/photos";
+import { NoteEditor } from "./NoteEditor";
+import { RelevancePicker } from "./RelevancePicker";
+import { isDigitalTrace, type Relevance } from "../lib/relevance";
 
 interface Props {
   evidence: CollectedEvidence;
   /** Gespeicherte Notiz zu diesem Beweis (#12), leer wenn keine da ist. */
   note: string;
+  /** Wann die Notiz zuletzt gespeichert wurde (#38). */
+  noteEditedAt?: string;
+  /** Eigenes Tatortfoto (#35), falls aufgenommen. */
+  photo?: EvidencePhoto;
+  /** Relevanz, falls es eine digitale Spur ist (#47). */
+  relevance?: Relevance;
+  onRelevance: (relevance: Relevance) => void;
   onSaveNote: (text: string) => void;
+  /** Teilen mit dem Team (#23). Fehlt, wenn die Seite kein Team kennt. */
+  share?: {
+    /** Name der Person, die diesen Fund schon geteilt hat — sonst `null`. */
+    sharedBy: string | null;
+    /** Ist man dem Team beigetreten? Ohne Namen gibt es keinen Urheber. */
+    joined: boolean;
+    /** Teilt und liefert die Meldung für den Spieler. */
+    onShare: () => Promise<string>;
+  };
   onBack: () => void;
 }
 
@@ -16,23 +37,18 @@ interface Props {
  * steht hier ein Platzhalter mit dem Titel statt einer leeren Fläche — wie
  * bei der Szene in #7.
  */
-export function EvidenceDetail({ evidence, note, onSaveNote, onBack }: Props) {
+export function EvidenceDetail({
+  evidence,
+  note,
+  noteEditedAt,
+  photo,
+  relevance,
+  onRelevance,
+  onSaveNote,
+  share,
+  onBack,
+}: Props) {
   const [imageFailed, setImageFailed] = useState(!evidence.imagePath);
-  const [draft, setDraft] = useState(note);
-  const [saved, setSaved] = useState(false);
-
-  // Beim Wechsel auf einen anderen Beweis dessen Notiz in den Entwurf holen.
-  useEffect(() => {
-    setDraft(note);
-    setSaved(false);
-  }, [evidence.id, note]);
-
-  const dirty = draft.trim() !== note.trim();
-
-  function save() {
-    onSaveNote(draft);
-    setSaved(true);
-  }
 
   return (
     <section className="panel evidence-detail">
@@ -64,6 +80,13 @@ export function EvidenceDetail({ evidence, note, onSaveNote, onBack }: Props) {
         )}
       </div>
 
+      {photo && (
+        <div className="evidence-detail__photo">
+          <p className="team-code__label">Mein Tatortfoto</p>
+          <EvidencePhotoView photo={photo} size="large" />
+        </div>
+      )}
+
       <p className="evidence-detail__description">{evidence.description}</p>
 
       <dl className="briefing__facts">
@@ -77,32 +100,55 @@ export function EvidenceDetail({ evidence, note, onSaveNote, onBack }: Props) {
         </div>
       </dl>
 
-      <div className="evidence-note">
-        <label className="team-code__label" htmlFor={`note-${evidence.id}`}>
-          Meine Notiz
-        </label>
-        <textarea
-          id={`note-${evidence.id}`}
-          className="evidence-note__input"
-          value={draft}
-          rows={4}
-          placeholder="Was fällt dir an diesem Beweis auf?"
-          onChange={(e) => {
-            setDraft(e.target.value);
-            setSaved(false);
-          }}
-        />
-        <div className="case-status__actions">
-          <button className="button--primary" onClick={save} disabled={!dirty}>
-            Notiz speichern
-          </button>
-          {saved && !dirty && (
-            <span className="evidence-note__saved" role="status">
-              Gespeichert
-            </span>
-          )}
-        </div>
-      </div>
+      {share && <ShareAction key={evidence.id} {...share} />}
+      {isDigitalTrace(evidence) && (
+        <RelevancePicker label={evidence.label} value={relevance} onChange={onRelevance} />
+      )}
+
+      <NoteEditor
+        evidenceId={evidence.id}
+        note={note}
+        editedAt={noteEditedAt}
+        onSave={onSaveNote}
+      />
     </section>
+  );
+}
+
+/** Story #23 — Teilen-Knopf mit Zustand und Rückmeldung. */
+function ShareAction({ sharedBy, joined, onShare }: NonNullable<Props["share"]>) {
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function run() {
+    setBusy(true);
+    try {
+      setMessage(await onShare());
+    } catch {
+      setMessage("Server nicht erreichbar. Bitte erneut versuchen.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="evidence-share">
+      {sharedBy ? (
+        <p className="evidence-share__done">Mit dem Team geteilt von {sharedBy}</p>
+      ) : joined ? (
+        <button onClick={run} disabled={busy}>
+          {busy ? "Teile…" : "Mit Team teilen"}
+        </button>
+      ) : (
+        <p className="case-status__hint" style={{ margin: 0 }}>
+          Zum Teilen zuerst in der Fallakte dem Team beitreten.
+        </p>
+      )}
+      {message && !sharedBy && (
+        <p className="case-status__hint" role="status" style={{ margin: 0 }}>
+          {message}
+        </p>
+      )}
+    </div>
   );
 }

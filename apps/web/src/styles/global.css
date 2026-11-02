@@ -517,6 +517,76 @@ button:disabled:hover {
   color: var(--accent);
 }
 
+/* ---------------------------------------------------------------
+   3D-Tatort: Canvas füllt die Szene, Hotspots hängen an den
+   Markierungen im Modell (drei <Html>) statt an Prozentwerten.
+   --------------------------------------------------------------- */
+
+.scene__canvas {
+  position: absolute !important;
+  inset: 0;
+  /* Eigener Stapelkontext: die z-indizes der drei-<Html>-Hotspots bleiben
+     unter Detail-Dialog und Bestätigung. */
+  z-index: 0;
+  cursor: grab;
+  touch-action: none;
+}
+
+.scene__canvas:active {
+  cursor: grabbing;
+}
+
+.scene__loading {
+  display: grid;
+  place-content: center;
+  height: 100%;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* drei zentriert das <Html> selbst — keine eigene Verschiebung. */
+.hotspot--3d {
+  position: static;
+  transform: none;
+}
+
+/* #157: oben rechts, ausserhalb der Overlay-Leiste unten. */
+.scene__reset {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background: rgba(5, 7, 10, 0.85);
+}
+
+/* #159: Tatort-Umschaltung in der Overlay-Leiste. */
+.scene__switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.scene__switch button {
+  background: rgba(5, 7, 10, 0.85);
+}
+
+/* Der aktive Tatort ist kein ausgegrauter Fehlerzustand, sondern markiert. */
+.scene__switch button[aria-current="page"],
+.scene__switch button[aria-current="page"]:hover {
+  opacity: 1;
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(34, 197, 94, 0.18);
+  cursor: default;
+}
+
+.scene__hotspot-fallback {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
 .scene__progress {
   margin: 0;
   color: var(--muted);
@@ -650,6 +720,33 @@ button:disabled:hover {
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 0.5rem;
+}
+
+/* ---------------------------------------------------------------
+   Story #18 — Forensik-Terminal
+   --------------------------------------------------------------- */
+
+.device__status {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.device__status--locked {
+  color: var(--danger);
+}
+
+.evidence-list__item--button.device--locked {
+  border-left-color: var(--danger);
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.evidence-list__item--button.device--locked:hover {
+  border-color: var(--border);
+  border-left-color: var(--danger);
+  background: #0a0f14;
 }
 
 /* ---------------------------------------------------------------
@@ -1126,4 +1223,1637 @@ button:disabled:hover {
   border-radius: 3px;
   color: var(--accent);
   font-size: 0.85rem;
+}
+
+/* ---------------------------------------------------------------
+   Story #22 — wer ist im Team
+   --------------------------------------------------------------- */
+
+.team {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.team__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.team__member {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: #0a0f14;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 0.9rem;
+}
+
+.team__member--me {
+  border-color: var(--accent);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.team__member--me .team__name {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.team__you {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.suspect-selection__item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color, #454545);
+}
+
+.suspect-selection__item > .suspect {
+    flex: 1;
+    min-width: 180px;
+}
+
+.suspect-selection__button {
+    margin-top: 0.5rem;
+    border: 1px solid #777;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    padding: 0.55rem 0.8rem;
+}
+
+.suspect-selection__button:hover {
+    border-color: #d69b45;
+}
+
+.suspect-selection__button.is-selected {
+    border-color: #d69b45;
+    color: #e5b86a;
+}
+
+.suspect-selection__summary {
+    margin-top: 1.25rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color, #454545);
+    border-left: 3px solid #d69b45;
+    background: rgba(214, 155, 69, 0.06);
+}
+
+.suspect-selection__summary p {
+    margin-bottom: 0.5rem;
+}
+
+.suspect-selection__summary p:last-child {
+    margin-bottom: 0;
+}
+
+.suspect-selection__hint {
+    opacity: 0.75;
+}
+
+/* ---------------------------------------------------------------
+   Story #23 — Fund mit dem Team teilen
+   --------------------------------------------------------------- */
+
+.evidence-share {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+  margin: 1rem 0;
+}
+
+.evidence-share__done {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.shared-finding {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.shared-finding__by {
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.shared-finding__by strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------
+   Story #24 — Ermittlungsfortschritt
+   --------------------------------------------------------------- */
+
+.progress {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.progress__percent {
+  color: var(--accent);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.progress__bar {
+  height: 0.6rem;
+  background: #0a0f14;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress__fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress__fill {
+    transition: none;
+  }
+}
+
+.progress__areas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.progress__area {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.7rem 0.9rem;
+  background: #0a0f14;
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--danger);
+  border-radius: 3px;
+}
+
+.progress__area--done {
+  border-left-color: var(--accent);
+}
+
+.progress__open {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* ---------------------------------------------------------------
+   Story #20 — Dateien auf einem Gerät
+   --------------------------------------------------------------- */
+
+.device-files__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.device-files {
+  display: grid;
+  grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 720px) {
+  .device-files {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.device-files__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+}
+
+.device-files__item {
+  display: grid;
+  gap: 0.25rem;
+  width: 100%;
+  text-align: left;
+  color: var(--ink);
+  border-color: var(--border);
+}
+
+.device-files__item:hover,
+.device-files__item:focus-visible,
+.device-files__item--open {
+  border-color: var(--accent);
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.device-files__name {
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.device-files__viewer {
+  min-height: 12rem;
+  padding: 1rem;
+  background: #0a0f14;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.device-files__viewer-name {
+  margin: 0 0 0.75rem;
+  color: var(--accent);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+}
+
+.device-files__text {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.device-files__figure {
+  margin: 0;
+}
+
+.device-files__figure figcaption {
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.device-files__unreadable {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--danger);
+  border-radius: 3px;
+  color: var(--danger);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* Story #26 — Anklage vorbereiten */
+.accusation__block {
+  border-top: 1px solid var(--border);
+  padding: 1rem 0;
+  display: grid;
+  gap: 0.6rem;
+  justify-items: start;
+}
+
+.accusation__suspect {
+  margin: 0;
+}
+
+.accusation__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.accusation__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.5rem 0.75rem;
+}
+
+.accusation__missing {
+  margin: 0;
+  padding: 0.75rem 1rem 0.75rem 2rem;
+  border: 1px solid var(--danger);
+  border-radius: 3px;
+  color: var(--danger);
+}
+
+/* Story #27 — Bestätigung nach dem Absenden */
+.accusation__confirmation {
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  padding: 0.75rem 1rem;
+  color: var(--accent);
+}
+
+/* Story #28 — Auflösung */
+.resolution {
+  display: grid;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.resolution__result {
+  margin: 0;
+  font-size: 1.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  padding: 0.75rem 1rem;
+  text-align: center;
+}
+
+.resolution__result--failed {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.resolution__findings {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.resolution__finding {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.resolution__mark {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+.resolution__finding--wrong .resolution__mark {
+  color: var(--danger);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Story #29 — Anmelden */
+.account-bar {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  justify-items: start;
+}
+
+div.account-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Story #30 — Fallauswahl */
+.case-overview {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.case-overview__item {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+}
+
+/* Story #61 — Tatortprotokoll */
+.scene-log + .scene-log {
+  margin-top: 1rem;
+}
+
+.scene-log__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scene-log__row {
+  display: grid;
+  grid-template-columns: 3.5rem 7.5rem 1fr;
+  gap: 0.75rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.scene-log__time {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Story #62 — eigene Tags */
+.evidence-tags__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.evidence-tags__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.2rem 0.15rem 0.6rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.evidence-tags__tag button {
+  padding: 0 0.4rem;
+  border: 0;
+}
+
+.evidence-tags__filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.evidence-tags__chip--on {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Story #68 — Zeitachse der Aussagen */
+.statement-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 2px solid var(--border);
+}
+
+.statement-timeline__row {
+  display: grid;
+  grid-template-columns: 4rem 9rem 1fr;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.45rem 0.75rem;
+}
+
+.statement-timeline__row--overlap {
+  border-left: 2px solid var(--accent);
+  margin-left: -2px;
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.statement-timeline__time {
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.statement-timeline__who {
+  justify-self: start;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* Story #69 — ausgeschlossene Verdächtige */
+.suspect--excluded .suspect {
+  opacity: 0.45;
+}
+
+.suspect--excluded .suspect__name {
+  text-decoration: line-through;
+}
+
+/* Story #70 — Gerät entsperren */
+.unlock {
+  margin: 0.5rem 0 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+}
+
+.unlock__row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.unlock__input {
+  width: 12rem;
+  letter-spacing: 0.3em;
+}
+
+.unlock__hint {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* Story #53 — Bestätigung vor dem Absenden */
+.confirm-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(5, 7, 10, 0.85);
+}
+
+.confirm-dialog__panel {
+  max-width: 34rem;
+  width: 100%;
+  padding: 1.75rem;
+  background: var(--panel);
+  border: 1px solid var(--danger);
+  border-radius: 4px;
+}
+
+.confirm-dialog__evidence {
+  margin: 0 0 1rem;
+  padding-left: 1.2rem;
+  line-height: 1.5;
+}
+
+.button--danger {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.button--danger:hover {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* Story #72 — Standortdaten */
+.device-location__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.device-location {
+  display: grid;
+  grid-template-columns: 7rem 1fr auto;
+  gap: 0.75rem;
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.device-location--crime {
+  border-left: 2px solid var(--danger);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.device-location__time,
+.device-location__source {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Story #71 — wiederhergestellte Nachrichten */
+.chat__recovered {
+  margin-left: 0.5rem;
+  padding: 0 0.4rem;
+  border: 1px dashed var(--danger);
+  border-radius: 3px;
+  color: var(--danger);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Story #66 — Befragung */
+.interrogation__log {
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.interrogation__log li {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.interrogation__question {
+  margin: 0 0 0.35rem;
+  color: var(--muted);
+}
+
+.interrogation__answer {
+  margin: 0;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--accent);
+}
+
+.interrogation__choices {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+}
+
+/* Story #67 — Fragen, die andere ausschliessen */
+.interrogation__choice--decision {
+  border-color: var(--danger);
+}
+
+/* Story #74 — Hinweise */
+.hints {
+  margin: 0 0 1rem;
+  padding-left: 1.2rem;
+  line-height: 1.5;
+}
+
+.hints li + li {
+  margin-top: 0.4rem;
+}
+
+/* Story #60 — UV-Lampe: Szene abdunkeln, Spuren violett leuchten lassen */
+.scene--uv .scene__image,
+.scene--uv .scene__placeholder {
+  filter: brightness(0.45) saturate(0.6) hue-rotate(250deg);
+}
+
+.scene--uv .hotspot__ring {
+  border-color: #c084fc;
+  box-shadow: 0 0 14px #c084fc;
+}
+
+/* Story #65 — Ermittlungstafel */
+.board {
+  position: relative;
+  height: 26rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.015) 0 12px, transparent 12px 24px);
+}
+
+.board__threads {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.board__thread {
+  stroke-width: 2;
+}
+
+.board__thread--insight {
+  stroke: var(--danger);
+}
+
+.board__thread--own {
+  stroke: var(--muted);
+  stroke-dasharray: 6 5;
+}
+
+.board__card {
+  position: absolute;
+  max-width: 10rem;
+  transform: translate(-50%, -50%);
+  padding: 0.4rem 0.6rem;
+  font-size: 0.75rem;
+  background: var(--panel);
+}
+
+.board__card--pending {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.board__legend {
+  margin: 0.75rem 0 0;
+  padding-left: 1.2rem;
+  color: var(--danger);
+  font-size: 0.85rem;
+}
+
+/* Story #58 — Intro */
+.intro {
+  display: grid;
+  min-height: 100vh;
+  place-content: center;
+  gap: 2rem;
+  padding: 2rem;
+  background: #000;
+}
+
+.intro__sequence {
+  max-width: 40rem;
+}
+
+.intro__line {
+  margin: 0 0 1rem;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  animation: intro-fade 1.2s ease-out both;
+}
+
+.intro__line--head {
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.intro__title {
+  margin: 1.5rem 0 0;
+  font-size: 2.2rem;
+  animation: intro-fade 1.6s ease-out both;
+}
+
+.intro__video {
+  width: min(56rem, 90vw);
+}
+
+.intro__actions {
+  justify-content: center;
+}
+
+@keyframes intro-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro__line,
+  .intro__title {
+    animation: none;
+  }
+}
+
+/* Story #56 — Schwierigkeitsstufe */
+.difficulty {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  border: 1px solid var(--border);
+}
+
+.difficulty__option {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  cursor: pointer;
+}
+
+/* Leicht: Stellen mit Fund leuchten zusätzlich auf. */
+.scene--leicht .hotspot--find .hotspot__ring {
+  border-color: var(--danger);
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* Schwer: Namen erst beim Darüberfahren, kein Pulsieren. */
+.scene--schwer .hotspot__label {
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.scene--schwer .hotspot:hover .hotspot__label,
+.scene--schwer .hotspot:focus-visible .hotspot__label {
+  opacity: 1;
+}
+
+.scene--schwer .hotspot__ring {
+  animation: none;
+}
+
+/* Story #78 — Bewertung der Beweiskette */
+.chain {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--muted);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.chain--stark {
+  border-left-color: var(--accent);
+}
+
+.chain--schwach {
+  border-left-color: var(--danger);
+}
+
+.chain__level {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.chain__count {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.chain__weaknesses {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+  line-height: 1.5;
+}
+
+/* Story #80 — alternative Enden */
+.ending {
+  margin: 1rem 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.ending--solved {
+  border-color: var(--accent);
+}
+
+.ending--wrong,
+.ending--insufficient {
+  border-color: var(--danger);
+}
+
+.ending__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.35rem;
+}
+
+/* Story #31 — Rollen im Team */
+.role-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.role-card {
+  display: grid;
+  gap: 0.4rem;
+  align-content: start;
+  justify-items: start;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.75rem;
+}
+
+.role-card--mine {
+  border-color: var(--accent);
+}
+
+.role-card__name {
+  font-weight: bold;
+}
+
+.role-card__focus,
+.role-card__holder {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* Story #32 — Ermittlungsziel jederzeit */
+.objective-dock {
+  position: fixed;
+  /* Oben rechts: unten liegt im Tatort die Szenenleiste mit "Zurück". */
+  right: 1rem;
+  top: 1rem;
+  z-index: 50;
+  display: grid;
+  gap: 0.5rem;
+  justify-items: end;
+  max-width: min(380px, calc(100vw - 2rem));
+}
+
+.objective-dock__toggle {
+  background: var(--panel);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.objective-dock__panel {
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 0.9rem 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.objective-dock__text {
+  margin: 0.5rem 0 0;
+  line-height: 1.5;
+}
+
+.briefing__objective {
+  border-left: 3px solid var(--accent);
+  padding: 0.25rem 0 0.25rem 0.9rem;
+  margin: 1rem 0;
+}
+
+/* Story #33 — Zoom im Tatort */
+.scene__viewport {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  /* Scrollbalken im Terminal-Look statt hellgrau. */
+  scrollbar-color: var(--accent) transparent;
+}
+
+.scene__stage {
+  position: relative;
+  min-width: 100%;
+  min-height: 100%;
+  transition: width 0.2s ease-out, height 0.2s ease-out;
+}
+
+.scene__zoom {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  z-index: 5;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.scene__zoom button {
+  background: rgba(5, 7, 10, 0.85);
+  min-width: 2.5rem;
+}
+
+.scene__zoom button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Story #35 — Tatortfotos */
+.evidence-photo,
+.evidence-photo__frame,
+.evidence-photo__caption {
+  display: block;
+}
+
+.evidence-photo {
+  margin: 0;
+  display: grid;
+  gap: 0.3rem;
+  justify-items: start;
+}
+
+.evidence-photo__frame {
+  position: relative;
+  width: 120px;
+  aspect-ratio: 4 / 3;
+  border: 4px solid var(--ink);
+  border-bottom-width: 14px;
+  background-color: #04060a;
+  background-repeat: no-repeat;
+}
+
+/* Absperrband-Raster wie beim Szenen-Platzhalter. Als eigene Ebene, weil das
+   Szenenbild inline als background-image gesetzt wird; fehlt es, bleibt das
+   Raster sichtbar. */
+.evidence-photo__frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(34, 197, 94, 0.08) 0px,
+    rgba(34, 197, 94, 0.08) 8px,
+    transparent 8px,
+    transparent 18px
+  );
+}
+
+.evidence-photo--large .evidence-photo__frame {
+  width: min(320px, 100%);
+}
+
+.evidence-photo__crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 28%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+}
+
+.evidence-photo__stamp {
+  position: absolute;
+  right: 4px;
+  bottom: -13px;
+  font-size: 0.6rem;
+  color: #05070a;
+}
+
+.evidence-photo__caption {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.evidence-detail__photo {
+  margin: 1rem 0;
+}
+
+/* Story #36 — Akte filtern */
+.evidence-filter {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.evidence-filter__query {
+  width: 100%;
+}
+
+.evidence-filter__kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.evidence-filter__kind {
+  color: var(--muted);
+  border-color: var(--border);
+  padding: 0.35rem 0.7rem;
+}
+
+.evidence-filter__kind--on {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+/* Story #37 — Akte sortieren */
+.evidence-filter__sort {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.evidence-filter__sort .team-code__label {
+  margin: 0;
+}
+
+/* Story #38 — Notiz bearbeiten */
+.evidence-note__text {
+  white-space: pre-wrap;
+  border-left: 3px solid var(--accent);
+  padding-left: 0.8rem;
+  margin: 0.25rem 0;
+}
+
+.evidence-note__meta {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+/* Story #39 — Verknüpfungen bewerten */
+.insight-rating {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.insight-rating__option {
+  color: var(--muted);
+  border-color: var(--border);
+  padding: 0.3rem 0.7rem;
+}
+
+.insight-rating__option--on {
+  color: var(--ink);
+}
+
+.insight-rating__option--1.insight-rating__option--on {
+  border-color: var(--muted);
+}
+
+.insight-rating__option--2.insight-rating__option--on {
+  border-color: #eab308;
+  color: #eab308;
+}
+
+.insight-rating__option--3.insight-rating__option--on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+/* Story #40 — Verdächtige vergleichen */
+.suspect-compare__table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.suspect-compare__table th,
+.suspect-compare__table td {
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 0.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.suspect-compare__table thead th {
+  display: table-cell;
+}
+
+.suspect-compare__table thead th > * {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.suspect-compare__table tbody th {
+  color: var(--muted);
+  font-weight: normal;
+  width: 28%;
+}
+
+.suspect-compare__row--differs td {
+  color: var(--accent);
+}
+
+.suspect-compare__statement {
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* Story #41 — Aussagen durchsuchen */
+.statement-search__hits {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.statement-search__hit {
+  display: grid;
+  gap: 0.25rem;
+  border-left: 2px solid var(--border);
+  padding-left: 0.75rem;
+  line-height: 1.5;
+}
+
+.statement-search__who {
+  justify-self: start;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.statement-search__mark {
+  background: rgba(34, 197, 94, 0.25);
+  color: var(--ink);
+  padding: 0 0.1rem;
+}
+
+/* Story #42 — Alibi prüfen */
+.alibi {
+  border-top: 1px solid var(--border);
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.alibi__timeline {
+  position: relative;
+  height: 2.6rem;
+  border-bottom: 1px solid var(--muted);
+  margin: 0.5rem 1.5rem 0;
+}
+
+.alibi__window {
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  background: rgba(239, 68, 68, 0.18);
+  border-left: 1px dashed var(--danger);
+  border-right: 1px dashed var(--danger);
+}
+
+.alibi__tick {
+  position: absolute;
+  bottom: -0.35rem;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: var(--muted);
+  padding-bottom: 0.9rem;
+  border-bottom: 3px solid var(--muted);
+}
+
+.alibi__tick--in {
+  color: var(--danger);
+  border-bottom-color: var(--danger);
+}
+
+.alibi__entries {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.35rem;
+  line-height: 1.5;
+}
+
+.alibi__entry--in strong {
+  color: var(--danger);
+}
+
+.alibi__warning {
+  margin: 0;
+  color: #eab308;
+}
+
+.alibi__verdict--haltbar {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.alibi__verdict--zweifelhaft {
+  border-color: #eab308;
+  color: #eab308;
+}
+
+.alibi__verdict--nicht-haltbar {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* Story #43 — Verdachtsgrad */
+.suspicion {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.suspicion__bar,
+.suspicion__step {
+  width: 8px;
+  background: var(--border);
+  border: none;
+  border-radius: 1px;
+  padding: 0;
+}
+
+.suspicion__bar:nth-child(1), .suspicion__step:nth-child(1) { height: 6px; }
+.suspicion__bar:nth-child(2), .suspicion__step:nth-child(2) { height: 10px; }
+.suspicion__bar:nth-child(3), .suspicion__step:nth-child(3) { height: 14px; }
+.suspicion__bar:nth-child(4), .suspicion__step:nth-child(4) { height: 18px; }
+
+.suspicion__step {
+  width: 22px;
+  cursor: pointer;
+}
+
+.suspicion__step:nth-child(1) { height: 12px; }
+.suspicion__step:nth-child(2) { height: 18px; }
+.suspicion__step:nth-child(3) { height: 24px; }
+.suspicion__step:nth-child(4) { height: 30px; }
+
+.suspicion__bar--on.suspicion__bar--1 { background: var(--muted); }
+.suspicion__bar--on.suspicion__bar--2 { background: #eab308; }
+.suspicion__bar--on.suspicion__bar--3 { background: #f97316; }
+.suspicion__bar--on.suspicion__bar--4 { background: var(--danger); }
+
+.suspicion__label {
+  margin-left: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.suspicion-picker {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+/* Story #45 — Bild-Metadaten */
+.attachment {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px dashed var(--border);
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+.attachment__file {
+  margin: 0;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  word-break: break-all;
+}
+
+.attachment__meta {
+  margin: 0;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.attachment__meta div {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 0.5rem;
+}
+
+.attachment__meta dt {
+  color: var(--muted);
+}
+
+.attachment__meta dd {
+  margin: 0;
+  color: var(--accent);
+}
+
+/* Story #46 — Systemprotokoll */
+.syslog {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0.5rem 0.75rem;
+  background: #05070a;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 0.8rem;
+  display: grid;
+  gap: 0.15rem;
+  max-height: 22rem;
+  overflow-y: auto;
+}
+
+.syslog__row {
+  display: grid;
+  grid-template-columns: 7.5rem 6.5rem 1fr;
+  gap: 0.75rem;
+  padding: 0.15rem 0.25rem;
+}
+
+.syslog__time {
+  color: var(--muted);
+}
+
+.syslog__cat {
+  color: var(--accent);
+}
+
+.syslog__row--window {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.syslog__row--window .syslog__time {
+  color: var(--danger);
+}
+
+@media (max-width: 560px) {
+  .syslog__row {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0.35rem 0.25rem;
+  }
+}
+
+/* Story #47 — Relevanz digitaler Spuren */
+.relevance--hoch {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.relevance--mittel {
+  border-color: #eab308;
+  color: #eab308;
+}
+
+.relevance--niedrig {
+  border-color: var(--muted);
+  color: var(--muted);
+}
+
+.chat__bubble .insight-rating {
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+}
+
+/* Story #48 — Teamleitung vergibt Rollen */
+.team-assign {
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+}
+
+.team-assign__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.team-assign__row {
+  display: grid;
+  grid-template-columns: 1fr minmax(180px, 240px);
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Story #49 — Team-Chat */
+.team-chat__form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+/* Story #50 — Aufgabenliste */
+.task-group {
+  margin-top: 1.25rem;
+}
+
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.task {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.5rem 0.75rem;
+}
+
+.task__check {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1 1 14rem;
+  cursor: pointer;
+}
+
+.task__check input {
+  accent-color: var(--accent);
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.task__meta {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.task--done .task__text {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.task button,
+.task select {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+}
+
+/* Story #52 — Anklage prüfen */
+.review {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.review__item {
+  border-left: 3px solid var(--muted);
+  padding: 0.35rem 0.75rem;
+  line-height: 1.45;
+}
+
+.review__level {
+  display: inline-block;
+  min-width: 5.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.review__item--fehler {
+  border-left-color: var(--danger);
+}
+
+.review__item--fehler .review__level {
+  color: var(--danger);
+}
+
+.review__item--warnung {
+  border-left-color: #eab308;
+}
+
+.review__item--warnung .review__level {
+  color: #eab308;
+}
+
+/* Story #54 — Punktzahl */
+.score {
+  display: grid;
+  gap: 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1rem;
+}
+
+.score__points {
+  margin: 0;
+  font-size: 2rem;
+  color: var(--accent);
+}
+
+.score__max {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.score__rank {
+  margin: 0;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.score__bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.score__bar span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.score__breakdown {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.85rem;
+}
+
+.score__breakdown li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.score__plus {
+  color: var(--accent);
+}
+
+.score__minus {
+  color: var(--danger);
 }
