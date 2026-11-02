@@ -38,12 +38,29 @@ Ungeplant ebenfalls auf `master`: #28 Auflösung, #29 Anmelden, #30 Fallübersic
 
 | Eintrag | Grund |
 |---|---|
-| #31 Rolle wählen und Folge-Stories (PR #128 – #151) | Change-Requests offen: Spieler-ID kommt vom Client, zweites Team-System neben #22 |
+| #31 Rolle wählen und Folge-Stories (PR #128 – #149, #151) | Change-Requests offen: Spieler-ID kommt vom Client, zweiter Join-Pfad neben #22 |
 | Texte mit korrekten Umlauten (PR #115) | veraltet, Konflikte mit `master`; neu aufsetzen statt flicken |
-| | Merge Conflicts |
+| Viele gleichzeitige PRs | Merge-Konflikte, vor allem in `CaseLoaderPage.tsx` |
 
-## 5. Anpassungen am Product Backlog
+## 4. Anpassungen am Product Backlog
 
-- Merge conflicts lösen
+- PR-Stack #128 – #149, #151: Change-Requests bearbeiten und Konflikte in den abhängigen PRs auflösen.
+- PR #115 neu auf aktuellem `master` aufsetzen.
 
 **Protokoll:** Chime Dongkar (SM)
+
+## 5. Nachtrag zum Stand nach der Präsentation
+
+Die Tabellen oben halten den Stand während des Abschlussreviews fest. Noch am 02.11.2026 wurden
+PR #128 – #149 und #151 gemergt, PR #150 war bereits durch #155 ersetzt, und die Umlaute aus PR #115
+kamen ebenfalls auf `master`. Diese Stories zählen nicht nachträglich zur Velocity von Sprint 3.
+
+Offener technischer Punkt: Die Route `/case/:code` nutzt weiterhin `room:join`, `/fall/:code` dagegen
+`team:join` ([App.tsx](../apps/web/src/App.tsx)). Die zwei Join-Pfade sollten als eigener
+Backlog-Eintrag zusammengeführt werden. Die Rollenvergabe selbst prüft der Server: nur Teammitglieder
+dürfen wählen, und nur die Teamleitung darf Rollen anderer ändern
+([team.ts](../apps/server/src/engine/team.ts)).
+
+**Story #77 Rangliste:** nach der Präsentation umgesetzt, von Loris approved und am 02.11.2026 mit
+[PR #191](https://github.com/lars11093/Live-Crime-Investigation/pull/191) gemergt. Sie stand nicht
+im Sprint-3-Backlog und zählt nicht zur Velocity.

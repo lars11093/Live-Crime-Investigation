@@ -104,14 +104,14 @@ blender --background --factory-startup --python tools/blender/build_flur_4og.py 
 ## 4. Scrum-Setup
 
 - **Rollen:** Product Owner (Anforderungen/Abnahme), Scrum Master (Prozess), 5 Entwickler (auch Product-Owner/SM sind gleichzeitig Devs im Team).
-- **Sprints:** 2 Wochen, insgesamt 4 Sprints à 2 Wochen + 1 Woche Puffer/Präsentation (9 Wochen total).
+- **Ursprüngliche Sprint-Planung:** 4 Sprints à 2 Wochen + 1 Woche Puffer/Präsentation. Tatsächliche Sprintzeiträume und Ergebnisse stehen im [Portfolio](docs/portfolio.md).
 - **Ritual:** Daily Standup (kurz), Sprint Planning zu Sprintbeginn, Sprint Review + Retro zu Sprintende.
 - **Backlog-Werkzeug:** GitHub Issues + Projects Board (Spalten: `Backlog`, `Sprint Backlog`, `In Progress`, `Review`, `Done`).
 - **Definition of Done:** sechs Kriterien, verbindlich ab Sprint 1 — siehe [docs/definition-of-done.md](docs/definition-of-done.md).
 - **Portfolio (Pflichtnachweis):** [docs/portfolio.md](docs/portfolio.md) — Team, Vision, Backlog, Sprint-Blöcke.
-- **Sprint 1 (aktuell):** Ziel, Schätzung und Sprint Backlog in [docs/sprint-1-planning.md](docs/sprint-1-planning.md), Refinement-Protokoll in [docs/refinement-sprint-1.md](docs/refinement-sprint-1.md).
+- **Sprintdokumentation:** Planning, Review und Retrospektive der Sprints 0–3 sind im [Portfolio](docs/portfolio.md) zusammengefasst; die Detailprotokolle liegen in [docs/](docs/).
 
-### Sprint-Plan (Vorschlag)
+### Ursprünglicher Sprint-Plan (Vorschlag)
 
 | Sprint | Ziel | Kern-Stories |
 |---|---|---|
@@ -122,17 +122,17 @@ blender --background --factory-startup --python tools/blender/build_flur_4og.py 
 | **4** | Live-Events + Accusation + Polish | Zeitgesteuerte Events, Timeline im Lead-Dashboard, Accusation-Flow + Scoring, Dark-Terminal-UI-Politur |
 | **Puffer** | Bugfixing, Präsentation üben | Testlauf mit 5 echten Spielern, Präsentations-Skript, Deploy |
 
-### Beispiel-Backlog (Product Backlog Items → als GitHub Issues anlegen)
+### Beispiel-Backlog (ursprüngliche Ideen, kein aktueller Status)
 
-- [ ] Als Lead Detective will ich einen Case-Code generieren können, damit mein Team joinen kann.
-- [ ] Als Spieler will ich per Code + Rollenwahl einer laufenden Session beitreten.
-- [ ] Als Forensiker will ich einen Fingerabdruck-Scan mit Ladeanimation und Match-Prozent sehen.
-- [ ] Als Cyber Investigator will ich gelöschte Nachrichten "wiederherstellen" können.
-- [ ] Als Field Detective will ich CCTV-Kameras durchklicken und Beweise entdecken können.
-- [ ] Als Lead Detective will ich Beweise auf dem Evidence Board verschieben und verbinden können, synchron für alle sichtbar.
-- [ ] Als Team wollen wir zeitgesteuerte Live-Events erhalten (neue Beweise, geänderte Aussagen).
-- [ ] Als Lead Detective will ich am Ende eine Accusation abgeben (Täter, Motiv, Waffe, Zeit) und ein Score-Ergebnis sehen.
-- [ ] Als Entwickler will ich, dass CI bei jedem PR Lint/Typecheck/Test ausführt.
+- Als Lead Detective will ich einen Case-Code generieren können, damit mein Team joinen kann.
+- Als Spieler will ich per Code + Rollenwahl einer laufenden Session beitreten.
+- Als Forensiker will ich einen Fingerabdruck-Scan mit Ladeanimation und Match-Prozent sehen.
+- Als Cyber Investigator will ich gelöschte Nachrichten "wiederherstellen" können.
+- Als Field Detective will ich CCTV-Kameras durchklicken und Beweise entdecken können.
+- Als Lead Detective will ich Beweise auf dem Evidence Board verschieben und verbinden können, synchron für alle sichtbar.
+- Als Team wollen wir zeitgesteuerte Live-Events erhalten (neue Beweise, geänderte Aussagen).
+- Als Lead Detective will ich am Ende eine Accusation abgeben (Täter, Motiv, Waffe, Zeit) und ein Score-Ergebnis sehen.
+- Als Entwickler will ich, dass CI bei jedem PR Lint/Typecheck/Test ausführt.
 
 ## 5. Features & Workflows (User Flows)
 

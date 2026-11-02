@@ -2,9 +2,10 @@
 
 Modul 426 · AP 25b · Auftrag 4.2 · **07.09.2026 – 21.09.2026**
 
-> **Vor der Abgabe ausfüllen:** Überall, wo `_<Name>_` steht, gehört das Teammitglied hin, das
-> den Task **gezogen** hat. Die Schätzwerte unten sind das Ergebnis unserer Planning-Poker-Runde;
-> weicht eure Runde ab, gilt eure Zahl — dann auch das Label im Board anpassen.
+> **Rückblick:** Die ursprüngliche Task-Ziehung wurde nicht protokolliert. Die Namen in den Tabellen
+> sind deshalb aus den PRs und der Git-Historie rekonstruiert und belegen die Umsetzung, nicht den
+> Zeitpunkt der Zuteilung. Die vier Stories #1, #2, #6 und #7 wurden auf Feature-Branches von Lars
+> umgesetzt (PRs #97–#100); die Story-Point-Schätzungen stammen aus dem dokumentierten Planning Poker.
 
 ## 1. Sprintziel
 
@@ -58,58 +59,49 @@ Ein Task ist so gross, dass eine Person ihn an einem Modultag schafft. Tasks sin
 die Story bleibt gemeinsame Verantwortung des Teams.
 
 ### #1 Startseite anzeigen — 1 SP
-| Task | Gezogen von |
+| Task | Umsetzung laut PR-Historie |
 |---|---|
-| Route `/` mit Titel, Kurzbeschreibung und Button `Fall starten` aufsetzen | `_<Name>_` |
-| Dark-Terminal-Grundstil (Farben, Schrift, Layout-Container) als wiederverwendbares CSS | `_<Name>_` |
-| Catch-all-Route: unbekannte Adresse führt zurück auf `/` | `_<Name>_` |
+| Route `/` mit Titel, Kurzbeschreibung und Button `Fall starten` aufsetzen | Lars (PR #97) |
+| Dark-Terminal-Grundstil (Farben, Schrift, Layout-Container) als wiederverwendbares CSS | Lars (PR #97) |
+| Catch-all-Route: unbekannte Adresse führt zurück auf `/` | Lars (PR #97) |
 
 ### #2 Fall laden — 3 SP
-| Task | Gezogen von |
+| Task | Umsetzung laut PR-Historie |
 |---|---|
-| Case-JSON-Grundgerüst in `apps/server/src/data/` + Typ in `packages/shared` | `_<Name>_` |
-| Server-Endpunkt, der den Fall ausliefert | `_<Name>_` |
-| Client: Laden, Ladezustand, Fehlermeldung mit `Erneut versuchen` | `_<Name>_` |
+| Case-JSON-Grundgerüst in `apps/server/src/data/` + Typ in `packages/shared` | Lars (PR #98) |
+| Server-Endpunkt, der den Fall ausliefert | Lars (PR #98) |
+| Client: Laden, Ladezustand, Fehlermeldung mit `Erneut versuchen` | Lars (PR #98) |
 
 ### #6 Fall-Briefing lesen — 2 SP
-| Task | Gezogen von |
+| Task | Umsetzung laut PR-Historie |
 |---|---|
-| Briefing-Ansicht (Titel, Tatzeit, Tatort, Text) aus den Falldaten | `_<Name>_` |
-| Erneut-Öffnen und Schliessen ohne Verlust des Spielstands | `_<Name>_` |
+| Briefing-Ansicht (Titel, Tatzeit, Tatort, Text) aus den Falldaten | Lars (PR #99) |
+| Erneut-Öffnen und Schliessen ohne Verlust des Spielstands | Lars (PR #99) |
 
 ### #7 Tatort als Szene sehen — 5 SP
-| Task | Gezogen von |
+| Task | Umsetzung laut PR-Historie |
 |---|---|
-| Szenen-Datenstruktur im Case-JSON (Name, Bildpfad) | `_<Name>_` |
-| Vollflächige Szenen-Ansicht, geprüft bei 1280×720 und 1920×1080 | `_<Name>_` |
-| Overlay mit Szenenname + `Zurück` | `_<Name>_` |
-| Platzhalter, wenn das Szenenbild nicht lädt | `_<Name>_` |
+| Szenen-Datenstruktur im Case-JSON (Name, Bildpfad) | Lars (PR #100) |
+| Vollflächige Szenen-Ansicht, geprüft bei 1280×720 und 1920×1080 | Lars (PR #100) |
+| Overlay mit Szenenname + `Zurück` | Lars (PR #100) |
+| Platzhalter, wenn das Szenenbild nicht lädt | Lars (PR #100) |
 
-> Bildmaterial: **keine echten Assets committen** (Copyright/Repo-Grösse) — Platzhalterpfad mit
-> `TODO`-Kommentar reicht für die MVP-Phase.
+> Für die MVP-Phase war ein Platzhalterpfad vorgesehen. Echtes Bildmaterial sollte aus Copyright-
+> und Repo-Grössen-Gründen nicht eingecheckt werden.
 
 ## 4. Erstes Daily Scrum
 
-10 Minuten, im Stehen, Scrum Master hält die Timebox. Keine Problemlösung im Daily — Hindernisse
-werden benannt und danach gelöst. Blocker bekommen im Board das Label `Impediment`.
-
-| Person | Woran arbeite ich als Erstes? | Was brauche ich von jemandem? | Was blockiert mich? |
-|---|---|---|---|
-| `_<Name>_` | | | |
-| `_<Name>_` | | | |
-| `_<Name>_` | | | |
-| `_<Name>_` | | | |
-| `_<Name>_` | | | |
+Das Daily war mit zehn Minuten angesetzt. Einzelne Antworten, Abhängigkeiten oder Blocker wurden
+nicht protokolliert; deshalb lässt sich die Tabelle nicht nachträglich zuverlässig ausfüllen.
 
 **Bekannte Abhängigkeit im Sprint:** #6 und #7 brauchen die Falldaten aus #2. Wer #6 oder #7
 zieht, beginnt mit dem, was ohne echte Daten geht (Layout, Platzhalterzustände), und zieht die
 Daten nach, sobald der Endpunkt steht.
 
-## 5. Nächste Schritte ausserhalb des Codes
+## 5. Abschlussstand der damaligen Planung
 
-- [ ] **Board-Zugriff für nicolai.fricker@tbz.ch** — Frist ist heute. Einladung unter
-      `Settings → Collaborators` im Repo `lars11093/Live-Crime-Investigation`.
-      *Das muss der Repo-Besitzer selbst auslösen.*
-- [ ] Namen in den Task-Tabellen oben eintragen (gezogen, nicht verteilt)
-- [ ] Story Points im Projects-Board ins Feld `Story Points` übernehmen (im Repo sind sie als
-      Label `SP: n` gesetzt)
+| Punkt | Nachweisbarer Stand |
+|---|---|
+| Board-Zugriff für den Stakeholder | Einladungsstatus liegt ausserhalb des Repos und ist hier nicht belegbar. |
+| Zuteilung einzelner Tasks | Im Planning nicht protokolliert; die PR-Historie belegt die Umsetzung durch Lars, nicht die ursprüngliche Task-Ziehung. |
+| Story Points im Projects-Board | Die Werte stehen in dieser Datei. Der damalige Inhalt des externen Board-Felds ist im Repo nicht gespeichert. |

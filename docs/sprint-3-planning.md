@@ -29,7 +29,7 @@ fertig machen geht vor neu anfangen.
 |---|---|---|---|
 | #26 Beweise an die Anklage anhängen | 2 | #123 bzw. #125 | ✅ |
 | #27 Anklage absenden und danach sperren | 2 | #124 bzw. #125 | ✅ |
-| #53 Bestätigung vor dem endgültigen Absenden | 1 | #150 | ✅ |
+| #53 Bestätigung vor dem endgültigen Absenden | 1 | #150 (ersetzt durch #155) | ✅ |
 | **Retro-Massnahme:** Mergen aufteilen — bis 11:30 hat jede Person mindestens einen PR einer anderen Person mit dem eigenen Konto reviewt und gemergt | – | – | ✅ |
 | **Task:** Stabilisieren | – | – | ✅ |
 | **Task:** Demo vorbereiten | – | – | ✅ |
@@ -53,40 +53,31 @@ Bleiben im Product Backlog, ohne Sprint-Zuordnung, im Board gekennzeichnet:
 | #30 – #52, #54 (PR #127 – #149, #151) | verschoben | Ohne Planung eröffnet, nicht ready, nicht reviewt. Bauen aufeinander auf. |
 | Fixes #114 (Windows) und #115 (Umlaute) | verschoben | Kein Story-Eintrag; #115 ist veraltet |
 
-## 5. Sprint Backlog — Tasks
+## 5. Tatsächliche Zuständigkeiten und Abschluss
 
-Ein Task ist so gross, dass eine Person ihn heute schafft. **Reviewer und Merger sind nie die Autorin
-oder der Autor des PRs** und wechseln, damit die Retro-Massnahme erfüllt wird.
+Die Planning-Unterlagen halten die Task-Ziehungen nicht fest. Die folgenden Zuständigkeiten sind
+aus den Sprint-PRs rekonstruiert; sie zeigen die Umsetzung und Reviews, nicht die ursprüngliche
+Aufteilung im Planning.
 
-### #26 Beweise an die Anklage anhängen
-| Task | Gezogen von |
-|---|---|
-| Code-Review des PRs gegen die Akzeptanzkriterien | `_<n>_` |
-| Lokal durchklicken (DoD 5), CI grün, mergen, Board auf `Done` | `_<n>_` |
+| Story | Autor/in | Review | Merge |
+|---|---|---|---|
+| #26 Beweise an die Anklage anhängen (PR #123) | Elina | Lars | Lars, 28.10. |
+| #27 Anklage absenden und danach sperren (PR #124) | Elina | Lars | Lars, 28.10. |
+| #53 Bestätigung vor dem Absenden (PR #155; ersetzte #150) | Lars | Loris | Lars, 01.11. |
 
-### #27 Anklage absenden und danach sperren
-| Task | Gezogen von |
-|---|---|
-| Code-Review des PRs gegen die Akzeptanzkriterien | `_<n>_` |
-| Rebase auf `master` nach #26, durchklicken, mergen, Board auf `Done` | `_<n>_` |
-
-### #53 Bestätigung vor dem endgültigen Absenden
-| Task | Gezogen von |
-|---|---|
-| PR #150 aus der Kette lösen: nur #53 auf `master` nach #27 | `_<n>_` |
-| Code-Review, durchklicken («Abbrechen» und «Absenden»), mergen, Board auf `Done` | `_<n>_` |
-
-### Pflicht-Tasks
-| Task | Inhalt | Gezogen von |
-|---|---|---|
-| Stabilisieren | `master` einmal komplett durchklicken, Fehler beheben; #25 nachträglich reviewen | `_<n>_` |
-| Demo vorbereiten | Reihenfolge der gezeigten Stories und wer zeigt festlegen, Demo einmal durchspielen | `_<n>_` |
-| Präsentation vorbereiten | Teil 1 Produkt, Teil 2 Technik, Teil 3 Scrum-Erfahrungen, Sprecher festlegen | `_<n>_` |
+Die Pflicht-Tasks Stabilisieren, Demo vorbereiten und Präsentation vorbereiten sind im Sprint Backlog
+aufgeführt. Die Produktdemo fand laut [Sprint-Review 3](Sprint-Review-3.md) statt; einzelne
+Zuständigkeiten für diese drei Tasks und die Verteilung der Sprechanteile sind nicht protokolliert.
 
 ## 6. Daily Scrum (26.10.2026)
 
-10 Minuten, im Stehen. Scrum Master hält die Timebox. Hindernisse werden benannt, nicht gelöst, und
-bekommen im Board das Label `Impediment`. **Fester Punkt:** auf welcher Story baut meine Arbeit auf?
-- [ ] Das Produkt läuft auf `master` im Zustand vom 2. November, die Demo ist einmal durchgespielt
-- [ ] Portfolio: Abschnitte 5 und 8 ausgefüllt, Block Sprint 3 mit Sprintziel und Stories, KI-Nachweis geprüft
-- [ ] Alle wissen, wer am 2. November was zeigt und sagt
+Das Daily war mit zehn Minuten angesetzt. Einzelne Antworten, Abhängigkeiten oder Blocker sind in
+diesen Unterlagen nicht protokolliert.
+
+## 7. Abschlussstand (02.11.2026)
+
+| Kriterium | Stand |
+|---|---|
+| Produkt auf master durchgespielt | Im Sprint-Review 3 als erreicht dokumentiert. |
+| Sprint-3-Block und KI-Nachweis im Portfolio | Ergänzt. Alle fünf Personen haben ihre Sprint-3-Reflexion im Portfolio eingetragen. |
+| Wer was in der Präsentation zeigt und sagt | Die Produktdemo fand statt; die Sprechanteile sind nicht protokolliert. |
