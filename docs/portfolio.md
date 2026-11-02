@@ -35,8 +35,6 @@ Actions. Details in [../README.md](../README.md).
 
 ## 2. Product Vision
 
-**Vision Board:** `_<Link oder Screenshot einfügen>_`
-
 **Visionssatz:** Für Menschen, die Krimis und Rätsel mögen, ist CASE//ZERO ein digitales
 Ermittlungsspiel, das einen echten Fall statt eines Quiz bietet — weil man Beweise selbst findet,
 kombiniert und seine Anklage begründen muss.
@@ -45,9 +43,7 @@ kombiniert und seine Anklage begründen muss.
 
 - 80 % der Testspieler verstehen das Spiel ohne mündliche Erklärung.
 - Ein Fall ist in 45–60 Minuten durchspielbar.
-- Modul 426 erfolgreich abschliessen *(Projektziel, bewusst getrennt von den Produktzielen geführt)*.
-
-**Story Map (Auftrag 3.1):** `_<Link zum Foto einfügen>_`
+- Modul 426 erfolgreich abschliessen
 
 ---
 
