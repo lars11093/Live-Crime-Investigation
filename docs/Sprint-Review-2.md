@@ -28,7 +28,7 @@ Tatort → Stellen untersuchen. Gezeigt hat jeweils, wer die Story gebaut hat.
 | #2 Fall laden | 3 | #98 | ✅ | ✅ gemergt, Review Loris |
 | #6 Fall-Briefing lesen | 2 | #99 | ✅ | ✅ gemergt, Review Loris |
 | #7 Tatort als Szene sehen | 5 | #100 | ✅ | ✅ gemergt, Review Loris |
-| #8 Stellen im Tatort untersuchen | ___ | #102 | ✅ | ✅ gemergt, Review Loris |
+| #8 Stellen im Tatort untersuchen | nicht geschätzt | #102 | ✅ | ✅ gemergt, Review Loris |
 
 **Velocity Sprint 2:** 11 SP (geplant 11 SP + #8)
 
@@ -68,8 +68,7 @@ Diese Stories zählen nicht zur Velocity des Sprintziels, sind aber nach DoD fer
 | Von | Feedback | Massnahme im Backlog |
 |---|---|---|
 | Team | Texte zeigen ae/oe/ue statt ä/ö/ü – wirkt unfertig | Neue Story «Texte mit korrekten Umlauten» |
-| N. Fricker | ___ | ___ |
-| ___ | ___ | ___ |
+| N. Fricker | Keine separate Rückmeldung dokumentiert | — |
 
 ## 5. Anpassungen am Product Backlog
 

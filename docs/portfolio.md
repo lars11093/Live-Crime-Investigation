@@ -240,7 +240,9 @@ Stabilisieren, Demo und Präsentation vorbereiten. Planung: [sprint-3-planning.m
 
 **Velocity: 5 SP.** #150 (Elinas Version von #53) wurde geschlossen, weil #155 dieselbe Story
 schon abdeckt. Der Weg bis zur abgeschickten Anklage ist auf `master`, CI ist grün (Typecheck,
-Lint, 210 Tests, Build). Ob das Sprintziel erreicht ist, zeigt das Durchspielen in der Demo am 02.11.
+Lint, 210 Tests, Build). **Sprintziel erreicht:** In der Abschlusspräsentation am 02.11.2026 wurde
+CASE//ZERO auf `master` von der Startseite bis zur abgeschickten Anklage durchgespielt
+([Sprint-Review-3.md](Sprint-Review-3.md)).
 
 **Zusätzlich ungeplant gemergt:** #28 Auflösung (PR #125), #29 Anmelden (PR #126), #30 Fallübersicht
 (PR #127), Windows-Fix für `npm run dev` (PR #114), der 3D-Tatort #156 – #159 (PR #160 – #163) und
@@ -257,6 +259,11 @@ erst am 01./02.11. in einem Zug gemergt, mit vielen Merge-Konflikten in `CaseLoa
 Merger. Approve-Reviews in Sprint 3 kamen nur von Lars und Loris; alle Feature-PRs hat Lars gemergt.
 Chime und Loris haben nur ihre eigenen Doku-PRs gemergt (#121, #122, #152 – #154).
 
+**Nach der Präsentation:** Elinas PR-Stack #128 – #149, #151 (Rollenwahl #31 und Folge-Stories),
+die Umlaute (#115) und die Rangliste #77 ([PR #191](https://github.com/lars11093/Live-Crime-Investigation/pull/191),
+Review Loris) wurden noch am 02.11. gemergt. Sie zählen nicht zur Velocity von Sprint 3. Details im
+[Review-Nachtrag](Sprint-Review-3.md#5-nachtrag-zum-stand-nach-der-präsentation).
+
 ---
 
 ## 5. KI-Nutzungsnachweis
@@ -270,6 +277,7 @@ Chime und Loris haben nur ihre eigenen Doku-PRs gemergt (#121, #122, #152 – #1
 | Story #18 Forensik-Terminal umsetzen und vor dem PR prüfen (Claude Code) | 7 | PR #120 |
 | Review-Protokoll, Retro-Dokumentation Sprint 2 und Refinement-Vorschläge Sprint 3 vorbereiten (Claude) | 8 | [Sprint-Review-2.md](Sprint-Review-2.md), [retrospective-sprint-2.md](retrospective-sprint-2.md), [refinement-sprint-3.md](refinement-sprint-3.md) |
 | PRs von Sprint 3 mit `master` zusammenführen, Konflikte lösen, Portfolio Sprint 3 nachtragen (Claude Code) | 9 | PR #160 – #182, dieser Abschnitt |
+| Story #77 Rangliste umsetzen, Sprint-Dokumente auf den Endstand bringen (Codex, Claude Code) | 9 | [PR #191](https://github.com/lars11093/Live-Crime-Investigation/pull/191), Sprint-Review 3 Abschnitt 5 |
 
 **Modultag 4 — übernommen:**
 
@@ -329,8 +337,8 @@ User Stories nach INVEST (Tag 3), Akzeptanzkriterien hinterfragen (Tag 4), Code-
 
 ## 6. Persönliche Kurzreflexion
 
-Jede Person trägt ihre eigene Zeile selbst ein. Fragen: siehe *Persönliche Kurzreflexion* in
-Reflexion und Lernjournal.
+Jede Person hat ihre Zeile selbst eingetragen (Fragen: *Persönliche Kurzreflexion* in Reflexion
+und Lernjournal).
 
 ### Sprint 1
 

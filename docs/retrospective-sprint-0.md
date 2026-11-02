@@ -3,10 +3,9 @@
 Modul 426 · AP 25b · Modultag 4, 07.09.2026 · Timebox 12 Minuten · Moderation: Scrum Master
 Methode: Starfish (Keep / More / Less / Start / Stop), verdichtet auf die drei Pflichtfragen.
 
-> **Vor der Abgabe prüfen:** Die Punkte unten sind aus dem nachvollziehbaren Stand von Sprint 0
-> abgeleitet (Commit-Historie, Board, Repo-Zustand). Ergänzt in der Retro, was nur ihr wisst —
-> und streicht, was ihr anders erlebt habt. Die *Verbesserungsmassnahme* ist der Teil, der
-> zwingend von euch getragen sein muss.
+> **Nachvollziehbarkeit:** Diese Rückschau rekonstruiert den dokumentierten Stand von Sprint 0 aus
+> Commit-Historie, Board und Repo-Zustand. Persönliche Eindrücke, die damals nicht protokolliert
+> wurden, sind nicht nachträglich ergänzt.
 
 ## 1. Was hat funktioniert?
 

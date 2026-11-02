@@ -19,7 +19,7 @@ nach DoD done sind. Damit haben wir nach Sprint 2 zum ersten Mal eine echte Velo
 | Eintrag | Entscheid |
 |---|---|
 | #1, #2, #6, #7 (aus Sprint 1 zurück) | Akzeptanzkriterien unverändert gültig, Schätzung bleibt. Wieder zuoberst im Backlog. |
-| Feedback aus dem Review | `_<neue/geänderte Einträge aus dem Feedback — oder «kein Feedback erhalten»>_` |
+| Feedback aus dem Review | Im Sprint-1-Review wurde kein Feedback dokumentiert. |
 | #5 Team-Code (3 SP) | Bleibt nächster Kandidat, aber **nicht in Sprint 2** — Richtwert trägt keine neue Story. |
 | #8 – #17 (PRs #101 – #111 ohne Planung eröffnet) | Nicht in Sprint 2. Kommen am 19.10. ins Refinement, erst dann Schätzung und Entscheid, ob die offenen PRs weiterverwendet oder geschlossen werden. |
 
@@ -60,14 +60,20 @@ wer später merged, muss eventuell Konflikte auflösen.
 Ein Task ist so gross, dass eine Person ihn an einem Modultag schafft. **Reviewer ist nie der
 Autor des PRs.** Jeder PR bekommt zwei Reviews — so kommen alle auf mindestens zwei.
 
+Einzelne Tasks und ihre ursprünglichen Besitzer wurden im Sprint-2-Planning nicht festgehalten.
+Die tatsächlich gemergten Stories, PRs und Reviews sind im [Sprint-Review 2](Sprint-Review-2.md)
+dokumentiert.
+
 ## 6. Daily Scrum (28.09.2026)
 
 10 Minuten, im Stehen. Scrum Master hält die Timebox. Keine Problemlösung im Daily — Hindernisse
 werden benannt und bekommen im Board das Label `Impediment`. **Fester Punkt: offene PRs.**
 
-## 7. Fertig, wenn (Auftrag 6.2)
+## 7. Abschlussstand der Planung
 
-- [ ] Sprintziel steht im Board und im Portfolio
-- [ ] Stories des Sprint Backlogs sind geschätzt und Sprint 2 zugeordnet
-- [ ] Retro-Massnahme steht als Eintrag im Sprint Backlog
-- [ ] Erste Tasks sind gezogen, die Arbeit hat begonnen
+| Kriterium | Stand |
+|---|---|
+| Sprintziel im Portfolio | Dokumentiert. Ob es zusätzlich im externen Board stand, ist im Repo nicht belegbar. |
+| Stories geschätzt und Sprint 2 zugeordnet | #1, #2, #6 und #7 waren mit 11 SP eingeplant; #8 kam ungeschätzt dazu. |
+| Retro-Massnahme im Sprint Backlog | In Abschnitt 4 als eigener Eintrag dokumentiert. |
+| Erste Tasks gezogen | Einzelne Task-Ziehungen wurden nicht protokolliert. |
