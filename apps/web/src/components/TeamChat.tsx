@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { TeamChatMessage } from "@case-zero/shared";
 import { formatChatTime } from "../lib/teamChat";
-import { ROLE_LABEL } from "../lib/roles";
+import { ROLE_LABEL } from "../lib/player";
 
 interface Props {
   /** Eigene Verbindungs-ID (#22) — daran erkennt der Chat die eigenen Nachrichten. */
