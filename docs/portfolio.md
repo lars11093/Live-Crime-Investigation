@@ -3,10 +3,6 @@
 Modul 426 · Software mit agilen Methoden entwickeln · AP 25b · N. Fricker
 Repository: <https://github.com/lars11093/Live-Crime-Investigation> · Board: GitHub Issues + Projects
 
-> **Vor der Abgabe ausfüllen** :
-> Namen und Rollen in Abschnitt 1 · Link/Screenshot Vision Board in Abschnitt 2 ·
-> Link zum Foto der Story Map in Abschnitt 2 · Personen in den Task-Tabellen in
-> [sprint-1-planning.md](sprint-1-planning.md) · Feedback im Review Sprint 1
 ---
 
 ## 1. Team und Produkt
@@ -257,10 +253,6 @@ Befragung, Hinweise, UV-Lampe, Schwierigkeit, Konten). Damit haben wir gegen uns
 aus dem Planning gearbeitet: «fertig machen geht vor neu anfangen». Die meisten dieser PRs wurden
 erst am 01./02.11. in einem Zug gemergt, mit vielen Merge-Konflikten in `CaseLoaderPage.tsx`.
 
-**Nicht gemergt:** Elinas Stack PR #128 – #151 (Rollenwahl #31 und Folge-Stories). Offene
-Change-Requests: die Spieler-ID kommt vom Client, und #128 baut ein zweites Team-System neben dem
-Socket-Team aus #22. Ebenso #115 (Umlaute), der veraltet ist und Konflikte hat.
-
 **Review (02.11.2026, Abschlusspräsentation)** — Protokoll in [Sprint-Review-3.md](Sprint-Review-3.md).
 
 **Retrospective Sprint 3** — in [retrospective-sprint-3.md](retrospective-sprint-3.md).
@@ -333,16 +325,6 @@ Review durch Loris, lokal durchgeklickt, Issue #18 von Hand geschlossen.
 | Review- und Retro-Protokoll im selben Aufbau wie Sprint 1 führen | Die Sprints sind direkt vergleichbar. |
 | Anklage-Weg (#26 → #27 → #28) für Sprint 3 nach oben, #70 entlang PIN-Entsperren splitten | Ein präsentierbares Spiel braucht ein Ende; ganz #70 passt nicht in einen Vormittag. |
 
-**Modultag 8 — verworfen:**
-
-| Vorschlag | Warum verworfen |
-|---|---|
-| Massnahme «jede Person reviewt bis 11:30 einen PR» | Das Team hat in der Retro «Mergen aufteilen» gewählt. Übernommen wurde nur, es konkret und prüfbar zu formulieren. |
-| #25 (direkt auf `master` gepusht) mit einem Revert rückgängig machen | Mitten im Review zu riskant. Stattdessen nachträgliches Review im Task «Stabilisieren». |
-
-*Selbst entschieden:* Starfish-Inhalte, Massnahme und Reihenfolge des Backlogs kommen vom Team;
-Schätzungen werden im Planning Poker bestätigt.
-
 **KI-Reviewpunkte (Scrum-Experiment, mindestens zwei):** Product Vision prüfen (Tag 2),
 User Stories nach INVEST (Tag 3), Akzeptanzkriterien hinterfragen (Tag 4), Code-Review vor dem PR
 (#18, Sprint 2) — **vier durchgeführt, es fehlt keiner.**
@@ -376,12 +358,10 @@ Reflexion und Lernjournal.
 
 ### Sprint 3
 
-Spalte «Mein Beitrag» aus GitHub vorausgefüllt; Erkenntnis und Lernschritt trägt jede Person selbst ein.
-
 | Person | Mein Beitrag | Wichtigste Erkenntnis | Nächster Lernschritt |
 |---|---|---|---|
 | Lars | #53 (PR #155), 3D-Tatort #156 – #159 (PR #160 – #163), Windows-Fix (PR #114); Reviews und Merges der Sprint-3-PRs | Wenn viele PRs am Schluss zusammenkommen, kostet das Mergen mehr als das Bauen | Früher und laufend mergen, Reviews an andere abgeben |
 | Loris | 19 Feature-PRs (#164 – #182), Reviews von #114, #155, #160 – #163 | | |
 | Elina | #26, #27 (PR #123, #124), dazu #28, #29, #30 (PR #125 – #127) | | |
 | Nehir | | | |
-| Chime | Scrum Master: Sprint-3-Planning (PR #154), Retro Sprint 2 (PR #152) | | |
+| Chime | Scrum Master: Sprint-3-Planning, Retro Sprint 2 | Vieles hat sich geändert, manches wurde übersehen oder nicht beachtet | Mit einer Struktur planen und organisieren |
