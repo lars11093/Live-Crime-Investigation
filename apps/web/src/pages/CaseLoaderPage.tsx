@@ -1,7 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { PublicCase } from "@case-zero/shared";
-import { combineEvidence, fetchCase, findRoom, recoverDeleted, submitAccusation, unlockDevice } from "../lib/api";
+import { saveTeam } from "../lib/savedTeam";
+import {
+  combineEvidence,
+  createRoom,
+  fetchCase,
+  findRoom,
+  recoverDeleted,
+  submitAccusation,
+  unlockDevice,
+} from "../lib/api";
 import { loadUnlocked, saveUnlocked, withUnlocked } from "../lib/unlockedDevices";
 import { loadRecovered, saveRecovered, withRecovered } from "../lib/recoveredMessages";
 import { RecoverDeleted } from "../components/RecoverDeleted";
@@ -123,6 +132,16 @@ export function CaseLoaderPage() {
     saveProgress(browserStorage(), code, progress, account?.id);
   }, [code, progress, account]);
 
+  // Team merken (#57), sobald man mit Namen beigetreten ist.
+  useEffect(() => {
+    if (team.name) saveTeam(browserStorage(), { code, name: team.name });
+  }, [code, team.name]);
+
+  // Das Team zieht in einen neuen Fall um (#57): mitgehen, mit demselben Namen.
+  // Neu laden statt nur navigieren, damit der Fortschritt zum neuen Code passt.
+  useEffect(() => {
+    if (team.movedTo) window.location.assign(`/fall/${team.movedTo.code}`);
+  }, [team.movedTo]);
   useEffect(() => {
     saveInterrogations(browserStorage(), code, interrogations);
   }, [code, interrogations]);
@@ -678,6 +697,24 @@ export function CaseLoaderPage() {
           error={team.error}
           onJoin={team.joinAs}
         />
+        {team.name && (
+          <div className="case-status__actions" style={{ marginTop: "0.75rem" }}>
+            {/* #57 — neuer Fall, gleiches Team: niemand muss neu beitreten. */}
+            <button
+              onClick={async () => {
+                try {
+                  const room = await createRoom(caseData.id);
+                  const result = await team.moveTo(room.code);
+                  if (!result.ok) window.alert(result.error);
+                } catch {
+                  window.alert("Server nicht erreichbar. Bitte erneut versuchen.");
+                }
+              }}
+            >
+              Neuer Fall mit diesem Team
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );

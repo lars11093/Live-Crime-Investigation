@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import type { CollectedEvidence, Player, SharedFinding, ShareResult } from "@case-zero/shared";
+import type {
+  CollectedEvidence,
+  Player,
+  SharedFinding,
+  ShareResult,
+  TeamJoinResult,
+} from "@case-zero/shared";
 import { socket } from "./socket";
 import type { ProgressStorage } from "./caseProgress";
 
@@ -70,6 +76,11 @@ function sessionStore(): ProgressStorage {
   return { getItem: () => null, setItem: () => {} };
 }
 
+/** Den Namen fuer eine Session vormerken, damit dort automatisch beigetreten wird (#57). */
+export function rememberName(roomCode: string, name: string): void {
+  saveName(sessionStore(), roomCode, name);
+}
+
 /**
  * Story #22 — das Team einer Session, live vom Server.
  *
@@ -84,6 +95,8 @@ export function useTeam(roomCode: string) {
   const [error, setError] = useState<string | null>(null);
   // Mit dem Team geteilte Funde (#23), live vom Server.
   const [findings, setFindings] = useState<SharedFinding[]>([]);
+  // Das Team ist in eine neue Session umgezogen (#57).
+  const [movedTo, setMovedTo] = useState<{ code: string; by: string } | null>(null);
 
   useEffect(() => {
     function onUpdate(list: Player[]) {
@@ -91,6 +104,11 @@ export function useTeam(roomCode: string) {
     }
     function onFindings(list: SharedFinding[]) {
       setFindings(list);
+    }
+    function onMoved(target: { code: string; by: string }) {
+      // Mit demselben Namen in der neuen Session weitermachen (#57).
+      if (name) rememberName(target.code, name);
+      setMovedTo(target);
     }
     function join() {
       if (!name) return;
@@ -106,11 +124,13 @@ export function useTeam(roomCode: string) {
 
     socket.on("team:update", onUpdate);
     socket.on("team:findings", onFindings);
+    socket.on("team:moved", onMoved);
     socket.on("connect", join);
     if (socket.connected) join();
     return () => {
       socket.off("team:update", onUpdate);
       socket.off("team:findings", onFindings);
+      socket.off("team:moved", onMoved);
       socket.off("connect", join);
     };
   }, [roomCode, name]);
@@ -146,5 +166,18 @@ export function useTeam(roomCode: string) {
     [roomCode]
   );
 
-  return { name, players, myId, error, joinAs, findings, share };
+  /** Nimmt das Team in die neue Session mit (#57). */
+  const moveTo = useCallback(
+    (newCode: string) =>
+      new Promise<TeamJoinResult>((resolve, reject) => {
+        socket
+          .timeout(5000)
+          .emit("team:next", { code: roomCode, newCode }, (err, result) =>
+            err ? reject(err) : resolve(result)
+          );
+      }),
+    [roomCode]
+  );
+
+  return { name, players, myId, error, joinAs, findings, share, movedTo, moveTo };
 }
