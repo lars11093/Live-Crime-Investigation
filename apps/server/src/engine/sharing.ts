@@ -19,7 +19,7 @@ export function collectableIds(caseDef: CaseDefinition): Set<string> {
 }
 
 /** Nur die Felder, die ein Beweis hat — alles andere aus dem Client fällt weg. */
-function clean(evidence: CollectedEvidence): CollectedEvidence {
+export function clean(evidence: CollectedEvidence): CollectedEvidence {
   return {
     id: String(evidence.id),
     label: String(evidence.label),

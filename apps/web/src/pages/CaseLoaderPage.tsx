@@ -45,6 +45,7 @@ import { DeviceFiles } from "../components/DeviceFiles";
 import { TeamPanel } from "../components/TeamPanel";
 import { shareMessage, useTeam } from "../lib/team";
 import { SharedFindings } from "../components/SharedFindings";
+import { TeamDiscoveries } from "../components/TeamDiscoveries";
 import { ShareNoteButton, SharedNotesList } from "../components/SharedNotes";
 import { ProgressPanel } from "../components/ProgressPanel";
 import { HintPanel } from "../components/HintPanel";
@@ -411,6 +412,8 @@ export function CaseLoaderPage() {
           collectedIds={collected.map((e) => e.id)}
           onCollect={(evidence) => {
             setProgress((prev) => ({ ...prev, collected: collectEvidence(prev.collected, evidence) }));
+            // Live ans Team (#75).
+            team.reportFound(evidence);
             setSceneLog((prev) =>
               appendSceneLog(prev, {
                 at: new Date().toISOString(),
@@ -509,16 +512,13 @@ export function CaseLoaderPage() {
               }))
             }
             collectedIds={collected.map((e) => e.id)}
-            onSecure={(message) =>
-              setProgress((prev) => ({
-                ...prev,
-                collected: collectEvidence(
-                  prev.collected,
-                  // Ausgelesene Metadaten (#45) kommen mit in die Akte.
-                  messageToEvidence(device, message, prev.metadataReadIds.includes(message.id))
-                ),
-              }))
-            }
+            onSecure={(message) => {
+              // Ausgelesene Metadaten (#45) kommen mit in die Akte.
+              const evidence = messageToEvidence(device, message, progress.metadataReadIds.includes(message.id));
+              setProgress((prev) => ({ ...prev, collected: collectEvidence(prev.collected, evidence) }));
+              // Live ans Team (#75).
+              team.reportFound(evidence);
+            }}
             onShowFiles={device.files?.length ? () => setDeviceTab("dateien") : undefined}
             relevance={progress.relevance}
             onRelevance={(messageId, level) =>
@@ -771,6 +771,16 @@ export function CaseLoaderPage() {
               </div>
               <div style={{ marginTop: "1rem" }}>
                 <SharedFindings findings={team.findings} myId={team.myId} />
+              </div>
+              <div style={{ marginTop: "1rem" }}>
+                <TeamDiscoveries
+                  discoveries={team.discoveries}
+                  myId={team.myId}
+                  collectedIds={collected.map((e) => e.id)}
+                  onTake={(evidence) =>
+                    setProgress((prev) => ({ ...prev, collected: collectEvidence(prev.collected, evidence) }))
+                  }
+                />
               </div>
               <div style={{ marginTop: "1rem" }}>
                 <InvestigationBoard

@@ -339,6 +339,19 @@ export interface SharedFinding {
   sharedById: string;
 }
 
+/**
+ * Ein Fund, den jemand im Team gerade eingesammelt hat (#75). Kommt ohne
+ * Klick auf "Teilen" bei allen an — so sieht man, was parallel gefunden wird.
+ */
+export interface TeamDiscovery {
+  evidence: CollectedEvidence;
+  /** Wer ihn zuerst eingesammelt hat. */
+  foundBy: string;
+  foundById: string;
+  /** ISO-Zeitpunkt, vom Server gesetzt. */
+  foundAt: string;
+}
+
 /** Eine mit dem Team geteilte Notiz zu einem Beweis (#64). */
 export interface SharedNote {
   evidenceId: string;
@@ -674,6 +687,8 @@ export interface ClientToServerEvents {
   ) => void;
   /** Story #23 — einen Fund aus der eigenen Akte mit dem Team teilen. */
   "evidence:share": (payload: { code: string; evidence: CollectedEvidence }, cb: (result: ShareResult) => void) => void;
+  /** Story #75 — eigenen Fund live ans Team melden (passiert beim Einsammeln automatisch). */
+  "evidence:found": (payload: { code: string; evidence: CollectedEvidence }, cb: (result: ShareResult) => void) => void;
   /** Story #64 — eine eigene Notiz zu einem Beweis mit dem Team teilen. */
   "note:share": (
     payload: { code: string; evidenceId: string; evidenceLabel: string; text: string },
@@ -714,6 +729,8 @@ export interface ServerToClientEvents {
   "team:update": (team: TeamState) => void;
   /** Story #23 — alle geteilten Funde, nach jedem Teilen an alle und beim Beitritt an den Neuen. */
   "team:findings": (findings: SharedFinding[]) => void;
+  /** Alle live gemeldeten Funde des Teams (#75), der älteste zuerst. */
+  "team:discoveries": (discoveries: TeamDiscovery[]) => void;
   /** Story #64 — alle geteilten Notizen, nach jedem Teilen an alle und beim Beitritt an den Neuen. */
   "team:notes": (notes: SharedNote[]) => void;
   /** Story #57 — das Team zieht in eine neue Session um; `by` hat sie angelegt. */
