@@ -7,7 +7,9 @@ Modul 426 · AP 25b · 02.11.2026 · Abschlusspräsentation mit Produktdemo (run
 > Am 2. November spielt eine Person CASE//ZERO auf `master` vom Start bis zur abgeschickten
 > Anklage durch, und wir zeigen dazu nachvollziehbar, wie wir mit Scrum gearbeitet haben.
 
-**Erreicht?** _nach der Demo eintragen_
+**Erreicht?** Auf `master` ist der ganze Weg bis zur abgeschickten Anklage gemergt, CI ist grün
+(Typecheck, Lint, 210 Tests, Build). Bestätigt wird es durch das Durchspielen in der Demo.
+_Nach der Demo: ✅ erreicht / ❌ nicht erreicht ankreuzen._
 
 ## 2. Gezeigtes Inkrement
 
@@ -31,10 +33,17 @@ Ungeplant ebenfalls auf `master`: #28 Auflösung, #29 Anmelden, #30 Fallübersic
 
 ## 4. Feedback
 
-_nach der Präsentation eintragen_
+> Entwurf — nach der Präsentation durch das echte Feedback ersetzen.
+
+| Von | Feedback | Wohin |
+|---|---|---|
+| _Lehrperson / Publikum_ | _eintragen_ | _Backlog / verworfen_ |
 
 ## 5. Anpassungen am Product Backlog
 
-_nach der Präsentation eintragen_
+- #31 Rolle wählen: PR #128 nach den Change-Requests umbauen (Spieler-ID vom Server, Socket-Team aus #22 verwenden), dann die Folge-Stories neu stapeln.
+- #150 schliessen bzw. geschlossen lassen: Duplikat von #53 (#155).
+- «Texte mit korrekten Umlauten»: PR #115 auf dem aktuellen `master` neu aufsetzen.
+- #59 Mehrere Tatorte: prüfen, ob durch #159 erledigt.
 
-**Protokoll:** _Name_
+**Protokoll:** Chime Dongkar (SM)
