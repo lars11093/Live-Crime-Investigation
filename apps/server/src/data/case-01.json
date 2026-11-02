@@ -1,6 +1,7 @@
 {
   "id": "case-01",
   "title": "The Office at 22:30",
+  "objective": "Finde heraus, wer Thomas Vogt am Freitagabend in Buero 4.12 getoetet hat. Sichere genug Beweise, um die Anklage gegen eine der drei verdaechtigen Personen zu begruenden.",
   "briefing": {
     "timeOfCrime": "Freitag, 12.09., zwischen 22:30 und 22:50 Uhr",
     "location": "Buero 4.12, Hardturmstrasse 61, Zuerich",

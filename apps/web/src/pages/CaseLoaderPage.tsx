@@ -77,6 +77,7 @@ import { addTag, allTags, filterByTag, loadTags, removeTag, saveTags } from "../
 import { EvidenceTagEditor } from "../components/EvidenceTagEditor";
 import { EvidenceTagFilter } from "../components/EvidenceTagFilter";
 import { loadExcluded, saveExcluded, toggleExcluded } from "../lib/excludedSuspects";
+import { ObjectiveDock } from "../components/ObjectiveDock";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View =
@@ -318,571 +319,581 @@ export function CaseLoaderPage() {
     );
   }
 
-  const { caseData, difficulty } = state;
+  // Das Ermittlungsziel haengt an jeder Ansicht des geladenen Falls (#32).
+  return (
+    <>
+      {renderView(state)}
+      <ObjectiveDock objective={state.caseData.objective} />
+    </>
+  );
 
-  if (showIntro && caseData.intro && view === "briefing") {
-    return (
-      <CaseIntro
-        title={caseData.title}
-        intro={caseData.intro}
-        onDone={() => {
-          markIntroSeen(browserStorage(), code);
-          setShowIntro(false);
-        }}
-      />
-    );
-  }
+  function renderView({ caseData, difficulty }: Extract<LoadState, { status: "ready" }>) {
 
-  const scenes = caseData.scenes;
-  const scene = scenes.find((s) => s.id === sceneId) ?? scenes.at(0);
+    if (showIntro && caseData.intro && view === "briefing") {
+      return (
+        <CaseIntro
+          title={caseData.title}
+          intro={caseData.intro}
+          onDone={() => {
+            markIntroSeen(browserStorage(), code);
+            setShowIntro(false);
+          }}
+        />
+      );
+    }
 
-  function openScene(id: string) {
-    setSceneId(id);
-    setView("tatort");
-  }
+    const scenes = caseData.scenes;
+    const scene = scenes.find((s) => s.id === sceneId) ?? scenes.at(0);
 
-  if (view === "tatort" && scene) {
-    return (
-      <SceneView
-        // Neuer Tatort = frischer Zustand (offener Dialog, Bild-/Modellfehler).
-        key={scene.id}
-        scene={scene}
-        scenes={scenes}
-        onSwitchScene={setSceneId}
-        investigatedIds={investigatedIds}
-        onInvestigate={(id) => {
-          setProgress((prev) =>
-            prev.investigatedIds.includes(id)
-              ? prev
-              : { ...prev, investigatedIds: [...prev.investigatedIds, id] }
-          );
-          const hotspot = scene.hotspots.find((h) => h.id === id);
-          if (hotspot) {
+    function openScene(id: string) {
+      setSceneId(id);
+      setView("tatort");
+    }
+
+    if (view === "tatort" && scene) {
+      return (
+        <SceneView
+          // Neuer Tatort = frischer Zustand (offener Dialog, Bild-/Modellfehler).
+          key={scene.id}
+          scene={scene}
+          scenes={scenes}
+          onSwitchScene={setSceneId}
+          investigatedIds={investigatedIds}
+          onInvestigate={(id) => {
+            setProgress((prev) =>
+              prev.investigatedIds.includes(id)
+                ? prev
+                : { ...prev, investigatedIds: [...prev.investigatedIds, id] }
+            );
+            const hotspot = scene.hotspots.find((h) => h.id === id);
+            if (hotspot) {
+              setSceneLog((prev) =>
+                appendSceneLog(prev, {
+                  at: new Date().toISOString(),
+                  action: "untersucht",
+                  sceneName: scene.name,
+                  hotspotLabel: hotspot.label,
+                })
+              );
+            }
+          }}
+          collectedIds={collected.map((e) => e.id)}
+          onCollect={(evidence) => {
+            setProgress((prev) => ({ ...prev, collected: collectEvidence(prev.collected, evidence) }));
             setSceneLog((prev) =>
               appendSceneLog(prev, {
                 at: new Date().toISOString(),
-                action: "untersucht",
-                sceneName: scene.name,
-                hotspotLabel: hotspot.label,
+                action: "eingesammelt",
+                sceneName: evidence.foundAt.sceneName,
+                hotspotLabel: evidence.foundAt.hotspotLabel,
+                evidenceLabel: evidence.label,
               })
             );
-          }
-        }}
-        collectedIds={collected.map((e) => e.id)}
-        onCollect={(evidence) => {
-          setProgress((prev) => ({ ...prev, collected: collectEvidence(prev.collected, evidence) }));
-          setSceneLog((prev) =>
-            appendSceneLog(prev, {
-              at: new Date().toISOString(),
-              action: "eingesammelt",
-              sceneName: evidence.foundAt.sceneName,
-              hotspotLabel: evidence.foundAt.hotspotLabel,
-              evidenceLabel: evidence.label,
-            })
-          );
-        }}
-        onBack={() => setView("akte")}
-        difficulty={difficulty}
-      />
-    );
-  }
+          }}
+          onBack={() => setView("akte")}
+          difficulty={difficulty}
+        />
+      );
+    }
 
-  const devices = withUnlocked(caseData.devices ?? [], unlocked).map((d) => withRecovered(d, recovered));
+    const devices = withUnlocked(caseData.devices ?? [], unlocked).map((d) => withRecovered(d, recovered));
 
-  if (view === "forensik") {
-    // Gesperrte Geraete kommen ohne Nachrichten vom Server und lassen sich im
-    // Terminal nicht oeffnen — hier landet nur ein auswertbares Geraet.
-    const device = devices.find((d) => d.id === openDeviceId && !d.locked);
-    if (!device) {
+    if (view === "forensik") {
+      // Gesperrte Geraete kommen ohne Nachrichten vom Server und lassen sich im
+      // Terminal nicht oeffnen — hier landet nur ein auswertbares Geraet.
+      const device = devices.find((d) => d.id === openDeviceId && !d.locked);
+      if (!device) {
+        return (
+          <main className="app-shell">
+            <ForensicsTerminal
+              devices={devices}
+              onOpen={(id) => {
+                setDeviceTab("chat");
+                setOpenDeviceId(id);
+              }}
+              onUnlock={async (deviceId, secret) => {
+                try {
+                  const result = await unlockDevice(caseData.id, deviceId, secret);
+                  if (result.ok) {
+                    setUnlocked((prev) => ({ ...prev, [deviceId]: result.device }));
+                    return null;
+                  }
+                  return result.reason === "wrong-secret"
+                    ? "PIN bzw. Passwort falsch. Das Geraet bleibt gesperrt."
+                    : "Dieses Geraet laesst sich nicht entsperren.";
+                } catch {
+                  return "Server nicht erreichbar. Bitte erneut versuchen.";
+                }
+              }}
+              onBack={() => setView("akte")}
+            />
+            <div style={{ marginTop: "1rem" }}>
+              <ForensicReportPanel
+                report={buildForensicReport(devices, collected, markedMessageIds)}
+                onDownload={() => {
+                  const report = buildForensicReport(devices, collected, markedMessageIds);
+                  const text = forensicReportMarkdown(report, caseData.title, notes);
+                  const url = URL.createObjectURL(new Blob([text], { type: "text/markdown;charset=utf-8" }));
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.download = `forensik-report-${code}.md`;
+                  link.click();
+                  setTimeout(() => URL.revokeObjectURL(url), 0);
+                }}
+              />
+            </div>
+          </main>
+        );
+      }
+      if (deviceTab === "dateien") {
+        return (
+          <main className="app-shell">
+            <DeviceFiles
+              device={device}
+              onShowMessages={() => setDeviceTab("chat")}
+              onBack={() => setOpenDeviceId(null)}
+            />
+          </main>
+        );
+      }
       return (
         <main className="app-shell">
-          <ForensicsTerminal
-            devices={devices}
-            onOpen={(id) => {
-              setDeviceTab("chat");
-              setOpenDeviceId(id);
-            }}
-            onUnlock={async (deviceId, secret) => {
-              try {
-                const result = await unlockDevice(caseData.id, deviceId, secret);
-                if (result.ok) {
-                  setUnlocked((prev) => ({ ...prev, [deviceId]: result.device }));
+          <ChatHistory
+            device={device}
+            markedIds={markedMessageIds}
+            onToggleMessage={(messageId) =>
+              setProgress((prev) => ({
+                ...prev,
+                markedMessageIds: toggleMarkedMessage(prev.markedMessageIds, messageId),
+              }))
+            }
+            collectedIds={collected.map((e) => e.id)}
+            onSecure={(message) =>
+              setProgress((prev) => ({
+                ...prev,
+                collected: collectEvidence(prev.collected, messageToEvidence(device, message)),
+              }))
+            }
+            onShowFiles={device.files?.length ? () => setDeviceTab("dateien") : undefined}
+            onBack={() => setOpenDeviceId(null)}
+          />
+          <div style={{ marginTop: "1rem" }}>
+            <RecoverDeleted
+              deletedCount={device.deletedCount ?? 0}
+              onRecover={async () => {
+                try {
+                  const result = await recoverDeleted(caseData.id, device.id);
+                  if (!result.ok) return "Auf diesem Geraet laesst sich nichts wiederherstellen.";
+                  setRecovered((prev) => ({ ...prev, [device.id]: result.messages }));
                   return null;
+                } catch {
+                  return "Server nicht erreichbar. Bitte erneut versuchen.";
                 }
-                return result.reason === "wrong-secret"
-                  ? "PIN bzw. Passwort falsch. Das Geraet bleibt gesperrt."
-                  : "Dieses Geraet laesst sich nicht entsperren.";
+              }}
+            />
+          </div>
+          {/* #72 — Standortverlauf desselben Geraets, gegen die Tatzeit gelesen. */}
+          <div style={{ marginTop: "1rem" }}>
+            <DeviceLocations device={device} timeOfCrime={caseData.briefing?.timeOfCrime} />
+          </div>
+        </main>
+      );
+    }
+
+    if (view === "verdaechtige") {
+      const openSuspect = caseData.suspects.find((s) => s.id === openSuspectId);
+      return (
+        <main className="app-shell">
+          {openSuspect ? (
+            <SuspectProfile
+              suspect={openSuspect}
+              markedIndices={contradictions
+                .filter((c) => c.suspectId === openSuspect.id)
+                .map((c) => c.sentenceIndex)}
+              onToggleSentence={(sentenceIndex, text) =>
+                setProgress((prev) => ({
+                  ...prev,
+                  contradictions: toggleContradiction(prev.contradictions, {
+                    suspectId: openSuspect.id,
+                    suspectName: openSuspect.name,
+                    sentenceIndex,
+                    text,
+                  }),
+                }))
+              }
+              onBack={() => setOpenSuspectId(null)}
+            />
+          ) : null}
+          {openSuspect && (
+            <div style={{ marginTop: "1rem" }}>
+              <InterrogationPanel
+                key={openSuspect.id}
+                suspect={openSuspect}
+                asked={transcript(interrogations, openSuspect)}
+                open={openQuestions(interrogations, openSuspect)}
+                closedCount={closedQuestionIds(interrogations, openSuspect).size}
+                onAsk={(questionId) =>
+                  setInterrogations((prev) => askQuestion(prev, openSuspect, questionId))
+                }
+              />
+            </div>
+          )}
+          {!openSuspect && (
+            <>
+              <SuspectList
+                suspects={caseData.suspects}
+                onOpen={setOpenSuspectId}
+                onBack={() => setView("akte")}
+                selectedSuspectId={accusation.suspectId}
+                onSelectSuspect={(id) =>
+                  // Story #25 — die Auswahl liegt im Anklage-Entwurf und ueberlebt so ein Neuladen.
+                  setProgress((prev) => ({
+                    ...prev,
+                    accusation: chooseSuspect(prev.accusation, id),
+                  }))
+                }
+                selectionLocked={Boolean(accusation.receipt)}
+                excludedIds={excludedIds}
+                onToggleExcluded={(id) => setExcludedIds((prev) => toggleExcluded(prev, id))}
+              />
+              <div style={{ marginTop: "1rem" }}>
+                <ContradictionOverview contradictions={contradictions} />
+              </div>
+              <div style={{ marginTop: "1rem" }}>
+                <StatementTimeline suspects={caseData.suspects} onOpen={setOpenSuspectId} />
+              </div>
+            </>
+          )}
+        </main>
+      );
+    }
+
+    if (view === "beweise") {
+      const open = collected.find((e) => e.id === openEvidenceId);
+      // Ein Filter auf einen inzwischen geloeschten Tag zeigt wieder alles (#62).
+      const activeTag = tagFilter && allTags(tags).includes(tagFilter) ? tagFilter : null;
+      return (
+        <main className="app-shell">
+          {open ? (
+            <EvidenceDetail
+              evidence={open}
+              note={notes[open.id] ?? ""}
+              onSaveNote={(text) =>
+                setProgress((prev) => ({ ...prev, notes: setNote(prev.notes, open.id, text) }))
+              }
+              share={{
+                sharedBy: team.findings.find((f) => f.evidence.id === open.id)?.sharedBy ?? null,
+                joined: team.name !== "",
+                onShare: async () => shareMessage(await team.share(open)),
+              }}
+              onBack={() => setOpenEvidenceId(null)}
+            />
+          ) : null}
+          {open && (
+            <>
+            <ShareNoteButton
+              evidence={open}
+              note={notes[open.id] ?? ""}
+              joined={team.name !== ""}
+              onShare={async () => {
+                try {
+                  const result = await team.shareNote(open, notes[open.id] ?? "");
+                  if (result.ok) return "Notiz geteilt. Das ganze Team sieht sie jetzt.";
+                  if (result.reason === "not-in-team") return "Tritt zuerst dem Team bei.";
+                  return "Diese Notiz lässt sich nicht teilen.";
+                } catch {
+                  return "Server nicht erreichbar. Bitte erneut versuchen.";
+                }
+              }}
+            />
+            <div style={{ marginTop: "1rem" }}>
+              <EvidenceTagEditor
+                tags={tags[open.id] ?? []}
+                suggestions={allTags(tags)}
+                onAdd={(tag) => setTags((prev) => addTag(prev, open.id, tag))}
+                onRemove={(tag) => setTags((prev) => removeTag(prev, open.id, tag))}
+              />
+            </div>
+            </>
+          )}
+          {!open && (
+            <>
+              <EvidenceTagFilter
+                tags={allTags(tags)}
+                active={activeTag}
+                onChange={setTagFilter}
+              />
+              <EvidenceList
+                evidence={filterByTag(collected, tags, activeTag)}
+                notes={notes}
+                tags={tags}
+                onOpen={setOpenEvidenceId}
+                onBack={() => setView("akte")}
+              />
+              <div style={{ marginTop: "1rem" }}>
+                <CombinePanel
+                  evidence={collected}
+                  insights={insights}
+                  onCombine={async (a, b) => {
+                    try {
+                      const result = await combineEvidence(
+                        caseData.id,
+                        [a, b],
+                        insights.map((i) => i.id)
+                      );
+                      if (result.ok) {
+                        setProgress((prev) => ({
+                          ...prev,
+                          insights: [...prev.insights, result.insight],
+                        }));
+                        // Fuer die Tafel (#65): aus welchem Paar die Erkenntnis entstand.
+                        setBoard((prev) => recordInsight(prev, result.insight.id, a, b));
+                        return `Neue Erkenntnis: ${result.insight.title}`;
+                      }
+                      if (result.reason === "already-found") {
+                        return "Diese Verknuepfung hast du bereits aufgedeckt.";
+                      }
+                      if (result.reason === "invalid") {
+                        return "Waehle zwei verschiedene Beweise.";
+                      }
+                      return "Zwischen diesen beiden Beweisen ist kein Zusammenhang erkennbar.";
+                    } catch {
+                      return "Server nicht erreichbar. Bitte erneut versuchen.";
+                    }
+                  }}
+                />
+              </div>
+              <div style={{ marginTop: "1rem" }}>
+                <SharedFindings findings={team.findings} myId={team.myId} />
+              </div>
+              <div style={{ marginTop: "1rem" }}>
+                <InvestigationBoard
+                  evidence={collected}
+                  insights={insights}
+                  board={board}
+                  onToggleThread={(a, b) => setBoard((prev) => toggleOwnThread(prev, a, b))}
+                />
+                <SharedNotesList notes={team.notes} myId={team.myId} />
+              </div>
+            </>
+          )}
+        </main>
+      );
+    }
+
+    if (view === "team") {
+      return (
+        <main className="app-shell">
+          <TeamRoles
+            me={me}
+            team={team.name ? team.view : null}
+            error={teamError}
+            onChoose={(role) => changeRole(me.id, role)}
+            onBack={() => setView("akte")}
+          />
+        </main>
+      );
+    }
+
+    const myRole = team.players.find((p) => p.id === me.id)?.role ?? null;
+
+    if (view === "anklage") {
+      return (
+        <main className="app-shell">
+          <AccusationPanel
+            draft={accusation}
+            suspects={caseData.suspects}
+            evidence={collected}
+            onAttach={(id) =>
+              setProgress((prev) => ({ ...prev, accusation: attachEvidence(prev.accusation, id) }))
+            }
+            onDetach={(id) =>
+              setProgress((prev) => ({ ...prev, accusation: detachEvidence(prev.accusation, id) }))
+            }
+            onChooseSuspect={() => setView("verdaechtige")}
+            onSubmit={async () => {
+              if (!accusation.suspectId) return "Waehle zuerst einen Taeter.";
+              try {
+                const result = await submitAccusation(code, {
+                  suspectId: accusation.suspectId,
+                  evidenceIds: accusation.evidenceIds,
+                });
+                if (!result.ok && result.reason === "invalid") return result.message;
+                // Auch "schon abgesendet" sperrt: dann hat jemand im Team zuerst
+                // abgesendet, und dessen Anklage gilt (#27).
+                const { receipt } = result;
+                setProgress((prev) => ({
+                  ...prev,
+                  accusation: {
+                    suspectId: receipt.suspectId,
+                    evidenceIds: receipt.evidenceIds,
+                    receipt,
+                  },
+                }));
+                return null;
               } catch {
                 return "Server nicht erreichbar. Bitte erneut versuchen.";
               }
             }}
             onBack={() => setView("akte")}
           />
-          <div style={{ marginTop: "1rem" }}>
-            <ForensicReportPanel
-              report={buildForensicReport(devices, collected, markedMessageIds)}
-              onDownload={() => {
-                const report = buildForensicReport(devices, collected, markedMessageIds);
-                const text = forensicReportMarkdown(report, caseData.title, notes);
-                const url = URL.createObjectURL(new Blob([text], { type: "text/markdown;charset=utf-8" }));
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = `forensik-report-${code}.md`;
-                link.click();
-                setTimeout(() => URL.revokeObjectURL(url), 0);
-              }}
-            />
-          </div>
+          {/* #79 — erst nach der Aufloesung: den Fall noch einmal spielen. */}
+          {accusation.receipt && (
+            <div style={{ marginTop: "1rem" }}>
+              <RestartCase
+                withTeam={team.name !== ""}
+                onRestart={() =>
+                  restartCase(caseData.id, difficulty, {
+                    createRoom,
+                    moveTeam: team.name ? team.moveTo : undefined,
+                    skipIntro: (newCode) => markIntroSeen(browserStorage(), newCode),
+                    go: (newCode) => window.location.assign(`/fall/${newCode}`),
+                  })
+                }
+              />
+            </div>
+          )}
         </main>
       );
     }
-    if (deviceTab === "dateien") {
+
+    if (view === "briefing") {
       return (
         <main className="app-shell">
-          <DeviceFiles
-            device={device}
-            onShowMessages={() => setDeviceTab("chat")}
-            onBack={() => setOpenDeviceId(null)}
+          <CaseBriefingPanel
+            objective={caseData.objective}
+            title={caseData.title}
+            briefing={caseData.briefing}
+            onOpenScene={() => setView(scene ? "tatort" : "akte")}
+            onClose={() => setView("akte")}
           />
         </main>
       );
     }
+
     return (
       <main className="app-shell">
-        <ChatHistory
-          device={device}
-          markedIds={markedMessageIds}
-          onToggleMessage={(messageId) =>
-            setProgress((prev) => ({
-              ...prev,
-              markedMessageIds: toggleMarkedMessage(prev.markedMessageIds, messageId),
-            }))
-          }
-          collectedIds={collected.map((e) => e.id)}
-          onSecure={(message) =>
-            setProgress((prev) => ({
-              ...prev,
-              collected: collectEvidence(prev.collected, messageToEvidence(device, message)),
-            }))
-          }
-          onShowFiles={device.files?.length ? () => setDeviceTab("dateien") : undefined}
-          onBack={() => setOpenDeviceId(null)}
-        />
-        <div style={{ marginTop: "1rem" }}>
-          <RecoverDeleted
-            deletedCount={device.deletedCount ?? 0}
-            onRecover={async () => {
-              try {
-                const result = await recoverDeleted(caseData.id, device.id);
-                if (!result.ok) return "Auf diesem Geraet laesst sich nichts wiederherstellen.";
-                setRecovered((prev) => ({ ...prev, [device.id]: result.messages }));
-                return null;
-              } catch {
-                return "Server nicht erreichbar. Bitte erneut versuchen.";
+        <p className="terminal-title">
+          Fallakte geoeffnet
+          {myRole && <span className="role-badge">{ROLE_LABEL[myRole]}</span>}
+        </p>
+        <div className="panel case-status">
+          <h1 className="case-title">{caseData.title}</h1>
+          <p className="case-status__hint">
+            {caseData.suspects.length} Verdaechtige &middot;{" "}
+            {caseData.seedEvidence.length} erste Spuren
+          </p>
+          <p className="case-status__hint">
+            Team-Code zum Teilen: <strong className="case-code">{code}</strong>
+          </p>
+          <p className="case-status__hint">
+            Schwierigkeit: <strong>{DIFFICULTY_INFO[difficulty].label}</strong>
+          </p>
+          <p className="case-status__hint">
+            {account ? (
+              <>
+                Ermittelt als <strong>{account.name}</strong>
+              </>
+            ) : (
+              "Ermittelt als Gast — Fortschritt nur auf diesem Geraet"
+            )}
+          </p>
+          <p className="case-status__hint">
+            {collected.length} {collected.length === 1 ? "Beweis" : "Beweise"} gesichert
+          </p>
+          <div className="case-status__actions">
+            {scenes.length === 1 && (
+              <button className="button--primary" onClick={() => openScene(scenes[0].id)}>
+                Zum Tatort
+              </button>
+            )}
+            {scenes.length > 1 &&
+              scenes.map((s) => (
+                <button key={s.id} className="button--primary" onClick={() => openScene(s.id)}>
+                  Tatort: {s.name}
+                </button>
+              ))}
+            <button onClick={() => setView("beweise")}>
+              Beweisakte ({collected.length})
+            </button>
+            <button onClick={() => setView("verdaechtige")}>
+              Verdaechtige ({caseData.suspects.length})
+            </button>
+            {devices.length > 0 && (
+              <button onClick={() => setView("forensik")}>
+                Forensik-Terminal ({devices.length})
+              </button>
+            )}
+            <button onClick={() => setView("anklage")}>
+              Anklage ({accusation.evidenceIds.length}{" "}
+              {accusation.evidenceIds.length === 1 ? "Beweis" : "Beweise"})
+            </button>
+            <button onClick={() => setView("team")}>
+              {myRole ? `Team · ${ROLE_LABEL[myRole]}` : "Team · Rolle waehlen"}
+            </button>
+            <button onClick={() => setView("briefing")}>Briefing</button>
+            {caseData.intro && (
+              <button
+                onClick={() => {
+                  setShowIntro(true);
+                  setView("briefing");
+                }}
+              >
+                Intro ansehen
+              </button>
+            )}
+            {/* #63 — die eigene Akte als Markdown-Datei mitnehmen. */}
+            <button
+              onClick={() =>
+                downloadText(exportFileName(caseData.title, code), exportAkte(caseData, progress, code))
               }
-            }}
+            >
+              Akte exportieren
+            </button>
+          </div>
+        </div>
+        <div style={{ marginTop: "1rem" }}>
+          <ProgressPanel
+            summary={summarizeProgress(
+              // Alle Tatorte, die die Fallakte anbietet (#159).
+              scenes,
+              [...collected.map((e) => e.id), ...team.findings.map((f) => f.evidence.id)],
+              investigatedIds
+            )}
           />
         </div>
-        {/* #72 — Standortverlauf desselben Geraets, gegen die Tatzeit gelesen. */}
         <div style={{ marginTop: "1rem" }}>
-          <DeviceLocations device={device} timeOfCrime={caseData.briefing?.timeOfCrime} />
+          <HintPanel code={code} />
+          <SceneLogPanel log={sceneLog} />
         </div>
-      </main>
-    );
-  }
-
-  if (view === "verdaechtige") {
-    const openSuspect = caseData.suspects.find((s) => s.id === openSuspectId);
-    return (
-      <main className="app-shell">
-        {openSuspect ? (
-          <SuspectProfile
-            suspect={openSuspect}
-            markedIndices={contradictions
-              .filter((c) => c.suspectId === openSuspect.id)
-              .map((c) => c.sentenceIndex)}
-            onToggleSentence={(sentenceIndex, text) =>
-              setProgress((prev) => ({
-                ...prev,
-                contradictions: toggleContradiction(prev.contradictions, {
-                  suspectId: openSuspect.id,
-                  suspectName: openSuspect.name,
-                  sentenceIndex,
-                  text,
-                }),
-              }))
-            }
-            onBack={() => setOpenSuspectId(null)}
+        <div style={{ marginTop: "1rem" }}>
+          <TeamPanel
+            name={team.name}
+            players={team.players}
+            myId={team.myId}
+            error={team.error}
+            onJoin={team.joinAs}
           />
-        ) : null}
-        {openSuspect && (
-          <div style={{ marginTop: "1rem" }}>
-            <InterrogationPanel
-              key={openSuspect.id}
-              suspect={openSuspect}
-              asked={transcript(interrogations, openSuspect)}
-              open={openQuestions(interrogations, openSuspect)}
-              closedCount={closedQuestionIds(interrogations, openSuspect).size}
-              onAsk={(questionId) =>
-                setInterrogations((prev) => askQuestion(prev, openSuspect, questionId))
-              }
-            />
-          </div>
-        )}
-        {!openSuspect && (
-          <>
-            <SuspectList
-              suspects={caseData.suspects}
-              onOpen={setOpenSuspectId}
-              onBack={() => setView("akte")}
-              selectedSuspectId={accusation.suspectId}
-              onSelectSuspect={(id) =>
-                // Story #25 — die Auswahl liegt im Anklage-Entwurf und ueberlebt so ein Neuladen.
-                setProgress((prev) => ({
-                  ...prev,
-                  accusation: chooseSuspect(prev.accusation, id),
-                }))
-              }
-              selectionLocked={Boolean(accusation.receipt)}
-              excludedIds={excludedIds}
-              onToggleExcluded={(id) => setExcludedIds((prev) => toggleExcluded(prev, id))}
-            />
-            <div style={{ marginTop: "1rem" }}>
-              <ContradictionOverview contradictions={contradictions} />
-            </div>
-            <div style={{ marginTop: "1rem" }}>
-              <StatementTimeline suspects={caseData.suspects} onOpen={setOpenSuspectId} />
-            </div>
-          </>
-        )}
-      </main>
-    );
-  }
-
-  if (view === "beweise") {
-    const open = collected.find((e) => e.id === openEvidenceId);
-    // Ein Filter auf einen inzwischen geloeschten Tag zeigt wieder alles (#62).
-    const activeTag = tagFilter && allTags(tags).includes(tagFilter) ? tagFilter : null;
-    return (
-      <main className="app-shell">
-        {open ? (
-          <EvidenceDetail
-            evidence={open}
-            note={notes[open.id] ?? ""}
-            onSaveNote={(text) =>
-              setProgress((prev) => ({ ...prev, notes: setNote(prev.notes, open.id, text) }))
-            }
-            share={{
-              sharedBy: team.findings.find((f) => f.evidence.id === open.id)?.sharedBy ?? null,
-              joined: team.name !== "",
-              onShare: async () => shareMessage(await team.share(open)),
-            }}
-            onBack={() => setOpenEvidenceId(null)}
-          />
-        ) : null}
-        {open && (
-          <>
-          <ShareNoteButton
-            evidence={open}
-            note={notes[open.id] ?? ""}
-            joined={team.name !== ""}
-            onShare={async () => {
-              try {
-                const result = await team.shareNote(open, notes[open.id] ?? "");
-                if (result.ok) return "Notiz geteilt. Das ganze Team sieht sie jetzt.";
-                if (result.reason === "not-in-team") return "Tritt zuerst dem Team bei.";
-                return "Diese Notiz lässt sich nicht teilen.";
-              } catch {
-                return "Server nicht erreichbar. Bitte erneut versuchen.";
-              }
-            }}
-          />
-          <div style={{ marginTop: "1rem" }}>
-            <EvidenceTagEditor
-              tags={tags[open.id] ?? []}
-              suggestions={allTags(tags)}
-              onAdd={(tag) => setTags((prev) => addTag(prev, open.id, tag))}
-              onRemove={(tag) => setTags((prev) => removeTag(prev, open.id, tag))}
-            />
-          </div>
-          </>
-        )}
-        {!open && (
-          <>
-            <EvidenceTagFilter
-              tags={allTags(tags)}
-              active={activeTag}
-              onChange={setTagFilter}
-            />
-            <EvidenceList
-              evidence={filterByTag(collected, tags, activeTag)}
-              notes={notes}
-              tags={tags}
-              onOpen={setOpenEvidenceId}
-              onBack={() => setView("akte")}
-            />
-            <div style={{ marginTop: "1rem" }}>
-              <CombinePanel
-                evidence={collected}
-                insights={insights}
-                onCombine={async (a, b) => {
+          {team.name && (
+            <div className="case-status__actions" style={{ marginTop: "0.75rem" }}>
+              {/* #57 — neuer Fall, gleiches Team: niemand muss neu beitreten. */}
+              <button
+                onClick={async () => {
                   try {
-                    const result = await combineEvidence(
-                      state.caseData.id,
-                      [a, b],
-                      insights.map((i) => i.id)
-                    );
-                    if (result.ok) {
-                      setProgress((prev) => ({
-                        ...prev,
-                        insights: [...prev.insights, result.insight],
-                      }));
-                      // Fuer die Tafel (#65): aus welchem Paar die Erkenntnis entstand.
-                      setBoard((prev) => recordInsight(prev, result.insight.id, a, b));
-                      return `Neue Erkenntnis: ${result.insight.title}`;
-                    }
-                    if (result.reason === "already-found") {
-                      return "Diese Verknuepfung hast du bereits aufgedeckt.";
-                    }
-                    if (result.reason === "invalid") {
-                      return "Waehle zwei verschiedene Beweise.";
-                    }
-                    return "Zwischen diesen beiden Beweisen ist kein Zusammenhang erkennbar.";
+                    const room = await createRoom(caseData.id);
+                    const result = await team.moveTo(room.code);
+                    if (!result.ok) window.alert(result.error);
                   } catch {
-                    return "Server nicht erreichbar. Bitte erneut versuchen.";
+                    window.alert("Server nicht erreichbar. Bitte erneut versuchen.");
                   }
                 }}
-              />
-            </div>
-            <div style={{ marginTop: "1rem" }}>
-              <SharedFindings findings={team.findings} myId={team.myId} />
-            </div>
-            <div style={{ marginTop: "1rem" }}>
-              <InvestigationBoard
-                evidence={collected}
-                insights={insights}
-                board={board}
-                onToggleThread={(a, b) => setBoard((prev) => toggleOwnThread(prev, a, b))}
-              />
-              <SharedNotesList notes={team.notes} myId={team.myId} />
-            </div>
-          </>
-        )}
-      </main>
-    );
-  }
-
-  if (view === "team") {
-    return (
-      <main className="app-shell">
-        <TeamRoles
-          me={me}
-          team={team.name ? team.view : null}
-          error={teamError}
-          onChoose={(role) => changeRole(me.id, role)}
-          onBack={() => setView("akte")}
-        />
-      </main>
-    );
-  }
-
-  const myRole = team.players.find((p) => p.id === me.id)?.role ?? null;
-
-  if (view === "anklage") {
-    return (
-      <main className="app-shell">
-        <AccusationPanel
-          draft={accusation}
-          suspects={caseData.suspects}
-          evidence={collected}
-          onAttach={(id) =>
-            setProgress((prev) => ({ ...prev, accusation: attachEvidence(prev.accusation, id) }))
-          }
-          onDetach={(id) =>
-            setProgress((prev) => ({ ...prev, accusation: detachEvidence(prev.accusation, id) }))
-          }
-          onChooseSuspect={() => setView("verdaechtige")}
-          onSubmit={async () => {
-            if (!accusation.suspectId) return "Waehle zuerst einen Taeter.";
-            try {
-              const result = await submitAccusation(code, {
-                suspectId: accusation.suspectId,
-                evidenceIds: accusation.evidenceIds,
-              });
-              if (!result.ok && result.reason === "invalid") return result.message;
-              // Auch "schon abgesendet" sperrt: dann hat jemand im Team zuerst
-              // abgesendet, und dessen Anklage gilt (#27).
-              const { receipt } = result;
-              setProgress((prev) => ({
-                ...prev,
-                accusation: {
-                  suspectId: receipt.suspectId,
-                  evidenceIds: receipt.evidenceIds,
-                  receipt,
-                },
-              }));
-              return null;
-            } catch {
-              return "Server nicht erreichbar. Bitte erneut versuchen.";
-            }
-          }}
-          onBack={() => setView("akte")}
-        />
-        {/* #79 — erst nach der Aufloesung: den Fall noch einmal spielen. */}
-        {accusation.receipt && (
-          <div style={{ marginTop: "1rem" }}>
-            <RestartCase
-              withTeam={team.name !== ""}
-              onRestart={() =>
-                restartCase(caseData.id, difficulty, {
-                  createRoom,
-                  moveTeam: team.name ? team.moveTo : undefined,
-                  skipIntro: (newCode) => markIntroSeen(browserStorage(), newCode),
-                  go: (newCode) => window.location.assign(`/fall/${newCode}`),
-                })
-              }
-            />
-          </div>
-        )}
-      </main>
-    );
-  }
-
-  if (view === "briefing") {
-    return (
-      <main className="app-shell">
-        <CaseBriefingPanel
-          title={caseData.title}
-          briefing={caseData.briefing}
-          onOpenScene={() => setView(scene ? "tatort" : "akte")}
-          onClose={() => setView("akte")}
-        />
-      </main>
-    );
-  }
-
-  return (
-    <main className="app-shell">
-      <p className="terminal-title">
-        Fallakte geoeffnet
-        {myRole && <span className="role-badge">{ROLE_LABEL[myRole]}</span>}
-      </p>
-      <div className="panel case-status">
-        <h1 className="case-title">{caseData.title}</h1>
-        <p className="case-status__hint">
-          {caseData.suspects.length} Verdaechtige &middot;{" "}
-          {caseData.seedEvidence.length} erste Spuren
-        </p>
-        <p className="case-status__hint">
-          Team-Code zum Teilen: <strong className="case-code">{code}</strong>
-        </p>
-        <p className="case-status__hint">
-          Schwierigkeit: <strong>{DIFFICULTY_INFO[difficulty].label}</strong>
-        </p>
-        <p className="case-status__hint">
-          {account ? (
-            <>
-              Ermittelt als <strong>{account.name}</strong>
-            </>
-          ) : (
-            "Ermittelt als Gast — Fortschritt nur auf diesem Geraet"
-          )}
-        </p>
-        <p className="case-status__hint">
-          {collected.length} {collected.length === 1 ? "Beweis" : "Beweise"} gesichert
-        </p>
-        <div className="case-status__actions">
-          {scenes.length === 1 && (
-            <button className="button--primary" onClick={() => openScene(scenes[0].id)}>
-              Zum Tatort
-            </button>
-          )}
-          {scenes.length > 1 &&
-            scenes.map((s) => (
-              <button key={s.id} className="button--primary" onClick={() => openScene(s.id)}>
-                Tatort: {s.name}
+              >
+                Neuer Fall mit diesem Team
               </button>
-            ))}
-          <button onClick={() => setView("beweise")}>
-            Beweisakte ({collected.length})
-          </button>
-          <button onClick={() => setView("verdaechtige")}>
-            Verdaechtige ({caseData.suspects.length})
-          </button>
-          {devices.length > 0 && (
-            <button onClick={() => setView("forensik")}>
-              Forensik-Terminal ({devices.length})
-            </button>
+            </div>
           )}
-          <button onClick={() => setView("anklage")}>
-            Anklage ({accusation.evidenceIds.length}{" "}
-            {accusation.evidenceIds.length === 1 ? "Beweis" : "Beweise"})
-          </button>
-          <button onClick={() => setView("team")}>
-            {myRole ? `Team · ${ROLE_LABEL[myRole]}` : "Team · Rolle waehlen"}
-          </button>
-          <button onClick={() => setView("briefing")}>Briefing</button>
-          {caseData.intro && (
-            <button
-              onClick={() => {
-                setShowIntro(true);
-                setView("briefing");
-              }}
-            >
-              Intro ansehen
-            </button>
-          )}
-          {/* #63 — die eigene Akte als Markdown-Datei mitnehmen. */}
-          <button
-            onClick={() =>
-              downloadText(exportFileName(caseData.title, code), exportAkte(caseData, progress, code))
-            }
-          >
-            Akte exportieren
-          </button>
         </div>
-      </div>
-      <div style={{ marginTop: "1rem" }}>
-        <ProgressPanel
-          summary={summarizeProgress(
-            // Alle Tatorte, die die Fallakte anbietet (#159).
-            scenes,
-            [...collected.map((e) => e.id), ...team.findings.map((f) => f.evidence.id)],
-            investigatedIds
-          )}
-        />
-      </div>
-      <div style={{ marginTop: "1rem" }}>
-        <HintPanel code={code} />
-        <SceneLogPanel log={sceneLog} />
-      </div>
-      <div style={{ marginTop: "1rem" }}>
-        <TeamPanel
-          name={team.name}
-          players={team.players}
-          myId={team.myId}
-          error={team.error}
-          onJoin={team.joinAs}
-        />
-        {team.name && (
-          <div className="case-status__actions" style={{ marginTop: "0.75rem" }}>
-            {/* #57 — neuer Fall, gleiches Team: niemand muss neu beitreten. */}
-            <button
-              onClick={async () => {
-                try {
-                  const room = await createRoom(caseData.id);
-                  const result = await team.moveTo(room.code);
-                  if (!result.ok) window.alert(result.error);
-                } catch {
-                  window.alert("Server nicht erreichbar. Bitte erneut versuchen.");
-                }
-              }}
-            >
-              Neuer Fall mit diesem Team
-            </button>
-          </div>
-        )}
-      </div>
-    </main>
-  );
+      </main>
+    );
+  }
 }

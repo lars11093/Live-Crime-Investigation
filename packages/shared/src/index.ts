@@ -392,6 +392,11 @@ export interface CaseIntro {
 export interface CaseDefinition {
   id: string;
   title: string;
+  /**
+   * Was das Team herausfinden soll, in einem bis zwei Saetzen (#32). Jederzeit
+   * im Spiel einsehbar — deshalb nichts darin, was die Loesung verraet.
+   */
+  objective?: string;
   intro?: CaseIntro;
   briefing?: CaseBriefing;
   scenes: Scene[];
