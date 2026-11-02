@@ -50,6 +50,7 @@ import { ProgressPanel } from "../components/ProgressPanel";
 import { HintPanel } from "../components/HintPanel";
 import { summarizeProgress } from "../lib/progress";
 import { messageToEvidence } from "../lib/digitalTrace";
+import { markReviewed } from "../lib/forensics";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
@@ -424,9 +425,15 @@ export function CaseLoaderPage() {
           <main className="app-shell">
             <ForensicsTerminal
               devices={devices}
+              reviewedIds={progress.reviewedDeviceIds}
               onOpen={(id) => {
                 setDeviceTab("chat");
                 setOpenDeviceId(id);
+                // Oeffnen heisst auswerten (#44) — gesperrte lassen sich gar nicht oeffnen.
+                setProgress((prev) => ({
+                  ...prev,
+                  reviewedDeviceIds: markReviewed(prev.reviewedDeviceIds, id),
+                }));
               }}
               onUnlock={async (deviceId, secret) => {
                 try {
