@@ -359,5 +359,5 @@ Reflexion und Lernjournal.
 | Lars | #53 (PR #155), 3D-Tatort #156 – #159 (PR #160 – #163), Windows-Fix (PR #114); Reviews und Merges der Sprint-3-PRs | Wenn viele PRs am Schluss zusammenkommen, kostet das Mergen mehr als das Bauen | Früher und laufend mergen, Reviews an andere abgeben |
 | Loris | 19 Feature-PRs (#164 – #182), Reviews von #114, #155, #160 – #163 | | |
 | Elina | #26, #27 (PR #123, #124), dazu #28, #29, #30 (PR #125 – #127) | | |
-| Nehir | | | |
+| Nehir | Review und Durchlauf/ Szenarien testen | Merges sollten abgesprochen werden, damit keine conflicts entstehen | Strukturierter vorgehen |
 | Chime | Scrum Master: Sprint-3-Planning, Retro Sprint 2 | Vieles hat sich geändert, manches wurde übersehen oder nicht beachtet | Mit einer Struktur planen und organisieren |
