@@ -357,9 +357,23 @@ export type CombineResult =
   | { ok: true; insight: Insight }
   | { ok: false; reason: "no-connection" | "already-found" | "invalid" };
 
+/**
+ * Das Intro eines Falls (#58).
+ *
+ * `videoPath` ist wie die Bildpfade nur ein Pfad: echte Videos werden nicht
+ * committet (CLAUDE.md). Fehlt die Datei, spielt der Client die Textzeilen
+ * als Titelsequenz ab — das ist in der MVP-Phase der Normalfall.
+ */
+export interface CaseIntro {
+  videoPath?: string;
+  /** Zeilen der Titelsequenz, in Reihenfolge. */
+  lines: string[];
+}
+
 export interface CaseDefinition {
   id: string;
   title: string;
+  intro?: CaseIntro;
   briefing?: CaseBriefing;
   scenes: Scene[];
   combinations: Combination[];

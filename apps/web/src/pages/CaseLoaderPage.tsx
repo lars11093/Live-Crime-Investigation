@@ -47,6 +47,8 @@ import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import { introSeen, markIntroSeen } from "../lib/intro";
+import { CaseIntro } from "../components/CaseIntro";
 import { loadBoard, recordInsight, saveBoard, toggleOwnThread } from "../lib/board";
 import { InvestigationBoard } from "../components/InvestigationBoard";
 import {
@@ -122,6 +124,8 @@ export function CaseLoaderPage() {
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
   // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
   const [deviceTab, setDeviceTab] = useState<"chat" | "dateien">("chat");
+  // Intro (#58): einmal pro Team-Session vor dem ersten Briefing.
+  const [showIntro, setShowIntro] = useState(() => !introSeen(browserStorage(), code));
   // Wiederhergestellte, geloeschte Nachrichten pro Geraet (#71).
   const [recovered, setRecovered] = useState(() => loadRecovered(browserStorage(), code));
   // Tatortprotokoll (#61): was wann wo untersucht und eingesammelt wurde.
@@ -255,6 +259,19 @@ export function CaseLoaderPage() {
   }
 
   const { caseData } = state;
+
+  if (showIntro && caseData.intro && view === "briefing") {
+    return (
+      <CaseIntro
+        title={caseData.title}
+        intro={caseData.intro}
+        onDone={() => {
+          markIntroSeen(browserStorage(), code);
+          setShowIntro(false);
+        }}
+      />
+    );
+  }
 
   const scenes = caseData.scenes;
   const scene = scenes.find((s) => s.id === sceneId) ?? scenes.at(0);
@@ -703,6 +720,16 @@ export function CaseLoaderPage() {
             {accusation.evidenceIds.length === 1 ? "Beweis" : "Beweise"})
           </button>
           <button onClick={() => setView("briefing")}>Briefing</button>
+          {caseData.intro && (
+            <button
+              onClick={() => {
+                setShowIntro(true);
+                setView("briefing");
+              }}
+            >
+              Intro ansehen
+            </button>
+          )}
           {/* #63 — die eigene Akte als Markdown-Datei mitnehmen. */}
           <button
             onClick={() =>

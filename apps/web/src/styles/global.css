@@ -1956,3 +1956,63 @@ div.account-bar {
   color: var(--danger);
   font-size: 0.85rem;
 }
+
+/* Story #58 — Intro */
+.intro {
+  display: grid;
+  min-height: 100vh;
+  place-content: center;
+  gap: 2rem;
+  padding: 2rem;
+  background: #000;
+}
+
+.intro__sequence {
+  max-width: 40rem;
+}
+
+.intro__line {
+  margin: 0 0 1rem;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  animation: intro-fade 1.2s ease-out both;
+}
+
+.intro__line--head {
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.intro__title {
+  margin: 1.5rem 0 0;
+  font-size: 2.2rem;
+  animation: intro-fade 1.6s ease-out both;
+}
+
+.intro__video {
+  width: min(56rem, 90vw);
+}
+
+.intro__actions {
+  justify-content: center;
+}
+
+@keyframes intro-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro__line,
+  .intro__title {
+    animation: none;
+  }
+}

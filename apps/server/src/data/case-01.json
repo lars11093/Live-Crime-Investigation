@@ -166,6 +166,16 @@
       }
     }
   ],
+  "intro": {
+    "videoPath": "/video/case-01/intro.mp4",
+    "lines": [
+      "Zürich · Freitag, 12. September · 23:14 Uhr",
+      "Hardturmstrasse 61, vierter Stock. Die Reinigungskraft wählt den Notruf.",
+      "Thomas Vogt liegt leblos in seinem Büro 4.12.",
+      "Drei Badge-Zutritte nach 22:00 Uhr. Drei Verdächtige. Eine Nachricht: «Meet me at the office. 22:30.»",
+      "Euer Team hat die Akte. Findet heraus, was passiert ist."
+    ]
+  },
   "hints": [
     "Wer hat die Nachricht \"Meet me at the office. 22:30.\" bekommen, und wer war nach 22:00 noch im Haus? Lies das Briefing und den Chatverlauf auf Vogts Smartphone nebeneinander.",
     "Leg das Badge-Protokoll neben die Uhrzeiten in den Aussagen. Stimmen die Zeiten, zu denen jemand gegangen sein will?",

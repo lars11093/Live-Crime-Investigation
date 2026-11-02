@@ -63,6 +63,7 @@ Live-Crime-Investigation/
 
 **Datenfluss (Kernloop):**
 1. Lead Detective erstellt Case → Server generiert `CASE CODE` (z.B. `7K4-XP9`), wählt Täter-Szenario, hält Room-State im Speicher.
+   Umgesetzt (#58): Ein Fall kann ein `intro` haben (`{ videoPath?, lines }`). Der Client spielt es einmal pro Team-Session vor dem Briefing; fehlt das Video (in der MVP-Phase immer, keine Assets im Repo), läuft die Titelsequenz aus `lines`.
 2. Andere 4 Spieler joinen mit Code + wählen Rolle → Socket-Room `case:<code>` beitreten.
    Umgesetzt (#22): In der Fallakte tritt man mit Namen bei (`team:join`); der Server schickt nach jedem Beitritt und Verlassen die Teamliste an alle im Raum (`team:update`). Die Rollenwahl folgt mit #31.
    Umgesetzt (#23): Funde teilen per `evidence:share`; der Server prüft Teammitgliedschaft und Fall-Zugehörigkeit, hält die geteilten Funde im Raum und schickt sie als `team:findings` an alle (auch an später Beitretende).
