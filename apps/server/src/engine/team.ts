@@ -1,34 +1,52 @@
-import { ROLES, type Role, type TeamResult, type TeamView } from "@case-zero/shared";
+import { ROLES, type Player, type Role, type TeamJoinResult, type TeamResult, type TeamView } from "@case-zero/shared";
 import type { Room } from "./rooms.js";
 
+/** Laenger wird ein Name in der Teamliste unleserlich. */
+export const MAX_NAME_LENGTH = 24;
+
 /**
- * Team einer Session (Story #31): wer dabei ist und wer welche Rolle hat.
+ * Story #22 — ein Spieler tritt dem Team einer Session bei.
  *
- * Lebt im bestehenden `RoomState.players`. Die Spieler-ID kommt vom Client
- * (Konto-ID aus #29 oder eine Gast-ID) — ohne Login-Server ist das die
- * einzige stabile Identitaet, die wir haben.
+ * Der Name wird hier geprueft, nicht nur im Client: der Server ist die Quelle
+ * fuer das, was alle anderen in ihrer Teamliste sehen.
+ *
+ * Tritt dieselbe Verbindung erneut bei (z. B. nach einem Namenswechsel),
+ * wird ihr Eintrag ersetzt statt verdoppelt. Die Rolle bleibt dabei erhalten;
+ * neu Beitretende starten ohne Rolle (#31).
  */
-export function teamView(room: Room): TeamView {
-  return { players: room.state.players };
-}
-
-const NAME_MAX = 24;
-
-/** Tritt dem Team bei. Wer schon dabei ist, behaelt seine Rolle; der Name wird aktualisiert. */
-export function joinTeam(room: Room, playerId: unknown, name: unknown): TeamResult {
-  if (typeof playerId !== "string" || !playerId.trim()) {
-    return { ok: false, message: "Spieler-ID fehlt." };
+export function joinTeam(room: Room, playerId: string, rawName: string): TeamJoinResult {
+  const name = rawName.trim();
+  if (!name) {
+    return { ok: false, error: "Bitte gib einen Namen ein." };
   }
-  const cleanName = typeof name === "string" ? name.trim().slice(0, NAME_MAX) : "";
-  if (!cleanName) return { ok: false, message: "Name fehlt." };
+  if (name.length > MAX_NAME_LENGTH) {
+    return { ok: false, error: `Der Name darf hoechstens ${MAX_NAME_LENGTH} Zeichen haben.` };
+  }
 
   const existing = room.state.players.find((p) => p.id === playerId);
   if (existing) {
-    existing.name = cleanName;
-  } else {
-    room.state.players.push({ id: playerId, name: cleanName, role: null });
+    existing.name = name;
+    return { ok: true };
   }
-  return { ok: true, team: teamView(room) };
+  room.state.players.push({ id: playerId, name, role: null });
+  return { ok: true };
+}
+
+/** Entfernt eine Verbindung aus dem Team. Gibt zurueck, ob sie dabei war. */
+export function leaveTeam(room: Room, playerId: string): boolean {
+  const before = room.state.players.length;
+  room.state.players = room.state.players.filter((p) => p.id !== playerId);
+  return room.state.players.length !== before;
+}
+
+/** Was die Teamliste bekommt: Name und Rolle, sonst nichts. */
+export function teamOf(room: Room): Player[] {
+  return room.state.players.map(({ id, name, role }) => ({ id, name, role }));
+}
+
+/** Das Team, wie die Rollenansicht es braucht (#31). */
+export function teamView(room: Room): TeamView {
+  return { players: teamOf(room) };
 }
 
 function isRole(value: unknown): value is Role {
@@ -43,7 +61,7 @@ function isRole(value: unknown): value is Role {
  */
 export function chooseRole(
   room: Room,
-  actorId: unknown,
+  actorId: string,
   targetId: unknown,
   role: unknown
 ): TeamResult {

@@ -3,6 +3,11 @@
 
 export type Role = "forensics" | "cyber" | "interrogation" | "field" | "lead";
 
+/** Schwierigkeitsstufe einer Team-Session (#56). */
+export type Difficulty = "leicht" | "normal" | "schwer";
+
+export const DIFFICULTIES: Difficulty[] = ["leicht", "normal", "schwer"];
+
 export const ROLES: Role[] = ["forensics", "cyber", "interrogation", "field", "lead"];
 
 export interface Player {
@@ -48,6 +53,20 @@ export interface Scenario {
   keyEvidenceIds: string[];
   /** Was tatsaechlich passiert ist — erscheint erst nach der Anklage (#28). */
   resolution: string;
+  /** Alternative Enden (#80), je nach Anklage — siehe `CaseEnding.when`. */
+  endings?: CaseEnding[];
+}
+
+/** Ein Ende des Falls (#80). */
+export interface CaseEnding {
+  /**
+   * Wann es eintritt: `solved` (richtig und begruendet), `insufficient`
+   * (richtige Person, Beweise reichen nicht) oder eine Verdaechtigen-ID —
+   * das Ende, wenn diese Person zu Unrecht angeklagt wird.
+   */
+  when: string;
+  title: string;
+  text: string;
 }
 
 export interface Suspect {
@@ -69,6 +88,25 @@ export interface Suspect {
   statement?: string;
   /** Portraet. Wie ueberall: kein Asset im Repo, Platzhalter im Client. */
   imagePath?: string;
+  /** Fragen fuer die Befragung (#66), in der Reihenfolge, in der sie angeboten werden. */
+  interrogation?: InterrogationQuestion[];
+}
+
+/**
+ * Eine Frage in der Befragung (#66).
+ *
+ * Inhalt, keine Loesung: Die Antworten passen zu jedem Szenario, deshalb
+ * duerfen sie an den Client. Ob eine Antwort luegt, zeigt erst der Abgleich
+ * mit den Spuren.
+ */
+export interface InterrogationQuestion {
+  id: string;
+  question: string;
+  answer: string;
+  /** Erst waehlbar, nachdem diese Frage gestellt wurde (#67). */
+  after?: string;
+  /** Wer diese Frage stellt, verwirft diese Alternativen (#67) — eine Entscheidung. */
+  closes?: string[];
 }
 
 /**
@@ -84,6 +122,31 @@ export interface ChatMessage {
   /** Zeitpunkt, wie er auf dem Geraet steht — z. B. "12.09. 20:31". */
   sentAt: string;
   text: string;
+  /** Gelöscht und per Forensik wiederhergestellt (#71). */
+  recovered?: boolean;
+}
+
+/**
+ * Eine Datei auf einem Geraet (Story #20).
+ *
+ * `type` sagt, wie der Client sie oeffnet:
+ *   - "text":       `content` wird als Text gezeigt
+ *   - "image":      `imagePath` als Bild, mit Platzhalter wie ueberall (kein Asset im Repo)
+ *   - "unreadable": verschluesselt oder beschaedigt — der Client zeigt `unreadableReason`
+ */
+export interface DeviceFile {
+  id: string;
+  /** Dateiname inkl. Endung, z. B. "notizen.txt". */
+  name: string;
+  type: "text" | "image" | "unreadable";
+  /** Zuletzt geaendert, als Anzeigetext — wie `ChatMessage.sentAt`. */
+  modifiedAt: string;
+  content?: string;
+  imagePath?: string;
+  /** Was auf dem Bild zu sehen ist. Steht unter dem Platzhalter, solange es kein Asset gibt. */
+  caption?: string;
+  /** Warum die Datei nicht lesbar ist, z. B. "Verschluesselt". */
+  unreadableReason?: string;
 }
 
 /**
@@ -107,7 +170,39 @@ export interface Device {
   locked?: boolean;
   /** Art der Sperre, wie sie im Terminal steht — z. B. "PIN, 4 Ziffern" (#18). */
   lockType?: string;
+  /**
+   * Hinweis zur Sperre, sichtbar im Terminal (#70) — z. B. woher die PIN
+   * kommen koennte. Verraet die PIN nicht selbst.
+   */
+  lockHint?: string;
+  /**
+   * PIN oder Passwort (#70). Bleibt auf dem Server: `toPublicCase` entfernt
+   * das Feld, geprueft wird nur in `engine/unlock.ts`.
+   */
+  unlockSecret?: string;
   messages: ChatMessage[];
+  /** Dateien auf dem Geraet (#20). Optional: nicht jedes Geraet hat welche. */
+  files?: DeviceFile[];
+  /**
+   * Geloeschte Nachrichten (#71). Bleiben auf dem Server, bis sie per
+   * `POST .../recover` wiederhergestellt werden; der Client sieht vorher nur
+   * `deletedCount`.
+   */
+  deletedMessages?: ChatMessage[];
+  /** Wie viele geloeschte Nachrichten sich wiederherstellen lassen (#71). Setzt nur der Server. */
+  deletedCount?: number;
+  /** Standortverlauf (#72), chronologisch wie im Case-JSON. Bei gesperrten Geraeten leer. */
+  locations?: DeviceLocation[];
+}
+
+/** Ein Standortpunkt eines Geraets (#72). */
+export interface DeviceLocation {
+  /** Zeitpunkt als Anzeigetext, wie `ChatMessage.sentAt` — z. B. "12.09. 22:31". */
+  at: string;
+  /** Ort in Worten, z. B. "Buero 4.12, Hardturmstrasse 61". */
+  place: string;
+  /** Woher der Punkt stammt, z. B. "WLAN CORP-4OG" oder "GPS". */
+  source?: string;
 }
 
 /**
@@ -140,7 +235,15 @@ export interface Hotspot {
    * die Stelle untersuchen, aber nichts mitnehmen.
    */
   evidence?: CollectableEvidence;
+  /**
+   * Nur mit diesem Werkzeug sichtbar (#60), z. B. "uv" fuer Spuren, die erst
+   * unter der UV-Lampe auftauchen. Ohne Feld ist die Stelle immer sichtbar.
+   */
+  requiresTool?: SceneTool;
 }
+
+/** Werkzeuge im Tatort (#60). */
+export type SceneTool = "uv";
 
 /** Ein einsammelbarer Fund aus dem Tatort (Story #9). */
 export interface CollectableEvidence {
@@ -175,11 +278,63 @@ export interface CollectedEvidence extends CollectableEvidence {
   collectedAt?: string;
 }
 
+/**
+ * Ein Fund, den jemand mit dem Team geteilt hat (Story #23).
+ *
+ * Liegt auf dem Server im Raum, nicht im localStorage: geteilt heisst, alle
+ * sehen denselben Stand — auch wer spaeter beitritt.
+ */
+export interface SharedFinding {
+  evidence: CollectedEvidence;
+  /** Name der Person, die geteilt hat — so ist der Urheber erkennbar. */
+  sharedBy: string;
+  /** Verbindungs-ID beim Teilen, damit der Client "du" anzeigen kann. */
+  sharedById: string;
+}
+
+/** Eine mit dem Team geteilte Notiz zu einem Beweis (#64). */
+export interface SharedNote {
+  evidenceId: string;
+  /** Name des Beweises, damit die Notiz auch ohne eigenen Fund lesbar ist. */
+  evidenceLabel: string;
+  text: string;
+  sharedBy: string;
+  sharedById: string;
+  /** ISO-Zeitpunkt, gesetzt vom Server. */
+  sharedAt: string;
+}
+
+/** Antwort auf `note:share` (#64). */
+export type NoteShareResult =
+  | { ok: true }
+  | { ok: false; reason: "invalid-room" | "not-in-team" | "unknown-evidence" | "invalid-text" };
+
+/** Antwort auf `evidence:share` (#23). */
+export type ShareResult =
+  | { ok: true }
+  | { ok: false; reason: "invalid-room" | "not-in-team" | "unknown-evidence" | "already-shared" };
+
+/** Antwort auf `POST /api/cases/:caseId/devices/:deviceId/recover` (#71). */
+export type RecoverResult =
+  | { ok: true; messages: ChatMessage[] }
+  | { ok: false; reason: "unknown-device" | "locked" };
+/** Antwort auf `POST /api/cases/:caseId/devices/:deviceId/unlock` (#70). */
+export type UnlockResult =
+  | { ok: true; device: Device }
+  | { ok: false; reason: "wrong-secret" | "unknown-device" | "not-locked" };
+
 export interface Scene {
   id: string;
   /** Anzeigename, dauerhaft als Overlay sichtbar. */
   name: string;
   imagePath: string;
+  /**
+   * 3D-Modell des Tatorts (GLB). Optional: ist es gesetzt, zeigt der Client
+   * die Szene in 3D statt als Bild. Das Modell enthaelt pro Stelle ein Objekt
+   * `hotspot_<id>`; Stellen ohne passendes Objekt bleiben nur in der Liste
+   * erreichbar. Erzeugt wird es per Skript unter `tools/blender/`.
+   */
+  modelPath?: string;
   hotspots: Hotspot[];
 }
 
@@ -239,6 +394,19 @@ export type CombineResult =
   | { ok: true; insight: Insight }
   | { ok: false; reason: "no-connection" | "already-found" | "invalid" };
 
+/**
+ * Das Intro eines Falls (#58).
+ *
+ * `videoPath` ist wie die Bildpfade nur ein Pfad: echte Videos werden nicht
+ * committet (CLAUDE.md). Fehlt die Datei, spielt der Client die Textzeilen
+ * als Titelsequenz ab — das ist in der MVP-Phase der Normalfall.
+ */
+export interface CaseIntro {
+  videoPath?: string;
+  /** Zeilen der Titelsequenz, in Reihenfolge. */
+  lines: string[];
+}
+
 export interface CaseDefinition {
   id: string;
   title: string;
@@ -247,6 +415,7 @@ export interface CaseDefinition {
    * im Spiel einsehbar — deshalb nichts darin, was die Loesung verraet.
    */
   objective?: string;
+  intro?: CaseIntro;
   briefing?: CaseBriefing;
   scenes: Scene[];
   combinations: Combination[];
@@ -256,6 +425,11 @@ export interface CaseDefinition {
   scenarios: Scenario[];
   seedEvidence: EvidenceNode[];
   timeline: TimedEvent[];
+  /**
+   * Hinweise fuer Sackgassen (#74), in der Reihenfolge, in der sie freigegeben
+   * werden. Bleiben auf dem Server und gehen nur einzeln auf Anfrage raus.
+   */
+  hints?: string[];
 }
 
 /**
@@ -265,7 +439,15 @@ export interface CaseDefinition {
  * serverseitig entfernt — siehe apps/server/src/engine/caseView.ts. Der Client
  * bekommt diesen Typ, nie CaseDefinition.
  */
-export type PublicCase = Omit<CaseDefinition, "scenarios" | "combinations">;
+export type PublicCase = Omit<CaseDefinition, "scenarios" | "combinations" | "hints">;
+
+/** Stand der Hinweise einer Team-Session (#74). */
+export interface HintState {
+  /** Bereits freigegebene Hinweise, aelteste zuerst. */
+  revealed: string[];
+  /** Wie viele Hinweise es insgesamt gibt. */
+  total: number;
+}
 
 /**
  * Ein Eintrag in der Fallauswahl (Story #30) — nur, was man zum Waehlen
@@ -332,6 +514,27 @@ export interface AccusationVerdict {
   /** Der Aufloesungstext aus dem aktiven Szenario. */
   resolution: string;
   findings: VerdictFinding[];
+  /**
+   * Bewertung der Beweiskette (#78). Optional, weil Quittungen von vor #78
+   * (im localStorage) sie nicht haben.
+   */
+  chain?: ChainRating;
+  /** Welches Ende die Anklage ausgeloest hat (#80). Fehlt, wenn das Szenario keine Enden hat. */
+  ending?: { kind: "solved" | "insufficient" | "wrong"; title: string; text: string };
+}
+
+/** Wie tragfaehig die Begruendung der Anklage war (#78). */
+export interface ChainRating {
+  level: "stark" | "mittel" | "schwach";
+  /** Angehaengte Beweise, die die Loesung tragen, und wie viele es gegeben haette. */
+  supporting: number;
+  possible: number;
+  /** Angehaengte Beweise ohne Bezug zur Loesung. */
+  irrelevant: number;
+  /** Ein Satz zur Einordnung. */
+  summary: string;
+  /** Konkret, wo die Begruendung schwach war — leer bei einer vollstaendigen Kette. */
+  weaknesses: string[];
 }
 
 /** Antwort des Servers auf `POST /api/rooms/:code/accusation` (Story #27). */
@@ -352,7 +555,7 @@ export interface TeamView {
   players: Player[];
 }
 
-/** Antwort der Team-Endpoints (#31). */
+/** Antwort auf `team:role` (#31). */
 export type TeamResult = { ok: true; team: TeamView } | { ok: false; message: string };
 
 export interface RoomState {
@@ -375,11 +578,38 @@ export interface ClientToServerEvents {
   "board:moveNode": (payload: { code: string; nodeId: string; x: number; y: number }) => void;
   "board:connect": (payload: { code: string; fromId: string; toId: string }) => void;
   "case:accuse": (payload: { code: string; accusation: Accusation }, cb: (result: ScoreResult) => void) => void;
+  /** Story #22 — mit Namen dem Team einer Session beitreten. */
+  "team:join": (payload: { code: string; playerName: string }, cb: (result: TeamJoinResult) => void) => void;
+  /** Rolle waehlen oder mit `null` abgeben (#31). Die neue Liste kommt per `team:update`. */
+  "team:role": (
+    payload: { code: string; playerId: string; role: Role | null },
+    cb: (result: TeamResult) => void
+  ) => void;
+  /** Story #23 — einen Fund aus der eigenen Akte mit dem Team teilen. */
+  "evidence:share": (payload: { code: string; evidence: CollectedEvidence }, cb: (result: ShareResult) => void) => void;
+  /** Story #64 — eine eigene Notiz zu einem Beweis mit dem Team teilen. */
+  "note:share": (
+    payload: { code: string; evidenceId: string; evidenceLabel: string; text: string },
+    cb: (result: NoteShareResult) => void
+  ) => void;
+  /** Story #57 — das ganze Team aus `code` in die neue Session `newCode` mitnehmen. */
+  "team:next": (payload: { code: string; newCode: string }, cb: (result: TeamJoinResult) => void) => void;
 }
+
+/** Antwort auf `team:join` (#22). */
+export type TeamJoinResult = { ok: true } | { ok: false; error: string };
 
 export interface ServerToClientEvents {
   "room:state": (state: RoomState) => void;
   "event:new": (event: TimedEvent) => void;
   "board:update": (board: RoomState["board"]) => void;
   "error:message": (message: string) => void;
+  /** Story #22 — die aktuelle Teamliste, nach jedem Beitritt und Verlassen an alle im Raum. */
+  "team:update": (players: Player[]) => void;
+  /** Story #23 — alle geteilten Funde, nach jedem Teilen an alle und beim Beitritt an den Neuen. */
+  "team:findings": (findings: SharedFinding[]) => void;
+  /** Story #64 — alle geteilten Notizen, nach jedem Teilen an alle und beim Beitritt an den Neuen. */
+  "team:notes": (notes: SharedNote[]) => void;
+  /** Story #57 — das Team zieht in eine neue Session um; `by` hat sie angelegt. */
+  "team:moved": (payload: { code: string; by: string }) => void;
 }

@@ -49,6 +49,7 @@ Live-Crime-Investigation/
 │   │       ├── index.ts       Server-Bootstrap, Socket-Events
 │   │       ├── engine/         Room-/Case-Engine (Raumverwaltung, Szenario-Auswahl, Scoring)
 │   │       └── data/           Case-JSONs (Ermittlungsziel, Briefing mit Tatzeitfenster, Beweise, Verdächtige, Geräte mit Chatverlauf und Sperre, Timeline, Lösung)
+│   │       └── data/           Case-JSONs (Ermittlungsziel, Beweise, Verdächtige, Geräte mit Chatverlauf, Dateien und Sperre, Timeline, Lösung)
 │   └── web/                React SPA — 5 rollenspezifische Dashboards
 │       └── src/
 │           ├── pages/          Join, Lobby, RoleDashboard
@@ -63,14 +64,36 @@ Live-Crime-Investigation/
 
 **Datenfluss (Kernloop):**
 1. Lead Detective erstellt Case → Server generiert `CASE CODE` (z.B. `7K4-XP9`), wählt Täter-Szenario, hält Room-State im Speicher.
+   Umgesetzt (#55): Konten mit Passwort per `POST /api/accounts` bzw. `POST /api/accounts/login` (scrypt-Hash mit Salt, Antwort mit Sitzungs-Token). Mit `Authorization: Bearer <token>` legt `PUT /api/accounts/me/progress/:code` den Spielstand ab, `GET` holt ihn auf jedem Gerät. Die Konten liegen in `.data/accounts.json` (Pfad über `ACCOUNTS_FILE`, nicht im Repo); ohne Passwort bleibt die Namens-Anmeldung aus #29 rein lokal.
+   Umgesetzt (#56): `POST /api/rooms` nimmt `difficulty` (`leicht`, `normal`, `schwer`; sonst `normal`), `GET /api/rooms/:code` liefert sie zurück. Die Stufe gilt für die ganze Session; im Client markiert «leicht» Stellen mit Fund, «schwer» blendet Namen und die Gesamtzahl der Stellen aus.
+   Umgesetzt (#58): Ein Fall kann ein `intro` haben (`{ videoPath?, lines }`). Der Client spielt es einmal pro Team-Session vor dem Briefing; fehlt das Video (in der MVP-Phase immer, keine Assets im Repo), läuft die Titelsequenz aus `lines`.
 2. Andere 4 Spieler joinen mit Code + wählen Rolle → Socket-Room `case:<code>` beitreten.
-   Umgesetzt (#31) über REST: `POST /api/rooms/:code/team` (`{ playerId, name }`, idempotent) tritt bei, `GET …/team` liefert das Team, `PUT …/team/:playerId/role` (`{ actorId, role | null }`) setzt die Rolle. Jede Rolle gibt es einmal pro Session (`409` sonst). Die `playerId` ist die Konto-ID (#29) oder eine im Browser gespeicherte Gast-ID.
+   Umgesetzt (#22): In der Fallakte tritt man mit Namen bei (`team:join`); der Server schickt nach jedem Beitritt und Verlassen die Teamliste an alle im Raum (`team:update`).
+   Umgesetzt (#31): Rolle wählen oder abgeben per `team:role` (`{ code, playerId, role | null }`, Antwort `TeamResult`). Der Server nimmt als Handelnden immer die eigene Verbindung (`socket.id`), vergibt jede Rolle einmal pro Session und schickt die neue Liste per `team:update`; bei einem erneuten Beitritt bleibt die Rolle erhalten.
+   Umgesetzt (#23): Funde teilen per `evidence:share`; der Server prüft Teammitgliedschaft und Fall-Zugehörigkeit, hält die geteilten Funde im Raum und schickt sie als `team:findings` an alle (auch an später Beitretende).
+   Umgesetzt (#64): Notizen teilen per `note:share` (`{ code, evidenceId, evidenceLabel, text }`). Der Server prüft Team, Beweis und Länge (max. 500 Zeichen), hält pro Person und Beweis eine Notiz und schickt alle als `team:notes` an den Raum, auch an später Beitretende.
+   Umgesetzt (#57): «Neuer Fall mit diesem Team» legt eine neue Session an und schickt `team:next`; der Server prüft, dass die Person im alten Team ist, und sendet `team:moved` mit dem neuen Code an alle im alten Raum. Die Clients wechseln dorthin und treten mit ihrem bisherigen Namen bei. Das zuletzt genutzte Team steht ausserdem im localStorage und lässt sich von der Startseite aus wieder öffnen.
 3. Server pusht rollenspezifische Payloads (`role:payload`) — jeder Client sieht nur, was seine Rolle darf.
 4. Aktionen (Board verbinden, Beweis anzeigen, Verhör-Antwort) gehen als Socket-Events zum Server, der validiert + an alle im Room broadcastet (`board:update`, `event:new`).
+   Umgesetzt (#60): Eine Stelle im Case-JSON kann `requiresTool: "uv"` haben. Sie erscheint im Tatort erst, wenn die UV-Lampe eingeschaltet ist; gefundene UV-Spuren bleiben danach sichtbar. Die Lampe wird nur in Szenen angeboten, in denen sie etwas bringt.
+   Umgesetzt (#66): Verdächtige haben im Case-JSON eine optionale Liste `interrogation` (`{ id, question, answer }`). Die Befragung läuft im Client; gemerkt wird pro Team-Code, welche Fragen gestellt wurden. Die Antworten passen zu jedem Szenario und verraten den Täter nicht.
+   Umgesetzt (#71): Geräte können `deletedMessages` im Case-JSON haben. Der Client bekommt nur `deletedCount`; `POST /api/cases/:caseId/devices/:deviceId/recover` liefert die Nachrichten (markiert mit `recovered: true`), die dann im Chatverlauf erscheinen und sich als Beweis sichern lassen.
+   Umgesetzt (#72): Geräte können im Case-JSON einen Standortverlauf `locations` (`{ at, place, source? }`) haben. Wie Nachrichten und Dateien bleibt er bei gesperrten Geräten auf dem Server (`toPublicCase`); der Client markiert Punkte in der Tatzeit aus dem Briefing.
+   Umgesetzt (#70): Gesperrte Geräte entsperren per `POST /api/cases/:caseId/devices/:deviceId/unlock` mit `{ secret }`. PIN bzw. Passwort stehen als `unlockSecret` im Case-JSON und verlassen den Server nie (`toPublicCase` entfernt das Feld); bei richtigem Versuch kommt das Gerät mit Nachrichten und Dateien zurück, sonst `400 wrong-secret`. Der öffentliche `lockHint` zeigt im Terminal, wo man suchen kann.
 5. Case-Engine feuert zeitbasierte Live-Events (`NEW_EVIDENCE`, `STATEMENT_CHANGED`, `SERVER_BREACH`) nach Skript im Case-JSON.
 6. Lead Detective reicht Accusation ein → Server vergleicht mit dem aktiven Szenario → `CASE SOLVED` Score-Payload an alle.
    Umgesetzt (#27) als `POST /api/rooms/:code/accusation` mit `{ suspectId, evidenceIds }`: Der Server prüft Täter und mindestens einen Beweis und speichert die Anklage einmal pro Team-Session (`201`). Jeder weitere Versuch bekommt `409` mit der ersten Quittung zurück, danach ist die Anklage gesperrt.
    Die Quittung enthält die Auflösung (#28): Ergebnis gelöst/nicht gelöst, wahrer Täter, Auflösungstext und eine Liste richtiger/falscher/übersehener Schlüsse. Grundlage sind die neuen Szenario-Felder `resolution` und `keyEvidenceIds` im Case-JSON. Wie das ganze Szenario verlassen sie den Server vor dem Absenden nie.
+   Umgesetzt (#80): Szenarien haben eine Liste `endings` (`{ when, title, text }`, `when` = `solved`, `insufficient` oder eine Verdächtigen-ID). Die Auflösung enthält das passende `ending`: richtig und begründet, richtige Person ohne tragfähige Beweise, oder pro falsch angeklagter Person ein eigenes Ende.
+   Umgesetzt (#78): Die Auflösung enthält zusätzlich `chain`, eine Bewertung der Beweiskette (stark/mittel/schwach, tragende und überflüssige Beweise, konkrete Schwächen). Sie entsteht in `engine/chainRating.ts` aus denselben `keyEvidenceIds` und verlässt den Server ebenfalls erst nach dem Absenden.
+   Umgesetzt (#74): Hinweise stehen als `hints` im Case-JSON und werden von `toPublicCase` entfernt. `GET /api/rooms/:code/hints` liefert die freigegebenen Hinweise der Session, `POST` gibt den nächsten für das ganze Team frei (`201`, `409` wenn keine mehr übrig sind).
+
+**3D-Tatort:** Eine Szene im Case-JSON kann optional `modelPath` haben (z.B. `/models/case-01/buero-412.glb`, liegt unter `apps/web/public/`). Ist es gesetzt, zeigt der Client den Tatort als drehbares 3D-Modell (three.js / react-three-fiber, lazy geladen) statt als Bild. Die Hotspot-Positionen stecken im Modell: pro Hotspot ein Objekt `hotspot_<id>`. Hotspots ohne passendes Objekt erscheinen an ihren `x`/`y`-Prozentwerten. Ohne `modelPath`, ohne WebGL oder bei einem Ladefehler bleibt alles beim Bild. Verdeckte Spuren (hinter Möbeln) werden ausgeblendet, „Ansicht zurücksetzen“ führt zurück in die Startansicht. Hat ein Fall mehrere Szenen, bietet die Fallakte jeden Tatort an und im Tatort lässt sich umschalten; Untersuchtes und Eingesammeltes gilt für den ganzen Fall. Die Modelle werden per Skript gebaut, ohne fremde Assets (gemeinsame Masse und Konventionen in `tools/blender/tatort_lib.py`):
+
+```bash
+blender --background --factory-startup --python tools/blender/build_buero_412.py -- apps/web/public/models/case-01/buero-412.glb
+blender --background --factory-startup --python tools/blender/build_flur_4og.py -- apps/web/public/models/case-01/flur-4og.glb
+```
 
 ## 4. Scrum-Setup
 

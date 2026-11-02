@@ -14,7 +14,9 @@ import case01 from "./data/case-01.json" with { type: "json" };
 import { toCaseSummaries, toPublicCase } from "./engine/caseView.js";
 import { combineEvidence } from "./engine/combine.js";
 import { submitAccusation } from "./engine/accusation.js";
-import { chooseRole, joinTeam, teamView } from "./engine/team.js";
+import { hintState, revealHint } from "./engine/hints.js";
+import { unlockDevice } from "./engine/unlock.js";
+import { recoverDeleted } from "./engine/recover.js";
 import {
   allRooms,
   createRoom,
@@ -24,6 +26,12 @@ import {
   roomCount,
   type Room,
 } from "./engine/rooms.js";
+import { chooseRole, joinTeam, leaveTeam, teamOf } from "./engine/team.js";
+import { shareFinding } from "./engine/sharing.js";
+import { AccountStore } from "./engine/accounts.js";
+import { difficultyOf, parseDifficulty, setDifficulty } from "./engine/difficulty.js";
+import { notesOf, shareNote } from "./engine/noteSharing.js";
+import { canMoveTeam } from "./engine/teamMove.js";
 
 const CASES: Record<string, CaseDefinition> = {
   "case-01": case01 as CaseDefinition,
@@ -46,6 +54,13 @@ function scoreAccusation(room: Room, accusation: Accusation): ScoreResult {
   };
 }
 
+// Story #55 — Konten. Die Datei liegt ausserhalb von src und ist in .gitignore.
+const accounts = new AccountStore(process.env.ACCOUNTS_FILE ?? ".data/accounts.json");
+
+function bearer(header: string | undefined): string | undefined {
+  return header?.startsWith("Bearer ") ? header.slice(7) : undefined;
+}
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -65,6 +80,35 @@ app.get("/api/cases/:caseId", (req, res) => {
   return res.json(toPublicCase(caseDef));
 });
 
+// Story #55 — Konto erstellen und anmelden.
+app.post("/api/accounts", (req, res) => {
+  const result = accounts.register(req.body?.name, req.body?.password);
+  return res.status(result.ok ? 201 : 400).json(result);
+});
+
+app.post("/api/accounts/login", (req, res) => {
+  const result = accounts.login(req.body?.name, req.body?.password);
+  return res.status(result.ok ? 200 : 401).json(result);
+});
+
+// Story #55 — Spielstand eines Kontos pro Team-Code, von jedem Geraet aus.
+app.get("/api/accounts/me/progress/:code", (req, res) => {
+  const progress = accounts.getProgress(bearer(req.headers.authorization), normalizeRoomCode(req.params.code));
+  if (progress === undefined) return res.status(401).json({ error: "Nicht angemeldet" });
+  return res.json({ progress });
+});
+
+app.put("/api/accounts/me/progress/:code", (req, res) => {
+  const result = accounts.saveProgress(
+    bearer(req.headers.authorization),
+    normalizeRoomCode(req.params.code),
+    req.body?.progress
+  );
+  if (result === "unauthorized") return res.status(401).json({ error: "Nicht angemeldet" });
+  if (result === "invalid") return res.status(400).json({ error: "Ungueltiger Spielstand" });
+  return res.status(204).end();
+});
+
 // Story #5 — Team-Session anlegen. Der Code ist das, was im Team geteilt wird.
 app.post("/api/rooms", (req, res) => {
   const caseId = typeof req.body?.caseId === "string" ? req.body.caseId : "case-01";
@@ -73,7 +117,10 @@ app.post("/api/rooms", (req, res) => {
     return res.status(404).json({ error: "Fall nicht gefunden" });
   }
   const room = createRoom(caseDef);
-  return res.status(201).json({ code: room.state.code, caseId, caseTitle: caseDef.title });
+  // Story #56 — die Stufe gilt fuer die ganze Session, alle im Team spielen gleich.
+  const difficulty = parseDifficulty(req.body?.difficulty);
+  setDifficulty(room, difficulty);
+  return res.status(201).json({ code: room.state.code, caseId, caseTitle: caseDef.title, difficulty });
 });
 
 // Story #13 — zwei Beweise kombinieren. Die Regeln bleiben auf dem Server:
@@ -92,6 +139,29 @@ app.post("/api/cases/:caseId/combine", (req, res) => {
   return res.json(combineEvidence(caseDef, String(evidenceIds[0]), String(evidenceIds[1]), found));
 });
 
+// Story #71 — geloeschte Nachrichten eines Geraets wiederherstellen.
+app.post("/api/cases/:caseId/devices/:deviceId/recover", (req, res) => {
+  const caseDef = CASES[req.params.caseId];
+  if (!caseDef) {
+    return res.status(404).json({ error: "Fall nicht gefunden" });
+  }
+  const result = recoverDeleted(caseDef, req.params.deviceId);
+  if (result.ok) return res.json(result);
+  return res.status(result.reason === "unknown-device" ? 404 : 400).json(result);
+});
+
+// Story #70 — gesperrtes Geraet entsperren. PIN/Passwort bleiben auf dem
+// Server; der Client bekommt den Inhalt nur bei richtigem Versuch.
+app.post("/api/cases/:caseId/devices/:deviceId/unlock", (req, res) => {
+  const caseDef = CASES[req.params.caseId];
+  if (!caseDef) {
+    return res.status(404).json({ error: "Fall nicht gefunden" });
+  }
+  const result = unlockDevice(caseDef, req.params.deviceId, req.body?.secret);
+  if (result.ok) return res.json(result);
+  return res.status(result.reason === "unknown-device" ? 404 : 400).json(result);
+});
+
 // Story #5 — Team-Code pruefen. Falsches Format und unbekannter Code sind fuer
 // den Spieler derselbe Fall: "Ungueltiger Team-Code".
 app.get("/api/rooms/:code", (req, res) => {
@@ -107,7 +177,22 @@ app.get("/api/rooms/:code", (req, res) => {
     code: room.state.code,
     caseId: room.state.caseId,
     caseTitle: room.caseDef.title,
+    difficulty: difficultyOf(room),
   });
+});
+
+// Story #74 — Hinweise der Team-Session lesen und den naechsten freigeben.
+app.get("/api/rooms/:code/hints", (req, res) => {
+  const room = getRoom(req.params.code);
+  if (!room) return res.status(404).json({ error: "Ungueltiger Team-Code" });
+  return res.json(hintState(room));
+});
+
+app.post("/api/rooms/:code/hints", (req, res) => {
+  const room = getRoom(req.params.code);
+  if (!room) return res.status(404).json({ error: "Ungueltiger Team-Code" });
+  const result = revealHint(room);
+  return res.status(result.ok ? 201 : 409).json(result.state);
 });
 
 // Story #27 — Anklage absenden. Einmal pro Team-Session; danach gesperrt.
@@ -119,27 +204,6 @@ app.post("/api/rooms/:code/accusation", (req, res) => {
   const result = submitAccusation(room, req.body);
   if (result.ok) return res.status(201).json(result);
   return res.status(result.reason === "already-submitted" ? 409 : 400).json(result);
-});
-
-// Story #31 — Team: beitreten, ansehen, Rolle waehlen.
-app.get("/api/rooms/:code/team", (req, res) => {
-  const room = getRoom(req.params.code);
-  if (!room) return res.status(404).json({ ok: false, message: "Ungueltiger Team-Code" });
-  return res.json({ ok: true, team: teamView(room) });
-});
-
-app.post("/api/rooms/:code/team", (req, res) => {
-  const room = getRoom(req.params.code);
-  if (!room) return res.status(404).json({ ok: false, message: "Ungueltiger Team-Code" });
-  const result = joinTeam(room, req.body?.playerId, req.body?.name);
-  return res.status(result.ok ? 200 : 400).json(result);
-});
-
-app.put("/api/rooms/:code/team/:playerId/role", (req, res) => {
-  const room = getRoom(req.params.code);
-  if (!room) return res.status(404).json({ ok: false, message: "Ungueltiger Team-Code" });
-  const result = chooseRole(room, req.body?.actorId, req.params.playerId, req.body?.role ?? null);
-  return res.status(result.ok ? 200 : 409).json(result);
 });
 
 const httpServer = createServer(app);
@@ -214,9 +278,81 @@ io.on("connection", (socket) => {
     cb(scoreAccusation(room, accusation));
   });
 
+  // Story #22 — Team beitreten. Die neue Liste geht an alle im Raum, damit
+  // jede Teamliste ohne Neuladen aktuell ist.
+  socket.on("team:join", ({ code, playerName }, cb) => {
+    const room = getRoom(code);
+    if (!room) {
+      cb({ ok: false, error: "Ungueltiger Team-Code" });
+      return;
+    }
+    const result = joinTeam(room, socket.id, String(playerName ?? ""));
+    cb(result);
+    if (!result.ok) return;
+    socket.join(room.state.code);
+    io.to(room.state.code).emit("team:update", teamOf(room));
+    // Wer spaeter dazukommt, sieht trotzdem alles, was schon geteilt wurde (#23).
+    socket.emit("team:findings", room.findings);
+    socket.emit("team:notes", notesOf(room));
+  });
+
+  // Story #31 — eine Rolle waehlen oder abgeben. Wer klickt, ist die
+  // Verbindung selbst; eine ID vom Client wuerde sich faelschen lassen.
+  socket.on("team:role", ({ code, playerId, role }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      cb({ ok: false, message: "Ungueltiger Team-Code" });
+      return;
+    }
+    const result = chooseRole(room, socket.id, playerId, role ?? null);
+    cb(result);
+    if (result.ok) io.to(room.state.code).emit("team:update", teamOf(room));
+  });
+
+  // Story #64 — Notiz teilen. Gepruefte Notiz geht an alle im Raum.
+  socket.on("note:share", ({ code, evidenceId, evidenceLabel, text }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      cb({ ok: false, reason: "invalid-room" });
+      return;
+    }
+    const result = shareNote(room, socket.id, { evidenceId, evidenceLabel, text });
+    cb(result);
+    if (result.ok) io.to(room.state.code).emit("team:notes", notesOf(room));
+  });
+
+  // Story #23 — Fund teilen. Gepruefter Fund geht an alle im Raum.
+  socket.on("evidence:share", ({ code, evidence }, cb) => {
+    const room = getRoom(code);
+    if (!room) {
+      cb({ ok: false, reason: "invalid-room" });
+      return;
+    }
+    const result = shareFinding(room, socket.id, evidence);
+    cb(result);
+    if (result.ok) io.to(room.state.code).emit("team:findings", room.findings);
+  });
+
+  // Story #57 — das Team in den naechsten Fall mitnehmen. Alle im alten Raum
+  // bekommen den neuen Code und treten dort mit ihrem Namen bei.
+  socket.on("team:next", ({ code, newCode }, cb) => {
+    const from = getRoom(String(code ?? ""));
+    const to = getRoom(String(newCode ?? ""));
+    const result = canMoveTeam(from, to, socket.id);
+    if (!result.ok) {
+      cb({ ok: false, error: result.error });
+      return;
+    }
+    cb({ ok: true });
+    io.to(from!.state.code).emit("team:moved", { code: to!.state.code, by: result.by });
+  });
+
   socket.on("disconnect", () => {
     for (const room of allRooms()) {
-      room.state.players = room.state.players.filter((p) => p.id !== socket.id);
+      // Wer geht, verschwindet auch aus den Teamlisten der anderen (#22).
+      if (leaveTeam(room, socket.id)) {
+        io.to(room.state.code).emit("team:update", teamOf(room));
+      }
     }
   });
 });
