@@ -40,6 +40,8 @@ import { ChatHistory } from "../components/ChatHistory";
 import { ForensicsTerminal } from "../components/ForensicsTerminal";
 import { DeviceFiles } from "../components/DeviceFiles";
 import { TeamPanel } from "../components/TeamPanel";
+import { TeamRoles } from "../components/TeamRoles";
+import { ROLE_LABEL } from "../lib/roles";
 import { shareMessage, useTeam } from "../lib/team";
 import { SharedFindings } from "../components/SharedFindings";
 import { ShareNoteButton, SharedNotesList } from "../components/SharedNotes";
@@ -75,7 +77,15 @@ import { EvidenceTagFilter } from "../components/EvidenceTagFilter";
 import { loadExcluded, saveExcluded, toggleExcluded } from "../lib/excludedSuspects";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
-type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik" | "anklage";
+type View =
+  | "briefing"
+  | "akte"
+  | "tatort"
+  | "beweise"
+  | "verdaechtige"
+  | "forensik"
+  | "anklage"
+  | "team";
 
 type LoadState =
   | { status: "loading" }
@@ -140,6 +150,8 @@ export function CaseLoaderPage() {
   const navigate = useNavigate();
   // Wer sonst noch in dieser Session ermittelt (#22).
   const team = useTeam(code);
+  // Absage des Servers auf die letzte Rollenwahl (#31).
+  const [roleError, setRoleError] = useState<string | null>(null);
 
   useEffect(() => {
     saveProgress(browserStorage(), code, progress, account?.id);
@@ -645,6 +657,30 @@ export function CaseLoaderPage() {
     );
   }
 
+  if (view === "team") {
+    return (
+      <main className="app-shell">
+        <TeamRoles
+          myId={team.myId}
+          players={team.players}
+          joined={team.name !== ""}
+          error={roleError ?? team.error}
+          onChoose={async (role) => {
+            try {
+              const result = await team.chooseRole(role);
+              setRoleError(result.ok ? null : result.error);
+            } catch {
+              setRoleError("Server nicht erreichbar. Bitte erneut versuchen.");
+            }
+          }}
+          onBack={() => setView("akte")}
+        />
+      </main>
+    );
+  }
+
+  const myRole = team.players.find((p) => p.id === team.myId)?.role ?? null;
+
   if (view === "anklage") {
     return (
       <main className="app-shell">
@@ -704,7 +740,10 @@ export function CaseLoaderPage() {
 
   return (
     <main className="app-shell">
-      <p className="terminal-title">Fallakte geoeffnet</p>
+      <p className="terminal-title">
+        Fallakte geoeffnet
+        {myRole && <span className="role-badge" style={{ marginLeft: "0.75rem" }}>{ROLE_LABEL[myRole]}</span>}
+      </p>
       <div className="panel case-status">
         <h1 className="case-title">{caseData.title}</h1>
         <p className="case-status__hint">
@@ -755,6 +794,9 @@ export function CaseLoaderPage() {
           <button onClick={() => setView("anklage")}>
             Anklage ({accusation.evidenceIds.length}{" "}
             {accusation.evidenceIds.length === 1 ? "Beweis" : "Beweise"})
+          </button>
+          <button onClick={() => setView("team")}>
+            {myRole ? `Team · ${ROLE_LABEL[myRole]}` : "Team · Rolle waehlen"}
           </button>
           <button onClick={() => setView("briefing")}>Briefing</button>
           {caseData.intro && (

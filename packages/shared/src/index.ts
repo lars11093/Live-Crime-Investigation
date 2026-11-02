@@ -514,6 +514,8 @@ export interface ClientToServerEvents {
   "case:accuse": (payload: { code: string; accusation: Accusation }, cb: (result: ScoreResult) => void) => void;
   /** Story #22 — mit Namen dem Team einer Session beitreten. */
   "team:join": (payload: { code: string; playerName: string }, cb: (result: TeamJoinResult) => void) => void;
+  /** Story #31 — die eigene Rolle waehlen; `null` gibt sie wieder frei. */
+  "team:role": (payload: { code: string; role: Role | null }, cb: (result: TeamJoinResult) => void) => void;
   /** Story #23 — einen Fund aus der eigenen Akte mit dem Team teilen. */
   "evidence:share": (payload: { code: string; evidence: CollectedEvidence }, cb: (result: ShareResult) => void) => void;
   /** Story #64 — eine eigene Notiz zu einem Beweis mit dem Team teilen. */

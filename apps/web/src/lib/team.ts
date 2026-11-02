@@ -3,6 +3,7 @@ import type {
   CollectedEvidence,
   NoteShareResult,
   Player,
+  Role,
   SharedFinding,
   SharedNote,
   ShareResult,
@@ -191,6 +192,19 @@ export function useTeam(roomCode: string) {
     [roomCode]
   );
 
+  /** Waehlt die eigene Rolle (#31); die neue Liste kommt per `team:update`. */
+  const chooseRole = useCallback(
+    (role: Role | null) =>
+      new Promise<TeamJoinResult>((resolve, reject) => {
+        socket
+          .timeout(5000)
+          .emit("team:role", { code: roomCode, role }, (err, result) =>
+            err ? reject(err) : resolve(result)
+          );
+      }),
+    [roomCode]
+  );
+
   /** Nimmt das Team in die neue Session mit (#57). */
   const moveTo = useCallback(
     (newCode: string) =>
@@ -204,5 +218,5 @@ export function useTeam(roomCode: string) {
     [roomCode]
   );
 
-  return { name, players, myId, error, joinAs, findings, share, notes, shareNote, movedTo, moveTo };
+  return { name, players, myId, error, joinAs, chooseRole, findings, share, notes, shareNote, movedTo, moveTo };
 }

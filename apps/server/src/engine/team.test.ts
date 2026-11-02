@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { CaseDefinition } from "@case-zero/shared";
 import { createRoom } from "./rooms.js";
-import { MAX_NAME_LENGTH, joinTeam, leaveTeam, teamOf } from "./team.js";
+import { MAX_NAME_LENGTH, chooseRole, joinTeam, leaveTeam, teamOf } from "./team.js";
 import case01 from "../data/case-01.json" with { type: "json" };
 
 const caseDef = case01 as CaseDefinition;
@@ -65,5 +65,65 @@ describe("Team verlassen", () => {
   it("meldet, wenn die Verbindung gar nicht im Team war", () => {
     const room = createRoom(caseDef);
     expect(leaveTeam(room, "socket-x")).toBe(false);
+  });
+});
+
+describe("Rolle waehlen (#31)", () => {
+  function roomWith(...names: string[]) {
+    const room = createRoom(caseDef);
+    for (const name of names) joinTeam(room, `socket-${name}`, name);
+    return room;
+  }
+  const roleOf = (room: ReturnType<typeof createRoom>, id: string) =>
+    teamOf(room).find((p) => p.id === id)?.role;
+
+  it("gibt einer Person eine freie Rolle", () => {
+    const room = roomWith("Anna");
+    expect(chooseRole(room, "socket-Anna", "lead")).toEqual({ ok: true });
+    expect(roleOf(room, "socket-Anna")).toBe("lead");
+  });
+
+  it("vergibt jede Rolle nur einmal und nennt, wer sie hat", () => {
+    const room = roomWith("Anna", "Ben");
+    chooseRole(room, "socket-Anna", "lead");
+    expect(chooseRole(room, "socket-Ben", "lead")).toEqual({
+      ok: false,
+      error: "Die Rolle ist schon an Anna vergeben.",
+    });
+    expect(roleOf(room, "socket-Ben")).toBeNull();
+  });
+
+  it("gibt beim Wechsel die alte Rolle frei", () => {
+    const room = roomWith("Anna", "Ben");
+    chooseRole(room, "socket-Anna", "lead");
+    chooseRole(room, "socket-Anna", "cyber");
+    expect(chooseRole(room, "socket-Ben", "lead").ok).toBe(true);
+  });
+
+  it("laesst die eigene Rolle wieder abgeben", () => {
+    const room = roomWith("Anna");
+    chooseRole(room, "socket-Anna", "lead");
+    expect(chooseRole(room, "socket-Anna", null).ok).toBe(true);
+    expect(roleOf(room, "socket-Anna")).toBeNull();
+  });
+
+  it("weist unbekannte Rollen und Verbindungen ausserhalb des Teams ab", () => {
+    const room = roomWith("Anna");
+    expect(chooseRole(room, "socket-Anna", "chef").ok).toBe(false);
+    expect(chooseRole(room, "socket-Zoe", "lead").ok).toBe(false);
+  });
+
+  it("behaelt die Rolle beim erneuten Beitritt", () => {
+    const room = roomWith("Anna");
+    chooseRole(room, "socket-Anna", "lead");
+    joinTeam(room, "socket-Anna", "Anna B.");
+    expect(roleOf(room, "socket-Anna")).toBe("lead");
+  });
+
+  it("macht die Rolle frei, wenn die Person das Team verlaesst", () => {
+    const room = roomWith("Anna", "Ben");
+    chooseRole(room, "socket-Anna", "lead");
+    leaveTeam(room, "socket-Anna");
+    expect(chooseRole(room, "socket-Ben", "lead").ok).toBe(true);
   });
 });

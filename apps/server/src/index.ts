@@ -26,7 +26,7 @@ import {
   roomCount,
   type Room,
 } from "./engine/rooms.js";
-import { joinTeam, leaveTeam, teamOf } from "./engine/team.js";
+import { chooseRole, joinTeam, leaveTeam, teamOf } from "./engine/team.js";
 import { shareFinding } from "./engine/sharing.js";
 import { AccountStore } from "./engine/accounts.js";
 import { difficultyOf, parseDifficulty, setDifficulty } from "./engine/difficulty.js";
@@ -294,6 +294,18 @@ io.on("connection", (socket) => {
     // Wer spaeter dazukommt, sieht trotzdem alles, was schon geteilt wurde (#23).
     socket.emit("team:findings", room.findings);
     socket.emit("team:notes", notesOf(room));
+  });
+
+  // Story #31 — eigene Rolle waehlen. Die neue Liste geht an alle im Raum.
+  socket.on("team:role", ({ code, role }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      cb({ ok: false, error: "Ungueltiger Team-Code" });
+      return;
+    }
+    const result = chooseRole(room, socket.id, role);
+    cb(result);
+    if (result.ok) io.to(room.state.code).emit("team:update", teamOf(room));
   });
 
   // Story #64 — Notiz teilen. Gepruefte Notiz geht an alle im Raum.
