@@ -6,6 +6,7 @@ import type {
   Role,
   SharedFinding,
   SharedNote,
+  TeamDiscovery,
   ShareResult,
   TeamJoinResult,
   TeamState,
@@ -101,6 +102,8 @@ export function useTeam(roomCode: string) {
   const [error, setError] = useState<string | null>(null);
   // Mit dem Team geteilte Funde (#23), live vom Server.
   const [findings, setFindings] = useState<SharedFinding[]>([]);
+  // Live gemeldete Funde des Teams (#75).
+  const [discoveries, setDiscoveries] = useState<TeamDiscovery[]>([]);
   // Mit dem Team geteilte Notizen (#64), live vom Server.
   const [notes, setNotes] = useState<SharedNote[]>([]);
   // Das Team ist in eine neue Session umgezogen (#57).
@@ -113,6 +116,9 @@ export function useTeam(roomCode: string) {
     }
     function onFindings(list: SharedFinding[]) {
       setFindings(list);
+    }
+    function onDiscoveries(list: TeamDiscovery[]) {
+      setDiscoveries(list);
     }
     function onNotes(list: SharedNote[]) {
       setNotes(list);
@@ -137,6 +143,7 @@ export function useTeam(roomCode: string) {
 
     socket.on("team:update", onUpdate);
     socket.on("team:findings", onFindings);
+    socket.on("team:discoveries", onDiscoveries);
     socket.on("team:notes", onNotes);
     socket.on("team:moved", onMoved);
     socket.on("connect", join);
@@ -144,6 +151,7 @@ export function useTeam(roomCode: string) {
     return () => {
       socket.off("team:update", onUpdate);
       socket.off("team:findings", onFindings);
+      socket.off("team:discoveries", onDiscoveries);
       socket.off("team:notes", onNotes);
       socket.off("team:moved", onMoved);
       socket.off("connect", join);
@@ -179,6 +187,19 @@ export function useTeam(roomCode: string) {
           );
       }),
     [roomCode]
+  );
+
+  /**
+   * Meldet einen eingesammelten Fund live ans Team (#75). Ohne Beitritt gibt es
+   * kein Team, dann passiert nichts. Eine Ablehnung (z. B. schon gefunden) ist
+   * kein Fehler — der erste Finder bleibt einfach stehen.
+   */
+  const reportFound = useCallback(
+    (evidence: CollectedEvidence) => {
+      if (!name) return;
+      socket.emit("evidence:found", { code: roomCode, evidence }, () => {});
+    },
+    [roomCode, name]
   );
 
   /** Teilt eine Notiz (#64); die neue Liste kommt per `team:notes`. */
@@ -225,5 +246,7 @@ export function useTeam(roomCode: string) {
     [roomCode]
   );
 
-  return { name, players, leaderId, myId, error, joinAs, chooseRole, findings, share, notes, shareNote, movedTo, moveTo };
+  return { name, players, leaderId, myId, error, joinAs, chooseRole, findings,
+    discoveries,
+    reportFound, share, notes, shareNote, movedTo, moveTo };
 }

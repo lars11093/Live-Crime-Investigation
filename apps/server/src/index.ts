@@ -30,6 +30,7 @@ import {
 } from "./engine/rooms.js";
 import { chooseRole, joinTeam, leaveTeam, teamStateOf } from "./engine/team.js";
 import { shareFinding } from "./engine/sharing.js";
+import { recordDiscovery } from "./engine/discoveries.js";
 import { AccountStore } from "./engine/accounts.js";
 import { difficultyOf, parseDifficulty, setDifficulty } from "./engine/difficulty.js";
 import { notesOf, shareNote } from "./engine/noteSharing.js";
@@ -295,6 +296,7 @@ io.on("connection", (socket) => {
     io.to(room.state.code).emit("team:update", teamStateOf(room));
     // Wer später dazukommt, sieht trotzdem alles, was schon geteilt wurde (#23).
     socket.emit("team:findings", room.findings);
+    socket.emit("team:discoveries", room.discoveries);
     socket.emit("team:notes", notesOf(room));
     socket.emit("chat:history", room.chat ?? []);
     socket.emit("tasks:state", room.tasks ?? []);
@@ -336,6 +338,19 @@ io.on("connection", (socket) => {
     const result = shareFinding(room, socket.id, evidence);
     cb(result);
     if (result.ok) io.to(room.state.code).emit("team:findings", room.findings);
+  });
+
+  // Story #75 — Funde live ans Team. Der Client meldet jeden eingesammelten
+  // Fund; der Server prüft Team und Fall wie beim Teilen (#23).
+  socket.on("evidence:found", ({ code, evidence }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      cb?.({ ok: false, reason: "invalid-room" });
+      return;
+    }
+    const result = recordDiscovery(room, socket.id, evidence);
+    cb?.(result);
+    if (result.ok) io.to(room.state.code).emit("team:discoveries", room.discoveries);
   });
 
   // Story #57 — das Team in den nächsten Fall mitnehmen. Alle im alten Raum
