@@ -12,7 +12,7 @@ Repository: <https://github.com/lars11093/Live-Crime-Investigation> · Board: Gi
 | Person | Scrum-Rolle | Schwerpunkt |
 |---|---|---|
 | Lars | Product Owner (und Entwickler) | Anforderungen, Abnahme, 3D-Tatort |
-| Chime | Scrum Master (und Entwickler) | Prozess, Timeboxen, Impediments |
+| Chime | Scrum Master (und Entwickler) | Prozess, Timeboxen, Planing, Retro |
 | Loris | Entwickler | Ermittlungs- und Team-Funktionen |
 | Nehir | Entwickler | Täter auswählen (#25) |
 | Elina | Entwickler | Anklage und Auflösung, Anmelden, Fallübersicht |
