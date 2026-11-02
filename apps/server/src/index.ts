@@ -26,7 +26,7 @@ import {
   roomCount,
   type Room,
 } from "./engine/rooms.js";
-import { chooseRole, joinTeam, leaveTeam, teamOf } from "./engine/team.js";
+import { chooseRole, joinTeam, leaveTeam, teamStateOf } from "./engine/team.js";
 import { shareFinding } from "./engine/sharing.js";
 import { AccountStore } from "./engine/accounts.js";
 import { difficultyOf, parseDifficulty, setDifficulty } from "./engine/difficulty.js";
@@ -290,23 +290,24 @@ io.on("connection", (socket) => {
     cb(result);
     if (!result.ok) return;
     socket.join(room.state.code);
-    io.to(room.state.code).emit("team:update", teamOf(room));
+    io.to(room.state.code).emit("team:update", teamStateOf(room));
     // Wer spaeter dazukommt, sieht trotzdem alles, was schon geteilt wurde (#23).
     socket.emit("team:findings", room.findings);
     socket.emit("team:notes", notesOf(room));
   });
 
-  // Story #31 — eine Rolle waehlen oder abgeben. Wer klickt, ist die
-  // Verbindung selbst; eine ID vom Client wuerde sich faelschen lassen.
-  socket.on("team:role", ({ code, playerId, role }, cb) => {
+  // Story #31 — eigene Rolle waehlen, #48 — als Teamleitung fuer andere.
+  // Die neue Liste geht an alle im Raum.
+  socket.on("team:role", ({ code, role, playerId }, cb) => {
     const room = getRoom(String(code ?? ""));
     if (!room) {
-      cb({ ok: false, message: "Ungueltiger Team-Code" });
+      cb({ ok: false, error: "Ungueltiger Team-Code" });
       return;
     }
-    const result = chooseRole(room, socket.id, playerId, role ?? null);
+    const target = typeof playerId === "string" ? playerId : socket.id;
+    const result = chooseRole(room, socket.id, role, target);
     cb(result);
-    if (result.ok) io.to(room.state.code).emit("team:update", teamOf(room));
+    if (result.ok) io.to(room.state.code).emit("team:update", teamStateOf(room));
   });
 
   // Story #64 — Notiz teilen. Gepruefte Notiz geht an alle im Raum.
@@ -351,7 +352,7 @@ io.on("connection", (socket) => {
     for (const room of allRooms()) {
       // Wer geht, verschwindet auch aus den Teamlisten der anderen (#22).
       if (leaveTeam(room, socket.id)) {
-        io.to(room.state.code).emit("team:update", teamOf(room));
+        io.to(room.state.code).emit("team:update", teamStateOf(room));
       }
     }
   });

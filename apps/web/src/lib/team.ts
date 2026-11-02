@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type {
   CollectedEvidence,
   NoteShareResult,
@@ -8,8 +8,7 @@ import type {
   SharedNote,
   ShareResult,
   TeamJoinResult,
-  TeamResult,
-  TeamView,
+  TeamState,
 } from "@case-zero/shared";
 import { socket } from "./socket";
 import type { ProgressStorage } from "./caseProgress";
@@ -96,6 +95,8 @@ export function rememberName(roomCode: string, name: string): void {
 export function useTeam(roomCode: string) {
   const [name, setName] = useState(() => loadName(sessionStore(), roomCode));
   const [players, setPlayers] = useState<Player[]>([]);
+  // Wer das Team leitet (#48) — Socket-ID wie `myId`.
+  const [leaderId, setLeaderId] = useState<string | null>(null);
   const [myId, setMyId] = useState<string | undefined>(socket.id);
   const [error, setError] = useState<string | null>(null);
   // Mit dem Team geteilte Funde (#23), live vom Server.
@@ -106,8 +107,9 @@ export function useTeam(roomCode: string) {
   const [movedTo, setMovedTo] = useState<{ code: string; by: string } | null>(null);
 
   useEffect(() => {
-    function onUpdate(list: Player[]) {
-      setPlayers(list);
+    function onUpdate(team: TeamState) {
+      setPlayers(team.players);
+      setLeaderId(team.leaderId);
     }
     function onFindings(list: SharedFinding[]) {
       setFindings(list);
@@ -194,6 +196,22 @@ export function useTeam(roomCode: string) {
     [roomCode]
   );
 
+  /**
+   * Setzt eine Rolle: die eigene (#31) oder als Teamleitung die eines anderen
+   * (#48). Die neue Liste kommt per `team:update`.
+   */
+  const chooseRole = useCallback(
+    (role: Role | null, playerId?: string) =>
+      new Promise<TeamJoinResult>((resolve, reject) => {
+        socket
+          .timeout(5000)
+          .emit("team:role", { code: roomCode, role, playerId }, (err, result) =>
+            err ? reject(err) : resolve(result)
+          );
+      }),
+    [roomCode]
+  );
+
   /** Nimmt das Team in die neue Session mit (#57). */
   const moveTo = useCallback(
     (newCode: string) =>
@@ -207,34 +225,5 @@ export function useTeam(roomCode: string) {
     [roomCode]
   );
 
-  /** Rolle waehlen oder abgeben (#31); die neue Liste kommt per `team:update`. */
-  const chooseRole = useCallback(
-    (playerId: string, role: Role | null) =>
-      new Promise<TeamResult>((resolve, reject) => {
-        socket
-          .timeout(5000)
-          .emit("team:role", { code: roomCode, playerId, role }, (err, result) =>
-            err ? reject(err) : resolve(result)
-          );
-      }),
-    [roomCode]
-  );
-
-  const view = useMemo<TeamView>(() => ({ players }), [players]);
-
-  return {
-    name,
-    players,
-    view,
-    myId,
-    error,
-    joinAs,
-    findings,
-    share,
-    notes,
-    shareNote,
-    movedTo,
-    moveTo,
-    chooseRole,
-  };
+  return { name, players, leaderId, myId, error, joinAs, chooseRole, findings, share, notes, shareNote, movedTo, moveTo };
 }

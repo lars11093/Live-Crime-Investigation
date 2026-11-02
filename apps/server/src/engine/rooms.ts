@@ -17,6 +17,8 @@ export interface Room {
   findings: SharedFinding[];
   /** Die abgesendete Anklage des Teams (#27). Fehlt, solange niemand abgesendet hat. */
   accusation?: AccusationReceipt;
+  /** Teamleiter (#48) — der erste Spieler, der dem Team beitritt. */
+  leaderId?: string;
 }
 
 /** Ohne I, O, 0 und 1 — die verwechselt man beim Vorlesen im Team. */

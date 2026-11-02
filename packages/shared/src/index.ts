@@ -597,14 +597,6 @@ export interface ScoreResult {
   evidenceTotal: number;
 }
 
-/** Das Team einer Session, wie der Client es sieht (#31). */
-export interface TeamView {
-  players: Player[];
-}
-
-/** Antwort auf `team:role` (#31). */
-export type TeamResult = { ok: true; team: TeamView } | { ok: false; message: string };
-
 export interface RoomState {
   code: string;
   caseId: string;
@@ -627,10 +619,10 @@ export interface ClientToServerEvents {
   "case:accuse": (payload: { code: string; accusation: Accusation }, cb: (result: ScoreResult) => void) => void;
   /** Story #22 — mit Namen dem Team einer Session beitreten. */
   "team:join": (payload: { code: string; playerName: string }, cb: (result: TeamJoinResult) => void) => void;
-  /** Rolle waehlen oder mit `null` abgeben (#31). Die neue Liste kommt per `team:update`. */
+  /** Story #31 — die eigene Rolle waehlen; `null` gibt sie wieder frei. */
   "team:role": (
-    payload: { code: string; playerId: string; role: Role | null },
-    cb: (result: TeamResult) => void
+    payload: { code: string; role: Role | null; /** Wem die Rolle gehoeren soll (#48); fehlt = mir. */ playerId?: string },
+    cb: (result: TeamJoinResult) => void
   ) => void;
   /** Story #23 — einen Fund aus der eigenen Akte mit dem Team teilen. */
   "evidence:share": (payload: { code: string; evidence: CollectedEvidence }, cb: (result: ShareResult) => void) => void;
@@ -643,6 +635,13 @@ export interface ClientToServerEvents {
   "team:next": (payload: { code: string; newCode: string }, cb: (result: TeamJoinResult) => void) => void;
 }
 
+/** Die Teamliste mit der Teamleitung (#48): wer zuerst beigetreten ist. */
+export interface TeamState {
+  players: Player[];
+  /** Socket-ID der Teamleitung, `null` solange niemand im Team ist. */
+  leaderId: string | null;
+}
+
 /** Antwort auf `team:join` (#22). */
 export type TeamJoinResult = { ok: true } | { ok: false; error: string };
 
@@ -652,7 +651,7 @@ export interface ServerToClientEvents {
   "board:update": (board: RoomState["board"]) => void;
   "error:message": (message: string) => void;
   /** Story #22 — die aktuelle Teamliste, nach jedem Beitritt und Verlassen an alle im Raum. */
-  "team:update": (players: Player[]) => void;
+  "team:update": (team: TeamState) => void;
   /** Story #23 — alle geteilten Funde, nach jedem Teilen an alle und beim Beitritt an den Neuen. */
   "team:findings": (findings: SharedFinding[]) => void;
   /** Story #64 — alle geteilten Notizen, nach jedem Teilen an alle und beim Beitritt an den Neuen. */

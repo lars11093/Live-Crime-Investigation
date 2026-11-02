@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { Difficulty, PublicCase, Role } from "@case-zero/shared";
+import type { Difficulty, PublicCase } from "@case-zero/shared";
 import { DIFFICULTY_INFO } from "../lib/difficulty";
 import { saveTeam } from "../lib/savedTeam";
 import {
@@ -120,7 +120,7 @@ export function CaseLoaderPage() {
   // Einmal beim Oeffnen gelesen: ein Kontowechsel passiert auf der Startseite.
   const [account] = useState(() => loadAccount(browserStorage()));
   // Fehler aus dem letzten Rollenwechsel (#31), z. B. "schon vergeben".
-  const [teamError, setTeamError] = useState<string | null>(null);
+  const [roleError, setRoleError] = useState<string | null>(null);
   // Fortschritt kommt gespeichert herein und wird bei jeder Aenderung
   // zurueckgeschrieben, damit Notizen ein Neuladen ueberleben (#12).
   const [progress, setProgress] = useState<CaseProgress>(() =>
@@ -265,17 +265,6 @@ export function CaseLoaderPage() {
   }, [code]);
 
   useEffect(() => load(), [load]);
-
-  async function changeRole(targetId: string, role: Role | null) {
-    setTeamError(null);
-    try {
-      // Die neue Teamliste kommt bei Erfolg per `team:update` an alle.
-      const result = await team.chooseRole(targetId, role);
-      if (!result.ok) setTeamError(result.message);
-    } catch {
-      setTeamError("Server nicht erreichbar. Bitte erneut versuchen.");
-    }
-  }
 
   if (state.status === "loading") {
     return (
@@ -775,10 +764,19 @@ export function CaseLoaderPage() {
       return (
         <main className="app-shell">
           <TeamRoles
-            me={me}
-            team={team.name ? team.view : null}
-            error={teamError}
-            onChoose={(role) => changeRole(me.id, role)}
+            myId={team.myId}
+            players={team.players}
+            leaderId={team.leaderId}
+            joined={team.name !== ""}
+            error={roleError ?? team.error}
+            onAssign={async (playerId, role) => {
+              try {
+                const result = await team.chooseRole(role, playerId === team.myId ? undefined : playerId);
+                setRoleError(result.ok ? null : result.error);
+              } catch {
+                setRoleError("Server nicht erreichbar. Bitte erneut versuchen.");
+              }
+            }}
             onBack={() => setView("akte")}
           />
         </main>
