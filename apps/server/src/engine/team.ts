@@ -11,7 +11,8 @@ export const MAX_NAME_LENGTH = 24;
  * fuer das, was alle anderen in ihrer Teamliste sehen.
  *
  * Tritt dieselbe Verbindung erneut bei (z. B. nach einem Namenswechsel),
- * wird ihr Eintrag ersetzt statt verdoppelt, ihre Rolle (#31) bleibt dabei.
+ * wird ihr Eintrag ersetzt statt verdoppelt. Die Rolle bleibt dabei erhalten;
+ * neu Beitretende starten ohne Rolle (#31).
  */
 export function joinTeam(room: Room, playerId: string, rawName: string): TeamJoinResult {
   const name = rawName.trim();

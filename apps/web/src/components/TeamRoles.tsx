@@ -1,5 +1,5 @@
 import { ROLES, type Player, type Role } from "@case-zero/shared";
-import { ROLE_FOCUS, ROLE_LABEL } from "../lib/roles";
+import { ROLE_FOCUS, ROLE_LABEL } from "../lib/player";
 
 interface Props {
   /** Verbindungs-ID des eigenen Eintrags; die Liste kommt live vom Server (#22). */
@@ -59,7 +59,7 @@ export function TeamRoles({ myId, players, leaderId, joined, error, onAssign, on
       </p>
 
       {!joined ? (
-        <p className="briefing__empty">Tritt zuerst in der Fallakte dem Team bei.</p>
+        <p className="briefing__empty">Tritt zuerst in der Fallakte mit deinem Namen dem Team bei.</p>
       ) : (
         <>
           {iAmLeader && (
