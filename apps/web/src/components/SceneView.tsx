@@ -16,6 +16,8 @@ interface Props {
   /** IDs bereits untersuchter Stellen — bleibt beim Verlassen der Szene erhalten. */
   investigatedIds: string[];
   onInvestigate: (hotspotId: string) => void;
+  /** Markierung bewusst setzen oder zuruecknehmen (#34). */
+  onToggleInvestigated: (hotspotId: string) => void;
   /** IDs bereits eingesammelter Funde (#9). */
   collectedIds: string[];
   onCollect: (evidence: CollectedEvidence) => void;
@@ -43,6 +45,7 @@ export function SceneView({
   onSwitchScene,
   investigatedIds,
   onInvestigate,
+  onToggleInvestigated,
   collectedIds,
   onCollect,
   onBack,
@@ -59,6 +62,10 @@ export function SceneView({
   const shown = visibleHotspots(scene.hotspots, activeTool, investigatedIds);
 
   const [zoom, setZoom] = useState<number>(ZOOM_LEVELS[0]);
+  // Untersuchte Stellen ausblenden, damit nur noch Offenes im Bild steht (#34).
+  const [hideDone, setHideDone] = useState(false);
+  // #34 — untersuchte Stellen auf Wunsch ausblenden.
+  const listed = hideDone ? shown.filter((h) => !investigatedIds.includes(h.id)) : shown;
   const viewportRef = useRef<HTMLDivElement>(null);
 
   function changeZoom(next: number) {
@@ -141,7 +148,7 @@ export function SceneView({
         <Suspense fallback={<p className="scene__loading">Tatort wird geladen …</p>}>
           <Scene3D
             modelPath={scene.modelPath!}
-            hotspots={shown}
+            hotspots={listed}
             renderHotspot={(hotspot) => hotspotButton(hotspot)}
             onError={() => setModelFailed(true)}
           />
@@ -168,7 +175,7 @@ export function SceneView({
                 onError={() => setImageFailed(true)}
               />
             )}
-            {shown.map((hotspot) =>
+            {listed.map((hotspot) =>
               hotspotButton(hotspot, { left: `${hotspot.x}%`, top: `${hotspot.y}%` })
             )}
           </div>
@@ -207,6 +214,14 @@ export function SceneView({
             scene.hotspots.length
           )}
         </p>
+        <button
+          className="scene__back"
+          aria-pressed={hideDone}
+          onClick={() => setHideDone((prev) => !prev)}
+          disabled={investigated.size === 0}
+        >
+          {hideDone ? "Alle Stellen zeigen" : "Untersuchte ausblenden"}
+        </button>
         {scenes.length > 1 && (
           <nav className="scene__switch" aria-label="Tatort wechseln">
             {scenes.map((s) => (
@@ -267,6 +282,15 @@ export function SceneView({
                     Einsammeln
                   </button>
                 ))}
+              {/* #34 — Markierung bewusst zuruecknehmen, z. B. nach einem Hinweis aus dem Team. */}
+              <button
+                onClick={() => {
+                  onToggleInvestigated(openHotspot.id);
+                  setOpenHotspot(null);
+                }}
+              >
+                Als offen markieren
+              </button>
               <button onClick={() => setOpenHotspot(null)}>Schliessen</button>
             </div>
           </div>

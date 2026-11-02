@@ -7,6 +7,7 @@ import {
   saveProgress,
   setNote,
   toggleContradiction,
+  toggleInvestigated,
   toggleMarkedMessage,
   type ProgressStorage,
 } from "./caseProgress";
@@ -183,5 +184,15 @@ describe("Beweise einsammeln", () => {
   it("sichert denselben Fund nicht doppelt", () => {
     const list = [evidence];
     expect(collectEvidence(list, { ...evidence })).toBe(list);
+  });
+});
+
+describe("Untersuchte Stellen markieren (#34)", () => {
+  it("markiert eine offene Stelle", () => {
+    expect(toggleInvestigated(["fenster"], "papierkorb")).toEqual(["fenster", "papierkorb"]);
+  });
+
+  it("nimmt die Markierung wieder zurueck", () => {
+    expect(toggleInvestigated(["fenster", "papierkorb"], "fenster")).toEqual(["papierkorb"]);
   });
 });
