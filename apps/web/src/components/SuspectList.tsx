@@ -1,8 +1,8 @@
 import type { Suspect } from "@case-zero/shared";
 import { SuspectPortrait } from "./SuspectPortrait";
-import { orderSuspects } from "../lib/excludedSuspects";
 import { SuspicionMeter } from "./SuspicionMeter";
 import { SUSPICION_LABEL, primeSuspect, type SuspicionLevel } from "../lib/suspicion";
+import { orderSuspects } from "../lib/excludedSuspects";
 
 interface Props {
     suspects: Suspect[];
@@ -12,11 +12,11 @@ interface Props {
     onSelectSuspect: (id: string) => void;
     /** Nach dem Absenden der Anklage ist die Auswahl gesperrt (#27). */
     selectionLocked?: boolean;
+    /** Eigener Verdachtsgrad pro Person (#43) — nur Anzeige, gesetzt wird im Profil. */
+    suspicion?: Record<string, SuspicionLevel>;
     /** Ausgeschlossene Personen (#69) — erscheinen ausgegraut am Ende. */
     excludedIds?: string[];
     onToggleExcluded?: (id: string) => void;
-    /** Eigener Verdachtsgrad pro Person (#43) — nur Anzeige, gesetzt wird im Profil. */
-    suspicion?: Record<string, SuspicionLevel>;
 }
 
 /**
@@ -33,13 +33,13 @@ export function SuspectList({
   selectedSuspectId,
   onSelectSuspect,
   selectionLocked = false,
+  suspicion = {},
   excludedIds = [],
   onToggleExcluded,
-  suspicion = {},
 }: Props) {
-    const excluded = new Set(excludedIds);
-    const remaining = suspects.filter((s) => !excluded.has(s.id)).length;
-    const prime = primeSuspect(suspects, suspicion);
+  const prime = primeSuspect(suspects, suspicion);
+  const excluded = new Set(excludedIds);
+  const remaining = suspects.filter((s) => !excluded.has(s.id)).length;
     const selectedSuspect = suspects.find((suspect) => suspect.id === selectedSuspectId) ?? null;
 
   return (

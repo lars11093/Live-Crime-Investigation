@@ -53,6 +53,20 @@ export interface Scenario {
   keyEvidenceIds: string[];
   /** Was tatsaechlich passiert ist — erscheint erst nach der Anklage (#28). */
   resolution: string;
+  /** Alternative Enden (#80), je nach Anklage — siehe `CaseEnding.when`. */
+  endings?: CaseEnding[];
+}
+
+/** Ein Ende des Falls (#80). */
+export interface CaseEnding {
+  /**
+   * Wann es eintritt: `solved` (richtig und begruendet), `insufficient`
+   * (richtige Person, Beweise reichen nicht) oder eine Verdaechtigen-ID —
+   * das Ende, wenn diese Person zu Unrecht angeklagt wird.
+   */
+  when: string;
+  title: string;
+  text: string;
 }
 
 export interface Suspect {
@@ -189,6 +203,10 @@ export interface Device {
   locked?: boolean;
   /** Art der Sperre, wie sie im Terminal steht — z. B. "PIN, 4 Ziffern" (#18). */
   lockType?: string;
+  /** Geraeteart fuer die Uebersicht (#44). Fehlt sie, steht "Geraet". */
+  kind?: "smartphone" | "laptop" | "tablet" | "storage";
+  /** Wo das Geraet sichergestellt wurde (#44), z. B. "Schreibtisch, Buero 4.12". */
+  seizedAt?: string;
   /**
    * Hinweis zur Sperre, sichtbar im Terminal (#70) — z. B. woher die PIN
    * kommen koennte. Verraet die PIN nicht selbst.
@@ -199,10 +217,6 @@ export interface Device {
    * das Feld, geprueft wird nur in `engine/unlock.ts`.
    */
   unlockSecret?: string;
-  /** Geraeteart fuer die Uebersicht (#44). Fehlt sie, steht "Geraet". */
-  kind?: "smartphone" | "laptop" | "tablet" | "storage";
-  /** Wo das Geraet sichergestellt wurde (#44), z. B. "Schreibtisch, Buero 4.12". */
-  seizedAt?: string;
   /**
    * Systemprotokoll (#46), chronologisch wie die Nachrichten. Bei gesperrten
    * Geraeten entfernt der Server es wie die Nachrichten.
@@ -443,12 +457,12 @@ export interface CaseIntro {
 export interface CaseDefinition {
   id: string;
   title: string;
-  intro?: CaseIntro;
   /**
    * Was das Team herausfinden soll, in einem bis zwei Saetzen (#32). Jederzeit
    * im Spiel einsehbar — deshalb nichts darin, was die Loesung verraet.
    */
   objective?: string;
+  intro?: CaseIntro;
   briefing?: CaseBriefing;
   scenes: Scene[];
   combinations: Combination[];
@@ -547,6 +561,27 @@ export interface AccusationVerdict {
   /** Der Aufloesungstext aus dem aktiven Szenario. */
   resolution: string;
   findings: VerdictFinding[];
+  /**
+   * Bewertung der Beweiskette (#78). Optional, weil Quittungen von vor #78
+   * (im localStorage) sie nicht haben.
+   */
+  chain?: ChainRating;
+  /** Welches Ende die Anklage ausgeloest hat (#80). Fehlt, wenn das Szenario keine Enden hat. */
+  ending?: { kind: "solved" | "insufficient" | "wrong"; title: string; text: string };
+}
+
+/** Wie tragfaehig die Begruendung der Anklage war (#78). */
+export interface ChainRating {
+  level: "stark" | "mittel" | "schwach";
+  /** Angehaengte Beweise, die die Loesung tragen, und wie viele es gegeben haette. */
+  supporting: number;
+  possible: number;
+  /** Angehaengte Beweise ohne Bezug zur Loesung. */
+  irrelevant: number;
+  /** Ein Satz zur Einordnung. */
+  summary: string;
+  /** Konkret, wo die Begruendung schwach war — leer bei einer vollstaendigen Kette. */
+  weaknesses: string[];
 }
 
 /** Antwort des Servers auf `POST /api/rooms/:code/accusation` (Story #27). */
@@ -561,6 +596,14 @@ export interface ScoreResult {
   evidenceMatched: number;
   evidenceTotal: number;
 }
+
+/** Das Team einer Session, wie der Client es sieht (#31). */
+export interface TeamView {
+  players: Player[];
+}
+
+/** Antwort auf `team:role` (#31). */
+export type TeamResult = { ok: true; team: TeamView } | { ok: false; message: string };
 
 export interface RoomState {
   code: string;
@@ -584,8 +627,11 @@ export interface ClientToServerEvents {
   "case:accuse": (payload: { code: string; accusation: Accusation }, cb: (result: ScoreResult) => void) => void;
   /** Story #22 — mit Namen dem Team einer Session beitreten. */
   "team:join": (payload: { code: string; playerName: string }, cb: (result: TeamJoinResult) => void) => void;
-  /** Story #31 — die eigene Rolle waehlen; `null` gibt sie wieder frei. */
-  "team:role": (payload: { code: string; role: Role | null }, cb: (result: TeamJoinResult) => void) => void;
+  /** Rolle waehlen oder mit `null` abgeben (#31). Die neue Liste kommt per `team:update`. */
+  "team:role": (
+    payload: { code: string; playerId: string; role: Role | null },
+    cb: (result: TeamResult) => void
+  ) => void;
   /** Story #23 — einen Fund aus der eigenen Akte mit dem Team teilen. */
   "evidence:share": (payload: { code: string; evidence: CollectedEvidence }, cb: (result: ShareResult) => void) => void;
   /** Story #64 — eine eigene Notiz zu einem Beweis mit dem Team teilen. */
