@@ -1884,3 +1884,14 @@ div.account-bar {
 .interrogation__choice--decision {
   border-color: var(--danger);
 }
+
+/* Story #74 — Hinweise */
+.hints {
+  margin: 0 0 1rem;
+  padding-left: 1.2rem;
+  line-height: 1.5;
+}
+
+.hints li + li {
+  margin-top: 0.4rem;
+}

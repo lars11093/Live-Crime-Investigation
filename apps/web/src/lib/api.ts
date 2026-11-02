@@ -2,6 +2,7 @@ import type {
   AccusationSubmission,
   CaseSummary,
   CombineResult,
+  HintState,
   PublicCase,
   RecoverResult,
   SubmitAccusationResult,
@@ -125,6 +126,22 @@ export async function submitAccusation(
     throw new Error(`Anklage konnte nicht abgesendet werden (HTTP ${response.status})`);
   }
   return (await response.json()) as SubmitAccusationResult;
+}
+
+/** Freigegebene Hinweise der Team-Session (#74). */
+export async function fetchHints(code: string): Promise<HintState> {
+  const response = await fetch(`${SERVER_URL}/api/rooms/${normalizeRoomCode(code)}/hints`);
+  if (!response.ok) throw new Error(`Hinweise nicht verfuegbar (HTTP ${response.status})`);
+  return (await response.json()) as HintState;
+}
+
+/** Gibt den naechsten Hinweis fuer das Team frei (#74). 409 heisst: keine mehr. */
+export async function requestHint(code: string): Promise<{ ok: boolean; state: HintState }> {
+  const response = await fetch(`${SERVER_URL}/api/rooms/${normalizeRoomCode(code)}/hints`, { method: "POST" });
+  if (response.status !== 201 && response.status !== 409) {
+    throw new Error(`Hinweis konnte nicht angefordert werden (HTTP ${response.status})`);
+  }
+  return { ok: response.status === 201, state: (await response.json()) as HintState };
 }
 
 /** Stellt die geloeschten Nachrichten eines Geraets wieder her (#71). Wirft nur ohne Server. */

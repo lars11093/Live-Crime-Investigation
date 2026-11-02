@@ -41,6 +41,7 @@ import { shareMessage, useTeam } from "../lib/team";
 import { SharedFindings } from "../components/SharedFindings";
 import { ShareNoteButton, SharedNotesList } from "../components/SharedNotes";
 import { ProgressPanel } from "../components/ProgressPanel";
+import { HintPanel } from "../components/HintPanel";
 import { summarizeProgress } from "../lib/progress";
 import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
@@ -708,6 +709,7 @@ export function CaseLoaderPage() {
         />
       </div>
       <div style={{ marginTop: "1rem" }}>
+        <HintPanel code={code} />
         <SceneLogPanel log={sceneLog} />
       </div>
       <div style={{ marginTop: "1rem" }}>

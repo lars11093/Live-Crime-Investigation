@@ -361,6 +361,11 @@ export interface CaseDefinition {
   scenarios: Scenario[];
   seedEvidence: EvidenceNode[];
   timeline: TimedEvent[];
+  /**
+   * Hinweise fuer Sackgassen (#74), in der Reihenfolge, in der sie freigegeben
+   * werden. Bleiben auf dem Server und gehen nur einzeln auf Anfrage raus.
+   */
+  hints?: string[];
 }
 
 /**
@@ -370,7 +375,15 @@ export interface CaseDefinition {
  * serverseitig entfernt — siehe apps/server/src/engine/caseView.ts. Der Client
  * bekommt diesen Typ, nie CaseDefinition.
  */
-export type PublicCase = Omit<CaseDefinition, "scenarios" | "combinations">;
+export type PublicCase = Omit<CaseDefinition, "scenarios" | "combinations" | "hints">;
+
+/** Stand der Hinweise einer Team-Session (#74). */
+export interface HintState {
+  /** Bereits freigegebene Hinweise, aelteste zuerst. */
+  revealed: string[];
+  /** Wie viele Hinweise es insgesamt gibt. */
+  total: number;
+}
 
 /**
  * Ein Eintrag in der Fallauswahl (Story #30) — nur, was man zum Waehlen
