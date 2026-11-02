@@ -12,7 +12,7 @@ export function hintState(room: Room): HintState {
 /**
  * Story #74 — einen Hinweis anfordern.
  *
- * Gilt fuer das ganze Team: wer anfordert, gibt den naechsten Hinweis fuer
+ * Gilt für das ganze Team: wer anfordert, gibt den nächsten Hinweis für
  * alle frei. Die Hinweise stehen im Case-JSON und verlassen den Server nur
  * einzeln, damit niemand alle auf einmal aus der Netzwerk-Konsole liest.
  */

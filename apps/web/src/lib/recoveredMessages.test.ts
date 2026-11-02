@@ -14,7 +14,7 @@ const device: Device = {
 };
 
 describe("Wiederhergestellte Nachrichten (#71)", () => {
-  it("fuegt sie chronologisch in den Verlauf ein und setzt die Anzahl zurueck", () => {
+  it("fügt sie chronologisch in den Verlauf ein und setzt die Anzahl zurück", () => {
     const merged = withRecovered(device, {
       phone: [{ id: "b", sender: "B", sentAt: "12.09. 22:25", text: "zwei", recovered: true }],
     });
@@ -22,7 +22,7 @@ describe("Wiederhergestellte Nachrichten (#71)", () => {
     expect(merged.deletedCount).toBe(0);
   });
 
-  it("aendert nichts ohne Wiederhergestelltes und doppelt nichts", () => {
+  it("ändert nichts ohne Wiederhergestelltes und doppelt nichts", () => {
     expect(withRecovered(device, {})).toBe(device);
     const merged = withRecovered(device, { phone: [device.messages[0]] });
     expect(merged.messages).toHaveLength(2);

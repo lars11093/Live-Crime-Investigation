@@ -6,7 +6,7 @@ const evidence = (id: string) => ({ id, label: id, kind: "object" as const, desc
 
 const buero: Scene = {
   id: "buero",
-  name: "Buero",
+  name: "Büro",
   imagePath: "/b.jpg",
   hotspots: [
     { id: "tisch", label: "Schreibtisch", x: 0, y: 0, detail: "", evidence: evidence("notebook") },
@@ -28,7 +28,7 @@ describe("Ermittlungsfortschritt", () => {
     expect(summary).toMatchObject({ found: 0, total: 3, percent: 0 });
   });
 
-  it("zaehlt nur Beweise, nicht Stellen ohne Beweis", () => {
+  it("zählt nur Beweise, nicht Stellen ohne Beweis", () => {
     expect(summarizeProgress([buero], [], []).total).toBe(2);
   });
 
@@ -47,8 +47,8 @@ describe("Ermittlungsfortschritt", () => {
     expect(area.done).toBe(false);
   });
 
-  // Hat jemand im Team den Beweis geteilt (#23), ist die Stelle fuer alle erledigt.
-  it("zaehlt eine Stelle mit gefundenem Beweis als erledigt", () => {
+  // Hat jemand im Team den Beweis geteilt (#23), ist die Stelle für alle erledigt.
+  it("zählt eine Stelle mit gefundenem Beweis als erledigt", () => {
     const [area] = summarizeProgress([buero], ["tasse"], []).areas;
     expect(area.openHotspots).toEqual(["Schreibtisch", "Kamera"]);
   });

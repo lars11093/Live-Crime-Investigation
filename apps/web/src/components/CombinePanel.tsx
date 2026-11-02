@@ -1,10 +1,19 @@
 import { useState } from "react";
 import type { CollectedEvidence, Insight } from "@case-zero/shared";
+import {
+  STRENGTHS,
+  STRENGTH_LABEL,
+  sortByStrength,
+  type InsightStrength,
+} from "../lib/insightRating";
 
 interface Props {
   evidence: CollectedEvidence[];
   insights: Insight[];
-  /** Liefert die Rueckmeldung als Text — der Server entscheidet, nicht der Client. */
+  /** Eigene Bewertung pro Erkenntnis (#39). */
+  ratings: Record<string, InsightStrength>;
+  onRate: (insightId: string, strength: InsightStrength) => void;
+  /** Liefert die Rückmeldung als Text — der Server entscheidet, nicht der Client. */
   onCombine: (a: string, b: string) => Promise<string>;
 }
 
@@ -13,8 +22,11 @@ interface Props {
  *
  * Auswahl per Klick, genau zwei. Was ein Paar ergibt, weiss nur der Server;
  * hier wird nur die Antwort angezeigt.
+ *
+ * Story #39 — jede aufgedeckte Verknüpfung lässt sich als schwach, mittel
+ * oder stark einschätzen; die starken stehen dann oben.
  */
-export function CombinePanel({ evidence, insights, onCombine }: Props) {
+export function CombinePanel({ evidence, insights, ratings, onRate, onCombine }: Props) {
   const [selected, setSelected] = useState<string[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -23,7 +35,7 @@ export function CombinePanel({ evidence, insights, onCombine }: Props) {
     setMessage(null);
     setSelected((prev) => {
       if (prev.includes(id)) return prev.filter((x) => x !== id);
-      // Bei zwei bereits Gewaehlten rueckt der aeltere heraus, statt den
+      // Bei zwei bereits Gewählten rückt der ältere heraus, statt den
       // Klick wirkungslos verpuffen zu lassen.
       return prev.length < 2 ? [...prev, id] : [prev[1], id];
     });
@@ -43,9 +55,9 @@ export function CombinePanel({ evidence, insights, onCombine }: Props) {
   if (evidence.length < 2) {
     return (
       <section className="panel">
-        <p className="terminal-title">Verknuepfungen</p>
+        <p className="terminal-title">Verknüpfungen</p>
         <p className="evidence-list__empty">
-          Sammle mindestens zwei Beweise, um nach Zusammenhaengen zu suchen.
+          Sammle mindestens zwei Beweise, um nach Zusammenhängen zu suchen.
         </p>
       </section>
     );
@@ -53,9 +65,9 @@ export function CombinePanel({ evidence, insights, onCombine }: Props) {
 
   return (
     <section className="panel">
-      <p className="terminal-title">Verknuepfungen</p>
+      <p className="terminal-title">Verknüpfungen</p>
       <p className="case-status__hint">
-        Waehle zwei Beweise aus und pruefe, ob sie zusammengehoeren.
+        Wähle zwei Beweise aus und prüfe, ob sie zusammengehören.
       </p>
 
       <ul className="combine__options">
@@ -74,9 +86,9 @@ export function CombinePanel({ evidence, insights, onCombine }: Props) {
 
       <div className="case-status__actions">
         <button className="button--primary" onClick={combine} disabled={selected.length !== 2 || busy}>
-          {busy ? "Pruefe…" : "Kombinieren"}
+          {busy ? "Prüfe…" : "Kombinieren"}
         </button>
-        <span className="case-status__hint">{selected.length} / 2 gewaehlt</span>
+        <span className="case-status__hint">{selected.length} / 2 gewählt</span>
       </div>
 
       {message && (
@@ -87,13 +99,39 @@ export function CombinePanel({ evidence, insights, onCombine }: Props) {
 
       {insights.length > 0 && (
         <ol className="evidence-list__items" style={{ marginTop: "1.5rem" }}>
-          {insights.map((insight) => (
+          {sortByStrength(insights, ratings).map((insight) => (
             <li key={insight.id} className="evidence-list__item">
               <div className="evidence-list__head">
                 <span className="evidence-list__label">{insight.title}</span>
-                <span className="evidence-list__kind">Erkenntnis</span>
+                <span className="evidence-list__kind">
+                  {ratings[insight.id] ? STRENGTH_LABEL[ratings[insight.id]] : "Erkenntnis"}
+                </span>
               </div>
               <p className="evidence-list__description">{insight.body}</p>
+              <div
+                className="insight-rating"
+                role="group"
+                aria-label={`Zusammenhang bewerten: ${insight.title}`}
+              >
+                <span className="team-code__label" style={{ margin: 0 }}>
+                  Zusammenhang
+                </span>
+                {STRENGTHS.map((strength) => {
+                  const on = ratings[insight.id] === strength;
+                  return (
+                    <button
+                      key={strength}
+                      className={`insight-rating__option insight-rating__option--${strength}${
+                        on ? " insight-rating__option--on" : ""
+                      }`}
+                      aria-pressed={on}
+                      onClick={() => onRate(insight.id, strength)}
+                    >
+                      {STRENGTH_LABEL[strength]}
+                    </button>
+                  );
+                })}
+              </div>
             </li>
           ))}
         </ol>

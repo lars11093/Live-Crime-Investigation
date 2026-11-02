@@ -6,8 +6,8 @@ import case01 from "../data/case-01.json" with { type: "json" };
 const caseDef = case01 as CaseDefinition;
 const monica = caseDef.scenarios.find((s) => s.id === "scenario-monica") as Scenario;
 
-describe("Aufloesung nach der Anklage (#28)", () => {
-  it("gilt als geloest mit richtigem Taeter und tragendem Beweis", () => {
+describe("Auflösung nach der Anklage (#28)", () => {
+  it("gilt als gelöst mit richtigem Täter und tragendem Beweis", () => {
     const verdict = judgeAccusation(caseDef, monica, {
       suspectId: "monica-brandt",
       evidenceIds: ["tasse-lippenstift"],
@@ -17,7 +17,7 @@ describe("Aufloesung nach der Anklage (#28)", () => {
     expect(verdict.resolution).toBe(monica.resolution);
   });
 
-  it("gilt als nicht geloest mit falschem Taeter", () => {
+  it("gilt als nicht gelöst mit falschem Täter", () => {
     const verdict = judgeAccusation(caseDef, monica, {
       suspectId: "leo-fischer",
       evidenceIds: ["tasse-lippenstift"],
@@ -27,7 +27,7 @@ describe("Aufloesung nach der Anklage (#28)", () => {
     expect(verdict.findings[0].text).toContain("Monica Brandt");
   });
 
-  it("gilt als nicht geloest, wenn kein Beweis die Loesung traegt", () => {
+  it("gilt als nicht gelöst, wenn kein Beweis die Lösung trägt", () => {
     const verdict = judgeAccusation(caseDef, monica, {
       suspectId: "monica-brandt",
       evidenceIds: ["kratzer-fensterrahmen"],
@@ -35,7 +35,7 @@ describe("Aufloesung nach der Anklage (#28)", () => {
     expect(verdict.solved).toBe(false);
   });
 
-  it("benennt richtige, falsche und uebersehene Schluesse", () => {
+  it("benennt richtige, falsche und übersehene Schlüsse", () => {
     const verdict = judgeAccusation(caseDef, monica, {
       suspectId: "monica-brandt",
       evidenceIds: ["tasse-lippenstift", "kratzer-fensterrahmen"],

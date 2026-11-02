@@ -3,9 +3,9 @@ import type { InterrogationQuestion, Suspect } from "@case-zero/shared";
 
 interface Props {
   suspect: Suspect;
-  /** Bisheriges Gespraech, in Reihenfolge (#66). */
+  /** Bisheriges Gespräch, in Reihenfolge (#66). */
   asked: InterrogationQuestion[];
-  /** Fragen, die noch gestellt werden koennen. */
+  /** Fragen, die noch gestellt werden können. */
   open: InterrogationQuestion[];
   onAsk: (questionId: string) => void;
   /** Durch eine Entscheidung verworfene Fragen (#67). */
@@ -15,7 +15,7 @@ interface Props {
 /**
  * Story #66 — eine Befragung starten.
  *
- * "Befragung starten" oeffnet das Gespraech. Jede gestellte Frage steht mit
+ * "Befragung starten" öffnet das Gespräch. Jede gestellte Frage steht mit
  * Antwort im Protokoll, die offenen Fragen darunter zur Auswahl. Bereits
  * Gefragtes bleibt sichtbar, auch nach dem Neuladen.
  */

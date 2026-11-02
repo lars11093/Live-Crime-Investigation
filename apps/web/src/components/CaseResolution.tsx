@@ -5,16 +5,18 @@ interface Props {
 }
 
 const TOPIC_LABEL = {
-  suspect: "Taeter",
+  suspect: "Täter",
   evidence: "Beweis",
-  missed: "Uebersehen",
+  missed: "Übersehen",
 } as const;
 
 /**
- * Story #28 — die Aufloesung nach der Anklage.
+ * Story #28 — die Auflösung nach der Anklage.
  *
- * Zuoberst und unuebersehbar: geloest oder nicht. Darunter, was tatsaechlich
- * passiert ist, und welche Schluesse richtig oder falsch waren.
+ * Zuoberst und unübersehbar: gelöst oder nicht. Darunter, was tatsächlich
+ * passiert ist, und welche Schlüsse richtig oder falsch waren.
+ *
+ * Story #54 — die Punktzahl mit Einordnung und Aufschlüsselung.
  */
 export function CaseResolution({ verdict }: Props) {
   return (
@@ -23,16 +25,85 @@ export function CaseResolution({ verdict }: Props) {
         className={`resolution__result${verdict.solved ? "" : " resolution__result--failed"}`}
         role="status"
       >
-        {verdict.solved ? "Fall geloest" : "Fall nicht geloest"}
+        {verdict.solved ? "Fall gelöst" : "Fall nicht gelöst"}
       </p>
       <p className="case-status__hint">
-        Taeter: <strong>{verdict.culprit.name}</strong>
+        Täter: <strong>{verdict.culprit.name}</strong>
       </p>
+
+      {verdict.ending && (
+        <div className={`ending ending--${verdict.ending.kind}`}>
+          <p className="team-code__label">Dein Ende</p>
+          <h2 className="ending__title">{verdict.ending.title}</h2>
+          <p className="briefing__text" style={{ margin: 0 }}>
+            {verdict.ending.text}
+          </p>
+          <p className="case-status__hint" style={{ marginBottom: 0 }}>
+            Jede Anklage hat ein eigenes Ende, und jede neue Session wählt den Täter neu.
+          </p>
+        </div>
+      )}
+
+      {verdict.score && (
+        <div className="score" aria-label="Punktzahl">
+          <p className="score__points">
+            {verdict.score.points}
+            <span className="score__max"> / {verdict.score.maxPoints} Punkte</span>
+          </p>
+          <p className="score__rank">{verdict.score.rank}</p>
+          <div
+            className="score__bar"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={verdict.score.maxPoints}
+            aria-valuenow={verdict.score.points}
+          >
+            <span
+              style={{ width: `${(verdict.score.points / Math.max(1, verdict.score.maxPoints)) * 100}%` }}
+            />
+          </div>
+          <ul className="score__breakdown">
+            {verdict.score.breakdown.map((item) => (
+              <li key={item.label}>
+                <span>{item.label}</span>
+                <span className={item.points < 0 ? "score__minus" : "score__plus"}>
+                  {item.points > 0 ? "+" : ""}
+                  {item.points}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <p className="team-code__label">Was wirklich geschah</p>
       <p className="briefing__text">{verdict.resolution}</p>
 
-      <p className="team-code__label">Deine Schluesse</p>
+      {verdict.chain && (
+        <div className={`chain chain--${verdict.chain.level}`}>
+          <p className="team-code__label">Bewertung deiner Beweiskette</p>
+          <p className="chain__level">
+            {verdict.chain.level === "stark" ? "Stark" : verdict.chain.level === "mittel" ? "Mittel" : "Schwach"}
+            <span className="chain__count">
+              {" "}
+              · {verdict.chain.supporting} von {verdict.chain.possible} tragenden Beweisen
+              {verdict.chain.irrelevant > 0 && ` · ${verdict.chain.irrelevant} ohne Bezug`}
+            </span>
+          </p>
+          <p className="briefing__text" style={{ margin: "0.25rem 0" }}>
+            {verdict.chain.summary}
+          </p>
+          {verdict.chain.weaknesses.length > 0 && (
+            <ul className="chain__weaknesses">
+              {verdict.chain.weaknesses.map((text) => (
+                <li key={text}>{text}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      <p className="team-code__label">Deine Schlüsse</p>
       <ul className="resolution__findings">
         {verdict.findings.map((finding, index) => (
           <li

@@ -17,6 +17,8 @@ import { submitAccusation } from "./engine/accusation.js";
 import { hintState, revealHint } from "./engine/hints.js";
 import { unlockDevice } from "./engine/unlock.js";
 import { recoverDeleted } from "./engine/recover.js";
+import { addChatMessage } from "./engine/chat.js";
+import { addTask, releaseTasks, removeTask, updateTask } from "./engine/tasks.js";
 import {
   allRooms,
   createRoom,
@@ -26,8 +28,10 @@ import {
   roomCount,
   type Room,
 } from "./engine/rooms.js";
-import { joinTeam, leaveTeam, teamOf } from "./engine/team.js";
+import { chooseRole, joinTeam, leaveTeam, teamStateOf } from "./engine/team.js";
 import { shareFinding } from "./engine/sharing.js";
+import { recordDiscovery } from "./engine/discoveries.js";
+import { logActivity, nameOf, roleText } from "./engine/activity.js";
 import { AccountStore } from "./engine/accounts.js";
 import { difficultyOf, parseDifficulty, setDifficulty } from "./engine/difficulty.js";
 import { notesOf, shareNote } from "./engine/noteSharing.js";
@@ -66,12 +70,12 @@ app.use(cors());
 app.use(express.json());
 app.get("/health", (_req, res) => res.json({ ok: true, rooms: roomCount() }));
 
-// Story #30 — Uebersicht der verfuegbaren Faelle. Ohne Loesung, wie ueberall.
+// Story #30 — Übersicht der verfügbaren Fälle. Ohne Lösung, wie überall.
 app.get("/api/cases", (_req, res) => {
   res.json(toCaseSummaries(Object.values(CASES)));
 });
 
-// Story #2 — Fall laden. Liefert den Fall ohne die Loesung (siehe engine/caseView.ts).
+// Story #2 — Fall laden. Liefert den Fall ohne die Lösung (siehe engine/caseView.ts).
 app.get("/api/cases/:caseId", (req, res) => {
   const caseDef = CASES[req.params.caseId];
   if (!caseDef) {
@@ -91,7 +95,7 @@ app.post("/api/accounts/login", (req, res) => {
   return res.status(result.ok ? 200 : 401).json(result);
 });
 
-// Story #55 — Spielstand eines Kontos pro Team-Code, von jedem Geraet aus.
+// Story #55 — Spielstand eines Kontos pro Team-Code, von jedem Gerät aus.
 app.get("/api/accounts/me/progress/:code", (req, res) => {
   const progress = accounts.getProgress(bearer(req.headers.authorization), normalizeRoomCode(req.params.code));
   if (progress === undefined) return res.status(401).json({ error: "Nicht angemeldet" });
@@ -105,7 +109,7 @@ app.put("/api/accounts/me/progress/:code", (req, res) => {
     req.body?.progress
   );
   if (result === "unauthorized") return res.status(401).json({ error: "Nicht angemeldet" });
-  if (result === "invalid") return res.status(400).json({ error: "Ungueltiger Spielstand" });
+  if (result === "invalid") return res.status(400).json({ error: "Ungültiger Spielstand" });
   return res.status(204).end();
 });
 
@@ -117,7 +121,7 @@ app.post("/api/rooms", (req, res) => {
     return res.status(404).json({ error: "Fall nicht gefunden" });
   }
   const room = createRoom(caseDef);
-  // Story #56 — die Stufe gilt fuer die ganze Session, alle im Team spielen gleich.
+  // Story #56 — die Stufe gilt für die ganze Session, alle im Team spielen gleich.
   const difficulty = parseDifficulty(req.body?.difficulty);
   setDifficulty(room, difficulty);
   return res.status(201).json({ code: room.state.code, caseId, caseTitle: caseDef.title, difficulty });
@@ -125,7 +129,7 @@ app.post("/api/rooms", (req, res) => {
 
 // Story #13 — zwei Beweise kombinieren. Die Regeln bleiben auf dem Server:
 // der Client schickt zwei IDs und bekommt die Erkenntnis oder eine Absage,
-// nie die Liste der Moeglichkeiten.
+// nie die Liste der Möglichkeiten.
 app.post("/api/cases/:caseId/combine", (req, res) => {
   const caseDef = CASES[req.params.caseId];
   if (!caseDef) {
@@ -139,7 +143,7 @@ app.post("/api/cases/:caseId/combine", (req, res) => {
   return res.json(combineEvidence(caseDef, String(evidenceIds[0]), String(evidenceIds[1]), found));
 });
 
-// Story #71 — geloeschte Nachrichten eines Geraets wiederherstellen.
+// Story #71 — gelöschte Nachrichten eines Geräts wiederherstellen.
 app.post("/api/cases/:caseId/devices/:deviceId/recover", (req, res) => {
   const caseDef = CASES[req.params.caseId];
   if (!caseDef) {
@@ -150,7 +154,7 @@ app.post("/api/cases/:caseId/devices/:deviceId/recover", (req, res) => {
   return res.status(result.reason === "unknown-device" ? 404 : 400).json(result);
 });
 
-// Story #70 — gesperrtes Geraet entsperren. PIN/Passwort bleiben auf dem
+// Story #70 — gesperrtes Gerät entsperren. PIN/Passwort bleiben auf dem
 // Server; der Client bekommt den Inhalt nur bei richtigem Versuch.
 app.post("/api/cases/:caseId/devices/:deviceId/unlock", (req, res) => {
   const caseDef = CASES[req.params.caseId];
@@ -162,16 +166,16 @@ app.post("/api/cases/:caseId/devices/:deviceId/unlock", (req, res) => {
   return res.status(result.reason === "unknown-device" ? 404 : 400).json(result);
 });
 
-// Story #5 — Team-Code pruefen. Falsches Format und unbekannter Code sind fuer
-// den Spieler derselbe Fall: "Ungueltiger Team-Code".
+// Story #5 — Team-Code prüfen. Falsches Format und unbekannter Code sind für
+// den Spieler derselbe Fall: "Ungültiger Team-Code".
 app.get("/api/rooms/:code", (req, res) => {
   const code = normalizeRoomCode(req.params.code);
   if (!isValidRoomCode(code)) {
-    return res.status(400).json({ error: "Ungueltiger Team-Code" });
+    return res.status(400).json({ error: "Ungültiger Team-Code" });
   }
   const room = getRoom(code);
   if (!room) {
-    return res.status(404).json({ error: "Ungueltiger Team-Code" });
+    return res.status(404).json({ error: "Ungültiger Team-Code" });
   }
   return res.json({
     code: room.state.code,
@@ -181,17 +185,18 @@ app.get("/api/rooms/:code", (req, res) => {
   });
 });
 
-// Story #74 — Hinweise der Team-Session lesen und den naechsten freigeben.
+// Story #74 — Hinweise der Team-Session lesen und den nächsten freigeben.
 app.get("/api/rooms/:code/hints", (req, res) => {
   const room = getRoom(req.params.code);
-  if (!room) return res.status(404).json({ error: "Ungueltiger Team-Code" });
+  if (!room) return res.status(404).json({ error: "Ungültiger Team-Code" });
   return res.json(hintState(room));
 });
 
 app.post("/api/rooms/:code/hints", (req, res) => {
   const room = getRoom(req.params.code);
-  if (!room) return res.status(404).json({ error: "Ungueltiger Team-Code" });
+  if (!room) return res.status(404).json({ error: "Ungültiger Team-Code" });
   const result = revealHint(room);
+  if (result.ok) activity(room, null, "Ein Hinweis wurde für das Team freigegeben.");
   return res.status(result.ok ? 201 : 409).json(result.state);
 });
 
@@ -199,10 +204,13 @@ app.post("/api/rooms/:code/hints", (req, res) => {
 app.post("/api/rooms/:code/accusation", (req, res) => {
   const room = getRoom(req.params.code);
   if (!room) {
-    return res.status(404).json({ error: "Ungueltiger Team-Code" });
+    return res.status(404).json({ error: "Ungültiger Team-Code" });
   }
   const result = submitAccusation(room, req.body);
-  if (result.ok) return res.status(201).json(result);
+  if (result.ok) {
+    activity(room, null, "Die Anklage wurde abgesendet.");
+    return res.status(201).json(result);
+  }
   return res.status(result.reason === "already-submitted" ? 409 : 400).json(result);
 });
 
@@ -210,6 +218,12 @@ const httpServer = createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
   cors: { origin: "*" },
 });
+
+/** Story #76 — Eintrag ins Aktivitätsprotokoll und an alle im Raum. */
+function activity(room: Room, who: string | null, text: string) {
+  logActivity(room, who, text);
+  io.to(room.state.code).emit("team:activity", room.activity);
+}
 
 io.on("connection", (socket) => {
   socket.on("room:create", ({ caseId, playerName }, cb) => {
@@ -226,7 +240,7 @@ io.on("connection", (socket) => {
   socket.on("room:join", ({ code, playerName, role }) => {
     const room = getRoom(code);
     if (!room) {
-      socket.emit("error:message", "Ungueltiger Team-Code");
+      socket.emit("error:message", "Ungültiger Team-Code");
       return;
     }
     if (room.state.players.some((p) => p.role === role)) {
@@ -283,20 +297,42 @@ io.on("connection", (socket) => {
   socket.on("team:join", ({ code, playerName }, cb) => {
     const room = getRoom(code);
     if (!room) {
-      cb({ ok: false, error: "Ungueltiger Team-Code" });
+      cb({ ok: false, error: "Ungültiger Team-Code" });
       return;
     }
+    const isNew = nameOf(room, socket.id) === undefined;
     const result = joinTeam(room, socket.id, String(playerName ?? ""));
     cb(result);
     if (!result.ok) return;
     socket.join(room.state.code);
-    io.to(room.state.code).emit("team:update", teamOf(room));
-    // Wer spaeter dazukommt, sieht trotzdem alles, was schon geteilt wurde (#23).
+    if (isNew) activity(room, nameOf(room, socket.id) ?? null, "ist dem Team beigetreten");
+    else socket.emit("team:activity", room.activity);
+    io.to(room.state.code).emit("team:update", teamStateOf(room));
+    // Wer später dazukommt, sieht trotzdem alles, was schon geteilt wurde (#23).
     socket.emit("team:findings", room.findings);
+    socket.emit("team:discoveries", room.discoveries);
     socket.emit("team:notes", notesOf(room));
+    socket.emit("chat:history", room.chat ?? []);
+    socket.emit("tasks:state", room.tasks ?? []);
   });
 
-  // Story #64 — Notiz teilen. Gepruefte Notiz geht an alle im Raum.
+  // Story #31 — eigene Rolle wählen, #48 — als Teamleitung für andere.
+  // Die neue Liste geht an alle im Raum.
+  socket.on("team:role", ({ code, role, playerId }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      cb({ ok: false, error: "Ungültiger Team-Code" });
+      return;
+    }
+    const target = typeof playerId === "string" ? playerId : socket.id;
+    const result = chooseRole(room, socket.id, role, target);
+    cb(result);
+    if (!result.ok) return;
+    io.to(room.state.code).emit("team:update", teamStateOf(room));
+    activity(room, nameOf(room, socket.id) ?? null, roleText(role ?? null, target === socket.id ? null : (nameOf(room, target) ?? "jemandem")));
+  });
+
+  // Story #64 — Notiz teilen. Geprüfte Notiz geht an alle im Raum.
   socket.on("note:share", ({ code, evidenceId, evidenceLabel, text }, cb) => {
     const room = getRoom(String(code ?? ""));
     if (!room) {
@@ -305,10 +341,12 @@ io.on("connection", (socket) => {
     }
     const result = shareNote(room, socket.id, { evidenceId, evidenceLabel, text });
     cb(result);
-    if (result.ok) io.to(room.state.code).emit("team:notes", notesOf(room));
+    if (!result.ok) return;
+    io.to(room.state.code).emit("team:notes", notesOf(room));
+    activity(room, nameOf(room, socket.id) ?? null, `hat eine Notiz zu «${String(evidenceLabel)}» geteilt`);
   });
 
-  // Story #23 — Fund teilen. Gepruefter Fund geht an alle im Raum.
+  // Story #23 — Fund teilen. Geprüfter Fund geht an alle im Raum.
   socket.on("evidence:share", ({ code, evidence }, cb) => {
     const room = getRoom(code);
     if (!room) {
@@ -317,10 +355,27 @@ io.on("connection", (socket) => {
     }
     const result = shareFinding(room, socket.id, evidence);
     cb(result);
-    if (result.ok) io.to(room.state.code).emit("team:findings", room.findings);
+    if (!result.ok) return;
+    io.to(room.state.code).emit("team:findings", room.findings);
+    activity(room, nameOf(room, socket.id) ?? null, `hat «${String(evidence.label)}» mit dem Team geteilt`);
   });
 
-  // Story #57 — das Team in den naechsten Fall mitnehmen. Alle im alten Raum
+  // Story #75 — Funde live ans Team. Der Client meldet jeden eingesammelten
+  // Fund; der Server prüft Team und Fall wie beim Teilen (#23).
+  socket.on("evidence:found", ({ code, evidence }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      cb?.({ ok: false, reason: "invalid-room" });
+      return;
+    }
+    const result = recordDiscovery(room, socket.id, evidence);
+    cb?.(result);
+    if (!result.ok) return;
+    io.to(room.state.code).emit("team:discoveries", room.discoveries);
+    activity(room, nameOf(room, socket.id) ?? null, `hat «${String(evidence.label)}» gefunden`);
+  });
+
+  // Story #57 — das Team in den nächsten Fall mitnehmen. Alle im alten Raum
   // bekommen den neuen Code und treten dort mit ihrem Namen bei.
   socket.on("team:next", ({ code, newCode }, cb) => {
     const from = getRoom(String(code ?? ""));
@@ -334,11 +389,70 @@ io.on("connection", (socket) => {
     io.to(from!.state.code).emit("team:moved", { code: to!.state.code, by: result.by });
   });
 
+  // Story #49 — Team-Chat. Schreiben darf, wer im Team ist (#22); die
+  // Nachricht geht an alle im selben Raum wie die Teamliste.
+  socket.on("chat:send", ({ code, text }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      cb({ ok: false, reason: "Ungültiger Team-Code" });
+      return;
+    }
+    const result = addChatMessage(room, socket.id, text);
+    if (!result.ok) {
+      cb({ ok: false, reason: result.reason });
+      return;
+    }
+    io.to(room.state.code).emit("chat:message", result.message);
+    cb({ ok: true });
+  });
+
+  // Story #50 — gemeinsame Aufgabenliste im selben Raum wie die Teamliste.
+  // Nach jeder Änderung geht die ganze Liste an alle: bei höchstens 50
+  // Aufgaben einfacher und robuster als einzelne Deltas. Wer handelt, ist
+  // immer die Socket-ID (#22) — nie eine ID aus dem Payload.
+  function broadcastTasks(room: Room) {
+    io.to(room.state.code).emit("tasks:state", room.tasks ?? []);
+  }
+
+  socket.on("tasks:add", ({ code, text }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) return cb({ ok: false, reason: "Ungültiger Team-Code" });
+    const result = addTask(room, socket.id, text);
+    if (!result.ok) return cb({ ok: false, reason: result.reason });
+    broadcastTasks(room);
+    activity(room, nameOf(room, socket.id) ?? null, `hat die Aufgabe «${String(text).trim()}» angelegt`);
+    cb({ ok: true });
+  });
+
+  socket.on("tasks:update", ({ code, taskId, patch }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) return cb({ ok: false, reason: "Ungültiger Team-Code" });
+    const result = updateTask(room, socket.id, taskId, patch ?? {});
+    if (!result.ok) return cb({ ok: false, reason: result.reason });
+    broadcastTasks(room);
+    const task = (room.tasks ?? []).find((t) => t.id === taskId);
+    if (task && patch?.done === true) activity(room, nameOf(room, socket.id) ?? null, `hat «${task.text}» erledigt`);
+    cb({ ok: true });
+  });
+
+  socket.on("tasks:remove", ({ code, taskId }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) return cb({ ok: false, reason: "Ungültiger Team-Code" });
+    const result = removeTask(room, socket.id, taskId);
+    if (!result.ok) return cb({ ok: false, reason: result.reason });
+    broadcastTasks(room);
+    cb({ ok: true });
+  });
+
   socket.on("disconnect", () => {
     for (const room of allRooms()) {
       // Wer geht, verschwindet auch aus den Teamlisten der anderen (#22).
+      const leaving = nameOf(room, socket.id);
       if (leaveTeam(room, socket.id)) {
-        io.to(room.state.code).emit("team:update", teamOf(room));
+        if (leaving) activity(room, leaving, "hat das Team verlassen");
+        io.to(room.state.code).emit("team:update", teamStateOf(room));
+        // Übernommene Aufgaben werden wieder frei (#50).
+        if (releaseTasks(room, socket.id)) broadcastTasks(room);
       }
     }
   });

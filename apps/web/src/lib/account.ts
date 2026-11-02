@@ -3,7 +3,7 @@ import type { ProgressStorage } from "./caseProgress";
 /**
  * Ein Ermittler-Konto (Story #29).
  *
- * Bewusst ohne Server und Passwort: CLAUDE.md sieht fuer die MVP-Phase keine
+ * Bewusst ohne Server und Passwort: CLAUDE.md sieht für die MVP-Phase keine
  * Datenbank vor, und "Konto erstellen" mit dauerhafter Speicherung ist eine
  * eigene Story (#55). Das Konto ordnet den Fortschritt einem Namen zu — wer
  * sich mit demselben Namen wieder anmeldet, findet seinen Stand wieder.
@@ -36,11 +36,11 @@ export function accountIdFor(name: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-/** Leer heisst gueltig; sonst der Grund, warum der Name nicht geht. */
+/** Leer heisst gültig; sonst der Grund, warum der Name nicht geht. */
 export function validateName(name: string): string | null {
   const trimmed = name.trim();
   if (trimmed.length < NAME_MIN) return `Der Name braucht mindestens ${NAME_MIN} Zeichen.`;
-  if (trimmed.length > NAME_MAX) return `Der Name darf hoechstens ${NAME_MAX} Zeichen haben.`;
+  if (trimmed.length > NAME_MAX) return `Der Name darf höchstens ${NAME_MAX} Zeichen haben.`;
   if (!accountIdFor(trimmed)) return "Der Name braucht mindestens einen Buchstaben oder eine Ziffer.";
   return null;
 }
@@ -58,7 +58,7 @@ export function loadAccount(storage: ProgressStorage): Account | null {
   }
 }
 
-/** Meldet an. Wirft nicht — ein ungueltiger Name kommt als `null` zurueck. */
+/** Meldet an. Wirft nicht — ein ungültiger Name kommt als `null` zurück. */
 export function login(storage: ProgressStorage, name: string): Account | null {
   if (validateName(name)) return null;
   const account: Account = { id: accountIdFor(name), name: name.trim() };

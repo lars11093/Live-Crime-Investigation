@@ -5,7 +5,7 @@ import { EMPTY_PROGRESS } from "./caseProgress";
 
 const caseData = {
   title: "Tod im Büro 4.12",
-  briefing: { timeOfCrime: "22:30", location: "Buero 4.12", text: "" },
+  briefing: { timeOfCrime: "22:30", location: "Büro 4.12", text: "" },
   suspects: [{ id: "monica", name: "Monica Brandt", age: 45, relationToVictim: "Chefin" }],
 };
 
@@ -17,7 +17,7 @@ const progress = {
       label: "Teetasse",
       kind: "object" as const,
       description: "Lippenstift am Rand.",
-      foundAt: { sceneName: "Buero 4.12", hotspotLabel: "Teetasse" },
+      foundAt: { sceneName: "Büro 4.12", hotspotLabel: "Teetasse" },
     },
   ],
   notes: { tasse: "Passt zu Monica?" },
@@ -25,11 +25,11 @@ const progress = {
 };
 
 describe("Akte exportieren (#63)", () => {
-  it("enthaelt Beweise mit Notiz, Fundort und den Anklage-Entwurf", () => {
+  it("enthält Beweise mit Notiz, Fundort und den Anklage-Entwurf", () => {
     const text = exportAkte(caseData, progress, "ABC-DEF", new Date("2026-11-01T20:00:00Z"));
     expect(text).toContain("# Fallakte: Tod im Büro 4.12");
     expect(text).toContain("### Teetasse");
-    expect(text).toContain("Fundort: Buero 4.12 · Teetasse");
+    expect(text).toContain("Fundort: Büro 4.12 · Teetasse");
     expect(text).toContain("> Notiz: Passt zu Monica?");
     expect(text).toContain("- Täter: Monica Brandt");
     expect(text).toContain("noch nicht abgesendet");

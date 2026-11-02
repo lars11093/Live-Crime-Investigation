@@ -19,7 +19,7 @@ describe("Werkzeuge im Tatort (#60)", () => {
     expect(visibleHotspots(spots, "uv").map((h) => h.id)).toEqual(["tisch", "boden"]);
   });
 
-  it("laesst gefundene UV-Spuren auch ohne Lampe sichtbar", () => {
+  it("lässt gefundene UV-Spuren auch ohne Lampe sichtbar", () => {
     expect(visibleHotspots(spots, null, ["boden"]).map((h) => h.id)).toEqual(["tisch", "boden"]);
   });
 

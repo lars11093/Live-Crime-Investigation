@@ -26,7 +26,7 @@ describe("Standortdaten auswerten (#72)", () => {
   });
 
   it("kommt ohne Tatzeit aus", () => {
-    const entries = analyzeLocations([{ at: "12.09. 22:40", place: "Buero" }], null);
+    const entries = analyzeLocations([{ at: "12.09. 22:40", place: "Büro" }], null);
     expect(entries[0].inCrimeWindow).toBe(false);
     expect(placeAtCrime(entries)).toBeNull();
   });

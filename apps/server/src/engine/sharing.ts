@@ -3,7 +3,7 @@ import type { Room } from "./rooms.js";
 
 /**
  * Alle Beweis-IDs, die es in einem Fall einzusammeln gibt: Funde im Tatort
- * (#9) und Chatnachrichten auf Geraeten (#21, Nachrichten-ID = Beweis-ID).
+ * (#9) und Chatnachrichten auf Geräten (#21, Nachrichten-ID = Beweis-ID).
  */
 export function collectableIds(caseDef: CaseDefinition): Set<string> {
   const ids = new Set<string>();
@@ -18,8 +18,8 @@ export function collectableIds(caseDef: CaseDefinition): Set<string> {
   return ids;
 }
 
-/** Nur die Felder, die ein Beweis hat — alles andere aus dem Client faellt weg. */
-function clean(evidence: CollectedEvidence): CollectedEvidence {
+/** Nur die Felder, die ein Beweis hat — alles andere aus dem Client fällt weg. */
+export function clean(evidence: CollectedEvidence): CollectedEvidence {
   return {
     id: String(evidence.id),
     label: String(evidence.label),
@@ -36,10 +36,10 @@ function clean(evidence: CollectedEvidence): CollectedEvidence {
 /**
  * Story #23 — einen Fund mit dem Team teilen.
  *
- * Drei Pruefungen, alle auf dem Server:
- *   - Wer teilt, muss im Team sein (#22). Sonst gaebe es keinen Urheber.
+ * Drei Prüfungen, alle auf dem Server:
+ *   - Wer teilt, muss im Team sein (#22). Sonst gäbe es keinen Urheber.
  *   - Der Beweis muss im Fall vorkommen. Ein erfundener Fund mit passendem
- *     Text wuerde sonst bei allen als echte Spur auftauchen.
+ *     Text würde sonst bei allen als echte Spur auftauchen.
  *   - Jeder Beweis wird nur einmal geteilt. Teilt ihn jemand zweites Mal,
  *     bleibt der erste Urheber stehen.
  */

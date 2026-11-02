@@ -12,8 +12,8 @@ const KEY = "case-zero:last-team";
 /**
  * Story #57 — das Team merken.
  *
- * Im localStorage, damit es auch einen geschlossenen Tab ueberlebt: Auf der
- * Startseite geht es dann mit einem Klick zurueck ins Team, ohne Code und
+ * Im localStorage, damit es auch einen geschlossenen Tab überlebt: Auf der
+ * Startseite geht es dann mit einem Klick zurück ins Team, ohne Code und
  * Namen erneut einzugeben.
  */
 export function loadSavedTeam(storage: ProgressStorage): SavedTeam | null {

@@ -6,7 +6,7 @@ interface Props {
   onLogin: (name: string) => void;
   /**
    * Konto mit Passwort erstellen oder anmelden (#55). Liefert `null` bei
-   * Erfolg, sonst die Meldung fuer den Spieler.
+   * Erfolg, sonst die Meldung für den Spieler.
    */
   onServerAccount: (mode: "register" | "login", name: string, password: string) => Promise<string | null>;
   onLogout: () => void;
@@ -15,9 +15,9 @@ interface Props {
 /**
  * Story #29 — anmelden; Story #55 — Konto erstellen.
  *
- * Nur mit Namen bleibt alles wie bei #29: Der Fortschritt haengt am Namen in
+ * Nur mit Namen bleibt alles wie bei #29: Der Fortschritt hängt am Namen in
  * diesem Browser. Mit Passwort entsteht ein Konto auf dem Server, und der
- * Fortschritt laesst sich auf jedem Geraet wieder laden.
+ * Fortschritt lässt sich auf jedem Gerät wieder laden.
  */
 export function AccountBar({ account, onLogin, onServerAccount, onLogout }: Props) {
   const [name, setName] = useState("");

@@ -1,13 +1,13 @@
 import type { ProgressStorage } from "./caseProgress";
 
-/** Wie lange eine Zeile der Titelsequenz steht, bevor die naechste kommt (#58). */
+/** Wie lange eine Zeile der Titelsequenz steht, bevor die nächste kommt (#58). */
 export const LINE_MS = 2600;
 
 function storageKey(roomCode: string): string {
   return `case-zero:intro-seen:${roomCode}`;
 }
 
-/** Story #58 — das Intro laeuft einmal pro Team-Session, danach direkt das Briefing. */
+/** Story #58 — das Intro läuft einmal pro Team-Session, danach direkt das Briefing. */
 export function introSeen(storage: ProgressStorage, roomCode: string): boolean {
   try {
     return storage.getItem(storageKey(roomCode)) === "1";

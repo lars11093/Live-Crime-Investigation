@@ -18,7 +18,7 @@ const device: Device = {
 const message = device.messages[0];
 
 describe("Chatnachricht als Beweis", () => {
-  it("uebernimmt die Nachrichten-ID als Beweis-ID", () => {
+  it("übernimmt die Nachrichten-ID als Beweis-ID", () => {
     expect(messageToEvidence(device, message).id).toBe("msg-vogt-05");
   });
 
@@ -32,10 +32,44 @@ describe("Chatnachricht als Beweis", () => {
     expect(evidence.description).toContain("Meet me at the office. 22:30.");
   });
 
-  it("haelt Geraet und Zeitstempel als Fundort fest", () => {
+  it("hält Gerät und Zeitstempel als Fundort fest", () => {
     expect(messageToEvidence(device, message).foundAt).toEqual({
       sceneName: "Smartphone Thomas Vogt",
       hotspotLabel: "Chat · 12.09. 20:30",
     });
+  });
+});
+
+describe("Anhang mit Metadaten in der Akte (#45)", () => {
+  const device = { id: "d", label: "Smartphone Thomas Vogt", owner: "Thomas Vogt", messages: [] };
+  const message = {
+    id: "m",
+    sender: "Leo Fischer",
+    sentAt: "12.09. 20:47",
+    text: "Soll ich vorbeikommen?",
+    attachment: {
+      fileName: "PXL_1.jpg",
+      metadata: { takenAt: "12.09. 20:44", camera: "Google Pixel 7" },
+    },
+  };
+
+  it("nennt den Anhang, solange die Metadaten nicht ausgelesen sind", () => {
+    expect(messageToEvidence(device, message).description).toBe(
+      "«Soll ich vorbeikommen?» Anhang: PXL_1.jpg."
+    );
+  });
+
+  it("nimmt ausgelesene Metadaten mit", () => {
+    expect(messageToEvidence(device, message, true).description).toBe(
+      "«Soll ich vorbeikommen?» Anhang PXL_1.jpg: aufgenommen 12.09. 20:44 · Google Pixel 7."
+    );
+  });
+});
+
+describe("Herkunft einer digitalen Spur (#47)", () => {
+  it("markiert gesicherte Nachrichten als vom Gerät", () => {
+    const device = { id: "d", label: "Smartphone", owner: "A", messages: [] };
+    const message = { id: "m", sender: "B", sentAt: "12.09. 21:15", text: "Hallo" };
+    expect(messageToEvidence(device, message).source).toBe("device");
   });
 });

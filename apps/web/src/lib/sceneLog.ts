@@ -16,8 +16,8 @@ export const SCENE_LOG_MAX = 200;
 /**
  * Story #61 — das Tatortprotokoll.
  *
- * Haelt fest, was der Ermittler wann wo gemacht hat. Pro Team-Code im
- * Browser, in einem eigenen Schluessel neben dem Fortschritt.
+ * Hält fest, was der Ermittler wann wo gemacht hat. Pro Team-Code im
+ * Browser, in einem eigenen Schlüssel neben dem Fortschritt.
  */
 function storageKey(roomCode: string): string {
   return `case-zero:scene-log:${roomCode}`;
@@ -49,8 +49,8 @@ export function saveSceneLog(storage: ProgressStorage, roomCode: string, log: Sc
 }
 
 /**
- * Haengt einen Eintrag an. Dieselbe Handlung an derselben Stelle wird nur
- * einmal protokolliert — wer eine Stelle dreimal oeffnet, hat sie einmal untersucht.
+ * Hängt einen Eintrag an. Dieselbe Handlung an derselben Stelle wird nur
+ * einmal protokolliert — wer eine Stelle dreimal öffnet, hat sie einmal untersucht.
  */
 export function appendSceneLog(log: SceneLogEntry[], entry: SceneLogEntry): SceneLogEntry[] {
   const duplicate = log.some(

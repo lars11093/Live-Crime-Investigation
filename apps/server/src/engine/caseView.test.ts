@@ -6,19 +6,19 @@ import case01 from "../data/case-01.json" with { type: "json" };
 const caseDef = case01 as CaseDefinition;
 
 describe("toPublicCase", () => {
-  it("entfernt die Loesung aus dem Fall", () => {
+  it("entfernt die Lösung aus dem Fall", () => {
     const view = toPublicCase(caseDef);
     expect("scenarios" in view).toBe(false);
   });
 
-  it("behaelt die Daten, die der Spieler zum Ermitteln braucht", () => {
+  it("behält die Daten, die der Spieler zum Ermitteln braucht", () => {
     const view = toPublicCase(caseDef);
     expect(view.id).toBe(caseDef.id);
     expect(view.title).toBe(caseDef.title);
     expect(view.suspects).toEqual(caseDef.suspects);
     expect(view.seedEvidence).toEqual(caseDef.seedEvidence);
-    // Der Chatverlauf ist Ermittlungsmaterial, keine Loesung (#19).
-    // Geloeschte Nachrichten (#71) gehen nur als Anzahl mit, der Rest unveraendert.
+    // Der Chatverlauf ist Ermittlungsmaterial, keine Lösung (#19).
+    // Gelöschte Nachrichten (#71) gehen nur als Anzahl mit, der Rest unverändert.
     const openDevices = caseDef.devices
       ?.filter((d) => !d.locked)
       .map(({ deletedMessages: _deleted, ...d }) => d);
@@ -28,9 +28,9 @@ describe("toPublicCase", () => {
     expect(publicOpen).toEqual(openDevices);
   });
 
-  // Das Forensik-Terminal listet gesperrte Geraete auf (#18), ihr Inhalt
+  // Das Forensik-Terminal listet gesperrte Geräte auf (#18), ihr Inhalt
   // bleibt aber auf dem Server, bis sie entsperrt sind.
-  it("listet gesperrte Geraete ohne ihre Nachrichten und Dateien", () => {
+  it("listet gesperrte Geräte ohne ihre Nachrichten und Dateien", () => {
     const view = toPublicCase(caseDef);
     const locked = caseDef.devices?.filter((d) => d.locked) ?? [];
     expect(locked.length).toBeGreaterThan(0);
@@ -51,7 +51,7 @@ describe("toPublicCase", () => {
     }
   });
 
-  // Die Verdaechtigen-Liste ist oeffentlich — der Spieler muss sie sehen.
+  // Die Verdächtigen-Liste ist öffentlich — der Spieler muss sie sehen.
   // Geheim ist, *welcher* davon es war, mit welcher Waffe und wann.
   it("gibt Motiv, Waffe, Tatzeit und Beweiskette nicht preis", () => {
     const serialized = JSON.stringify(toPublicCase(caseDef));
@@ -68,7 +68,7 @@ describe("toPublicCase", () => {
 });
 
 describe("Fallauswahl (#30)", () => {
-  it("listet jeden Fall mit Titel, Tatort, Tatzeit und Verdaechtigen", () => {
+  it("listet jeden Fall mit Titel, Tatort, Tatzeit und Verdächtigen", () => {
     expect(toCaseSummaries([caseDef])).toEqual([
       {
         id: "case-01",
@@ -87,10 +87,43 @@ describe("Fallauswahl (#30)", () => {
     expect(list[0].location).toBeUndefined();
   });
 
-  it("verraet nichts aus der Loesung", () => {
+  it("verrät nichts aus der Lösung", () => {
     const json = JSON.stringify(toCaseSummaries([caseDef]));
     for (const scenario of caseDef.scenarios) {
       expect(json).not.toContain(scenario.resolution);
     }
+  });
+});
+
+describe("Ermittlungsziel (#32)", () => {
+  it("geht an den Client, weil es jederzeit sichtbar sein soll", () => {
+    expect(toPublicCase(caseDef).objective).toBe(caseDef.objective);
+    expect(caseDef.objective).toBeTruthy();
+  });
+
+  it("nennt keinen Täter", () => {
+    for (const scenario of caseDef.scenarios) {
+      const culprit = caseDef.suspects.find((s) => s.id === scenario.suspectId)!;
+      expect(caseDef.objective).not.toContain(culprit.name);
+    }
+  });
+});
+
+describe("Systemprotokolle (#46)", () => {
+  it("liefert das Protokoll offener Geräte aus", () => {
+    const open = toPublicCase(caseDef).devices?.find((d) => d.id === "smartphone-vogt");
+    expect(open?.systemLog?.length).toBeGreaterThan(0);
+  });
+
+  it("schickt kein Protokoll gesperrter Geräte an den Client", () => {
+    const view = toPublicCase(caseDef);
+    const lockedWithLog = caseDef.devices?.filter((d) => d.locked && d.systemLog?.length) ?? [];
+    expect(lockedWithLog.length).toBeGreaterThan(0);
+    for (const device of lockedWithLog) {
+      expect(view.devices?.find((d) => d.id === device.id)?.systemLog).toEqual([]);
+    }
+    // Gezielt auf einen Protokolleintrag des gesperrten Laptops prüfen: das
+    // Wort "Revisionsstelle" allein kommt inzwischen auch in einer Befragung (#67) vor.
+    expect(JSON.stringify(view)).not.toContain("Mail-Entwurf gespeichert: An Revisionsstelle");
   });
 });

@@ -1,12 +1,21 @@
 import { customAlphabet } from "nanoid";
-import type { AccusationReceipt, CaseDefinition, RoomState, SharedFinding } from "@case-zero/shared";
+import type {
+  AccusationReceipt,
+  CaseDefinition,
+  RoomState,
+  SharedFinding,
+  TeamDiscovery,
+  ActivityEntry,
+  TeamChatMessage,
+  TeamTask,
+} from "@case-zero/shared";
 
 /**
  * In-Memory Room Store (Story #5).
  *
  * Entscheidung zur offenen Frage im Issue ("Wie wird eine Session
  * serverseitig gehalten?"): im Server-Prozess, ohne Datenbank — so steht es
- * in CLAUDE.md fuer die MVP-Phase. Konsequenz, die das Team kennen muss:
+ * in CLAUDE.md für die MVP-Phase. Konsequenz, die das Team kennen muss:
  * ein Server-Neustart verwirft alle laufenden Sessions.
  */
 export interface Room {
@@ -15,8 +24,20 @@ export interface Room {
   scenario: CaseDefinition["scenarios"][number];
   /** Mit dem Team geteilte Funde (#23), in der Reihenfolge des Teilens. */
   findings: SharedFinding[];
+  /** Live gemeldete Funde (#75), pro Beweis nur der erste Fund. */
+  discoveries: TeamDiscovery[];
+  /** Aktivitätsprotokoll des Teams (#76), der älteste Eintrag zuerst. */
+  activity: ActivityEntry[];
   /** Die abgesendete Anklage des Teams (#27). Fehlt, solange niemand abgesendet hat. */
   accusation?: AccusationReceipt;
+  /** Teamleiter (#48) — der erste Spieler, der dem Team beitritt. */
+  leaderId?: string;
+  /** Verlauf des Team-Chats (#49), die älteste Nachricht zuerst. */
+  chat?: TeamChatMessage[];
+  /** Gemeinsame Aufgabenliste (#50). */
+  tasks?: TeamTask[];
+  /** Wann die Session angelegt wurde — für den Tempobonus (#54). */
+  createdAt: Date;
 }
 
 /** Ohne I, O, 0 und 1 — die verwechselt man beim Vorlesen im Team. */
@@ -42,16 +63,19 @@ function pickScenario(caseDef: CaseDefinition) {
 
 export function createRoom(caseDef: CaseDefinition): Room {
   let code = `${nanoid()}-${nanoid()}`;
-  // Bei 32^6 Kombinationen praktisch nie noetig, aber billiger als ein
-  // ueberschriebener Raum mit fremden Spielern darin.
+  // Bei 32^6 Kombinationen praktisch nie nötig, aber billiger als ein
+  // überschriebener Raum mit fremden Spielern darin.
   while (rooms.has(code)) {
     code = `${nanoid()}-${nanoid()}`;
   }
 
   const room: Room = {
+    createdAt: new Date(),
     caseDef,
     scenario: pickScenario(caseDef),
     findings: [],
+    discoveries: [],
+    activity: [],
     state: {
       code,
       caseId: caseDef.id,

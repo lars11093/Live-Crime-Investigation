@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import type { ProgressStorage } from "./caseProgress";
 
-// Der Hook in team.ts baut beim Import eine Socket-Verbindung auf. Fuer die
+// Der Hook in team.ts baut beim Import eine Socket-Verbindung auf. Für die
 // reinen Funktionen hier wird sie nicht gebraucht.
 vi.mock("./socket", () => ({ socket: {} }));
 
@@ -17,7 +17,7 @@ function fakeStorage(): ProgressStorage {
   };
 }
 
-describe("Name pruefen", () => {
+describe("Name prüfen", () => {
   it("akzeptiert einen normalen Namen", () => {
     expect(nameError("Loris")).toBeNull();
   });
@@ -33,19 +33,19 @@ describe("Name pruefen", () => {
 });
 
 describe("Name speichern", () => {
-  it("liest zurueck, was gespeichert wurde", () => {
+  it("liest zurück, was gespeichert wurde", () => {
     const storage = fakeStorage();
     saveName(storage, "ABC-123", "Loris");
     expect(loadName(storage, "ABC-123")).toBe("Loris");
   });
 
-  it("haelt Sessions auseinander", () => {
+  it("hält Sessions auseinander", () => {
     const storage = fakeStorage();
     saveName(storage, "ABC-123", "Loris");
     expect(loadName(storage, "XYZ-999")).toBe("");
   });
 
-  it("laeuft weiter, wenn der Storage gesperrt ist", () => {
+  it("läuft weiter, wenn der Storage gesperrt ist", () => {
     const broken: ProgressStorage = {
       getItem: () => {
         throw new Error("blocked");
@@ -60,11 +60,11 @@ describe("Name speichern", () => {
 });
 
 describe("Meldung nach dem Teilen", () => {
-  it("bestaetigt ein erfolgreiches Teilen", () => {
+  it("bestätigt ein erfolgreiches Teilen", () => {
     expect(shareMessage({ ok: true })).toBe("Mit dem Team geteilt.");
   });
 
-  it("hat fuer jeden Absagegrund einen eigenen Text", () => {
+  it("hat für jeden Absagegrund einen eigenen Text", () => {
     const reasons = ["invalid-room", "not-in-team", "unknown-evidence", "already-shared"] as const;
     const texts = reasons.map((reason) => shareMessage({ ok: false, reason }));
     expect(new Set(texts).size).toBe(reasons.length);

@@ -12,7 +12,7 @@ const tasse: CollectedEvidence = {
   label: "Tasse mit Lippenstiftabdruck",
   kind: "object",
   description: "Halbvolle, kalte Tasse.",
-  foundAt: { sceneName: "Buero 4.12 - Fundort", hotspotLabel: "Tasse auf der Ablage" },
+  foundAt: { sceneName: "Büro 4.12 - Fundort", hotspotLabel: "Tasse auf der Ablage" },
 };
 
 function roomWithTeam() {
@@ -39,7 +39,7 @@ describe("Fund teilen", () => {
     expect(room.findings[0].evidence.id).toBe("tasse-lippenstift");
   });
 
-  it("laesst nur Teammitglieder teilen", () => {
+  it("lässt nur Teammitglieder teilen", () => {
     const room = roomWithTeam();
     expect(shareFinding(room, "socket-x", tasse)).toEqual({ ok: false, reason: "not-in-team" });
     expect(room.findings).toEqual([]);
@@ -47,11 +47,11 @@ describe("Fund teilen", () => {
 
   it("weist erfundene Beweise ab", () => {
     const room = roomWithTeam();
-    const fake = { ...tasse, id: "gestaendnis", label: "Gestaendnis von Monica" };
+    const fake = { ...tasse, id: "gestaendnis", label: "Geständnis von Monica" };
     expect(shareFinding(room, "socket-a", fake)).toEqual({ ok: false, reason: "unknown-evidence" });
   });
 
-  it("teilt denselben Beweis nur einmal und behaelt den ersten Urheber", () => {
+  it("teilt denselben Beweis nur einmal und behält den ersten Urheber", () => {
     const room = roomWithTeam();
     shareFinding(room, "socket-a", tasse);
     expect(shareFinding(room, "socket-b", tasse)).toEqual({ ok: false, reason: "already-shared" });

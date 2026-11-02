@@ -6,7 +6,7 @@ import case01 from "../data/case-01.json" with { type: "json" };
 
 const caseDef = case01 as CaseDefinition;
 
-describe("Geraet entsperren (#70)", () => {
+describe("Gerät entsperren (#70)", () => {
   it("entsperrt das Smartphone mit der richtigen PIN und liefert die Nachrichten", () => {
     const result = unlockDevice(caseDef, "smartphone-fischer", "0417");
     expect(result.ok).toBe(true);
@@ -23,11 +23,11 @@ describe("Geraet entsperren (#70)", () => {
     });
   });
 
-  it("nimmt das Passwort unabhaengig von Gross/klein und Trennzeichen an", () => {
+  it("nimmt das Passwort unabhängig von Gross/klein und Trennzeichen an", () => {
     expect(unlockDevice(caseDef, "laptop-vogt", "Finanzen-Q3-Original").ok).toBe(true);
   });
 
-  it("antwortet bei unbekannten oder offenen Geraeten ohne Inhalt", () => {
+  it("antwortet bei unbekannten oder offenen Geräten ohne Inhalt", () => {
     expect(unlockDevice(caseDef, "gibt-es-nicht", "0417")).toEqual({ ok: false, reason: "unknown-device" });
     expect(unlockDevice(caseDef, "smartphone-vogt", "0417")).toEqual({ ok: false, reason: "not-locked" });
     expect(unlockDevice(caseDef, "smartphone-fischer", 417)).toEqual({ ok: false, reason: "wrong-secret" });

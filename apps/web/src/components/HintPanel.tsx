@@ -9,8 +9,8 @@ interface Props {
 /**
  * Story #74 — einen Hinweis anfordern, wenn das Team feststeckt.
  *
- * Ein Hinweis gilt fuer das ganze Team (der Server zaehlt pro Session). Vor
- * dem Anfordern fragt die Ansicht nach, weil ein Hinweis nicht zurueckgeht.
+ * Ein Hinweis gilt für das ganze Team (der Server zählt pro Session). Vor
+ * dem Anfordern fragt die Ansicht nach, weil ein Hinweis nicht zurückgeht.
  */
 export function HintPanel({ code }: Props) {
   const [state, setState] = useState<HintState | null>(null);

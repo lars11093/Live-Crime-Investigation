@@ -2,13 +2,13 @@ import { useState } from "react";
 
 interface Props {
   deletedCount: number;
-  /** Liefert `null` bei Erfolg, sonst die Meldung fuer den Spieler. */
+  /** Liefert `null` bei Erfolg, sonst die Meldung für den Spieler. */
   onRecover: () => Promise<string | null>;
 }
 
 /**
- * Story #71 — geloeschte Nachrichten wiederherstellen.
- * Erscheint nur, wenn auf dem Geraet etwas geloescht wurde. Nach dem
+ * Story #71 — gelöschte Nachrichten wiederherstellen.
+ * Erscheint nur, wenn auf dem Gerät etwas gelöscht wurde. Nach dem
  * Wiederherstellen stehen die Nachrichten markiert im Chatverlauf.
  */
 export function RecoverDeleted({ deletedCount, onRecover }: Props) {

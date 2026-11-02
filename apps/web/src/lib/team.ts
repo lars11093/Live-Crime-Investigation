@@ -3,10 +3,14 @@ import type {
   CollectedEvidence,
   NoteShareResult,
   Player,
+  Role,
   SharedFinding,
   SharedNote,
+  TeamDiscovery,
+  ActivityEntry,
   ShareResult,
   TeamJoinResult,
+  TeamState,
 } from "@case-zero/shared";
 import { socket } from "./socket";
 import type { ProgressStorage } from "./caseProgress";
@@ -15,15 +19,15 @@ import type { ProgressStorage } from "./caseProgress";
 export const MAX_NAME_LENGTH = 24;
 
 /**
- * Prueft einen Namen, bevor er an den Server geht (#22).
- * `null` heisst "in Ordnung". Der Server prueft trotzdem nochmal — das hier
- * spart nur den Umweg fuer die offensichtlichen Faelle.
+ * Prüft einen Namen, bevor er an den Server geht (#22).
+ * `null` heisst "in Ordnung". Der Server prüft trotzdem nochmal — das hier
+ * spart nur den Umweg für die offensichtlichen Fälle.
  */
 export function nameError(rawName: string): string | null {
   const name = rawName.trim();
   if (!name) return "Bitte gib einen Namen ein.";
   if (name.length > MAX_NAME_LENGTH) {
-    return `Der Name darf hoechstens ${MAX_NAME_LENGTH} Zeichen haben.`;
+    return `Der Name darf höchstens ${MAX_NAME_LENGTH} Zeichen haben.`;
   }
   return null;
 }
@@ -37,7 +41,7 @@ export function shareMessage(result: ShareResult): string {
     case "already-shared":
       return "Diesen Fund hat schon jemand geteilt.";
     case "unknown-evidence":
-      return "Dieser Fund gehoert nicht zum Fall.";
+      return "Dieser Fund gehört nicht zum Fall.";
     case "invalid-room":
       return "Die Team-Session gibt es nicht mehr.";
   }
@@ -47,7 +51,7 @@ export function shareMessage(result: ShareResult): string {
  * Der eigene Name liegt im sessionStorage, pro Team-Code.
  *
  * sessionStorage statt localStorage, weil er pro Tab gilt: zwei Tabs im selben
- * Browser sind dann zwei Teammitglieder — so laesst sich #22 allein testen.
+ * Browser sind dann zwei Teammitglieder — so lässt sich #22 allein testen.
  */
 function nameKey(roomCode: string): string {
   return `case-zero:name:${roomCode}`;
@@ -78,7 +82,7 @@ function sessionStore(): ProgressStorage {
   return { getItem: () => null, setItem: () => {} };
 }
 
-/** Den Namen fuer eine Session vormerken, damit dort automatisch beigetreten wird (#57). */
+/** Den Namen für eine Session vormerken, damit dort automatisch beigetreten wird (#57). */
 export function rememberName(roomCode: string, name: string): void {
   saveName(sessionStore(), roomCode, name);
 }
@@ -93,21 +97,34 @@ export function rememberName(roomCode: string, name: string): void {
 export function useTeam(roomCode: string) {
   const [name, setName] = useState(() => loadName(sessionStore(), roomCode));
   const [players, setPlayers] = useState<Player[]>([]);
+  // Wer das Team leitet (#48) — Socket-ID wie `myId`.
+  const [leaderId, setLeaderId] = useState<string | null>(null);
   const [myId, setMyId] = useState<string | undefined>(socket.id);
   const [error, setError] = useState<string | null>(null);
   // Mit dem Team geteilte Funde (#23), live vom Server.
   const [findings, setFindings] = useState<SharedFinding[]>([]);
+  // Live gemeldete Funde des Teams (#75).
+  const [discoveries, setDiscoveries] = useState<TeamDiscovery[]>([]);
+  // Aktivitätsprotokoll des Teams (#76).
+  const [activity, setActivity] = useState<ActivityEntry[]>([]);
   // Mit dem Team geteilte Notizen (#64), live vom Server.
   const [notes, setNotes] = useState<SharedNote[]>([]);
   // Das Team ist in eine neue Session umgezogen (#57).
   const [movedTo, setMovedTo] = useState<{ code: string; by: string } | null>(null);
 
   useEffect(() => {
-    function onUpdate(list: Player[]) {
-      setPlayers(list);
+    function onUpdate(team: TeamState) {
+      setPlayers(team.players);
+      setLeaderId(team.leaderId);
     }
     function onFindings(list: SharedFinding[]) {
       setFindings(list);
+    }
+    function onActivity(list: ActivityEntry[]) {
+      setActivity(list);
+    }
+    function onDiscoveries(list: TeamDiscovery[]) {
+      setDiscoveries(list);
     }
     function onNotes(list: SharedNote[]) {
       setNotes(list);
@@ -132,6 +149,8 @@ export function useTeam(roomCode: string) {
 
     socket.on("team:update", onUpdate);
     socket.on("team:findings", onFindings);
+    socket.on("team:discoveries", onDiscoveries);
+    socket.on("team:activity", onActivity);
     socket.on("team:notes", onNotes);
     socket.on("team:moved", onMoved);
     socket.on("connect", join);
@@ -139,6 +158,8 @@ export function useTeam(roomCode: string) {
     return () => {
       socket.off("team:update", onUpdate);
       socket.off("team:findings", onFindings);
+      socket.off("team:discoveries", onDiscoveries);
+      socket.off("team:activity", onActivity);
       socket.off("team:notes", onNotes);
       socket.off("team:moved", onMoved);
       socket.off("connect", join);
@@ -176,6 +197,19 @@ export function useTeam(roomCode: string) {
     [roomCode]
   );
 
+  /**
+   * Meldet einen eingesammelten Fund live ans Team (#75). Ohne Beitritt gibt es
+   * kein Team, dann passiert nichts. Eine Ablehnung (z. B. schon gefunden) ist
+   * kein Fehler — der erste Finder bleibt einfach stehen.
+   */
+  const reportFound = useCallback(
+    (evidence: CollectedEvidence) => {
+      if (!name) return;
+      socket.emit("evidence:found", { code: roomCode, evidence }, () => {});
+    },
+    [roomCode, name]
+  );
+
   /** Teilt eine Notiz (#64); die neue Liste kommt per `team:notes`. */
   const shareNote = useCallback(
     (evidence: CollectedEvidence, text: string) =>
@@ -186,6 +220,22 @@ export function useTeam(roomCode: string) {
             "note:share",
             { code: roomCode, evidenceId: evidence.id, evidenceLabel: evidence.label, text },
             (err, result) => (err ? reject(err) : resolve(result))
+          );
+      }),
+    [roomCode]
+  );
+
+  /**
+   * Setzt eine Rolle: die eigene (#31) oder als Teamleitung die eines anderen
+   * (#48). Die neue Liste kommt per `team:update`.
+   */
+  const chooseRole = useCallback(
+    (role: Role | null, playerId?: string) =>
+      new Promise<TeamJoinResult>((resolve, reject) => {
+        socket
+          .timeout(5000)
+          .emit("team:role", { code: roomCode, role, playerId }, (err, result) =>
+            err ? reject(err) : resolve(result)
           );
       }),
     [roomCode]
@@ -204,5 +254,8 @@ export function useTeam(roomCode: string) {
     [roomCode]
   );
 
-  return { name, players, myId, error, joinAs, findings, share, notes, shareNote, movedTo, moveTo };
+  return { name, players, leaderId, myId, error, joinAs, chooseRole, findings,
+    discoveries,
+    reportFound,
+    activity, share, notes, shareNote, movedTo, moveTo };
 }

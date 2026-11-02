@@ -1,8 +1,10 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import type { CollectedEvidence, Difficulty, Hotspot, Scene, SceneTool } from "@case-zero/shared";
 import { sceneProgressText } from "../lib/difficulty";
 import { TOOL_LABEL, toolsIn, visibleHotspots } from "../lib/sceneTools";
+import { ZOOM_LEVELS, keepCenter, zoomIn, zoomOut } from "../lib/zoom";
+import type { EvidencePhoto } from "../lib/photos";
 
 // three.js ist gross — erst laden, wenn ein Tatort wirklich ein 3D-Modell hat.
 const Scene3D = lazy(() => import("./Scene3D"));
@@ -15,9 +17,14 @@ interface Props {
   /** IDs bereits untersuchter Stellen — bleibt beim Verlassen der Szene erhalten. */
   investigatedIds: string[];
   onInvestigate: (hotspotId: string) => void;
+  /** Markierung bewusst setzen oder zurücknehmen (#34). */
+  onToggleInvestigated: (hotspotId: string) => void;
   /** IDs bereits eingesammelter Funde (#9). */
   collectedIds: string[];
   onCollect: (evidence: CollectedEvidence) => void;
+  /** IDs bereits fotografierter Funde (#35). */
+  photographedIds: string[];
+  onPhoto: (photo: EvidencePhoto) => void;
   onBack: () => void;
   /** Schwierigkeitsstufe der Session (#56). */
   difficulty?: Difficulty;
@@ -28,8 +35,13 @@ interface Props {
  *
  * TODO Bild-Assets: `scene.imagePath` zeigt auf Dateien, die es im Repo noch
  * nicht gibt — echte Bilder werden in der MVP-Phase bewusst nicht committet
- * (Copyright/Repo-Groesse). Bis dahin greift der Platzhalter, der deshalb
+ * (Copyright/Repo-Grösse). Bis dahin greift der Platzhalter, der deshalb
  * kein Randfall ist, sondern der Normalzustand.
+ *
+ * Story #33 — Zoom. Bild und Stellen liegen gemeinsam auf einer "Bühne", die
+ * mit der Zoomstufe wächst; der Ausschnitt darum herum scrollt. Weil die
+ * Stellen in Prozent der Bühne positioniert sind, bleiben sie beim Zoomen
+ * genau auf ihrem Bilddetail.
  */
 export function SceneView({
   scene,
@@ -37,8 +49,11 @@ export function SceneView({
   onSwitchScene,
   investigatedIds,
   onInvestigate,
+  onToggleInvestigated,
   collectedIds,
   onCollect,
+  photographedIds,
+  onPhoto,
   onBack,
   difficulty = "normal",
 }: Props) {
@@ -52,10 +67,41 @@ export function SceneView({
   const activeTool = tool && tools.includes(tool) ? tool : null;
   const shown = visibleHotspots(scene.hotspots, activeTool, investigatedIds);
 
+  const [zoom, setZoom] = useState<number>(ZOOM_LEVELS[0]);
+  // Untersuchte Stellen ausblenden, damit nur noch Offenes im Bild steht (#34).
+  const [hideDone, setHideDone] = useState(false);
+  // #34 — untersuchte Stellen auf Wunsch ausblenden.
+  const listed = hideDone ? shown.filter((h) => !investigatedIds.includes(h.id)) : shown;
+  const viewportRef = useRef<HTMLDivElement>(null);
+
+  function changeZoom(next: number) {
+    const viewport = viewportRef.current;
+    if (viewport && next !== zoom) {
+      const left = keepCenter(viewport.scrollLeft, viewport.clientWidth, zoom, next);
+      const top = keepCenter(viewport.scrollTop, viewport.clientHeight, zoom, next);
+      // Erst nach dem Neuzeichnen scrollen, sonst ist die Bühne noch zu klein.
+      requestAnimationFrame(() => viewport.scrollTo({ left, top }));
+    }
+    setZoom(next);
+  }
+
+  // Tastatur (#33): + / - zoomen, 0 setzt zurück — nicht, solange ein Dialog offen ist, und
+  // nicht in 3D: dort zoomt die Szene selbst (Mausrad).
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if (show3d || openHotspot || event.target instanceof HTMLInputElement) return;
+      if (event.key === "+" || event.key === "=") changeZoom(zoomIn(zoom));
+      else if (event.key === "-") changeZoom(zoomOut(zoom));
+      else if (event.key === "0") changeZoom(ZOOM_LEVELS[0]);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
   const investigated = new Set(investigatedIds);
   const collected = new Set(collectedIds);
 
-  // Bestaetigung wieder ausblenden, damit sie nicht dauerhaft im Bild steht.
+  // Bestätigung wieder ausblenden, damit sie nicht dauerhaft im Bild steht.
   useEffect(() => {
     if (!confirmation) return;
     const timer = setTimeout(() => setConfirmation(null), 4000);
@@ -68,9 +114,25 @@ export function SceneView({
     onCollect({
       ...evidence,
       foundAt: { sceneName: scene.name, hotspotLabel: hotspot.label },
+      source: "scene",
     });
     setConfirmation(`"${evidence.label}" ist in deiner Beweisakte.`);
     setOpenHotspot(null);
+  }
+
+  // #35 — das Foto merkt sich Stelle und Zoom; die Akte zeichnet daraus den Ausschnitt.
+  function photograph(hotspot: Hotspot, evidence: NonNullable<Hotspot["evidence"]>) {
+    onPhoto({
+      evidenceId: evidence.id,
+      takenAt: new Date().toISOString(),
+      sceneName: scene.name,
+      sceneImagePath: scene.imagePath,
+      hotspotLabel: hotspot.label,
+      x: hotspot.x,
+      y: hotspot.y,
+      zoom,
+    });
+    setConfirmation(`Foto von "${evidence.label}" aufgenommen.`);
   }
 
   function open(hotspot: Hotspot) {
@@ -108,32 +170,61 @@ export function SceneView({
         <Suspense fallback={<p className="scene__loading">Tatort wird geladen …</p>}>
           <Scene3D
             modelPath={scene.modelPath!}
-            hotspots={shown}
+            hotspots={listed}
             renderHotspot={(hotspot) => hotspotButton(hotspot)}
             onError={() => setModelFailed(true)}
           />
         </Suspense>
-      ) : imageFailed ? (
-        <div className="scene__placeholder">
-          <p className="scene__placeholder-mark" aria-hidden="true">
-            [ ! ]
-          </p>
-          <p className="scene__placeholder-name">{scene.name}</p>
-          <p className="scene__placeholder-hint">Szenenbild nicht verfuegbar</p>
-        </div>
       ) : (
-        <img
-          className="scene__image"
-          src={scene.imagePath}
-          alt={scene.name}
-          onError={() => setImageFailed(true)}
-        />
+        <div className="scene__viewport" ref={viewportRef}>
+          <div
+            className="scene__stage"
+            style={{ width: `${zoom * 100}%`, height: `${zoom * 100}%` }}
+          >
+            {imageFailed ? (
+              <div className="scene__placeholder">
+                <p className="scene__placeholder-mark" aria-hidden="true">
+                  [ ! ]
+                </p>
+                <p className="scene__placeholder-name">{scene.name}</p>
+                <p className="scene__placeholder-hint">Szenenbild nicht verfügbar</p>
+              </div>
+            ) : (
+              <img
+                className="scene__image"
+                src={scene.imagePath}
+                alt={scene.name}
+                onError={() => setImageFailed(true)}
+              />
+            )}
+            {listed.map((hotspot) =>
+              hotspotButton(hotspot, { left: `${hotspot.x}%`, top: `${hotspot.y}%` })
+            )}
+          </div>
+        </div>
       )}
 
-      {!show3d &&
-        shown.map((hotspot) =>
-          hotspotButton(hotspot, { left: `${hotspot.x}%`, top: `${hotspot.y}%` })
-        )}
+      {!show3d && (
+        <div className="scene__zoom" role="group" aria-label="Zoom">
+          <button
+            onClick={() => changeZoom(zoomOut(zoom))}
+            disabled={zoom === ZOOM_LEVELS[0]}
+            aria-label="Herauszoomen"
+          >
+            −
+          </button>
+          <button onClick={() => changeZoom(ZOOM_LEVELS[0])} aria-label="Zoom zurücksetzen">
+            {Math.round(zoom * 100)} %
+          </button>
+          <button
+            onClick={() => changeZoom(zoomIn(zoom))}
+            disabled={zoom === ZOOM_LEVELS[ZOOM_LEVELS.length - 1]}
+            aria-label="Hineinzoomen"
+          >
+            +
+          </button>
+        </div>
+      )}
 
       <div className="scene__overlay">
         <p className="scene__name">{scene.name}</p>
@@ -145,6 +236,14 @@ export function SceneView({
             scene.hotspots.length
           )}
         </p>
+        <button
+          className="scene__back"
+          aria-pressed={hideDone}
+          onClick={() => setHideDone((prev) => !prev)}
+          disabled={investigated.size === 0}
+        >
+          {hideDone ? "Alle Stellen zeigen" : "Untersuchte ausblenden"}
+        </button>
         {scenes.length > 1 && (
           <nav className="scene__switch" aria-label="Tatort wechseln">
             {scenes.map((s) => (
@@ -170,7 +269,7 @@ export function SceneView({
           </button>
         ))}
         <button className="scene__back" onClick={onBack}>
-          Zurueck
+          Zurück
         </button>
       </div>
 
@@ -205,6 +304,22 @@ export function SceneView({
                     Einsammeln
                   </button>
                 ))}
+              {openHotspot.evidence && (
+                <button onClick={() => photograph(openHotspot, openHotspot.evidence!)}>
+                  {photographedIds.includes(openHotspot.evidence.id)
+                    ? "Neues Foto aufnehmen"
+                    : "Fotografieren"}
+                </button>
+              )}
+              {/* #34 — Markierung bewusst zuruecknehmen, z. B. nach einem Hinweis aus dem Team. */}
+              <button
+                onClick={() => {
+                  onToggleInvestigated(openHotspot.id);
+                  setOpenHotspot(null);
+                }}
+              >
+                Als offen markieren
+              </button>
               <button onClick={() => setOpenHotspot(null)}>Schliessen</button>
             </div>
           </div>

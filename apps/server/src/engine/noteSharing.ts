@@ -17,9 +17,9 @@ export function notesOf(room: Room): SharedNote[] {
 /**
  * Story #64 — eine Notiz mit dem Team teilen.
  *
- * Wie beim Teilen von Funden (#23) prueft der Server Teammitgliedschaft und
+ * Wie beim Teilen von Funden (#23) prüft der Server Teammitgliedschaft und
  * ob es den Beweis im Fall gibt. Teilt dieselbe Person erneut eine Notiz zum
- * selben Beweis, ersetzt die neue die alte — eine Ueberlegung pro Person und Beweis.
+ * selben Beweis, ersetzt die neue die alte — eine Überlegung pro Person und Beweis.
  */
 export function shareNote(
   room: Room,

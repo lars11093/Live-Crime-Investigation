@@ -7,7 +7,7 @@ interface Props {
 
 /**
  * Story #73 — Forensik-Report: alle digitalen Funde auf einen Blick, pro
- * Geraet, und als Datei zum Vorlegen.
+ * Gerät, und als Datei zum Vorlegen.
  */
 export function ForensicReportPanel({ report, onDownload }: Props) {
   const empty = report.securedCount === 0 && report.markedCount === 0;

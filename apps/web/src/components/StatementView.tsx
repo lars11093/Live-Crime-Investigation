@@ -25,7 +25,7 @@ function TimeHighlighted({ text }: { text: string }) {
 
 /**
  * Story #16 — Aussage mit hervorgehobenen Zeitangaben.
- * Story #17 — einzelne Saetze als Widerspruch markieren.
+ * Story #17 — einzelne Sätze als Widerspruch markieren.
  *
  * Markiert wird satzweise, nicht zeichengenau — siehe lib/statement.ts.
  */

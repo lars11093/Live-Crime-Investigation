@@ -12,11 +12,11 @@ interface Props {
 /**
  * Story #65 — die Ermittlungstafel.
  *
- * Jeder gesicherte Beweis ist eine Karte. Rote Faeden sind Verknuepfungen,
- * die beim Kombinieren (#13) bestaetigt wurden; gestrichelte Faeden sind
+ * Jeder gesicherte Beweis ist eine Karte. Rote Fäden sind Verknüpfungen,
+ * die beim Kombinieren (#13) bestätigt wurden; gestrichelte Fäden sind
  * eigene Vermutungen: zwei Karten nacheinander anklicken spannt einen Faden
- * oder nimmt ihn wieder ab. Die Tafel bewertet nichts — bestaetigt wird nur
- * ueber das Kombinieren auf dem Server.
+ * oder nimmt ihn wieder ab. Die Tafel bewertet nichts — bestätigt wird nur
+ * über das Kombinieren auf dem Server.
  */
 export function InvestigationBoard({ evidence, insights, board, onToggleThread }: Props) {
   const [pending, setPending] = useState<string | null>(null);

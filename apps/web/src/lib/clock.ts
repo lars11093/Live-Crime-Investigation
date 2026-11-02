@@ -1,4 +1,4 @@
-/** "22:40" -> 1360 Minuten seit Mitternacht. Ungueltige Uhrzeiten (25:00) ergeben `null`. */
+/** "22:40" -> 1360 Minuten seit Mitternacht. Ungültige Uhrzeiten (25:00) ergeben `null`. */
 export function clockToMinutes(clock: string): number | null {
   const match = /^(\d{1,2}):(\d{2})$/.exec(clock);
   if (!match) return null;

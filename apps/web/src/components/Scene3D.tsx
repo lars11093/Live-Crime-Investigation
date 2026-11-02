@@ -13,7 +13,7 @@ interface Props {
   modelPath: string;
   hotspots: Hotspot[];
   renderHotspot: (hotspot: Hotspot) => ReactNode;
-  /** Modell nicht ladbar oder kein WebGL — SceneView faellt aufs Bild zurueck. */
+  /** Modell nicht ladbar oder kein WebGL — SceneView fällt aufs Bild zurück. */
   onError: () => void;
 }
 
@@ -23,7 +23,7 @@ interface Props {
  * Die Hotspot-Positionen kommen aus dem Modell selbst: jedes Objekt
  * `hotspot_<id>` markiert eine Stelle (siehe `tools/blender/`). So bleibt die
  * Platzierung beim Modellbau, und das Fall-JSON braucht nur `modelPath`.
- * Stellen ohne passendes Objekt erscheinen an ihrer x/y-Position ueber der Szene.
+ * Stellen ohne passendes Objekt erscheinen an ihrer x/y-Position über der Szene.
  */
 export default function Scene3D({ modelPath, hotspots, renderHotspot, onError }: Props) {
   const [missing, setMissing] = useState<Hotspot[]>([]);
@@ -70,7 +70,7 @@ export default function Scene3D({ modelPath, hotspots, renderHotspot, onError }:
           enablePan={false}
           minDistance={1.2}
           maxDistance={9}
-          // Nicht unter den Boden und nicht hinter die Waende (Diorama ist vorne/rechts offen).
+          // Nicht unter den Boden und nicht hinter die Wände (Diorama ist vorne/rechts offen).
           maxPolarAngle={Math.PI / 2.15}
           minAzimuthAngle={-0.25}
           maxAzimuthAngle={Math.PI / 2 + 0.25}
@@ -112,7 +112,7 @@ function Model({
       {placed.map(
         ({ hotspot, position }) =>
           position && (
-            // #158: `occlude` prueft per Raycast gegen das Modell, ob etwas zwischen
+            // #158: `occlude` prüft per Raycast gegen das Modell, ob etwas zwischen
             // Kamera und Spur steht, und blendet sie dann aus (nicht klickbar).
             <Html key={hotspot.id} position={position} center occlude zIndexRange={[20, 0]}>
               {renderHotspot(hotspot)}

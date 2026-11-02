@@ -4,21 +4,27 @@ import { missingForAccusation, type AccusationDraft } from "../lib/accusation";
 import { KIND_LABEL } from "./evidenceKind";
 import { SubmitConfirmDialog } from "./SubmitConfirmDialog";
 import { CaseResolution } from "./CaseResolution";
+import { AccusationReview } from "./AccusationReview";
+import type { ReviewFinding } from "../lib/accusationReview";
 
 interface Props {
   draft: AccusationDraft;
   suspects: Suspect[];
-  /** Alle Beweise aus der Akte — nur die koennen angehaengt werden. */
+  /** Alle Beweise aus der Akte — nur die können angehängt werden. */
   evidence: CollectedEvidence[];
   onAttach: (evidenceId: string) => void;
   onDetach: (evidenceId: string) => void;
-  /** Fuehrt zur Verdaechtigenliste, wo der Taeter ausgewaehlt wird (#25). */
+  /** Führt zur Verdächtigenliste mit Profilen und Vergleich (#25). */
   onChooseSuspect: () => void;
+  /** Täter direkt hier wechseln oder mit `null` aufheben (#51). */
+  onChangeSuspect: (suspectId: string | null) => void;
   /**
    * Sendet die Anklage ab (#27). Liefert `null` bei Erfolg, sonst den
-   * Fehlertext fuer den Spieler.
+   * Fehlertext für den Spieler.
    */
   onSubmit: () => Promise<string | null>;
+  /** Ergebnis der Prüfung auf offensichtliche Lücken (#52), laufend aktuell. */
+  review: ReviewFinding[];
   onBack: () => void;
 }
 
@@ -30,15 +36,15 @@ function formatSubmittedAt(iso: string): string {
 }
 
 /**
- * Story #26 — der Anklage Beweise anhaengen.
+ * Story #26 — der Anklage Beweise anhängen.
  *
- * Zeigt den ausgewaehlten Taeter (#25), die angehaengten Beweise mit
- * "Entfernen" und darunter, was aus der Akte noch angehaengt werden kann.
+ * Zeigt den ausgewählten Täter (#25), die angehängten Beweise mit
+ * "Entfernen" und darunter, was aus der Akte noch angehängt werden kann.
  *
- * Story #27 — Anklage absenden. Nur mit Taeter und mindestens einem Beweis;
- * danach zeigt das Panel die Bestaetigung und nichts laesst sich mehr aendern.
+ * Story #27 — Anklage absenden. Nur mit Täter und mindestens einem Beweis;
+ * danach zeigt das Panel die Bestätigung und nichts lässt sich mehr ändern.
  *
- * Story #53 — vor dem endgueltigen Absenden steht ein Bestaetigungsdialog.
+ * Story #53 — vor dem endgültigen Absenden steht ein Bestätigungsdialog.
  */
 export function AccusationPanel({
   draft,
@@ -47,12 +53,16 @@ export function AccusationPanel({
   onAttach,
   onDetach,
   onChooseSuspect,
+  onChangeSuspect,
   onSubmit,
+  review,
   onBack,
 }: Props) {
   const [sending, setSending] = useState(false);
-  // #53 — erst bestaetigen, dann absenden.
+  // #53 — erst bestätigen, dann absenden.
   const [confirming, setConfirming] = useState(false);
+  // #52 — die Prüfung erscheint erst auf Wunsch und rechnet dann bei jeder Änderung neu.
+  const [showReview, setShowReview] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const suspect = suspects.find((s) => s.id === draft.suspectId);
   const attached = draft.evidenceIds
@@ -69,7 +79,7 @@ export function AccusationPanel({
     setSending(false);
     setError(problem);
     // Bei Erfolg zeigt das Panel ohnehin die Quittung; bei einem Fehler
-    // zurueck zur Anklage, damit die Meldung sichtbar ist.
+    // zurück zur Anklage, damit die Meldung sichtbar ist.
     setConfirming(false);
   }
 
@@ -80,11 +90,11 @@ export function AccusationPanel({
           <p className="terminal-title" style={{ margin: 0 }}>
             Anklage abgesendet
           </p>
-          <button onClick={onBack}>Zurueck zur Fallakte</button>
+          <button onClick={onBack}>Zurück zur Fallakte</button>
         </div>
         <p className="accusation__confirmation" role="status">
           Die Anklage wurde am {formatSubmittedAt(receipt.submittedAt)} an die Staatsanwaltschaft
-          uebermittelt. Sie kann nicht mehr geaendert werden.
+          übermittelt. Sie kann nicht mehr geändert werden.
         </p>
         <div className="accusation__block">
           <p className="team-code__label">Angeklagt</p>
@@ -93,7 +103,7 @@ export function AccusationPanel({
           </p>
         </div>
         <div className="accusation__block">
-          <p className="team-code__label">Angehaengte Beweise · {receipt.evidenceIds.length}</p>
+          <p className="team-code__label">Angehängte Beweise · {receipt.evidenceIds.length}</p>
           <ul className="accusation__list">
             {receipt.evidenceIds.map((id) => (
               <li key={id} className="accusation__item">
@@ -104,7 +114,7 @@ export function AccusationPanel({
         </div>
         <div className="accusation__block">
           <p className="terminal-title" style={{ margin: 0 }}>
-            Aufloesung
+            Auflösung
           </p>
           <CaseResolution verdict={receipt.verdict} />
         </div>
@@ -118,27 +128,41 @@ export function AccusationPanel({
         <p className="terminal-title" style={{ margin: 0 }}>
           Anklage vorbereiten
         </p>
-        <button onClick={onBack}>Zurueck zur Fallakte</button>
+        <button onClick={onBack}>Zurück zur Fallakte</button>
       </div>
 
       <div className="accusation__block">
-        <p className="team-code__label">Taeter</p>
+        <p className="team-code__label">Täter</p>
         {suspect ? (
           <p className="accusation__suspect">
             <strong>{suspect.name}</strong> · {suspect.relationToVictim}
           </p>
         ) : (
-          <p className="briefing__empty">Noch kein Taeter ausgewaehlt.</p>
+          <p className="briefing__empty">Noch kein Täter ausgewählt.</p>
         )}
-        <button onClick={onChooseSuspect}>
-          {suspect ? "Andere Person waehlen" : "Taeter auswaehlen"}
-        </button>
+        {/* #51 — bis zum Absenden jederzeit aenderbar, ohne die Ansicht zu verlassen. */}
+        <div className="case-status__actions" style={{ margin: 0 }}>
+          <select
+            aria-label="Täter ändern"
+            value={draft.suspectId ?? ""}
+            onChange={(e) => onChangeSuspect(e.target.value || null)}
+          >
+            <option value="">— niemand ausgewählt —</option>
+            {suspects.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+          {suspect && <button onClick={() => onChangeSuspect(null)}>Auswahl aufheben</button>}
+          <button onClick={onChooseSuspect}>Zu den Verdächtigen</button>
+        </div>
       </div>
 
       <div className="accusation__block">
-        <p className="team-code__label">Angehaengte Beweise · {attached.length}</p>
+        <p className="team-code__label">Angehängte Beweise · {attached.length}</p>
         {attached.length === 0 ? (
-          <p className="briefing__empty">Noch kein Beweis angehaengt.</p>
+          <p className="briefing__empty">Noch kein Beweis angehängt.</p>
         ) : (
           <ul className="accusation__list">
             {attached.map((item) => (
@@ -157,13 +181,13 @@ export function AccusationPanel({
       </div>
 
       <div className="accusation__block">
-        <p className="team-code__label">Aus der Akte anhaengen</p>
+        <p className="team-code__label">Aus der Akte anhängen</p>
         {evidence.length === 0 ? (
           <p className="briefing__empty">
             Deine Akte ist leer. Sichere zuerst Beweise im Tatort oder im Forensik-Terminal.
           </p>
         ) : available.length === 0 ? (
-          <p className="briefing__empty">Alle Beweise aus der Akte sind angehaengt.</p>
+          <p className="briefing__empty">Alle Beweise aus der Akte sind angehängt.</p>
         ) : (
           <ul className="accusation__list">
             {available.map((item) => (
@@ -172,8 +196,8 @@ export function AccusationPanel({
                   {item.label}{" "}
                   <span className="evidence-list__kind">{KIND_LABEL[item.kind]}</span>
                 </span>
-                <button onClick={() => onAttach(item.id)} aria-label={`${item.label} anhaengen`}>
-                  Anhaengen
+                <button onClick={() => onAttach(item.id)} aria-label={`${item.label} anhängen`}>
+                  Anhängen
                 </button>
               </li>
             ))}
@@ -189,7 +213,17 @@ export function AccusationPanel({
         </ul>
       )}
 
+      {showReview && (
+        <div className="accusation__block">
+          <p className="team-code__label">Prüfung</p>
+          <AccusationReview findings={review} />
+        </div>
+      )}
+
       <div className="case-status__actions">
+        <button onClick={() => setShowReview((prev) => !prev)} aria-expanded={showReview}>
+          {showReview ? "Prüfung ausblenden" : "Anklage prüfen lassen"}
+        </button>
         <button
           className="button--primary"
           onClick={() => setConfirming(true)}
@@ -202,6 +236,7 @@ export function AccusationPanel({
         <SubmitConfirmDialog
           suspectName={suspect.name}
           evidenceLabels={attached.map((e) => e.label)}
+          warningCount={review.filter((f) => f.level === "warnung").length}
           sending={sending}
           onConfirm={submit}
           onCancel={() => setConfirming(false)}

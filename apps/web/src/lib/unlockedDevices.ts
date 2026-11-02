@@ -2,12 +2,12 @@ import type { Device } from "@case-zero/shared";
 import type { ProgressStorage } from "./caseProgress";
 
 /**
- * Entsperrte Geraete einer Team-Session (#70).
+ * Entsperrte Geräte einer Team-Session (#70).
  *
- * Liegt in einem eigenen Schluessel neben dem Fortschritt: nach einem
- * Neuladen kommt der Fall wieder mit gesperrtem Geraet vom Server, und der
- * Ermittler soll die PIN nicht erneut eingeben muessen. Gespeichert wird das
- * Geraet, das der Server nach dem Entsperren geliefert hat — nie die PIN.
+ * Liegt in einem eigenen Schlüssel neben dem Fortschritt: nach einem
+ * Neuladen kommt der Fall wieder mit gesperrtem Gerät vom Server, und der
+ * Ermittler soll die PIN nicht erneut eingeben müssen. Gespeichert wird das
+ * Gerät, das der Server nach dem Entsperren geliefert hat — nie die PIN.
  */
 function storageKey(roomCode: string): string {
   return `case-zero:unlocked:${roomCode}`;
@@ -41,7 +41,7 @@ export function saveUnlocked(
   }
 }
 
-/** Ersetzt gesperrte Geraete durch ihre entsperrte Fassung, Reihenfolge bleibt. */
+/** Ersetzt gesperrte Geräte durch ihre entsperrte Fassung, Reihenfolge bleibt. */
 export function withUnlocked(devices: Device[], unlocked: Record<string, Device>): Device[] {
   return devices.map((device) => unlocked[device.id] ?? device);
 }

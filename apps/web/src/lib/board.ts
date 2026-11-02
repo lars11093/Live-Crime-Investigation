@@ -5,12 +5,12 @@ import type { ProgressStorage } from "./caseProgress";
 export interface Thread {
   a: string;
   b: string;
-  /** "insight" = vom Server bestaetigte Verknuepfung (#13), "own" = eigene Vermutung. */
+  /** "insight" = vom Server bestätigte Verknüpfung (#13), "own" = eigene Vermutung. */
   kind: "insight" | "own";
   label?: string;
 }
 
-/** Was die Tafel speichert: welche Paare welche Erkenntnis ergaben, und eigene Faeden. */
+/** Was die Tafel speichert: welche Paare welche Erkenntnis ergaben, und eigene Fäden. */
 export interface BoardState {
   /** Erkenntnis-ID -> die zwei Beweise, aus denen sie entstand. */
   insightPairs: Record<string, [string, string]>;
@@ -62,9 +62,9 @@ export function recordInsight(board: BoardState, insightId: string, a: string, b
 }
 
 /**
- * Alle Faeden, die auf der Tafel sichtbar sind — nur zwischen Beweisen, die
+ * Alle Fäden, die auf der Tafel sichtbar sind — nur zwischen Beweisen, die
  * in der Akte liegen. Eine eigene Vermutung, die der Server inzwischen
- * bestaetigt hat, erscheint nur einmal, als bestaetigter Faden.
+ * bestätigt hat, erscheint nur einmal, als bestätigter Faden.
  */
 export function threadsFor(board: BoardState, evidence: CollectedEvidence[], insights: Insight[]): Thread[] {
   const present = new Set(evidence.map((e) => e.id));

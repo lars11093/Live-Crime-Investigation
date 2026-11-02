@@ -38,15 +38,15 @@ function hashPassword(password: string, salt: string): string {
 }
 
 /**
- * Story #55 — Konten, die einen Browserwechsel ueberleben.
+ * Story #55 — Konten, die einen Browserwechsel überleben.
  *
- * Passwoerter liegen nur als scrypt-Hash mit Salt vor. Angemeldet wird ueber
- * ein zufaelliges Token (im Speicher, nicht in der Datei), danach laesst sich
- * pro Team-Code ein Spielstand ablegen und von jedem Geraet wieder holen.
+ * Passwörter liegen nur als scrypt-Hash mit Salt vor. Angemeldet wird über
+ * ein zufälliges Token (im Speicher, nicht in der Datei), danach lässt sich
+ * pro Team-Code ein Spielstand ablegen und von jedem Gerät wieder holen.
  *
  * Gespeichert wird in einer JSON-Datei, wenn ein Pfad gesetzt ist. Das ist
  * bewusst keine Datenbank (CLAUDE.md, MVP), reicht aber, damit Konten einen
- * Server-Neustart ueberleben. Ohne Pfad (Tests) bleibt alles im Speicher.
+ * Server-Neustart überleben. Ohne Pfad (Tests) bleibt alles im Speicher.
  */
 export class AccountStore {
   private accounts = new Map<string, StoredAccount>();
@@ -106,7 +106,7 @@ export class AccountStore {
     return id ? this.accounts.get(id) : undefined;
   }
 
-  /** `undefined` heisst: Token ungueltig. `null`: noch kein Stand fuer diesen Code. */
+  /** `undefined` heisst: Token ungültig. `null`: noch kein Stand für diesen Code. */
   getProgress(token: string | undefined, roomCode: string): string | null | undefined {
     const account = this.byToken(token);
     if (!account) return undefined;

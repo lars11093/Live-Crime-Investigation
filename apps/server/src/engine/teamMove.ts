@@ -12,9 +12,9 @@ export function canMoveTeam(
   to: Room | undefined,
   playerId: string
 ): { ok: true; by: string } | { ok: false; error: string } {
-  if (!from || !to) return { ok: false, error: "Ungueltiger Team-Code" };
+  if (!from || !to) return { ok: false, error: "Ungültiger Team-Code" };
   if (from === to) return { ok: false, error: "Das Team ist schon in dieser Session." };
   const player = from.state.players.find((p) => p.id === playerId);
-  if (!player) return { ok: false, error: "Nur Teammitglieder koennen das Team mitnehmen." };
+  if (!player) return { ok: false, error: "Nur Teammitglieder können das Team mitnehmen." };
   return { ok: true, by: player.name };
 }

@@ -8,7 +8,7 @@ interface Props {
 }
 
 /**
- * Story #72 — Standortverlauf eines Geraets.
+ * Story #72 — Standortverlauf eines Geräts.
  * Punkte in der Tatzeit sind hervorgehoben, ein Ortswechsel ist markiert.
  */
 export function DeviceLocations({ device, timeOfCrime }: Props) {

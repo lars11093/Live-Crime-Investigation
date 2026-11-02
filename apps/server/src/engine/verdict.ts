@@ -5,11 +5,14 @@ import type {
   Scenario,
   VerdictFinding,
 } from "@case-zero/shared";
+import { rateChain } from "./chainRating.js";
+import { pickEnding } from "./ending.js";
+import { scoreAccusation } from "./score.js";
 
 /**
  * Alle Beweise eines Falls mit ihrem Anzeigenamen — aus dem Tatort und aus den
- * Geraeten. Nachrichten heissen wie in der Akte (web/src/lib/digitalTrace.ts),
- * ergaenzt um den Zeitstempel, damit zwei Nachrichten derselben Person
+ * Geräten. Nachrichten heissen wie in der Akte (web/src/lib/digitalTrace.ts),
+ * ergänzt um den Zeitstempel, damit zwei Nachrichten derselben Person
  * unterscheidbar bleiben.
  */
 export function evidenceLabels(caseDef: CaseDefinition): Map<string, string> {
@@ -30,13 +33,15 @@ export function evidenceLabels(caseDef: CaseDefinition): Map<string, string> {
 /**
  * Vergleicht eine Anklage mit dem aktiven Szenario (Story #28).
  *
- * Geloest ist der Fall, wenn der Taeter stimmt und mindestens ein angehaengter
- * Beweis die Loesung traegt — ein richtiger Name ohne Begruendung ist geraten.
+ * Gelöst ist der Fall, wenn der Täter stimmt und mindestens ein angehängter
+ * Beweis die Lösung trägt — ein richtiger Name ohne Begründung ist geraten.
  */
 export function judgeAccusation(
   caseDef: CaseDefinition,
   scenario: Scenario,
-  submission: AccusationSubmission
+  submission: AccusationSubmission,
+  /** Minuten seit Beginn der Session (#54); `null`, wenn unbekannt. */
+  elapsedMinutes: number | null = null
 ): AccusationVerdict {
   const labels = evidenceLabels(caseDef);
   const label = (id: string) => labels.get(id) ?? id;
@@ -59,22 +64,28 @@ export function judgeAccusation(
       topic: "evidence",
       correct: key.has(id),
       text: key.has(id)
-        ? `${label(id)} stuetzt die Loesung.`
-        : `${label(id)} traegt nichts zur Loesung bei.`,
+        ? `${label(id)} stützt die Lösung.`
+        : `${label(id)} trägt nichts zur Lösung bei.`,
     });
   }
 
   for (const id of scenario.keyEvidenceIds) {
     if (!submission.evidenceIds.includes(id)) {
-      findings.push({ topic: "missed", correct: false, text: `Uebersehen: ${label(id)}.` });
+      findings.push({ topic: "missed", correct: false, text: `Übersehen: ${label(id)}.` });
     }
   }
 
   const supported = submission.evidenceIds.some((id) => key.has(id));
+  const solved = rightSuspect && supported;
   return {
-    solved: rightSuspect && supported,
+    solved,
+    // #80 — eines von mehreren Enden, je nach Anklage.
+    ending: pickEnding(scenario, submission, solved),
     culprit: { id: scenario.suspectId, name: nameOf(scenario.suspectId) },
     resolution: scenario.resolution,
     findings,
+    // #78 — wo die Begründung schwach war, erst nach dem Absenden berechnet.
+    chain: rateChain(caseDef, scenario, submission),
+    score: scoreAccusation(scenario, submission, elapsedMinutes),
   };
 }

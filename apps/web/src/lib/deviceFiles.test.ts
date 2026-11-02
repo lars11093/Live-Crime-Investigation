@@ -4,7 +4,7 @@ import { openFile } from "./deviceFiles";
 
 const base = { id: "f", name: "datei", modifiedAt: "12.09. 21:58" };
 
-describe("Datei oeffnen", () => {
+describe("Datei öffnen", () => {
   it("zeigt eine Textdatei als Text", () => {
     const file: DeviceFile = { ...base, type: "text", content: "Hallo" };
     expect(openFile(file)).toEqual({ kind: "text", content: "Hallo" });
@@ -16,8 +16,8 @@ describe("Datei oeffnen", () => {
   });
 
   it("nennt bei einer nicht lesbaren Datei den Grund", () => {
-    const file: DeviceFile = { ...base, type: "unreadable", unreadableReason: "Verschluesselt" };
-    expect(openFile(file)).toEqual({ kind: "unreadable", reason: "Verschluesselt" });
+    const file: DeviceFile = { ...base, type: "unreadable", unreadableReason: "Verschlüsselt" };
+    expect(openFile(file)).toEqual({ kind: "unreadable", reason: "Verschlüsselt" });
   });
 
   it("hat auch ohne Grund einen Hinweis", () => {
