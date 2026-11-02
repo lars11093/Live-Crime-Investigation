@@ -1,12 +1,15 @@
-import { ROLES, type Player, type Role } from "@case-zero/shared";
-import { ROLE_FOCUS, ROLE_LABEL } from "../lib/roles";
+import { ROLES, type Role, type TeamView } from "@case-zero/shared";
+import { ROLE_FOCUS, ROLE_LABEL } from "../lib/player";
+
+/** Wer im Team auftritt: die eigene Verbindung und der Name (#22, #31). */
+export interface PlayerIdentity {
+  id: string;
+  name: string;
+}
 
 interface Props {
-  /** Verbindungs-ID des eigenen Eintrags; die Liste kommt live vom Server (#22). */
-  myId: string | undefined;
-  players: Player[];
-  /** Erst nach dem Beitritt (#22) kann man eine Rolle waehlen. */
-  joined: boolean;
+  me: PlayerIdentity;
+  team: TeamView | null;
   /** Fehler aus dem letzten Versuch, z. B. "Die Rolle ist schon vergeben". */
   error: string | null;
   onChoose: (role: Role | null) => void;
@@ -17,10 +20,12 @@ interface Props {
  * Story #31 — im Team eine Rolle waehlen.
  *
  * Alle fuenf Rollen mit dem, was sie exklusiv sehen. Vergebene Rollen zeigen,
- * wer sie hat, und sind fuer alle anderen gesperrt.
+ * wer sie hat, und sind fuer alle anderen gesperrt. Aenderungen anderer
+ * kommen live per `team:update` (#22) — kein Nachladen noetig.
  */
-export function TeamRoles({ myId, players, joined, error, onChoose, onBack }: Props) {
-  const myRole = players.find((p) => p.id === myId)?.role ?? null;
+export function TeamRoles({ me, team, error, onChoose, onBack }: Props) {
+  const players = team?.players ?? [];
+  const myRole = players.find((p) => p.id === me.id)?.role ?? null;
 
   return (
     <section className="panel">
@@ -43,13 +48,13 @@ export function TeamRoles({ myId, players, joined, error, onChoose, onBack }: Pr
         )}
       </p>
 
-      {!joined ? (
-        <p className="briefing__empty">Tritt zuerst in der Fallakte dem Team bei.</p>
+      {!team ? (
+        <p className="briefing__empty">Tritt zuerst in der Fallakte mit deinem Namen dem Team bei.</p>
       ) : (
         <ul className="role-list">
           {ROLES.map((role) => {
             const holder = players.find((p) => p.role === role);
-            const mine = holder?.id === myId;
+            const mine = holder?.id === me.id;
             return (
               <li key={role} className={`role-card${mine ? " role-card--mine" : ""}`}>
                 <span className="role-card__name">{ROLE_LABEL[role]}</span>

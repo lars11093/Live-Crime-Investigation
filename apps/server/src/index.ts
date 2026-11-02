@@ -296,14 +296,15 @@ io.on("connection", (socket) => {
     socket.emit("team:notes", notesOf(room));
   });
 
-  // Story #31 — eigene Rolle waehlen. Die neue Liste geht an alle im Raum.
-  socket.on("team:role", ({ code, role }, cb) => {
+  // Story #31 — eine Rolle waehlen oder abgeben. Wer klickt, ist die
+  // Verbindung selbst; eine ID vom Client wuerde sich faelschen lassen.
+  socket.on("team:role", ({ code, playerId, role }, cb) => {
     const room = getRoom(String(code ?? ""));
     if (!room) {
-      cb({ ok: false, error: "Ungueltiger Team-Code" });
+      cb({ ok: false, message: "Ungueltiger Team-Code" });
       return;
     }
-    const result = chooseRole(room, socket.id, role);
+    const result = chooseRole(room, socket.id, playerId, role ?? null);
     cb(result);
     if (result.ok) io.to(room.state.code).emit("team:update", teamOf(room));
   });
