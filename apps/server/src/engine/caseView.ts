@@ -10,8 +10,11 @@ import type { CaseDefinition, CaseSummary, PublicCase } from "@case-zero/shared"
  *     liesse sich jede Verknuepfung aus der Netzwerk-Konsole ablesen, statt
  *     sie zu finden. Kombiniert wird deshalb serverseitig (#13).
  * Ausserdem bleiben gesperrte Geraete leer: Das Forensik-Terminal (#18) listet
- * sie auf, ihre Nachrichten und Dateien (#20) stehen aber erst nach dem
- * Entsperren zur Verfuegung.
+ * sie auf, ihre Nachrichten, Dateien (#20) und Standortdaten (#72) stehen aber
+ * erst nach dem Entsperren zur Verfuegung. PIN und Passwort (`unlockSecret`, #70)
+ * fehlen bei jedem Geraet: geprueft wird nur auf dem Server (engine/unlock.ts).
+ * Geloeschte Nachrichten (#71) gehen nie mit, nur ihre Anzahl — wiederhergestellt
+ * wird ueber engine/recover.ts.
  */
 export function toPublicCase(caseDef: CaseDefinition): PublicCase {
   // Hinweise (#74) gehen nur einzeln ueber engine/hints.ts raus.
@@ -19,9 +22,11 @@ export function toPublicCase(caseDef: CaseDefinition): PublicCase {
   if (!publicCase.devices) return publicCase;
   return {
     ...publicCase,
-    devices: publicCase.devices.map((device) =>
-      device.locked ? { ...device, messages: [], files: [] } : device
-    ),
+    devices: publicCase.devices.map(({ unlockSecret: _secret, deletedMessages, ...device }) => {
+      const deletedCount = device.locked ? 0 : (deletedMessages?.length ?? 0);
+      const view = deletedCount > 0 ? { ...device, deletedCount } : device;
+      return device.locked ? { ...view, messages: [], files: [], locations: [] } : view;
+    }),
   };
 }
 

@@ -4,7 +4,9 @@ import type {
   CombineResult,
   HintState,
   PublicCase,
+  RecoverResult,
   SubmitAccusationResult,
+  UnlockResult,
 } from "@case-zero/shared";
 
 export const SERVER_URL = import.meta.env.VITE_SERVER_URL ?? "http://localhost:4000";
@@ -140,4 +142,38 @@ export async function requestHint(code: string): Promise<{ ok: boolean; state: H
     throw new Error(`Hinweis konnte nicht angefordert werden (HTTP ${response.status})`);
   }
   return { ok: response.status === 201, state: (await response.json()) as HintState };
+}
+
+/** Stellt die geloeschten Nachrichten eines Geraets wieder her (#71). Wirft nur ohne Server. */
+export async function recoverDeleted(caseId: string, deviceId: string): Promise<RecoverResult> {
+  const response = await fetch(`${SERVER_URL}/api/cases/${caseId}/devices/${deviceId}/recover`, {
+    method: "POST",
+  });
+  if (![200, 400, 404].includes(response.status)) {
+    throw new Error(`Wiederherstellen fehlgeschlagen (HTTP ${response.status})`);
+  }
+  return (await response.json()) as RecoverResult;
+}
+
+/**
+ * Versucht, ein gesperrtes Geraet zu entsperren (#70).
+ *
+ * Die Pruefung passiert auf dem Server — PIN und Passwort kennt der Browser
+ * nie. "Falsche PIN" ist eine Antwort, kein Fehler; geworfen wird nur, wenn
+ * der Server nicht erreichbar ist.
+ */
+export async function unlockDevice(
+  caseId: string,
+  deviceId: string,
+  secret: string
+): Promise<UnlockResult> {
+  const response = await fetch(`${SERVER_URL}/api/cases/${caseId}/devices/${deviceId}/unlock`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ secret }),
+  });
+  if (![200, 400, 404].includes(response.status)) {
+    throw new Error(`Entsperren fehlgeschlagen (HTTP ${response.status})`);
+  }
+  return (await response.json()) as UnlockResult;
 }

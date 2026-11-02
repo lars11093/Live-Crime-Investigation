@@ -15,6 +15,8 @@ import { toCaseSummaries, toPublicCase } from "./engine/caseView.js";
 import { combineEvidence } from "./engine/combine.js";
 import { submitAccusation } from "./engine/accusation.js";
 import { hintState, revealHint } from "./engine/hints.js";
+import { unlockDevice } from "./engine/unlock.js";
+import { recoverDeleted } from "./engine/recover.js";
 import {
   allRooms,
   createRoom,
@@ -26,6 +28,8 @@ import {
 } from "./engine/rooms.js";
 import { joinTeam, leaveTeam, teamOf } from "./engine/team.js";
 import { shareFinding } from "./engine/sharing.js";
+import { notesOf, shareNote } from "./engine/noteSharing.js";
+import { canMoveTeam } from "./engine/teamMove.js";
 
 const CASES: Record<string, CaseDefinition> = {
   "case-01": case01 as CaseDefinition,
@@ -92,6 +96,29 @@ app.post("/api/cases/:caseId/combine", (req, res) => {
   }
   const found = Array.isArray(foundInsightIds) ? foundInsightIds.filter((x) => typeof x === "string") : [];
   return res.json(combineEvidence(caseDef, String(evidenceIds[0]), String(evidenceIds[1]), found));
+});
+
+// Story #71 — geloeschte Nachrichten eines Geraets wiederherstellen.
+app.post("/api/cases/:caseId/devices/:deviceId/recover", (req, res) => {
+  const caseDef = CASES[req.params.caseId];
+  if (!caseDef) {
+    return res.status(404).json({ error: "Fall nicht gefunden" });
+  }
+  const result = recoverDeleted(caseDef, req.params.deviceId);
+  if (result.ok) return res.json(result);
+  return res.status(result.reason === "unknown-device" ? 404 : 400).json(result);
+});
+
+// Story #70 — gesperrtes Geraet entsperren. PIN/Passwort bleiben auf dem
+// Server; der Client bekommt den Inhalt nur bei richtigem Versuch.
+app.post("/api/cases/:caseId/devices/:deviceId/unlock", (req, res) => {
+  const caseDef = CASES[req.params.caseId];
+  if (!caseDef) {
+    return res.status(404).json({ error: "Fall nicht gefunden" });
+  }
+  const result = unlockDevice(caseDef, req.params.deviceId, req.body?.secret);
+  if (result.ok) return res.json(result);
+  return res.status(result.reason === "unknown-device" ? 404 : 400).json(result);
 });
 
 // Story #5 — Team-Code pruefen. Falsches Format und unbekannter Code sind fuer
@@ -224,6 +251,19 @@ io.on("connection", (socket) => {
     io.to(room.state.code).emit("team:update", teamOf(room));
     // Wer spaeter dazukommt, sieht trotzdem alles, was schon geteilt wurde (#23).
     socket.emit("team:findings", room.findings);
+    socket.emit("team:notes", notesOf(room));
+  });
+
+  // Story #64 — Notiz teilen. Gepruefte Notiz geht an alle im Raum.
+  socket.on("note:share", ({ code, evidenceId, evidenceLabel, text }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      cb({ ok: false, reason: "invalid-room" });
+      return;
+    }
+    const result = shareNote(room, socket.id, { evidenceId, evidenceLabel, text });
+    cb(result);
+    if (result.ok) io.to(room.state.code).emit("team:notes", notesOf(room));
   });
 
   // Story #23 — Fund teilen. Gepruefter Fund geht an alle im Raum.
@@ -236,6 +276,20 @@ io.on("connection", (socket) => {
     const result = shareFinding(room, socket.id, evidence);
     cb(result);
     if (result.ok) io.to(room.state.code).emit("team:findings", room.findings);
+  });
+
+  // Story #57 — das Team in den naechsten Fall mitnehmen. Alle im alten Raum
+  // bekommen den neuen Code und treten dort mit ihrem Namen bei.
+  socket.on("team:next", ({ code, newCode }, cb) => {
+    const from = getRoom(String(code ?? ""));
+    const to = getRoom(String(newCode ?? ""));
+    const result = canMoveTeam(from, to, socket.id);
+    if (!result.ok) {
+      cb({ ok: false, error: result.error });
+      return;
+    }
+    cb({ ok: true });
+    io.to(from!.state.code).emit("team:moved", { code: to!.state.code, by: result.by });
   });
 
   socket.on("disconnect", () => {
