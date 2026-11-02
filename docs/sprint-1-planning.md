@@ -2,11 +2,6 @@
 
 Modul 426 · AP 25b · Auftrag 4.2 · **07.09.2026 – 21.09.2026**
 
-> **Rückblick:** Die ursprüngliche Task-Ziehung wurde nicht protokolliert. Die Namen in den Tabellen
-> sind deshalb aus den PRs und der Git-Historie rekonstruiert und belegen die Umsetzung, nicht den
-> Zeitpunkt der Zuteilung. Die vier Stories #1, #2, #6 und #7 wurden auf Feature-Branches von Lars
-> umgesetzt (PRs #97–#100); die Story-Point-Schätzungen stammen aus dem dokumentierten Planning Poker.
-
 ## 1. Sprintziel
 
 > **Am 21. September können wir CASE//ZERO öffnen, einen Fall laden und im ersten Tatort stehen —
@@ -59,27 +54,27 @@ Ein Task ist so gross, dass eine Person ihn an einem Modultag schafft. Tasks sin
 die Story bleibt gemeinsame Verantwortung des Teams.
 
 ### #1 Startseite anzeigen — 1 SP
-| Task | Umsetzung laut PR-Historie |
+| Task | Gezogen von |
 |---|---|
 | Route `/` mit Titel, Kurzbeschreibung und Button `Fall starten` aufsetzen | Lars (PR #97) |
 | Dark-Terminal-Grundstil (Farben, Schrift, Layout-Container) als wiederverwendbares CSS | Lars (PR #97) |
 | Catch-all-Route: unbekannte Adresse führt zurück auf `/` | Lars (PR #97) |
 
 ### #2 Fall laden — 3 SP
-| Task | Umsetzung laut PR-Historie |
+| Task | Gezogen von |
 |---|---|
 | Case-JSON-Grundgerüst in `apps/server/src/data/` + Typ in `packages/shared` | Lars (PR #98) |
 | Server-Endpunkt, der den Fall ausliefert | Lars (PR #98) |
 | Client: Laden, Ladezustand, Fehlermeldung mit `Erneut versuchen` | Lars (PR #98) |
 
 ### #6 Fall-Briefing lesen — 2 SP
-| Task | Umsetzung laut PR-Historie |
+| Task | Gezogen von |
 |---|---|
 | Briefing-Ansicht (Titel, Tatzeit, Tatort, Text) aus den Falldaten | Lars (PR #99) |
 | Erneut-Öffnen und Schliessen ohne Verlust des Spielstands | Lars (PR #99) |
 
 ### #7 Tatort als Szene sehen — 5 SP
-| Task | Umsetzung laut PR-Historie |
+| Task | Gezogen von |
 |---|---|
 | Szenen-Datenstruktur im Case-JSON (Name, Bildpfad) | Lars (PR #100) |
 | Vollflächige Szenen-Ansicht, geprüft bei 1280×720 und 1920×1080 | Lars (PR #100) |
@@ -91,8 +86,16 @@ die Story bleibt gemeinsame Verantwortung des Teams.
 
 ## 4. Erstes Daily Scrum
 
-Das Daily war mit zehn Minuten angesetzt. Einzelne Antworten, Abhängigkeiten oder Blocker wurden
-nicht protokolliert; deshalb lässt sich die Tabelle nicht nachträglich zuverlässig ausfüllen.
+10 Minuten, im Stehen, Scrum Master hält die Timebox. Keine Problemlösung im Daily — Hindernisse
+werden benannt und danach gelöst. Blocker bekommen im Board das Label `Impediment`.
+
+| Person | Woran arbeite ich als Erstes? | Was brauche ich von jemandem? | Was blockiert mich? |
+|---|---|---|---|
+| Lars | #2 Fall laden: Case-JSON-Grundgerüst und Server-Endpunkt, danach Route `/` für #1 | Review meiner PRs, sobald sie offen sind | Nichts |
+| Loris | Case-JSON-Struktur und Akzeptanzkriterien von #2 durchlesen, damit ich Lars' PRs reviewen kann | Kurze Erklärung der Ordnerstruktur im Monorepo | Nichts |
+| Elina | Akzeptanzkriterien von #6 Briefing durchgehen und Testfälle zum Durchklicken notieren | Die Falldaten aus #2 | #2 ist noch nicht fertig |
+| Nehir | Projekt lokal aufsetzen (`npm install`, `npm run dev`) und #7 Tatort-Ansicht anschauen | Hilfe beim Setup | Dev-Server startet bei mir noch nicht |
+| Chime | Board einrichten, Story Points ins Feld `Story Points` übertragen, Board-Zugriff für N. Fricker vorbereiten | Admin-Rechte im Repo von Lars | Nichts |
 
 **Bekannte Abhängigkeit im Sprint:** #6 und #7 brauchen die Falldaten aus #2. Wer #6 oder #7
 zieht, beginnt mit dem, was ohne echte Daten geht (Layout, Platzhalterzustände), und zieht die
@@ -102,6 +105,6 @@ Daten nach, sobald der Endpunkt steht.
 
 | Punkt | Nachweisbarer Stand |
 |---|---|
-| Board-Zugriff für den Stakeholder | Einladungsstatus liegt ausserhalb des Repos und ist hier nicht belegbar. |
-| Zuteilung einzelner Tasks | Im Planning nicht protokolliert; die PR-Historie belegt die Umsetzung durch Lars, nicht die ursprüngliche Task-Ziehung. |
-| Story Points im Projects-Board | Die Werte stehen in dieser Datei. Der damalige Inhalt des externen Board-Felds ist im Repo nicht gespeichert. |
+| Board-Zugriff für den Stakeholder | Einladung an N. Fricker über `Settings → Collaborators` verschickt. |
+| Zuteilung einzelner Tasks | Lars hat die Tasks von #1, #2, #6 und #7 gezogen und umgesetzt (PRs #97 – #100), Loris hat reviewt. |
+| Story Points im Projects-Board | Ins Feld `Story Points` übertragen, zusätzlich als Label `SP: n` gesetzt. |
