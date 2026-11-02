@@ -7,6 +7,7 @@ import type {
   SharedFinding,
   SharedNote,
   TeamDiscovery,
+  ActivityEntry,
   ShareResult,
   TeamJoinResult,
   TeamState,
@@ -104,6 +105,8 @@ export function useTeam(roomCode: string) {
   const [findings, setFindings] = useState<SharedFinding[]>([]);
   // Live gemeldete Funde des Teams (#75).
   const [discoveries, setDiscoveries] = useState<TeamDiscovery[]>([]);
+  // Aktivitätsprotokoll des Teams (#76).
+  const [activity, setActivity] = useState<ActivityEntry[]>([]);
   // Mit dem Team geteilte Notizen (#64), live vom Server.
   const [notes, setNotes] = useState<SharedNote[]>([]);
   // Das Team ist in eine neue Session umgezogen (#57).
@@ -116,6 +119,9 @@ export function useTeam(roomCode: string) {
     }
     function onFindings(list: SharedFinding[]) {
       setFindings(list);
+    }
+    function onActivity(list: ActivityEntry[]) {
+      setActivity(list);
     }
     function onDiscoveries(list: TeamDiscovery[]) {
       setDiscoveries(list);
@@ -144,6 +150,7 @@ export function useTeam(roomCode: string) {
     socket.on("team:update", onUpdate);
     socket.on("team:findings", onFindings);
     socket.on("team:discoveries", onDiscoveries);
+    socket.on("team:activity", onActivity);
     socket.on("team:notes", onNotes);
     socket.on("team:moved", onMoved);
     socket.on("connect", join);
@@ -152,6 +159,7 @@ export function useTeam(roomCode: string) {
       socket.off("team:update", onUpdate);
       socket.off("team:findings", onFindings);
       socket.off("team:discoveries", onDiscoveries);
+      socket.off("team:activity", onActivity);
       socket.off("team:notes", onNotes);
       socket.off("team:moved", onMoved);
       socket.off("connect", join);
@@ -248,5 +256,6 @@ export function useTeam(roomCode: string) {
 
   return { name, players, leaderId, myId, error, joinAs, chooseRole, findings,
     discoveries,
-    reportFound, share, notes, shareNote, movedTo, moveTo };
+    reportFound,
+    activity, share, notes, shareNote, movedTo, moveTo };
 }

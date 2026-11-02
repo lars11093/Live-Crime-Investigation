@@ -5,6 +5,7 @@ import type {
   RoomState,
   SharedFinding,
   TeamDiscovery,
+  ActivityEntry,
   TeamChatMessage,
   TeamTask,
 } from "@case-zero/shared";
@@ -25,6 +26,8 @@ export interface Room {
   findings: SharedFinding[];
   /** Live gemeldete Funde (#75), pro Beweis nur der erste Fund. */
   discoveries: TeamDiscovery[];
+  /** Aktivitätsprotokoll des Teams (#76), der älteste Eintrag zuerst. */
+  activity: ActivityEntry[];
   /** Die abgesendete Anklage des Teams (#27). Fehlt, solange niemand abgesendet hat. */
   accusation?: AccusationReceipt;
   /** Teamleiter (#48) — der erste Spieler, der dem Team beitritt. */
@@ -72,6 +75,7 @@ export function createRoom(caseDef: CaseDefinition): Room {
     scenario: pickScenario(caseDef),
     findings: [],
     discoveries: [],
+    activity: [],
     state: {
       code,
       caseId: caseDef.id,
