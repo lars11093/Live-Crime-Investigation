@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { Difficulty, PublicCase } from "@case-zero/shared";
+import type { Difficulty, PublicCase, Role } from "@case-zero/shared";
 import { DIFFICULTY_INFO } from "../lib/difficulty";
 import { saveTeam } from "../lib/savedTeam";
 import {
@@ -50,6 +50,8 @@ import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import { ROLE_LABEL } from "../lib/player";
+import { TeamRoles } from "../components/TeamRoles";
 import { introSeen, markIntroSeen } from "../lib/intro";
 import { restartCase } from "../lib/restart";
 import { RestartCase } from "../components/RestartCase";
@@ -77,7 +79,15 @@ import { EvidenceTagFilter } from "../components/EvidenceTagFilter";
 import { loadExcluded, saveExcluded, toggleExcluded } from "../lib/excludedSuspects";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
-type View = "briefing" | "akte" | "tatort" | "beweise" | "verdaechtige" | "forensik" | "anklage";
+type View =
+  | "briefing"
+  | "akte"
+  | "tatort"
+  | "beweise"
+  | "verdaechtige"
+  | "forensik"
+  | "anklage"
+  | "team";
 
 type LoadState =
   | { status: "loading" }
@@ -98,6 +108,8 @@ export function CaseLoaderPage() {
   // Angemeldet (#29) gehoert der Fortschritt dem Konto, sonst dem Gast.
   // Einmal beim Oeffnen gelesen: ein Kontowechsel passiert auf der Startseite.
   const [account] = useState(() => loadAccount(browserStorage()));
+  // Fehler aus dem letzten Rollenwechsel (#31), z. B. "schon vergeben".
+  const [teamError, setTeamError] = useState<string | null>(null);
   // Fortschritt kommt gespeichert herein und wird bei jeder Aenderung
   // zurueckgeschrieben, damit Notizen ein Neuladen ueberleben (#12).
   const [progress, setProgress] = useState<CaseProgress>(() =>
@@ -142,6 +154,8 @@ export function CaseLoaderPage() {
   const navigate = useNavigate();
   // Wer sonst noch in dieser Session ermittelt (#22).
   const team = useTeam(code);
+  // Wer im Team auftritt (#31): die eigene Verbindung, wie der Server sie kennt (#22).
+  const me = { id: team.myId ?? "", name: team.name };
 
   useEffect(() => {
     saveProgress(browserStorage(), code, progress, account?.id);
@@ -240,6 +254,17 @@ export function CaseLoaderPage() {
   }, [code]);
 
   useEffect(() => load(), [load]);
+
+  async function changeRole(targetId: string, role: Role | null) {
+    setTeamError(null);
+    try {
+      // Die neue Teamliste kommt bei Erfolg per `team:update` an alle.
+      const result = await team.chooseRole(targetId, role);
+      if (!result.ok) setTeamError(result.message);
+    } catch {
+      setTeamError("Server nicht erreichbar. Bitte erneut versuchen.");
+    }
+  }
 
   if (state.status === "loading") {
     return (
@@ -647,6 +672,22 @@ export function CaseLoaderPage() {
     );
   }
 
+  if (view === "team") {
+    return (
+      <main className="app-shell">
+        <TeamRoles
+          me={me}
+          team={team.name ? team.view : null}
+          error={teamError}
+          onChoose={(role) => changeRole(me.id, role)}
+          onBack={() => setView("akte")}
+        />
+      </main>
+    );
+  }
+
+  const myRole = team.players.find((p) => p.id === me.id)?.role ?? null;
+
   if (view === "anklage") {
     return (
       <main className="app-shell">
@@ -722,7 +763,10 @@ export function CaseLoaderPage() {
 
   return (
     <main className="app-shell">
-      <p className="terminal-title">Fallakte geoeffnet</p>
+      <p className="terminal-title">
+        Fallakte geoeffnet
+        {myRole && <span className="role-badge">{ROLE_LABEL[myRole]}</span>}
+      </p>
       <div className="panel case-status">
         <h1 className="case-title">{caseData.title}</h1>
         <p className="case-status__hint">
@@ -773,6 +817,9 @@ export function CaseLoaderPage() {
           <button onClick={() => setView("anklage")}>
             Anklage ({accusation.evidenceIds.length}{" "}
             {accusation.evidenceIds.length === 1 ? "Beweis" : "Beweise"})
+          </button>
+          <button onClick={() => setView("team")}>
+            {myRole ? `Team · ${ROLE_LABEL[myRole]}` : "Team · Rolle waehlen"}
           </button>
           <button onClick={() => setView("briefing")}>Briefing</button>
           {caseData.intro && (

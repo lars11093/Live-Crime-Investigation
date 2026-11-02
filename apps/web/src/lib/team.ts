@@ -1,12 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type {
   CollectedEvidence,
   NoteShareResult,
   Player,
+  Role,
   SharedFinding,
   SharedNote,
   ShareResult,
   TeamJoinResult,
+  TeamResult,
+  TeamView,
 } from "@case-zero/shared";
 import { socket } from "./socket";
 import type { ProgressStorage } from "./caseProgress";
@@ -204,5 +207,34 @@ export function useTeam(roomCode: string) {
     [roomCode]
   );
 
-  return { name, players, myId, error, joinAs, findings, share, notes, shareNote, movedTo, moveTo };
+  /** Rolle waehlen oder abgeben (#31); die neue Liste kommt per `team:update`. */
+  const chooseRole = useCallback(
+    (playerId: string, role: Role | null) =>
+      new Promise<TeamResult>((resolve, reject) => {
+        socket
+          .timeout(5000)
+          .emit("team:role", { code: roomCode, playerId, role }, (err, result) =>
+            err ? reject(err) : resolve(result)
+          );
+      }),
+    [roomCode]
+  );
+
+  const view = useMemo<TeamView>(() => ({ players }), [players]);
+
+  return {
+    name,
+    players,
+    view,
+    myId,
+    error,
+    joinAs,
+    findings,
+    share,
+    notes,
+    shareNote,
+    movedTo,
+    moveTo,
+    chooseRole,
+  };
 }

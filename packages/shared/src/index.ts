@@ -527,6 +527,14 @@ export interface ScoreResult {
   evidenceTotal: number;
 }
 
+/** Das Team einer Session, wie der Client es sieht (#31). */
+export interface TeamView {
+  players: Player[];
+}
+
+/** Antwort auf `team:role` (#31). */
+export type TeamResult = { ok: true; team: TeamView } | { ok: false; message: string };
+
 export interface RoomState {
   code: string;
   caseId: string;
@@ -549,6 +557,11 @@ export interface ClientToServerEvents {
   "case:accuse": (payload: { code: string; accusation: Accusation }, cb: (result: ScoreResult) => void) => void;
   /** Story #22 — mit Namen dem Team einer Session beitreten. */
   "team:join": (payload: { code: string; playerName: string }, cb: (result: TeamJoinResult) => void) => void;
+  /** Rolle waehlen oder mit `null` abgeben (#31). Die neue Liste kommt per `team:update`. */
+  "team:role": (
+    payload: { code: string; playerId: string; role: Role | null },
+    cb: (result: TeamResult) => void
+  ) => void;
   /** Story #23 — einen Fund aus der eigenen Akte mit dem Team teilen. */
   "evidence:share": (payload: { code: string; evidence: CollectedEvidence }, cb: (result: ShareResult) => void) => void;
   /** Story #64 — eine eigene Notiz zu einem Beweis mit dem Team teilen. */

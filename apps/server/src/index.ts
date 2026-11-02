@@ -26,7 +26,7 @@ import {
   roomCount,
   type Room,
 } from "./engine/rooms.js";
-import { joinTeam, leaveTeam, teamOf } from "./engine/team.js";
+import { chooseRole, joinTeam, leaveTeam, teamOf } from "./engine/team.js";
 import { shareFinding } from "./engine/sharing.js";
 import { AccountStore } from "./engine/accounts.js";
 import { difficultyOf, parseDifficulty, setDifficulty } from "./engine/difficulty.js";
@@ -294,6 +294,19 @@ io.on("connection", (socket) => {
     // Wer spaeter dazukommt, sieht trotzdem alles, was schon geteilt wurde (#23).
     socket.emit("team:findings", room.findings);
     socket.emit("team:notes", notesOf(room));
+  });
+
+  // Story #31 — eine Rolle waehlen oder abgeben. Wer klickt, ist die
+  // Verbindung selbst; eine ID vom Client wuerde sich faelschen lassen.
+  socket.on("team:role", ({ code, playerId, role }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      cb({ ok: false, message: "Ungueltiger Team-Code" });
+      return;
+    }
+    const result = chooseRole(room, socket.id, playerId, role ?? null);
+    cb(result);
+    if (result.ok) io.to(room.state.code).emit("team:update", teamOf(room));
   });
 
   // Story #64 — Notiz teilen. Gepruefte Notiz geht an alle im Raum.
