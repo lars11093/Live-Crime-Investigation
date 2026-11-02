@@ -273,9 +273,6 @@ export function CaseLoaderPage() {
     );
   }
 
-  // Solange nur ein Tatort pro Fall angezeigt wird, ist es der erste.
-  // Mehrere Tatorte zur Auswahl sind #59.
-  const scene = caseData.scenes.at(0);
   const scenes = caseData.scenes;
   const scene = scenes.find((s) => s.id === sceneId) ?? scenes.at(0);
 
