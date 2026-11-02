@@ -69,6 +69,21 @@ export interface Suspect {
   statement?: string;
   /** Portraet. Wie ueberall: kein Asset im Repo, Platzhalter im Client. */
   imagePath?: string;
+  /** Fragen fuer die Befragung (#66), in der Reihenfolge, in der sie angeboten werden. */
+  interrogation?: InterrogationQuestion[];
+}
+
+/**
+ * Eine Frage in der Befragung (#66).
+ *
+ * Inhalt, keine Loesung: Die Antworten passen zu jedem Szenario, deshalb
+ * duerfen sie an den Client. Ob eine Antwort luegt, zeigt erst der Abgleich
+ * mit den Spuren.
+ */
+export interface InterrogationQuestion {
+  id: string;
+  question: string;
+  answer: string;
 }
 
 /**
