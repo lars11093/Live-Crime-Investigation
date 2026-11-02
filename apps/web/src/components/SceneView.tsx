@@ -1,9 +1,18 @@
 import { useEffect, useState } from "react";
 import type { CollectedEvidence, Hotspot, Scene, SceneTool } from "@case-zero/shared";
 import { TOOL_LABEL, toolsIn, visibleHotspots } from "../lib/sceneTools";
+import { lazy, Suspense, useEffect, useState } from "react";
+import type { CSSProperties } from "react";
+import type { CollectedEvidence, Hotspot, Scene } from "@case-zero/shared";
+
+// three.js ist gross — erst laden, wenn ein Tatort wirklich ein 3D-Modell hat.
+const Scene3D = lazy(() => import("./Scene3D"));
 
 interface Props {
   scene: Scene;
+  /** Alle Tatorte des Falls (#159) — ab zwei erscheint die Umschaltung. */
+  scenes: Scene[];
+  onSwitchScene: (sceneId: string) => void;
   /** IDs bereits untersuchter Stellen — bleibt beim Verlassen der Szene erhalten. */
   investigatedIds: string[];
   onInvestigate: (hotspotId: string) => void;
@@ -23,6 +32,8 @@ interface Props {
  */
 export function SceneView({
   scene,
+  scenes,
+  onSwitchScene,
   investigatedIds,
   onInvestigate,
   collectedIds,
@@ -30,6 +41,7 @@ export function SceneView({
   onBack,
 }: Props) {
   const [imageFailed, setImageFailed] = useState(false);
+  const [modelFailed, setModelFailed] = useState(false);
   const [openHotspot, setOpenHotspot] = useState<Hotspot | null>(null);
   const [confirmation, setConfirmation] = useState<string | null>(null);
   // #60 — eingeschaltetes Werkzeug, z. B. die UV-Lampe.
@@ -61,9 +73,42 @@ export function SceneView({
     onInvestigate(hotspot.id);
   }
 
+  function hotspotButton(hotspot: Hotspot, style?: CSSProperties) {
+    const done = investigated.has(hotspot.id);
+    return (
+      <button
+        key={hotspot.id}
+        className={`hotspot${style ? "" : " hotspot--3d"}${done ? " hotspot--done" : ""}`}
+        style={style}
+        onClick={() => open(hotspot)}
+        aria-pressed={done}
+        aria-label={`${hotspot.label}${done ? " (bereits untersucht)" : ""}`}
+      >
+        <span className="hotspot__ring" aria-hidden="true" />
+        <span className="hotspot__label">
+          {hotspot.label}
+          {done && <span className="hotspot__check" aria-hidden="true"> ✓</span>}
+        </span>
+      </button>
+    );
+  }
+
+  const show3d = Boolean(scene.modelPath) && !modelFailed;
+
   return (
     <section className={`scene${tool ? ` scene--${tool}` : ""}`} aria-label={`Tatort: ${scene.name}`}>
       {imageFailed ? (
+    <section className="scene" aria-label={`Tatort: ${scene.name}`}>
+      {show3d ? (
+        <Suspense fallback={<p className="scene__loading">Tatort wird geladen …</p>}>
+          <Scene3D
+            modelPath={scene.modelPath!}
+            hotspots={scene.hotspots}
+            renderHotspot={(hotspot) => hotspotButton(hotspot)}
+            onError={() => setModelFailed(true)}
+          />
+        </Suspense>
+      ) : imageFailed ? (
         <div className="scene__placeholder">
           <p className="scene__placeholder-mark" aria-hidden="true">
             [ ! ]
@@ -99,11 +144,17 @@ export function SceneView({
           </button>
         );
       })}
+      {!show3d &&
+        scene.hotspots.map((hotspot) =>
+          hotspotButton(hotspot, { left: `${hotspot.x}%`, top: `${hotspot.y}%` })
+        )}
 
       <div className="scene__overlay">
         <p className="scene__name">{scene.name}</p>
         <p className="scene__progress">
-          {investigated.size} / {scene.hotspots.length} untersucht
+          {/* Nur die Stellen dieses Tatorts — investigatedIds gilt fuer den ganzen Fall. */}
+          {scene.hotspots.filter((h) => investigated.has(h.id)).length} / {scene.hotspots.length}{" "}
+          untersucht
         </p>
         {toolsIn(scene.hotspots).map((t) => (
           <button
@@ -115,6 +166,20 @@ export function SceneView({
             {TOOL_LABEL[t]} {tool === t ? "aus" : "an"}
           </button>
         ))}
+        {scenes.length > 1 && (
+          <nav className="scene__switch" aria-label="Tatort wechseln">
+            {scenes.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => onSwitchScene(s.id)}
+                aria-current={s.id === scene.id ? "page" : undefined}
+                disabled={s.id === scene.id}
+              >
+                {s.name}
+              </button>
+            ))}
+          </nav>
+        )}
         <button className="scene__back" onClick={onBack}>
           Zurueck
         </button>
