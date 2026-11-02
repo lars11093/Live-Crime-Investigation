@@ -1,9 +1,18 @@
-import { useEffect, useRef, useState } from "react";
-import type { CollectedEvidence, Hotspot, Scene } from "@case-zero/shared";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
+import type { CollectedEvidence, Difficulty, Hotspot, Scene, SceneTool } from "@case-zero/shared";
+import { sceneProgressText } from "../lib/difficulty";
+import { TOOL_LABEL, toolsIn, visibleHotspots } from "../lib/sceneTools";
 import { ZOOM_LEVELS, keepCenter, zoomIn, zoomOut } from "../lib/zoom";
+
+// three.js ist gross — erst laden, wenn ein Tatort wirklich ein 3D-Modell hat.
+const Scene3D = lazy(() => import("./Scene3D"));
 
 interface Props {
   scene: Scene;
+  /** Alle Tatorte des Falls (#159) — ab zwei erscheint die Umschaltung. */
+  scenes: Scene[];
+  onSwitchScene: (sceneId: string) => void;
   /** IDs bereits untersuchter Stellen — bleibt beim Verlassen der Szene erhalten. */
   investigatedIds: string[];
   onInvestigate: (hotspotId: string) => void;
@@ -13,6 +22,8 @@ interface Props {
   collectedIds: string[];
   onCollect: (evidence: CollectedEvidence) => void;
   onBack: () => void;
+  /** Schwierigkeitsstufe der Session (#56). */
+  difficulty?: Difficulty;
 }
 
 /**
@@ -30,19 +41,31 @@ interface Props {
  */
 export function SceneView({
   scene,
+  scenes,
+  onSwitchScene,
   investigatedIds,
   onInvestigate,
   onToggleInvestigated,
   collectedIds,
   onCollect,
   onBack,
+  difficulty = "normal",
 }: Props) {
   const [imageFailed, setImageFailed] = useState(false);
+  const [modelFailed, setModelFailed] = useState(false);
   const [openHotspot, setOpenHotspot] = useState<Hotspot | null>(null);
   const [confirmation, setConfirmation] = useState<string | null>(null);
+  // #60 — eingeschaltetes Werkzeug, z. B. die UV-Lampe.
+  const [tool, setTool] = useState<SceneTool | null>(null);
+  const tools = toolsIn(scene.hotspots);
+  const activeTool = tool && tools.includes(tool) ? tool : null;
+  const shown = visibleHotspots(scene.hotspots, activeTool, investigatedIds);
+
   const [zoom, setZoom] = useState<number>(ZOOM_LEVELS[0]);
   // Untersuchte Stellen ausblenden, damit nur noch Offenes im Bild steht (#34).
   const [hideDone, setHideDone] = useState(false);
+  // #34 — untersuchte Stellen auf Wunsch ausblenden.
+  const listed = hideDone ? shown.filter((h) => !investigatedIds.includes(h.id)) : shown;
   const viewportRef = useRef<HTMLDivElement>(null);
 
   function changeZoom(next: number) {
@@ -56,10 +79,11 @@ export function SceneView({
     setZoom(next);
   }
 
-  // Tastatur: + / - zoomen, 0 setzt zurueck — nicht, solange ein Dialog offen ist.
+  // Tastatur (#33): + / - zoomen, 0 setzt zurueck — nicht, solange ein Dialog offen ist, und
+  // nicht in 3D: dort zoomt die Szene selbst (Mausrad).
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
-      if (openHotspot || event.target instanceof HTMLInputElement) return;
+      if (show3d || openHotspot || event.target instanceof HTMLInputElement) return;
       if (event.key === "+" || event.key === "=") changeZoom(zoomIn(zoom));
       else if (event.key === "-") changeZoom(zoomOut(zoom));
       else if (event.key === "0") changeZoom(ZOOM_LEVELS[0]);
@@ -94,73 +118,101 @@ export function SceneView({
     onInvestigate(hotspot.id);
   }
 
+  function hotspotButton(hotspot: Hotspot, style?: CSSProperties) {
+    const done = investigated.has(hotspot.id);
+    // #56 — auf "leicht" sind Stellen mit noch nicht gesichertem Fund markiert.
+    const hint = difficulty === "leicht" && hotspot.evidence && !collected.has(hotspot.evidence.id);
+    return (
+      <button
+        key={hotspot.id}
+        className={`hotspot${style ? "" : " hotspot--3d"}${done ? " hotspot--done" : ""}${hint ? " hotspot--find" : ""}`}
+        style={style}
+        onClick={() => open(hotspot)}
+        aria-pressed={done}
+        aria-label={`${hotspot.label}${done ? " (bereits untersucht)" : ""}`}
+      >
+        <span className="hotspot__ring" aria-hidden="true" />
+        <span className="hotspot__label">
+          {hotspot.label}
+          {done && <span className="hotspot__check" aria-hidden="true"> ✓</span>}
+        </span>
+      </button>
+    );
+  }
+
+  const show3d = Boolean(scene.modelPath) && !modelFailed;
+
   return (
-    <section className="scene" aria-label={`Tatort: ${scene.name}`}>
-      <div className="scene__viewport" ref={viewportRef}>
-        <div
-          className="scene__stage"
-          style={{ width: `${zoom * 100}%`, height: `${zoom * 100}%` }}
-        >
-          {imageFailed ? (
-            <div className="scene__placeholder">
-              <p className="scene__placeholder-mark" aria-hidden="true">
-                [ ! ]
-              </p>
-              <p className="scene__placeholder-name">{scene.name}</p>
-              <p className="scene__placeholder-hint">Szenenbild nicht verfuegbar</p>
-            </div>
-          ) : (
-            <img
-              className="scene__image"
-              src={scene.imagePath}
-              alt={scene.name}
-              onError={() => setImageFailed(true)}
-            />
-          )}
-
-          {scene.hotspots.map((hotspot) => {
-            const done = investigated.has(hotspot.id);
-            if (done && hideDone) return null;
-            return (
-              <button
-                key={hotspot.id}
-                className={`hotspot${done ? " hotspot--done" : ""}`}
-                style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%` }}
-                onClick={() => open(hotspot)}
-                aria-pressed={done}
-                aria-label={`${hotspot.label}${done ? " (bereits untersucht)" : ""}`}
-              >
-                <span className="hotspot__ring" aria-hidden="true" />
-                <span className="hotspot__label">
-                  {hotspot.label}
-                  {done && <span className="hotspot__check" aria-hidden="true"> ✓</span>}
-                </span>
-              </button>
-            );
-          })}
+    <section className={`scene scene--${difficulty}${activeTool ? ` scene--${activeTool}` : ""}`} aria-label={`Tatort: ${scene.name}`}>
+      {show3d ? (
+        <Suspense fallback={<p className="scene__loading">Tatort wird geladen …</p>}>
+          <Scene3D
+            modelPath={scene.modelPath!}
+            hotspots={listed}
+            renderHotspot={(hotspot) => hotspotButton(hotspot)}
+            onError={() => setModelFailed(true)}
+          />
+        </Suspense>
+      ) : (
+        <div className="scene__viewport" ref={viewportRef}>
+          <div
+            className="scene__stage"
+            style={{ width: `${zoom * 100}%`, height: `${zoom * 100}%` }}
+          >
+            {imageFailed ? (
+              <div className="scene__placeholder">
+                <p className="scene__placeholder-mark" aria-hidden="true">
+                  [ ! ]
+                </p>
+                <p className="scene__placeholder-name">{scene.name}</p>
+                <p className="scene__placeholder-hint">Szenenbild nicht verfuegbar</p>
+              </div>
+            ) : (
+              <img
+                className="scene__image"
+                src={scene.imagePath}
+                alt={scene.name}
+                onError={() => setImageFailed(true)}
+              />
+            )}
+            {listed.map((hotspot) =>
+              hotspotButton(hotspot, { left: `${hotspot.x}%`, top: `${hotspot.y}%` })
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="scene__zoom" role="group" aria-label="Zoom">
-        <button onClick={() => changeZoom(zoomOut(zoom))} disabled={zoom === ZOOM_LEVELS[0]} aria-label="Herauszoomen">
-          −
-        </button>
-        <button onClick={() => changeZoom(ZOOM_LEVELS[0])} aria-label="Zoom zuruecksetzen">
-          {Math.round(zoom * 100)} %
-        </button>
-        <button
-          onClick={() => changeZoom(zoomIn(zoom))}
-          disabled={zoom === ZOOM_LEVELS[ZOOM_LEVELS.length - 1]}
-          aria-label="Hineinzoomen"
-        >
-          +
-        </button>
-      </div>
+      {!show3d && (
+        <div className="scene__zoom" role="group" aria-label="Zoom">
+          <button
+            onClick={() => changeZoom(zoomOut(zoom))}
+            disabled={zoom === ZOOM_LEVELS[0]}
+            aria-label="Herauszoomen"
+          >
+            −
+          </button>
+          <button onClick={() => changeZoom(ZOOM_LEVELS[0])} aria-label="Zoom zuruecksetzen">
+            {Math.round(zoom * 100)} %
+          </button>
+          <button
+            onClick={() => changeZoom(zoomIn(zoom))}
+            disabled={zoom === ZOOM_LEVELS[ZOOM_LEVELS.length - 1]}
+            aria-label="Hineinzoomen"
+          >
+            +
+          </button>
+        </div>
+      )}
 
       <div className="scene__overlay">
         <p className="scene__name">{scene.name}</p>
         <p className="scene__progress">
-          {investigated.size} / {scene.hotspots.length} untersucht
+          {/* Nur die Stellen dieses Tatorts — investigatedIds gilt fuer den ganzen Fall. */}
+          {sceneProgressText(
+            difficulty,
+            scene.hotspots.filter((h) => investigated.has(h.id)).length,
+            scene.hotspots.length
+          )}
         </p>
         <button
           className="scene__back"
@@ -170,6 +222,30 @@ export function SceneView({
         >
           {hideDone ? "Alle Stellen zeigen" : "Untersuchte ausblenden"}
         </button>
+        {scenes.length > 1 && (
+          <nav className="scene__switch" aria-label="Tatort wechseln">
+            {scenes.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => onSwitchScene(s.id)}
+                aria-current={s.id === scene.id ? "page" : undefined}
+                disabled={s.id === scene.id}
+              >
+                {s.name}
+              </button>
+            ))}
+          </nav>
+        )}
+        {tools.map((t) => (
+          <button
+            key={t}
+            className="scene__back"
+            aria-pressed={activeTool === t}
+            onClick={() => setTool((prev) => (prev === t ? null : t))}
+          >
+            {TOOL_LABEL[t]} {activeTool === t ? "aus" : "an"}
+          </button>
+        ))}
         <button className="scene__back" onClick={onBack}>
           Zurueck
         </button>
