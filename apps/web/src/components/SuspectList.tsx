@@ -1,5 +1,6 @@
 import type { Suspect } from "@case-zero/shared";
 import { SuspectPortrait } from "./SuspectPortrait";
+import { orderSuspects } from "../lib/excludedSuspects";
 
 interface Props {
     suspects: Suspect[];
@@ -9,12 +10,17 @@ interface Props {
     onSelectSuspect: (id: string) => void;
     /** Nach dem Absenden der Anklage ist die Auswahl gesperrt (#27). */
     selectionLocked?: boolean;
+    /** Ausgeschlossene Personen (#69) — erscheinen ausgegraut am Ende. */
+    excludedIds?: string[];
+    onToggleExcluded?: (id: string) => void;
 }
 
 /**
  * Story #14 — Liste der Verdaechtigen.
  * Name und Bild pro Person, Anzahl in der Kopfzeile, Klick oeffnet das Profil.
  * Story #25 — Einen Verdaechtigen als Taeter auswaehlen.
+ * Story #69 — Verdaechtige ausschliessen: Sie bleiben sichtbar, aber
+ * ausgegraut am Ende der Liste und lassen sich nicht anklagen.
  */
 export function SuspectList({
   suspects,
@@ -23,14 +29,18 @@ export function SuspectList({
   selectedSuspectId,
   onSelectSuspect,
   selectionLocked = false,
+  excludedIds = [],
+  onToggleExcluded,
 }: Props) {
+    const excluded = new Set(excludedIds);
+    const remaining = suspects.filter((s) => !excluded.has(s.id)).length;
     const selectedSuspect = suspects.find((suspect) => suspect.id === selectedSuspectId) ?? null;
 
   return (
     <section className="panel">
       <div className="evidence-list__bar">
         <p className="terminal-title" style={{ margin: 0 }}>
-          Verdaechtige · {suspects.length}
+          Verdaechtige · {excluded.size > 0 ? `${remaining} von ${suspects.length} verbleibend` : suspects.length}
         </p>
         <button onClick={onBack}>Zurück zur Fallakte</button>
       </div>
@@ -39,26 +49,42 @@ export function SuspectList({
         <p className="evidence-list__empty">In diesem Fall ist niemand als verdaechtig gefuehrt.</p>
       ) : (
         <ul className="suspect-list">
-            {suspects.map((suspect) => {
+            {orderSuspects(suspects, excludedIds).map((suspect) => {
               const isSelected = suspect.id === selectedSuspectId;
+              const isExcluded = excluded.has(suspect.id);
               return (
-            <li key={suspect.id}>
+            <li key={suspect.id} className={isExcluded ? "suspect--excluded" : undefined}>
               <button className="suspect" onClick={() => onOpen(suspect.id)}>
                 <SuspectPortrait suspect={suspect} />
                 <span className="suspect__text">
                   <span className="suspect__name">{suspect.name}</span>
-                  <span className="suspect__relation">{suspect.relationToVictim}</span>
+                  <span className="suspect__relation">
+                    {suspect.relationToVictim}
+                    {isExcluded && " · ausgeschlossen"}
+                  </span>
                 </span>
               </button>
               <button
                 type="button"
                 className={isSelected ? "suspect-selection__button is-selected" : "suspect-selection__button"}
                 aria-pressed={isSelected}
-                disabled={selectionLocked}
+                disabled={selectionLocked || isExcluded}
                 onClick={() => onSelectSuspect(suspect.id)}
               >
                 {isSelected ? "Ausgewählt ✓" : "Als Täter auswählen"}
               </button>
+              {onToggleExcluded && (
+                <button
+                  type="button"
+                  className="suspect-selection__button"
+                  aria-pressed={isExcluded}
+                  // Wer angeklagt ist, laesst sich nicht gleichzeitig ausschliessen.
+                  disabled={isSelected && !isExcluded}
+                  onClick={() => onToggleExcluded(suspect.id)}
+                >
+                  {isExcluded ? "Wieder aufnehmen" : "Ausschliessen"}
+                </button>
+              )}
             </li>
           );
         })}
