@@ -6,9 +6,11 @@ import { saveTeam } from "../lib/savedTeam";
 import {
   combineEvidence,
   createRoom,
+  fetchAccountProgress,
   fetchCase,
   findRoom,
   recoverDeleted,
+  saveAccountProgress,
   submitAccusation,
   unlockDevice,
 } from "../lib/api";
@@ -143,6 +145,36 @@ export function CaseLoaderPage() {
     saveProgress(browserStorage(), code, progress, account?.id);
   }, [code, progress, account]);
 
+  // Story #55 — mit Konto liegt der Stand zusaetzlich auf dem Server. Beim
+  // Oeffnen gewinnt der Server-Stand (anderes Geraet), danach wird jede
+  // Aenderung kurz gesammelt und hochgeladen.
+  const [remoteLoaded, setRemoteLoaded] = useState(!account?.token);
+  useEffect(() => {
+    if (!account?.token) return;
+    let cancelled = false;
+    fetchAccountProgress(account.token, code)
+      .then((raw) => {
+        if (cancelled || !raw) return;
+        setProgress(loadProgress({ getItem: () => raw, setItem: () => {} }, code, account.id));
+      })
+      .catch(() => {
+        // Server-Konto nicht erreichbar: lokal weiterspielen.
+      })
+      .finally(() => !cancelled && setRemoteLoaded(true));
+    return () => {
+      cancelled = true;
+    };
+  }, [account, code]);
+
+  useEffect(() => {
+    if (!account?.token || !remoteLoaded) return;
+    const timer = setTimeout(() => {
+      saveAccountProgress(account.token!, code, JSON.stringify(progress)).catch(() => {
+        // Beim naechsten Speichern erneut versuchen.
+      });
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [account, code, progress, remoteLoaded]);
   useEffect(() => {
     saveBoard(browserStorage(), code, board);
   }, [code, board]);

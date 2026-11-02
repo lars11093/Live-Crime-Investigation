@@ -10,6 +10,11 @@ import type {
   UnlockResult,
 } from "@case-zero/shared";
 
+/** Antwort auf Konto erstellen/anmelden (#55). */
+export type AccountResponse =
+  | { ok: true; token: string; account: { id: string; name: string } }
+  | { ok: false; error: string };
+
 export const SERVER_URL = import.meta.env.VITE_SERVER_URL ?? "http://localhost:4000";
 
 /**
@@ -129,6 +134,41 @@ export async function submitAccusation(
     throw new Error(`Anklage konnte nicht abgesendet werden (HTTP ${response.status})`);
   }
   return (await response.json()) as SubmitAccusationResult;
+}
+
+/** Konto erstellen (#55) oder anmelden. Fehler wie "Name vergeben" kommen als Ergebnis. */
+export async function accountRequest(
+  mode: "register" | "login",
+  name: string,
+  password: string
+): Promise<AccountResponse> {
+  const response = await fetch(`${SERVER_URL}/api/accounts${mode === "login" ? "/login" : ""}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, password }),
+  });
+  if (![200, 201, 400, 401].includes(response.status)) {
+    throw new Error(`Konto-Anfrage fehlgeschlagen (HTTP ${response.status})`);
+  }
+  return (await response.json()) as AccountResponse;
+}
+
+/** Gespeicherter Spielstand eines Kontos (#55). `null`: noch keiner fuer diesen Code. */
+export async function fetchAccountProgress(token: string, code: string): Promise<string | null> {
+  const response = await fetch(`${SERVER_URL}/api/accounts/me/progress/${normalizeRoomCode(code)}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error(`Spielstand nicht verfuegbar (HTTP ${response.status})`);
+  return ((await response.json()) as { progress: string | null }).progress;
+}
+
+export async function saveAccountProgress(token: string, code: string, progress: string): Promise<void> {
+  const response = await fetch(`${SERVER_URL}/api/accounts/me/progress/${normalizeRoomCode(code)}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ progress }),
+  });
+  if (!response.ok) throw new Error(`Spielstand nicht gespeichert (HTTP ${response.status})`);
 }
 
 /** Freigegebene Hinweise der Team-Session (#74). */
