@@ -94,7 +94,7 @@ export function rememberName(roomCode: string, name: string): void {
  * eine neue Verbindung hat eine neue ID, die alte hat der Server beim
  * Trennen schon aus der Liste genommen.
  */
-export function useTeam(roomCode: string) {
+export function useTeam(roomCode: string, accountToken?: string) {
   const [name, setName] = useState(() => loadName(sessionStore(), roomCode));
   const [players, setPlayers] = useState<Player[]>([]);
   // Wer das Team leitet (#48) — Socket-ID wie `myId`.
@@ -137,7 +137,7 @@ export function useTeam(roomCode: string) {
     }
     function join() {
       if (!name) return;
-      socket.emit("team:join", { code: roomCode, playerName: name }, (result) => {
+      socket.emit("team:join", { code: roomCode, playerName: name, token: accountToken }, (result) => {
         if (result.ok) {
           setError(null);
           setMyId(socket.id);
@@ -164,7 +164,7 @@ export function useTeam(roomCode: string) {
       socket.off("team:moved", onMoved);
       socket.off("connect", join);
     };
-  }, [roomCode, name]);
+  }, [roomCode, name, accountToken]);
 
   const joinAs = useCallback(
     (rawName: string) => {

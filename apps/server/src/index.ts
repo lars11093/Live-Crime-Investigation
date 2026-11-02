@@ -113,6 +113,11 @@ app.put("/api/accounts/me/progress/:code", (req, res) => {
   return res.status(204).end();
 });
 
+// Story #77 — öffentliche Rangliste mit dem besten Ergebnis pro Konto und Fall.
+app.get("/api/leaderboard", (_req, res) => {
+  res.json(accounts.leaderboard());
+});
+
 // Story #5 — Team-Session anlegen. Der Code ist das, was im Team geteilt wird.
 app.post("/api/rooms", (req, res) => {
   const caseId = typeof req.body?.caseId === "string" ? req.body.caseId : "case-01";
@@ -207,6 +212,19 @@ app.post("/api/rooms/:code/accusation", (req, res) => {
     return res.status(404).json({ error: "Ungültiger Team-Code" });
   }
   const result = submitAccusation(room, req.body);
+  if (result.ok && result.receipt.verdict.score) {
+    // Die Punktzahl kommt aus dem gespeicherten Server-Ergebnis, nie aus dem Request.
+    for (const accountId of room.accountIds) {
+      accounts.recordScoreForAccount(
+        accountId,
+        room.state.code,
+        room.caseDef.id,
+        room.caseDef.title,
+        result.receipt.verdict.score,
+        result.receipt.submittedAt
+      );
+    }
+  }
   if (result.ok) {
     activity(room, null, "Die Anklage wurde abgesendet.");
     return res.status(201).json(result);
@@ -294,16 +312,18 @@ io.on("connection", (socket) => {
 
   // Story #22 — Team beitreten. Die neue Liste geht an alle im Raum, damit
   // jede Teamliste ohne Neuladen aktuell ist.
-  socket.on("team:join", ({ code, playerName }, cb) => {
+  socket.on("team:join", ({ code, playerName, token }, cb) => {
     const room = getRoom(code);
     if (!room) {
       cb({ ok: false, error: "Ungültiger Team-Code" });
       return;
     }
     const isNew = nameOf(room, socket.id) === undefined;
-    const result = joinTeam(room, socket.id, String(playerName ?? ""));
+    const account = accounts.identityForToken(token);
+    const result = joinTeam(room, socket.id, account?.name ?? String(playerName ?? ""));
     cb(result);
     if (!result.ok) return;
+    if (account) room.accountIds.add(account.id);
     socket.join(room.state.code);
     if (isNew) activity(room, nameOf(room, socket.id) ?? null, "ist dem Team beigetreten");
     else socket.emit("team:activity", room.activity);

@@ -57,6 +57,10 @@ export function StartPage() {
           Fall starten
         </button>
 
+        <button className="start-screen__leaderboard" onClick={() => navigate("/rangliste")}>
+          Rangliste ansehen
+        </button>
+
         <div className="start-screen__divider">
           <span>oder einem Team beitreten</span>
         </div>

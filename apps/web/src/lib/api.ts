@@ -4,6 +4,7 @@ import type {
   CombineResult,
   Difficulty,
   HintState,
+  LeaderboardEntry,
   PublicCase,
   RecoverResult,
   SubmitAccusationResult,
@@ -134,6 +135,13 @@ export async function submitAccusation(
     throw new Error(`Anklage konnte nicht abgesendet werden (HTTP ${response.status})`);
   }
   return (await response.json()) as SubmitAccusationResult;
+}
+
+/** Die besten Ergebnisse serverseitiger Konten (#77). */
+export async function fetchLeaderboard(): Promise<LeaderboardEntry[]> {
+  const response = await fetch(`${SERVER_URL}/api/leaderboard`);
+  if (!response.ok) throw new Error(`Rangliste nicht verfügbar (HTTP ${response.status})`);
+  return (await response.json()) as LeaderboardEntry[];
 }
 
 /** Konto erstellen (#55) oder anmelden. Fehler wie "Name vergeben" kommen als Ergebnis. */

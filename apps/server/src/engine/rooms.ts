@@ -32,6 +32,8 @@ export interface Room {
   accusation?: AccusationReceipt;
   /** Teamleiter (#48) — der erste Spieler, der dem Team beitritt. */
   leaderId?: string;
+  /** Server-Konten, die während der Session im Team waren (#77). */
+  accountIds: Set<string>;
   /** Verlauf des Team-Chats (#49), die älteste Nachricht zuerst. */
   chat?: TeamChatMessage[];
   /** Gemeinsame Aufgabenliste (#50). */
@@ -76,6 +78,7 @@ export function createRoom(caseDef: CaseDefinition): Room {
     findings: [],
     discoveries: [],
     activity: [],
+    accountIds: new Set(),
     state: {
       code,
       caseId: caseDef.id,

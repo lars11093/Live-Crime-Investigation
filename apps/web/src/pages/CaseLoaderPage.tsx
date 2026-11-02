@@ -181,7 +181,7 @@ export function CaseLoaderPage() {
   const [sceneId, setSceneId] = useState<string | null>(null);
   const navigate = useNavigate();
   // Wer sonst noch in dieser Session ermittelt (#22).
-  const team = useTeam(code);
+  const team = useTeam(code, account?.token);
   // Wer im Team auftritt (#31): die eigene Verbindung, wie der Server sie kennt (#22).
   const me = { id: team.myId ?? "", name: team.name };
 
