@@ -53,6 +53,20 @@ export interface Scenario {
   keyEvidenceIds: string[];
   /** Was tatsaechlich passiert ist — erscheint erst nach der Anklage (#28). */
   resolution: string;
+  /** Alternative Enden (#80), je nach Anklage — siehe `CaseEnding.when`. */
+  endings?: CaseEnding[];
+}
+
+/** Ein Ende des Falls (#80). */
+export interface CaseEnding {
+  /**
+   * Wann es eintritt: `solved` (richtig und begruendet), `insufficient`
+   * (richtige Person, Beweise reichen nicht) oder eine Verdaechtigen-ID —
+   * das Ende, wenn diese Person zu Unrecht angeklagt wird.
+   */
+  when: string;
+  title: string;
+  text: string;
 }
 
 export interface Suspect {
@@ -477,6 +491,27 @@ export interface AccusationVerdict {
   /** Der Aufloesungstext aus dem aktiven Szenario. */
   resolution: string;
   findings: VerdictFinding[];
+  /**
+   * Bewertung der Beweiskette (#78). Optional, weil Quittungen von vor #78
+   * (im localStorage) sie nicht haben.
+   */
+  chain?: ChainRating;
+  /** Welches Ende die Anklage ausgeloest hat (#80). Fehlt, wenn das Szenario keine Enden hat. */
+  ending?: { kind: "solved" | "insufficient" | "wrong"; title: string; text: string };
+}
+
+/** Wie tragfaehig die Begruendung der Anklage war (#78). */
+export interface ChainRating {
+  level: "stark" | "mittel" | "schwach";
+  /** Angehaengte Beweise, die die Loesung tragen, und wie viele es gegeben haette. */
+  supporting: number;
+  possible: number;
+  /** Angehaengte Beweise ohne Bezug zur Loesung. */
+  irrelevant: number;
+  /** Ein Satz zur Einordnung. */
+  summary: string;
+  /** Konkret, wo die Begruendung schwach war — leer bei einer vollstaendigen Kette. */
+  weaknesses: string[];
 }
 
 /** Antwort des Servers auf `POST /api/rooms/:code/accusation` (Story #27). */

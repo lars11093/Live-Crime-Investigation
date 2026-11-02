@@ -53,6 +53,8 @@ import { loadAccount } from "../lib/account";
 import { ROLE_LABEL } from "../lib/player";
 import { TeamRoles } from "../components/TeamRoles";
 import { introSeen, markIntroSeen } from "../lib/intro";
+import { restartCase } from "../lib/restart";
+import { RestartCase } from "../components/RestartCase";
 import { CaseIntro } from "../components/CaseIntro";
 import { loadBoard, recordInsight, saveBoard, toggleOwnThread } from "../lib/board";
 import { InvestigationBoard } from "../components/InvestigationBoard";
@@ -726,6 +728,22 @@ export function CaseLoaderPage() {
           }}
           onBack={() => setView("akte")}
         />
+        {/* #79 — erst nach der Aufloesung: den Fall noch einmal spielen. */}
+        {accusation.receipt && (
+          <div style={{ marginTop: "1rem" }}>
+            <RestartCase
+              withTeam={team.name !== ""}
+              onRestart={() =>
+                restartCase(caseData.id, difficulty, {
+                  createRoom,
+                  moveTeam: team.name ? team.moveTo : undefined,
+                  skipIntro: (newCode) => markIntroSeen(browserStorage(), newCode),
+                  go: (newCode) => window.location.assign(`/fall/${newCode}`),
+                })
+              }
+            />
+          </div>
+        )}
       </main>
     );
   }
