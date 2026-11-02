@@ -40,6 +40,7 @@ describe("toPublicCase", () => {
       expect(publicDevice?.locked).toBe(true);
       expect(publicDevice?.messages).toEqual([]);
       expect(publicDevice?.files ?? []).toEqual([]);
+      expect(publicDevice?.locations ?? []).toEqual([]);
     }
     const serialized = JSON.stringify(view);
     for (const message of locked.flatMap((d) => d.messages)) {

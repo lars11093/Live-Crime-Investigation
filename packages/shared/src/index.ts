@@ -132,6 +132,16 @@ export interface Device {
   locked?: boolean;
   /** Art der Sperre, wie sie im Terminal steht — z. B. "PIN, 4 Ziffern" (#18). */
   lockType?: string;
+  /**
+   * Hinweis zur Sperre, sichtbar im Terminal (#70) — z. B. woher die PIN
+   * kommen koennte. Verraet die PIN nicht selbst.
+   */
+  lockHint?: string;
+  /**
+   * PIN oder Passwort (#70). Bleibt auf dem Server: `toPublicCase` entfernt
+   * das Feld, geprueft wird nur in `engine/unlock.ts`.
+   */
+  unlockSecret?: string;
   messages: ChatMessage[];
   /** Dateien auf dem Geraet (#20). Optional: nicht jedes Geraet hat welche. */
   files?: DeviceFile[];
@@ -143,6 +153,18 @@ export interface Device {
   deletedMessages?: ChatMessage[];
   /** Wie viele geloeschte Nachrichten sich wiederherstellen lassen (#71). Setzt nur der Server. */
   deletedCount?: number;
+  /** Standortverlauf (#72), chronologisch wie im Case-JSON. Bei gesperrten Geraeten leer. */
+  locations?: DeviceLocation[];
+}
+
+/** Ein Standortpunkt eines Geraets (#72). */
+export interface DeviceLocation {
+  /** Zeitpunkt als Anzeigetext, wie `ChatMessage.sentAt` — z. B. "12.09. 22:31". */
+  at: string;
+  /** Ort in Worten, z. B. "Buero 4.12, Hardturmstrasse 61". */
+  place: string;
+  /** Woher der Punkt stammt, z. B. "WLAN CORP-4OG" oder "GPS". */
+  source?: string;
 }
 
 /**
@@ -228,12 +250,23 @@ export type ShareResult =
 export type RecoverResult =
   | { ok: true; messages: ChatMessage[] }
   | { ok: false; reason: "unknown-device" | "locked" };
+/** Antwort auf `POST /api/cases/:caseId/devices/:deviceId/unlock` (#70). */
+export type UnlockResult =
+  | { ok: true; device: Device }
+  | { ok: false; reason: "wrong-secret" | "unknown-device" | "not-locked" };
 
 export interface Scene {
   id: string;
   /** Anzeigename, dauerhaft als Overlay sichtbar. */
   name: string;
   imagePath: string;
+  /**
+   * 3D-Modell des Tatorts (GLB). Optional: ist es gesetzt, zeigt der Client
+   * die Szene in 3D statt als Bild. Das Modell enthaelt pro Stelle ein Objekt
+   * `hotspot_<id>`; Stellen ohne passendes Objekt bleiben nur in der Liste
+   * erreichbar. Erzeugt wird es per Skript unter `tools/blender/`.
+   */
+  modelPath?: string;
   hotspots: Hotspot[];
 }
 
