@@ -1812,3 +1812,29 @@ div.account-bar {
 .button--danger:hover {
   background: rgba(239, 68, 68, 0.12);
 }
+
+/* Story #72 — Standortdaten */
+.device-location__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.device-location {
+  display: grid;
+  grid-template-columns: 7rem 1fr auto;
+  gap: 0.75rem;
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.device-location--crime {
+  border-left: 2px solid var(--danger);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.device-location__time,
+.device-location__source {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}

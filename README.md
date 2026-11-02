@@ -68,6 +68,7 @@ Live-Crime-Investigation/
    Umgesetzt (#23): Funde teilen per `evidence:share`; der Server prüft Teammitgliedschaft und Fall-Zugehörigkeit, hält die geteilten Funde im Raum und schickt sie als `team:findings` an alle (auch an später Beitretende).
 3. Server pusht rollenspezifische Payloads (`role:payload`) — jeder Client sieht nur, was seine Rolle darf.
 4. Aktionen (Board verbinden, Beweis anzeigen, Verhör-Antwort) gehen als Socket-Events zum Server, der validiert + an alle im Room broadcastet (`board:update`, `event:new`).
+   Umgesetzt (#72): Geräte können im Case-JSON einen Standortverlauf `locations` (`{ at, place, source? }`) haben. Wie Nachrichten und Dateien bleibt er bei gesperrten Geräten auf dem Server (`toPublicCase`); der Client markiert Punkte in der Tatzeit aus dem Briefing.
    Umgesetzt (#70): Gesperrte Geräte entsperren per `POST /api/cases/:caseId/devices/:deviceId/unlock` mit `{ secret }`. PIN bzw. Passwort stehen als `unlockSecret` im Case-JSON und verlassen den Server nie (`toPublicCase` entfernt das Feld); bei richtigem Versuch kommt das Gerät mit Nachrichten und Dateien zurück, sonst `400 wrong-secret`. Der öffentliche `lockHint` zeigt im Terminal, wo man suchen kann.
 5. Case-Engine feuert zeitbasierte Live-Events (`NEW_EVIDENCE`, `STATEMENT_CHANGED`, `SERVER_BREACH`) nach Skript im Case-JSON.
 6. Lead Detective reicht Accusation ein → Server vergleicht mit dem aktiven Szenario → `CASE SOLVED` Score-Payload an alle.

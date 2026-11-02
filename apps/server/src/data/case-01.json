@@ -184,6 +184,12 @@
       "id": "smartphone-vogt",
       "label": "Smartphone Thomas Vogt",
       "owner": "Thomas Vogt",
+      "locations": [
+        { "at": "12.09. 18:02", "place": "Buero 4.12, Hardturmstrasse 61", "source": "WLAN CORP-4OG" },
+        { "at": "12.09. 20:29", "place": "Buero 4.12, Hardturmstrasse 61", "source": "WLAN CORP-4OG" },
+        { "at": "12.09. 22:31", "place": "Buero 4.12, Hardturmstrasse 61", "source": "WLAN CORP-4OG" },
+        { "at": "12.09. 22:44", "place": "Buero 4.12, Hardturmstrasse 61", "source": "WLAN CORP-4OG" }
+      ],
       "messages": [
         {
           "id": "msg-vogt-01",
@@ -278,6 +284,12 @@
       "owner": "Leo Fischer",
       "locked": true,
       "lockType": "PIN, 4 Ziffern",
+      "locations": [
+        { "at": "12.09. 21:48", "place": "Serverraum UG, Hardturmstrasse 61", "source": "WLAN CORP-UG" },
+        { "at": "12.09. 22:16", "place": "Serverraum UG, Hardturmstrasse 61", "source": "WLAN CORP-UG" },
+        { "at": "12.09. 22:47", "place": "Serverraum UG, Hardturmstrasse 61", "source": "WLAN CORP-UG" },
+        { "at": "12.09. 23:52", "place": "Parkhaus Hardturm, Ebene -2", "source": "GPS" }
+      ],
       "lockHint": "Laut IT-Abteilung nimmt Leo Fischer fuer alles dieselbe Nummer wie auf seinem Ersatzbadge.",
       "unlockSecret": "0417",
       "messages": [

@@ -34,6 +34,7 @@ import { messageToEvidence } from "../lib/digitalTrace";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import { DeviceLocations } from "../components/DeviceLocations";
 import { buildForensicReport, forensicReportMarkdown } from "../lib/forensicReport";
 import { ForensicReportPanel } from "../components/ForensicReportPanel";
 import { downloadText, exportAkte, exportFileName } from "../lib/akteExport";
@@ -338,6 +339,10 @@ export function CaseLoaderPage() {
           onShowFiles={device.files?.length ? () => setDeviceTab("dateien") : undefined}
           onBack={() => setOpenDeviceId(null)}
         />
+        {/* #72 — Standortverlauf desselben Geraets, gegen die Tatzeit gelesen. */}
+        <div style={{ marginTop: "1rem" }}>
+          <DeviceLocations device={device} timeOfCrime={caseData.briefing?.timeOfCrime} />
+        </div>
       </main>
     );
   }
