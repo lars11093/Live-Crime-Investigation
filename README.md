@@ -52,6 +52,7 @@ Live-Crime-Investigation/
 │   │       └── data/           Case-JSONs (Ermittlungsziel, Briefing mit Tatzeitfenster, Beweise, Verdächtige, Geräte mit Chatverlauf und Sperre, Timeline, Lösung)
 │   │       └── data/           Case-JSONs (Ermittlungsziel, Beweise, Verdächtige, Geräte mit Chatverlauf, Dateien und Sperre, Timeline, Lösung)
 │   │       └── data/           Case-JSONs (Ermittlungsziel, Briefing mit Tatzeitfenster, Beweise, Verdächtige, Geräte mit Art, Sicherstellungsort, Chatverlauf inkl. Bildanhängen mit Metadaten und Sperre, Timeline, Lösung)
+│   │       └── data/           Case-JSONs (Ermittlungsziel, Briefing mit Tatzeitfenster, Beweise, Verdächtige, Geräte mit Art, Sicherstellungsort, Chatverlauf inkl. Bildanhängen mit Metadaten, Systemprotokoll und Sperre, Timeline, Lösung)
 │   └── web/                React SPA — 5 rollenspezifische Dashboards
 │       └── src/
 │           ├── pages/          Join, Lobby, RoleDashboard
