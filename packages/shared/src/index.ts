@@ -477,6 +477,25 @@ export interface AccusationVerdict {
   /** Der Aufloesungstext aus dem aktiven Szenario. */
   resolution: string;
   findings: VerdictFinding[];
+  /**
+   * Bewertung der Beweiskette (#78). Optional, weil Quittungen von vor #78
+   * (im localStorage) sie nicht haben.
+   */
+  chain?: ChainRating;
+}
+
+/** Wie tragfaehig die Begruendung der Anklage war (#78). */
+export interface ChainRating {
+  level: "stark" | "mittel" | "schwach";
+  /** Angehaengte Beweise, die die Loesung tragen, und wie viele es gegeben haette. */
+  supporting: number;
+  possible: number;
+  /** Angehaengte Beweise ohne Bezug zur Loesung. */
+  irrelevant: number;
+  /** Ein Satz zur Einordnung. */
+  summary: string;
+  /** Konkret, wo die Begruendung schwach war — leer bei einer vollstaendigen Kette. */
+  weaknesses: string[];
 }
 
 /** Antwort des Servers auf `POST /api/rooms/:code/accusation` (Story #27). */

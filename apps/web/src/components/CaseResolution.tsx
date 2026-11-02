@@ -32,6 +32,30 @@ export function CaseResolution({ verdict }: Props) {
       <p className="team-code__label">Was wirklich geschah</p>
       <p className="briefing__text">{verdict.resolution}</p>
 
+      {verdict.chain && (
+        <div className={`chain chain--${verdict.chain.level}`}>
+          <p className="team-code__label">Bewertung deiner Beweiskette</p>
+          <p className="chain__level">
+            {verdict.chain.level === "stark" ? "Stark" : verdict.chain.level === "mittel" ? "Mittel" : "Schwach"}
+            <span className="chain__count">
+              {" "}
+              · {verdict.chain.supporting} von {verdict.chain.possible} tragenden Beweisen
+              {verdict.chain.irrelevant > 0 && ` · ${verdict.chain.irrelevant} ohne Bezug`}
+            </span>
+          </p>
+          <p className="briefing__text" style={{ margin: "0.25rem 0" }}>
+            {verdict.chain.summary}
+          </p>
+          {verdict.chain.weaknesses.length > 0 && (
+            <ul className="chain__weaknesses">
+              {verdict.chain.weaknesses.map((text) => (
+                <li key={text}>{text}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
       <p className="team-code__label">Deine Schluesse</p>
       <ul className="resolution__findings">
         {verdict.findings.map((finding, index) => (
