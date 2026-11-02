@@ -228,6 +228,60 @@ Sprint 3. Verantwortlich: Scrum Master.
 
 ---
 
+### Sprint 3 — Präsentierbar machen (26.10.2026 – 02.11.2026)
+
+**Sprintziel:**
+
+> Am 2. November spielt eine Person CASE//ZERO auf `master` vom Start bis zur abgeschickten
+> Anklage durch, und wir zeigen dazu nachvollziehbar, wie wir mit Scrum gearbeitet haben.
+
+**Sprint Backlog:** #26 Beweise an die Anklage anhängen (2 SP) · #27 Anklage absenden und danach
+sperren (2 SP) · #53 Bestätigung vor dem endgültigen Absenden (1 SP) — **5 SP**, die Hälfte der
+11 SP aus Sprint 2. Dazu ohne Story Points: die Retro-Massnahme und die Tasks «Stabilisieren»,
+«Demo vorbereiten» und «Präsentation vorbereiten». Bewusst draussen: #28 Auflösung, #29 – #52,
+#54, «Texte mit korrekten Umlauten» und #70a, weil sie nicht auf das Sprintziel einzahlen oder nicht
+ready waren. Merge-Reihenfolge #26 → #27 → #53.
+
+Planung und Tasks: [sprint-3-planning.md](sprint-3-planning.md), Refinement:
+[refinement-sprint-3.md](refinement-sprint-3.md).
+
+**Ergebnis (Stand 02.11.2026, aus `master` und den PRs belegt):**
+
+| Eintrag | SP | Stand |
+|---|---|---|
+| #26 Beweise an die Anklage anhängen | 2 | PR #123 am 28.10. gemergt. Review: Kommentar `elinahulli`, Approve `lars11093` (26.10.) |
+| #27 Anklage absenden und danach sperren | 2 | PR #124 am 28.10. gemergt. Review: Kommentar `elinahulli`, Approve `lars11093` (26.10.) |
+| #53 Bestätigung vor dem endgültigen Absenden | 1 | PR #150 ohne Merge geschlossen, stattdessen PR #155 (`feat/53-bestaetigung-v2`) am 02.11. gemergt. Review: Approve `lorisreina-prog` (01.11.) |
+
+Alle drei Sprint-Stories liegen damit auf `master`: **5 von 5 SP gemergt.** Ob jede Story
+zusätzlich lokal von einer zweiten Person durchgeklickt wurde (DoD 5), ist in den PRs nicht
+belegt und wird in der Review bestätigt.
+
+Ungeplant, ausserhalb des Sprint Backlogs gemergt:
+
+- **28.10.:** #28 Auflösung (PR #125), #29 Anmelden (PR #126), #30 Fallübersicht (PR #127). Alle
+  drei standen im Planning unter «verschoben».
+- **02.11.:** 24 weitere PRs, darunter #114 (Windows-Dev-Skript), 3D-Tatort (#156 – #159, #163),
+  #55 – #58, #60 – #74. Auch sie standen nicht im Sprint Backlog.
+
+Das Sprintziel war ein Spiel «vom Start bis zur abgeschickten Anklage» auf `master`. Das ist mit
+#26, #27 und #53 gegeben. Der Umfang auf `master` geht aber weit über die geplanten 5 SP hinaus; im
+Planning hiess es «fertig machen geht vor neu anfangen». Der Review-Stand der ungeplanten PRs
+wurde hier nicht einzeln geprüft.
+
+**Retro-Massnahme («Mergen aufteilen»):** Nach den Merge-Commits auf `master` **nicht erfüllt.**
+Alle Sprint-3-Merges (#123, #124, #125, #126, #127, #155 und die 02.11.-PRs) stammen vom Konto
+`lars11093`; nur die Dokumentations-PRs wurden von Chime456 und lorisreina-prog gemergt. Fünf
+verschiedene Konten als Merger sind es nicht. Reviewt haben bei den Sprint-Stories `elinahulli`,
+`lars11093` und `lorisreina-prog`.
+
+**Review (02.11.2026):** `_<Ergebnis der Abschlusspräsentation und Feedback eintragen,
+Protokoll in Sprint-Review-3.md>_`
+
+**Retrospective:** `_<Starfish und Erkenntnis des Teams eintragen, Protokoll in retrospective-sprint-3.md>_`
+
+---
+
 ## 5. KI-Nutzungsnachweis
 
 | Nachweis | Modultag | Wo |
@@ -238,6 +292,7 @@ Sprint 3. Verantwortlich: Scrum Master.
 | Review-Protokoll und Retro-Dokumentation Sprint 1 strukturieren (Claude) | 6 | [Sprint-Review-1.md](Sprint-Review-1.md), [retrospective-sprint-1.md](retrospective-sprint-1.md) |
 | Story #18 Forensik-Terminal umsetzen und vor dem PR prüfen (Claude Code) | 7 | PR #120 |
 | Review-Protokoll, Retro-Dokumentation Sprint 2 und Refinement-Vorschläge Sprint 3 vorbereiten (Claude) | 8 | [Sprint-Review-2.md](Sprint-Review-2.md), [retrospective-sprint-2.md](retrospective-sprint-2.md), [refinement-sprint-3.md](refinement-sprint-3.md) |
+| Sprint-3-Abschnitt im Portfolio aus `master`, Git-Verlauf und PR-Reviews zusammenstellen (Claude Code) | 02.11. | Abschnitt «Sprint 3» in Kapitel 4 |
 
 **Modultag 4 — übernommen:**
 
@@ -330,3 +385,13 @@ Reflexion und Lernjournal.
 | Elina | Ich war in den Ferien | Ich war in den Ferien | Mitarbeiten am Projekt |
 | Nehir | Story #25 | - | Ich muss mein Tempo verbessern. |hanges mergen
 | Chime | Story #18 Forensik-Terminal umgesetzt (PR #120, von Loris reviewt, gemergt) | Vor dem Start `master` holen, sonst baut man auf einem veralteten Stand und muss umbasen | PRs von anderen reviewen und im PR «Closes #…» schreiben, damit das Issue automatisch schliesst |
+
+### Sprint 3
+
+| Person | Mein Beitrag | Wichtigste Erkenntnis | Nächster Lernschritt |
+|---|---|---|---|
+| Lars | | | |
+| Loris | | | |
+| Elina | | | |
+| Nehir | | | |
+| Chime | | | |
