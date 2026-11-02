@@ -2,6 +2,18 @@
 
 Modul 426 · AP 25b · 02.11.2026 · Abschlusspräsentation mit Produktdemo (rund 15 Minuten)
 
+## Ablauf der Produktdemo
+
+| Min. | Punkt | Wer |
+|---|---|---|
+| 0–1 | Sprintziel vorlesen, Antwort «erreicht ja/nein» | SM |
+| 1–6 | Inkrement live auf `master` zeigen, nur was nach DoD fertig ist | Devs |
+| 6–8 | Offen sagen, was nicht fertig wurde | PO |
+| 8–10 | Feedback aufnehmen und ins Backlog schreiben | SM (Protokoll) |
+
+**Vor dem Zeigen:** `git pull`, `npm install`, `npm run dev`, einmal von der Startseite bis zur
+Anklage durchklicken. Gezeigt wird von `master`, nicht von einem Arbeitsbranch.
+
 ## 1. Sprintziel
 
 > Am 2. November spielt eine Person CASE//ZERO auf `master` vom Start bis zur abgeschickten
