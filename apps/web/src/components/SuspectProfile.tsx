@@ -1,6 +1,8 @@
 import type { CrimeWindow, Suspect } from "@case-zero/shared";
 import { AlibiCheck } from "./AlibiCheck";
 import type { AlibiVerdict } from "../lib/alibi";
+import { SuspicionMeter } from "./SuspicionMeter";
+import type { SuspicionLevel } from "../lib/suspicion";
 import { SuspectPortrait } from "./SuspectPortrait";
 import { StatementView } from "./StatementView";
 
@@ -13,6 +15,9 @@ interface Props {
   crimeWindow?: CrimeWindow;
   alibiVerdict?: AlibiVerdict;
   onAlibiVerdict: (verdict: AlibiVerdict) => void;
+  /** Eigener Verdachtsgrad (#43). */
+  suspicion?: SuspicionLevel;
+  onSuspicion: (level: SuspicionLevel) => void;
   onBack: () => void;
 }
 
@@ -30,6 +35,8 @@ export function SuspectProfile({
   crimeWindow,
   alibiVerdict,
   onAlibiVerdict,
+  suspicion,
+  onSuspicion,
   onBack,
 }: Props) {
   return (
@@ -47,6 +54,7 @@ export function SuspectProfile({
           <h1 className="evidence-detail__title" style={{ margin: 0 }}>
             {suspect.name}
           </h1>
+          <SuspicionMeter name={suspect.name} level={suspicion} onChange={onSuspicion} />
         </div>
       </div>
 

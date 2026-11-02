@@ -1,5 +1,7 @@
 import type { Suspect } from "@case-zero/shared";
 import { SuspectPortrait } from "./SuspectPortrait";
+import { SuspicionMeter } from "./SuspicionMeter";
+import { SUSPICION_LABEL, primeSuspect, type SuspicionLevel } from "../lib/suspicion";
 import { orderSuspects } from "../lib/excludedSuspects";
 
 interface Props {
@@ -10,6 +12,8 @@ interface Props {
     onSelectSuspect: (id: string) => void;
     /** Nach dem Absenden der Anklage ist die Auswahl gesperrt (#27). */
     selectionLocked?: boolean;
+    /** Eigener Verdachtsgrad pro Person (#43) — nur Anzeige, gesetzt wird im Profil. */
+    suspicion?: Record<string, SuspicionLevel>;
     /** Ausgeschlossene Personen (#69) — erscheinen ausgegraut am Ende. */
     excludedIds?: string[];
     onToggleExcluded?: (id: string) => void;
@@ -29,11 +33,13 @@ export function SuspectList({
   selectedSuspectId,
   onSelectSuspect,
   selectionLocked = false,
+  suspicion = {},
   excludedIds = [],
   onToggleExcluded,
 }: Props) {
-    const excluded = new Set(excludedIds);
-    const remaining = suspects.filter((s) => !excluded.has(s.id)).length;
+  const prime = primeSuspect(suspects, suspicion);
+  const excluded = new Set(excludedIds);
+  const remaining = suspects.filter((s) => !excluded.has(s.id)).length;
     const selectedSuspect = suspects.find((suspect) => suspect.id === selectedSuspectId) ?? null;
 
   return (
@@ -62,6 +68,7 @@ export function SuspectList({
                     {suspect.relationToVictim}
                     {isExcluded && " · ausgeschlossen"}
                   </span>
+                  <SuspicionMeter name={suspect.name} level={suspicion[suspect.id]} />
                 </span>
               </button>
               <button
@@ -101,6 +108,12 @@ export function SuspectList({
           <p>Noch kein Täter ausgewählt.</p>
         )}
         {selectionLocked && <p>Die Anklage ist abgesendet. Die Auswahl ist gesperrt.</p>}
+        {prime && (
+          <p className="suspect-selection__hint">
+            Dein Hauptverdacht: <strong>{prime.name}</strong> (
+            {SUSPICION_LABEL[suspicion[prime.id]]})
+          </p>
+        )}
       </section>
     </section>
   );
