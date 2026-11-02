@@ -2,8 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TeamCodeForm } from "../components/TeamCodeForm";
 import { AccountBar } from "../components/AccountBar";
-import { loadAccount, login, logout, type Account } from "../lib/account";
+import { loadAccount, login, logout, rememberServerAccount, type Account } from "../lib/account";
+import { accountRequest } from "../lib/api";
 import { browserStorage } from "../lib/caseProgress";
+import { loadSavedTeam } from "../lib/savedTeam";
+import { rememberName } from "../lib/team";
 
 /**
  * Story #1 — Startseite.
@@ -13,6 +16,8 @@ import { browserStorage } from "../lib/caseProgress";
 export function StartPage() {
   const navigate = useNavigate();
   const [account, setAccount] = useState<Account | null>(() => loadAccount(browserStorage()));
+  // Zuletzt genutztes Team (#57) — ein Klick, und man ist wieder drin.
+  const [savedTeam] = useState(() => loadSavedTeam(browserStorage()));
 
   return (
     <main className="start-screen">
@@ -31,6 +36,16 @@ export function StartPage() {
         <AccountBar
           account={account}
           onLogin={(name) => setAccount(login(browserStorage(), name))}
+          onServerAccount={async (mode, name, password) => {
+            try {
+              const result = await accountRequest(mode, name, password);
+              if (!result.ok) return result.error;
+              setAccount(rememberServerAccount(browserStorage(), result.account.name, result.token));
+              return null;
+            } catch {
+              return "Server nicht erreichbar. Bitte erneut versuchen.";
+            }
+          }}
           onLogout={() => {
             logout(browserStorage());
             setAccount(null);
@@ -45,6 +60,17 @@ export function StartPage() {
         <div className="start-screen__divider">
           <span>oder einem Team beitreten</span>
         </div>
+
+        {savedTeam && (
+          <button
+            onClick={() => {
+              rememberName(savedTeam.code, savedTeam.name);
+              navigate(`/fall/${savedTeam.code}`);
+            }}
+          >
+            Zurück zu deinem Team {savedTeam.code} (als {savedTeam.name})
+          </button>
+        )}
 
         <TeamCodeForm onJoined={(code) => navigate(`/fall/${code}`)} />
 
