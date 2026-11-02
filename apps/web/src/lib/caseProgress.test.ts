@@ -58,6 +58,7 @@ describe("Fortschritt speichern und laden", () => {
       contradictions: [],
       markedMessageIds: [],
       accusation: { suspectId: "monica-brandt", evidenceIds: ["tasse-lippenstift"] },
+      photos: {},
     });
     const loaded = loadProgress(storage, "ABC-123");
     // Taeterauswahl und angehaengte Beweise ueberstehen ein Neuladen (#25, #26).
