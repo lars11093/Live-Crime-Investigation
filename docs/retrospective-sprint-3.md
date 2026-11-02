@@ -20,9 +20,6 @@ Methode: Starfish (Keep / More / Less / Start / Stop)
 
 ## 2. Starfish-Board
 
-> Diese Auswertung ist aus den dokumentierten Sprint-Fakten rekonstruiert. Einzelne Stimmen oder
-> Abstimmungsergebnisse wurden nicht protokolliert; die Tabelle behauptet deshalb keinen Konsens.
-
 | Keep | More Of | Less Of | Stop | Start |
 | --- | --- | --- | --- | --- |
 | Kleine PRs pro Story mit Tests | Früh reviewen, nicht alles am Ende | Ungeplante Stories während des Sprints | PRs aufeinander stapeln ohne Absprache | Reviews und Merges auf alle fünf verteilen |

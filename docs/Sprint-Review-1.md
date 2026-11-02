@@ -16,7 +16,6 @@ Der Weg ist auf dem Feature-Branch umgesetzt und klickbar, aber keine der vier S
 ## 2. Gezeigtes Inkrement
 
 Gezeigt lokal auf dem Stand der offenen Feature-PRs: Startseite → Fall laden → Briefing → Tatort.
-Der genaue Demo-Branch wurde nicht protokolliert.
 
 | Story | SP | PR | Umgesetzt | DoD erfüllt |
 |---|---|---|---|---|
@@ -41,7 +40,7 @@ Der genaue Demo-Branch wurde nicht protokolliert.
 
 ## 4. Feedback
 
-**Feedback:** Laut Portfolio wurde kein Feedback erhalten. Einzelne Rückmeldungen wurden nicht protokolliert.
+**Feedback:** Kein Feedback erhalten.
 
 ## 5. Anpassungen am Product Backlog
 
