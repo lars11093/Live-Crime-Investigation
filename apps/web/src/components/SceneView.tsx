@@ -41,7 +41,7 @@ interface Props {
  * Story #33 — Zoom. Bild und Stellen liegen gemeinsam auf einer "Buehne", die
  * mit der Zoomstufe waechst; der Ausschnitt darum herum scrollt. Weil die
  * Stellen in Prozent der Buehne positioniert sind, bleiben sie beim Zoomen
- * genau auf ihrem Bilddetail. Das 3D-Modell (#156) zoomt selbst per Mausrad.
+ * genau auf ihrem Bilddetail.
  */
 export function SceneView({
   scene,
@@ -65,13 +65,13 @@ export function SceneView({
   const [tool, setTool] = useState<SceneTool | null>(null);
   const tools = toolsIn(scene.hotspots);
   const activeTool = tool && tools.includes(tool) ? tool : null;
+  const shown = visibleHotspots(scene.hotspots, activeTool, investigatedIds);
+
+  const [zoom, setZoom] = useState<number>(ZOOM_LEVELS[0]);
   // Untersuchte Stellen ausblenden, damit nur noch Offenes im Bild steht (#34).
   const [hideDone, setHideDone] = useState(false);
-  const shown = visibleHotspots(scene.hotspots, activeTool, investigatedIds).filter(
-    (h) => !(hideDone && investigatedIds.includes(h.id))
-  );
-  const show3d = Boolean(scene.modelPath) && !modelFailed;
-  const [zoom, setZoom] = useState<number>(ZOOM_LEVELS[0]);
+  // #34 — untersuchte Stellen auf Wunsch ausblenden.
+  const listed = hideDone ? shown.filter((h) => !investigatedIds.includes(h.id)) : shown;
   const viewportRef = useRef<HTMLDivElement>(null);
 
   function changeZoom(next: number) {
@@ -85,11 +85,11 @@ export function SceneView({
     setZoom(next);
   }
 
-  // Tastatur: + / - zoomen, 0 setzt zurueck — nicht, solange ein Dialog offen ist.
+  // Tastatur (#33): + / - zoomen, 0 setzt zurueck — nicht, solange ein Dialog offen ist, und
+  // nicht in 3D: dort zoomt die Szene selbst (Mausrad).
   useEffect(() => {
-    if (show3d) return;
     function onKey(event: KeyboardEvent) {
-      if (openHotspot || event.target instanceof HTMLInputElement) return;
+      if (show3d || openHotspot || event.target instanceof HTMLInputElement) return;
       if (event.key === "+" || event.key === "=") changeZoom(zoomIn(zoom));
       else if (event.key === "-") changeZoom(zoomOut(zoom));
       else if (event.key === "0") changeZoom(ZOOM_LEVELS[0]);
@@ -162,13 +162,15 @@ export function SceneView({
     );
   }
 
+  const show3d = Boolean(scene.modelPath) && !modelFailed;
+
   return (
     <section className={`scene scene--${difficulty}${activeTool ? ` scene--${activeTool}` : ""}`} aria-label={`Tatort: ${scene.name}`}>
       {show3d ? (
         <Suspense fallback={<p className="scene__loading">Tatort wird geladen …</p>}>
           <Scene3D
             modelPath={scene.modelPath!}
-            hotspots={shown}
+            hotspots={listed}
             renderHotspot={(hotspot) => hotspotButton(hotspot)}
             onError={() => setModelFailed(true)}
           />
@@ -195,8 +197,7 @@ export function SceneView({
                 onError={() => setImageFailed(true)}
               />
             )}
-
-            {shown.map((hotspot) =>
+            {listed.map((hotspot) =>
               hotspotButton(hotspot, { left: `${hotspot.x}%`, top: `${hotspot.y}%` })
             )}
           </div>
@@ -205,7 +206,11 @@ export function SceneView({
 
       {!show3d && (
         <div className="scene__zoom" role="group" aria-label="Zoom">
-          <button onClick={() => changeZoom(zoomOut(zoom))} disabled={zoom === ZOOM_LEVELS[0]} aria-label="Herauszoomen">
+          <button
+            onClick={() => changeZoom(zoomOut(zoom))}
+            disabled={zoom === ZOOM_LEVELS[0]}
+            aria-label="Herauszoomen"
+          >
             −
           </button>
           <button onClick={() => changeZoom(ZOOM_LEVELS[0])} aria-label="Zoom zuruecksetzen">
@@ -231,6 +236,14 @@ export function SceneView({
             scene.hotspots.length
           )}
         </p>
+        <button
+          className="scene__back"
+          aria-pressed={hideDone}
+          onClick={() => setHideDone((prev) => !prev)}
+          disabled={investigated.size === 0}
+        >
+          {hideDone ? "Alle Stellen zeigen" : "Untersuchte ausblenden"}
+        </button>
         {scenes.length > 1 && (
           <nav className="scene__switch" aria-label="Tatort wechseln">
             {scenes.map((s) => (
@@ -255,14 +268,6 @@ export function SceneView({
             {TOOL_LABEL[t]} {activeTool === t ? "aus" : "an"}
           </button>
         ))}
-        <button
-          className="scene__back"
-          aria-pressed={hideDone}
-          onClick={() => setHideDone((prev) => !prev)}
-          disabled={investigated.size === 0}
-        >
-          {hideDone ? "Alle Stellen zeigen" : "Untersuchte ausblenden"}
-        </button>
         <button className="scene__back" onClick={onBack}>
           Zurueck
         </button>
