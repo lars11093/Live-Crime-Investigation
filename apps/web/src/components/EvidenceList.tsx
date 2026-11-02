@@ -16,10 +16,10 @@ interface Props {
   evidence: CollectedEvidence[];
   /** Beweis-ID -> Notiztext (#12). */
   notes?: Record<string, string>;
-  /** Eigene Tags pro Beweis (#62). */
-  tags?: Record<string, string[]>;
   /** Tatortfotos (#35), pro Beweis-ID. */
   photos?: Record<string, EvidencePhoto>;
+  /** Eigene Tags pro Beweis (#62). */
+  tags?: Record<string, string[]>;
   /** Oeffnet die Detailansicht (#11). */
   onOpen?: (id: string) => void;
   /** Zurueck in die Fallakte. Fehlt, wenn die Liste eingebettet gezeigt wird. */
@@ -39,7 +39,7 @@ interface Props {
  * Story #37 — sortieren nach Fundzeit (beide Richtungen), Art oder Name.
  * Sortiert wird nur die Anzeige; die Akte selbst bleibt in Fundreihenfolge.
  */
-export function EvidenceList({ evidence, notes = {}, tags = {}, photos = {}, onOpen, onBack }: Props) {
+export function EvidenceList({ evidence, notes = {}, photos = {}, tags = {}, onOpen, onBack }: Props) {
   const [filter, setFilter] = useState<EvidenceFilter>(NO_FILTER);
   const [sort, setSort] = useState<EvidenceSort>("found-asc");
   const shown = sortEvidence(filterEvidence(evidence, filter, notes), sort);

@@ -238,6 +238,8 @@
       "id": "smartphone-vogt",
       "label": "Smartphone Thomas Vogt",
       "owner": "Thomas Vogt",
+      "kind": "smartphone",
+      "seizedAt": "Jackentasche des Opfers, Buero 4.12",
       "deletedMessages": [
         {
           "id": "msg-vogt-del-01",
@@ -258,8 +260,6 @@
         { "at": "12.09. 22:31", "place": "Buero 4.12, Hardturmstrasse 61", "source": "WLAN CORP-4OG" },
         { "at": "12.09. 22:44", "place": "Buero 4.12, Hardturmstrasse 61", "source": "WLAN CORP-4OG" }
       ],
-      "kind": "smartphone",
-      "seizedAt": "Jackentasche des Opfers, Buero 4.12",
       "systemLog": [
         { "at": "12.09. 20:29", "category": "unlock", "event": "Bildschirm entsperrt (Face ID)" },
         { "at": "12.09. 20:30", "category": "app", "event": "Nachrichten: Nachricht an 3 Empfaenger gesendet" },
@@ -452,7 +452,29 @@
       "timeOfCrime": "22:46",
       "requiredEdgeIds": ["edge-fingerprint-daniel", "edge-message-daniel", "edge-cctv-daniel"],
       "keyEvidenceIds": ["badge-protokoll", "msg-vogt-08", "msg-vogt-03", "kratzer-fensterrahmen", "zettel-zahlenreihe"],
-      "resolution": "Daniel Keller hat das Buero um 22:10 nicht verlassen. Er wartete auf der Etage, bis Monica Brandt um 22:41 gegangen war, und betrat Buero 4.12 mit seinem eigenen Badge ein zweites Mal - deshalb zeigt das Protokoll denselben Badge zweimal im Abstand von vier Minuten. Vogt hatte ihm am Abend klargemacht, dass die Befoerderung erneut an ihm vorbeigehen wuerde. Der Streit eskalierte, Keller griff zum Messer aus der Teekueche. Das Messer reichte er durch das Kippfenster nach aussen auf den Sims - daher die frischen Kratzer am Rahmen - und holte es spaeter ueber das Treppenhaus. Das Telefonat mit seiner Schwester um 22:40 hat nie stattgefunden."
+      "resolution": "Daniel Keller hat das Buero um 22:10 nicht verlassen. Er wartete auf der Etage, bis Monica Brandt um 22:41 gegangen war, und betrat Buero 4.12 mit seinem eigenen Badge ein zweites Mal - deshalb zeigt das Protokoll denselben Badge zweimal im Abstand von vier Minuten. Vogt hatte ihm am Abend klargemacht, dass die Befoerderung erneut an ihm vorbeigehen wuerde. Der Streit eskalierte, Keller griff zum Messer aus der Teekueche. Das Messer reichte er durch das Kippfenster nach aussen auf den Sims - daher die frischen Kratzer am Rahmen - und holte es spaeter ueber das Treppenhaus. Das Telefonat mit seiner Schwester um 22:40 hat nie stattgefunden.",
+      "endings": [
+        {
+          "when": "solved",
+          "title": "Geständnis im Verhörraum",
+          "text": "Konfrontiert mit dem Badge-Protokoll und seiner eigenen Nachricht von 22:02 bricht Daniel Keller ein. Er gesteht, auf der Etage gewartet zu haben. Die Staatsanwaltschaft erhebt Anklage."
+        },
+        {
+          "when": "insufficient",
+          "title": "Freigelassen mangels Beweisen",
+          "text": "Daniel Keller kommt nach 48 Stunden frei. Der Verdacht stimmt, aber ohne tragfähige Beweiskette reicht er nicht. Eine Woche später kündigt er und zieht weg."
+        },
+        {
+          "when": "monica-brandt",
+          "title": "Die Falsche auf der Anklagebank",
+          "text": "Monica Brandt wird angeklagt, ihr Anwalt zerlegt die Beweise im Prozess. Während sie freigesprochen wird, löscht Daniel Keller die letzten Nachrichten auf seinem Telefon."
+        },
+        {
+          "when": "leo-fischer",
+          "title": "Ein Alibi aus Logdateien",
+          "text": "Leo Fischers Serverlogs belegen, dass er bis 23:00 im Untergeschoss Befehle eingab. Die Anklage fällt nach einem Tag in sich zusammen – und der wahre Täter hat Zeit gewonnen."
+        }
+      ]
     },
     {
       "id": "scenario-monica",
@@ -462,7 +484,29 @@
       "timeOfCrime": "22:39",
       "requiredEdgeIds": ["edge-fingerprint-monica", "edge-message-monica"],
       "keyEvidenceIds": ["tasse-lippenstift", "notebook-kuendigung", "msg-vogt-01", "msg-vogt-07", "badge-protokoll"],
-      "resolution": "Monica Brandt kam um 22:30 wie verabredet - sie wusste aus seiner Antwort auf ihre Q3-Nachricht, worum es gehen wuerde. Auf dem Notebook sah sie die Kuendigung und den Entwurf einer Mail, mit der Vogt die geschoenten Q3-Zahlen offenlegen wollte. Sie trank Tee mit ihm, um Zeit zu gewinnen, und versuchte ihn umzustimmen. Als er sich weigerte, griff sie zum Briefoeffner vom Schreibtisch. Sie verliess das Gebaeude nicht um 22:45, sondern ging kurz hinaus und mit ihrem Badge noch einmal hinein, um ihre Tasse zu holen - die vergass sie in der Eile trotzdem. Ihr Lippenstift am Tassenrand und ihre Nachricht \"Das bleibt unter uns\" verraten sie."
+      "resolution": "Monica Brandt kam um 22:30 wie verabredet - sie wusste aus seiner Antwort auf ihre Q3-Nachricht, worum es gehen wuerde. Auf dem Notebook sah sie die Kuendigung und den Entwurf einer Mail, mit der Vogt die geschoenten Q3-Zahlen offenlegen wollte. Sie trank Tee mit ihm, um Zeit zu gewinnen, und versuchte ihn umzustimmen. Als er sich weigerte, griff sie zum Briefoeffner vom Schreibtisch. Sie verliess das Gebaeude nicht um 22:45, sondern ging kurz hinaus und mit ihrem Badge noch einmal hinein, um ihre Tasse zu holen - die vergass sie in der Eile trotzdem. Ihr Lippenstift am Tassenrand und ihre Nachricht \"Das bleibt unter uns\" verraten sie.",
+      "endings": [
+        {
+          "when": "solved",
+          "title": "Die Zahlen lügen nicht",
+          "text": "Die Tasse, die Kündigung und ihre eigene Nachricht reichen: Monica Brandt legt ein Geständnis ab. Die Q3-Originaldaten gehen an die Revisionsstelle – so, wie Thomas Vogt es wollte."
+        },
+        {
+          "when": "insufficient",
+          "title": "Zurück im Chefbüro",
+          "text": "Monica Brandt wird nach der Befragung entlassen, die Beweise reichen nicht. Am Montag gehen die Q3-Zahlen raus, so wie besprochen."
+        },
+        {
+          "when": "daniel-keller",
+          "title": "Der Kollege mit Motiv",
+          "text": "Daniel Keller wird verhaftet: Sein Motiv passt, seine Spuren nicht. Im Prozess bricht die Anklage zusammen. Die geschönten Q3-Zahlen sind bis dahin längst veröffentlicht."
+        },
+        {
+          "when": "leo-fischer",
+          "title": "Ein Alibi aus Logdateien",
+          "text": "Leo Fischers Serverlogs belegen, dass er bis 23:00 im Untergeschoss Befehle eingab. Die Anklage fällt nach einem Tag in sich zusammen – und der wahre Täter hat Zeit gewonnen."
+        }
+      ]
     }
   ],
   "seedEvidence": [

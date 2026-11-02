@@ -68,62 +68,55 @@ describe("Team verlassen", () => {
   });
 });
 
+function roomWith(...names: string[]) {
+  const room = createRoom(caseDef);
+  for (const name of names) joinTeam(room, name.toLowerCase(), name);
+  return room;
+}
+
 describe("Rolle waehlen (#31)", () => {
-  function roomWith(...names: string[]) {
-    const room = createRoom(caseDef);
-    for (const name of names) joinTeam(room, `socket-${name}`, name);
-    return room;
-  }
-  const roleOf = (room: ReturnType<typeof createRoom>, id: string) =>
-    teamOf(room).find((p) => p.id === id)?.role;
-
-  it("gibt einer Person eine freie Rolle", () => {
+  it("vergibt eine freie Rolle", () => {
     const room = roomWith("Anna");
-    expect(chooseRole(room, "socket-Anna", "lead")).toEqual({ ok: true });
-    expect(roleOf(room, "socket-Anna")).toBe("lead");
+    expect(chooseRole(room, "anna", "anna", "forensics").ok).toBe(true);
+    expect(room.state.players[0].role).toBe("forensics");
   });
 
-  it("vergibt jede Rolle nur einmal und nennt, wer sie hat", () => {
+  it("vergibt jede Rolle nur einmal", () => {
     const room = roomWith("Anna", "Ben");
-    chooseRole(room, "socket-Anna", "lead");
-    expect(chooseRole(room, "socket-Ben", "lead")).toEqual({
-      ok: false,
-      error: "Die Rolle ist schon an Anna vergeben.",
-    });
-    expect(roleOf(room, "socket-Ben")).toBeNull();
+    chooseRole(room, "anna", "anna", "forensics");
+    const result = chooseRole(room, "ben", "ben", "forensics");
+    expect(result).toEqual({ ok: false, message: "Die Rolle ist schon an Anna vergeben." });
   });
 
-  it("gibt beim Wechsel die alte Rolle frei", () => {
+  it("wechselt die eigene Rolle und gibt die alte frei", () => {
     const room = roomWith("Anna", "Ben");
-    chooseRole(room, "socket-Anna", "lead");
-    chooseRole(room, "socket-Anna", "cyber");
-    expect(chooseRole(room, "socket-Ben", "lead").ok).toBe(true);
+    chooseRole(room, "anna", "anna", "forensics");
+    chooseRole(room, "anna", "anna", "cyber");
+    expect(chooseRole(room, "ben", "ben", "forensics").ok).toBe(true);
   });
 
-  it("laesst die eigene Rolle wieder abgeben", () => {
+  it("gibt eine Rolle mit null wieder ab", () => {
     const room = roomWith("Anna");
-    chooseRole(room, "socket-Anna", "lead");
-    expect(chooseRole(room, "socket-Anna", null).ok).toBe(true);
-    expect(roleOf(room, "socket-Anna")).toBeNull();
+    chooseRole(room, "anna", "anna", "lead");
+    chooseRole(room, "anna", "anna", null);
+    expect(room.state.players[0].role).toBeNull();
   });
 
-  it("weist unbekannte Rollen und Verbindungen ausserhalb des Teams ab", () => {
+  it("behaelt die Rolle bei einem erneuten Beitritt", () => {
     const room = roomWith("Anna");
-    expect(chooseRole(room, "socket-Anna", "chef").ok).toBe(false);
-    expect(chooseRole(room, "socket-Zoe", "lead").ok).toBe(false);
+    chooseRole(room, "anna", "anna", "cyber");
+    joinTeam(room, "anna", "Anna B.");
+    expect(teamOf(room)[0]).toEqual({ id: "anna", name: "Anna B.", role: "cyber" });
   });
 
-  it("behaelt die Rolle beim erneuten Beitritt", () => {
-    const room = roomWith("Anna");
-    chooseRole(room, "socket-Anna", "lead");
-    joinTeam(room, "socket-Anna", "Anna B.");
-    expect(roleOf(room, "socket-Anna")).toBe("lead");
-  });
-
-  it("macht die Rolle frei, wenn die Person das Team verlaesst", () => {
+  it("laesst niemanden die Rolle eines anderen setzen", () => {
     const room = roomWith("Anna", "Ben");
-    chooseRole(room, "socket-Anna", "lead");
-    leaveTeam(room, "socket-Anna");
-    expect(chooseRole(room, "socket-Ben", "lead").ok).toBe(true);
+    expect(chooseRole(room, "anna", "ben", "lead").ok).toBe(false);
+  });
+
+  it("weist unbekannte Rollen und Personen ab", () => {
+    const room = roomWith("Anna");
+    expect(chooseRole(room, "anna", "anna", "koch").ok).toBe(false);
+    expect(chooseRole(room, "zoe", "zoe", "lead").ok).toBe(false);
   });
 });
