@@ -64,6 +64,7 @@ Live-Crime-Investigation/
 **Datenfluss (Kernloop):**
 1. Lead Detective erstellt Case → Server generiert `CASE CODE` (z.B. `7K4-XP9`), wählt Täter-Szenario, hält Room-State im Speicher.
    Umgesetzt (#55): Konten mit Passwort per `POST /api/accounts` bzw. `POST /api/accounts/login` (scrypt-Hash mit Salt, Antwort mit Sitzungs-Token). Mit `Authorization: Bearer <token>` legt `PUT /api/accounts/me/progress/:code` den Spielstand ab, `GET` holt ihn auf jedem Gerät. Die Konten liegen in `.data/accounts.json` (Pfad über `ACCOUNTS_FILE`, nicht im Repo); ohne Passwort bleibt die Namens-Anmeldung aus #29 rein lokal.
+   Umgesetzt (#77): Die Rangliste steht unter `GET /api/leaderboard`. Nach einer Anklage speichert der Server den berechneten Score beim angemeldeten Konto; pro Konto und Fall bleibt nur der Bestwert erhalten. Ergebnisse ohne Server-Konto werden nicht dauerhaft eingetragen.
    Umgesetzt (#56): `POST /api/rooms` nimmt `difficulty` (`leicht`, `normal`, `schwer`; sonst `normal`), `GET /api/rooms/:code` liefert sie zurück. Die Stufe gilt für die ganze Session; im Client markiert «leicht» Stellen mit Fund, «schwer» blendet Namen und die Gesamtzahl der Stellen aus.
    Umgesetzt (#58): Ein Fall kann ein `intro` haben (`{ videoPath?, lines }`). Der Client spielt es einmal pro Team-Session vor dem Briefing; fehlt das Video (in der MVP-Phase immer, keine Assets im Repo), läuft die Titelsequenz aus `lines`.
 2. Andere 4 Spieler joinen mit Code + wählen Rolle → Socket-Room `case:<code>` beitreten.

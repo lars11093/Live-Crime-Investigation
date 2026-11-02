@@ -1,6 +1,7 @@
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import type { AccusationScore, LeaderboardEntry } from "@case-zero/shared";
 
 export const NAME_MIN = 2;
 export const NAME_MAX = 24;
@@ -15,6 +16,18 @@ interface StoredAccount {
   hash: string;
   /** Team-Code -> gespeicherter Fortschritt (JSON-Text aus dem Browser). */
   progress: Record<string, string>;
+  /** Bestes Ergebnis je Fall. Ältere Kontodateien haben dieses Feld nicht. */
+  scores?: StoredScore[];
+}
+
+interface StoredScore {
+  roomCode: string;
+  caseId: string;
+  caseTitle: string;
+  points: number;
+  maxPoints: number;
+  scoreRank: string;
+  achievedAt: string;
 }
 
 export type AccountResult =
@@ -106,6 +119,11 @@ export class AccountStore {
     return id ? this.accounts.get(id) : undefined;
   }
 
+  identityForToken(token: string | undefined): { id: string; name: string } | undefined {
+    const account = this.byToken(token);
+    return account ? { id: account.id, name: account.name } : undefined;
+  }
+
   /** `undefined` heisst: Token ungültig. `null`: noch kein Stand für diesen Code. */
   getProgress(token: string | undefined, roomCode: string): string | null | undefined {
     const account = this.byToken(token);
@@ -125,5 +143,60 @@ export class AccountStore {
     account.progress[roomCode] = progress;
     this.persist();
     return "ok";
+  }
+
+  /** Speichert ausschliesslich den serverseitig berechneten Score (#77). */
+  recordScoreForAccount(
+    accountId: string,
+    roomCode: string,
+    caseId: string,
+    caseTitle: string,
+    score: AccusationScore,
+    achievedAt: string
+  ): boolean {
+    const account = this.accounts.get(accountId);
+    if (!account) return false;
+
+    const scores = account.scores ?? [];
+    const previous = scores.find((entry) => entry.caseId === caseId);
+    if (previous && previous.points >= score.points) return true;
+
+    account.scores = [
+      ...scores.filter((entry) => entry.caseId !== caseId),
+      {
+        roomCode,
+        caseId,
+        caseTitle,
+        points: score.points,
+        maxPoints: score.maxPoints,
+        scoreRank: score.rank,
+        achievedAt,
+      },
+    ];
+    this.persist();
+    return true;
+  }
+
+  /** Öffentliche Rangliste: pro Konto nur der persönliche Bestwert je Fall. */
+  leaderboard(): LeaderboardEntry[] {
+    return [...this.accounts.values()]
+      .flatMap((account) =>
+        (account.scores ?? []).map(({ caseId, caseTitle, points, maxPoints, scoreRank, achievedAt }) => ({
+          playerName: account.name,
+          caseId,
+          caseTitle,
+          points,
+          maxPoints,
+          scoreRank,
+          achievedAt,
+        }))
+      )
+      .sort(
+        (a, b) =>
+          b.points - a.points ||
+          a.achievedAt.localeCompare(b.achievedAt) ||
+          a.playerName.localeCompare(b.playerName, "de")
+      )
+      .slice(0, 100);
   }
 }

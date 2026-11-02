@@ -2857,3 +2857,119 @@ div.account-bar {
 .score__minus {
   color: var(--danger);
 }
+
+/* Story #77 — Rangliste */
+.start-screen__leaderboard {
+  display: block;
+  margin: 0.8rem auto 0;
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.leaderboard {
+  display: grid;
+  gap: 1rem;
+}
+
+.leaderboard__intro,
+.leaderboard__account-note {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.leaderboard__account-note {
+  border-left: 2px solid var(--accent);
+  padding: 0.65rem 0.9rem;
+  background: rgba(34, 197, 94, 0.06);
+}
+
+.leaderboard__message {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.leaderboard__message p {
+  margin: 0;
+}
+
+.leaderboard__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.leaderboard__entry {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--panel);
+}
+
+.leaderboard__entry--own {
+  border-color: var(--accent);
+  box-shadow: inset 3px 0 var(--accent);
+}
+
+.leaderboard__position {
+  color: var(--accent);
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.leaderboard__details {
+  min-width: 0;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.leaderboard__name {
+  overflow-wrap: anywhere;
+}
+
+.leaderboard__you,
+.leaderboard__rank,
+.leaderboard__case {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.leaderboard__you {
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+.leaderboard__score {
+  color: var(--accent);
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.leaderboard__score span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+@media (max-width: 520px) {
+  .leaderboard__entry {
+    grid-template-columns: 2.3rem minmax(0, 1fr);
+    gap: 0.7rem;
+  }
+
+  .leaderboard__score {
+    grid-column: 2;
+    text-align: left;
+  }
+}

@@ -622,6 +622,17 @@ export interface AccusationScore {
   breakdown: { label: string; points: number }[];
 }
 
+/** Bestes Ergebnis eines Server-Kontos pro Fall (#77). */
+export interface LeaderboardEntry {
+  playerName: string;
+  caseId: string;
+  caseTitle: string;
+  points: number;
+  maxPoints: number;
+  scoreRank: string;
+  achievedAt: string;
+}
+
 /** Antwort des Servers auf `POST /api/rooms/:code/accusation` (Story #27). */
 export type SubmitAccusationResult =
   | { ok: true; receipt: AccusationReceipt }
@@ -690,7 +701,10 @@ export interface ClientToServerEvents {
   "board:connect": (payload: { code: string; fromId: string; toId: string }) => void;
   "case:accuse": (payload: { code: string; accusation: Accusation }, cb: (result: ScoreResult) => void) => void;
   /** Story #22 — mit Namen dem Team einer Session beitreten. */
-  "team:join": (payload: { code: string; playerName: string }, cb: (result: TeamJoinResult) => void) => void;
+  "team:join": (
+    payload: { code: string; playerName: string; token?: string },
+    cb: (result: TeamJoinResult) => void
+  ) => void;
   /** Story #31 — die eigene Rolle wählen; `null` gibt sie wieder frei. */
   "team:role": (
     payload: { code: string; role: Role | null; /** Wem die Rolle gehören soll (#48); fehlt = mir. */ playerId?: string },
