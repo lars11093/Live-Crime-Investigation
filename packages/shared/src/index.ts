@@ -216,7 +216,15 @@ export interface Hotspot {
    * die Stelle untersuchen, aber nichts mitnehmen.
    */
   evidence?: CollectableEvidence;
+  /**
+   * Nur mit diesem Werkzeug sichtbar (#60), z. B. "uv" fuer Spuren, die erst
+   * unter der UV-Lampe auftauchen. Ohne Feld ist die Stelle immer sichtbar.
+   */
+  requiresTool?: SceneTool;
 }
+
+/** Werkzeuge im Tatort (#60). */
+export type SceneTool = "uv";
 
 /** Ein einsammelbarer Fund aus dem Tatort (Story #9). */
 export interface CollectableEvidence {

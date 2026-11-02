@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import type { CSSProperties } from "react";
-import type { CollectedEvidence, Hotspot, Scene } from "@case-zero/shared";
+import type { CollectedEvidence, Hotspot, Scene, SceneTool } from "@case-zero/shared";
+import { TOOL_LABEL, toolsIn, visibleHotspots } from "../lib/sceneTools";
 
 // three.js ist gross — erst laden, wenn ein Tatort wirklich ein 3D-Modell hat.
 const Scene3D = lazy(() => import("./Scene3D"));
@@ -41,6 +42,11 @@ export function SceneView({
   const [modelFailed, setModelFailed] = useState(false);
   const [openHotspot, setOpenHotspot] = useState<Hotspot | null>(null);
   const [confirmation, setConfirmation] = useState<string | null>(null);
+  // #60 — eingeschaltetes Werkzeug, z. B. die UV-Lampe.
+  const [tool, setTool] = useState<SceneTool | null>(null);
+  const tools = toolsIn(scene.hotspots);
+  const activeTool = tool && tools.includes(tool) ? tool : null;
+  const shown = visibleHotspots(scene.hotspots, activeTool, investigatedIds);
 
   const investigated = new Set(investigatedIds);
   const collected = new Set(collectedIds);
@@ -91,12 +97,12 @@ export function SceneView({
   const show3d = Boolean(scene.modelPath) && !modelFailed;
 
   return (
-    <section className="scene" aria-label={`Tatort: ${scene.name}`}>
+    <section className={`scene${activeTool ? ` scene--${activeTool}` : ""}`} aria-label={`Tatort: ${scene.name}`}>
       {show3d ? (
         <Suspense fallback={<p className="scene__loading">Tatort wird geladen …</p>}>
           <Scene3D
             modelPath={scene.modelPath!}
-            hotspots={scene.hotspots}
+            hotspots={shown}
             renderHotspot={(hotspot) => hotspotButton(hotspot)}
             onError={() => setModelFailed(true)}
           />
@@ -119,7 +125,7 @@ export function SceneView({
       )}
 
       {!show3d &&
-        scene.hotspots.map((hotspot) =>
+        shown.map((hotspot) =>
           hotspotButton(hotspot, { left: `${hotspot.x}%`, top: `${hotspot.y}%` })
         )}
 
@@ -144,6 +150,16 @@ export function SceneView({
             ))}
           </nav>
         )}
+        {tools.map((t) => (
+          <button
+            key={t}
+            className="scene__back"
+            aria-pressed={activeTool === t}
+            onClick={() => setTool((prev) => (prev === t ? null : t))}
+          >
+            {TOOL_LABEL[t]} {activeTool === t ? "aus" : "an"}
+          </button>
+        ))}
         <button className="scene__back" onClick={onBack}>
           Zurueck
         </button>

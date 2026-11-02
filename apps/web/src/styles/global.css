@@ -1895,3 +1895,14 @@ div.account-bar {
 .hints li + li {
   margin-top: 0.4rem;
 }
+
+/* Story #60 — UV-Lampe: Szene abdunkeln, Spuren violett leuchten lassen */
+.scene--uv .scene__image,
+.scene--uv .scene__placeholder {
+  filter: brightness(0.45) saturate(0.6) hue-rotate(250deg);
+}
+
+.scene--uv .hotspot__ring {
+  border-color: #c084fc;
+  box-shadow: 0 0 14px #c084fc;
+}
