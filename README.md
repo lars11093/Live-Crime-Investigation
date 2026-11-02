@@ -67,12 +67,24 @@ Live-Crime-Investigation/
    Umgesetzt (#22): In der Fallakte tritt man mit Namen bei (`team:join`); der Server schickt nach jedem Beitritt und Verlassen die Teamliste an alle im Raum (`team:update`). Die Rollenwahl folgt mit #31.
    Umgesetzt (#23): Funde teilen per `evidence:share`; der Server prüft Teammitgliedschaft und Fall-Zugehörigkeit, hält die geteilten Funde im Raum und schickt sie als `team:findings` an alle (auch an später Beitretende).
    Umgesetzt (#64): Notizen teilen per `note:share` (`{ code, evidenceId, evidenceLabel, text }`). Der Server prüft Team, Beweis und Länge (max. 500 Zeichen), hält pro Person und Beweis eine Notiz und schickt alle als `team:notes` an den Raum, auch an später Beitretende.
+   Umgesetzt (#57): «Neuer Fall mit diesem Team» legt eine neue Session an und schickt `team:next`; der Server prüft, dass die Person im alten Team ist, und sendet `team:moved` mit dem neuen Code an alle im alten Raum. Die Clients wechseln dorthin und treten mit ihrem bisherigen Namen bei. Das zuletzt genutzte Team steht ausserdem im localStorage und lässt sich von der Startseite aus wieder öffnen.
 3. Server pusht rollenspezifische Payloads (`role:payload`) — jeder Client sieht nur, was seine Rolle darf.
 4. Aktionen (Board verbinden, Beweis anzeigen, Verhör-Antwort) gehen als Socket-Events zum Server, der validiert + an alle im Room broadcastet (`board:update`, `event:new`).
+   Umgesetzt (#66): Verdächtige haben im Case-JSON eine optionale Liste `interrogation` (`{ id, question, answer }`). Die Befragung läuft im Client; gemerkt wird pro Team-Code, welche Fragen gestellt wurden. Die Antworten passen zu jedem Szenario und verraten den Täter nicht.
+   Umgesetzt (#71): Geräte können `deletedMessages` im Case-JSON haben. Der Client bekommt nur `deletedCount`; `POST /api/cases/:caseId/devices/:deviceId/recover` liefert die Nachrichten (markiert mit `recovered: true`), die dann im Chatverlauf erscheinen und sich als Beweis sichern lassen.
+   Umgesetzt (#72): Geräte können im Case-JSON einen Standortverlauf `locations` (`{ at, place, source? }`) haben. Wie Nachrichten und Dateien bleibt er bei gesperrten Geräten auf dem Server (`toPublicCase`); der Client markiert Punkte in der Tatzeit aus dem Briefing.
+   Umgesetzt (#70): Gesperrte Geräte entsperren per `POST /api/cases/:caseId/devices/:deviceId/unlock` mit `{ secret }`. PIN bzw. Passwort stehen als `unlockSecret` im Case-JSON und verlassen den Server nie (`toPublicCase` entfernt das Feld); bei richtigem Versuch kommt das Gerät mit Nachrichten und Dateien zurück, sonst `400 wrong-secret`. Der öffentliche `lockHint` zeigt im Terminal, wo man suchen kann.
 5. Case-Engine feuert zeitbasierte Live-Events (`NEW_EVIDENCE`, `STATEMENT_CHANGED`, `SERVER_BREACH`) nach Skript im Case-JSON.
 6. Lead Detective reicht Accusation ein → Server vergleicht mit dem aktiven Szenario → `CASE SOLVED` Score-Payload an alle.
    Umgesetzt (#27) als `POST /api/rooms/:code/accusation` mit `{ suspectId, evidenceIds }`: Der Server prüft Täter und mindestens einen Beweis und speichert die Anklage einmal pro Team-Session (`201`). Jeder weitere Versuch bekommt `409` mit der ersten Quittung zurück, danach ist die Anklage gesperrt.
    Die Quittung enthält die Auflösung (#28): Ergebnis gelöst/nicht gelöst, wahrer Täter, Auflösungstext und eine Liste richtiger/falscher/übersehener Schlüsse. Grundlage sind die neuen Szenario-Felder `resolution` und `keyEvidenceIds` im Case-JSON. Wie das ganze Szenario verlassen sie den Server vor dem Absenden nie.
+
+**3D-Tatort:** Eine Szene im Case-JSON kann optional `modelPath` haben (z.B. `/models/case-01/buero-412.glb`, liegt unter `apps/web/public/`). Ist es gesetzt, zeigt der Client den Tatort als drehbares 3D-Modell (three.js / react-three-fiber, lazy geladen) statt als Bild. Die Hotspot-Positionen stecken im Modell: pro Hotspot ein Objekt `hotspot_<id>`. Hotspots ohne passendes Objekt erscheinen an ihren `x`/`y`-Prozentwerten. Ohne `modelPath`, ohne WebGL oder bei einem Ladefehler bleibt alles beim Bild. Verdeckte Spuren (hinter Möbeln) werden ausgeblendet, „Ansicht zurücksetzen“ führt zurück in die Startansicht. Hat ein Fall mehrere Szenen, bietet die Fallakte jeden Tatort an und im Tatort lässt sich umschalten; Untersuchtes und Eingesammeltes gilt für den ganzen Fall. Die Modelle werden per Skript gebaut, ohne fremde Assets (gemeinsame Masse und Konventionen in `tools/blender/tatort_lib.py`):
+
+```bash
+blender --background --factory-startup --python tools/blender/build_buero_412.py -- apps/web/public/models/case-01/buero-412.glb
+blender --background --factory-startup --python tools/blender/build_flur_4og.py -- apps/web/public/models/case-01/flur-4og.glb
+```
 
 ## 4. Scrum-Setup
 
