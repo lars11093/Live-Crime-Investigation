@@ -28,6 +28,7 @@ import {
 } from "./engine/rooms.js";
 import { joinTeam, leaveTeam, teamOf } from "./engine/team.js";
 import { shareFinding } from "./engine/sharing.js";
+import { difficultyOf, parseDifficulty, setDifficulty } from "./engine/difficulty.js";
 import { notesOf, shareNote } from "./engine/noteSharing.js";
 import { canMoveTeam } from "./engine/teamMove.js";
 
@@ -79,7 +80,10 @@ app.post("/api/rooms", (req, res) => {
     return res.status(404).json({ error: "Fall nicht gefunden" });
   }
   const room = createRoom(caseDef);
-  return res.status(201).json({ code: room.state.code, caseId, caseTitle: caseDef.title });
+  // Story #56 — die Stufe gilt fuer die ganze Session, alle im Team spielen gleich.
+  const difficulty = parseDifficulty(req.body?.difficulty);
+  setDifficulty(room, difficulty);
+  return res.status(201).json({ code: room.state.code, caseId, caseTitle: caseDef.title, difficulty });
 });
 
 // Story #13 — zwei Beweise kombinieren. Die Regeln bleiben auf dem Server:
@@ -136,6 +140,7 @@ app.get("/api/rooms/:code", (req, res) => {
     code: room.state.code,
     caseId: room.state.caseId,
     caseTitle: room.caseDef.title,
+    difficulty: difficultyOf(room),
   });
 });
 

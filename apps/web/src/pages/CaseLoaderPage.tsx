@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { PublicCase } from "@case-zero/shared";
+import type { Difficulty, PublicCase } from "@case-zero/shared";
+import { DIFFICULTY_INFO } from "../lib/difficulty";
 import { saveTeam } from "../lib/savedTeam";
 import {
   combineEvidence,
@@ -78,7 +79,7 @@ type LoadState =
   | { status: "loading" }
   | { status: "error" }
   | { status: "invalidCode" }
-  | { status: "ready"; caseData: PublicCase };
+  | { status: "ready"; caseData: PublicCase; difficulty: Difficulty };
 
 /**
  * Story #2 — Fall laden.
@@ -192,7 +193,7 @@ export function CaseLoaderPage() {
           return;
         }
         return fetchCase(room.caseId).then((caseData) => {
-          if (!cancelled) setState({ status: "ready", caseData });
+          if (!cancelled) setState({ status: "ready", caseData, difficulty: room.difficulty ?? "normal" });
         });
       })
       .catch(() => {
@@ -258,7 +259,7 @@ export function CaseLoaderPage() {
     );
   }
 
-  const { caseData } = state;
+  const { caseData, difficulty } = state;
 
   if (showIntro && caseData.intro && view === "briefing") {
     return (
@@ -322,6 +323,7 @@ export function CaseLoaderPage() {
           );
         }}
         onBack={() => setView("akte")}
+        difficulty={difficulty}
       />
     );
   }
@@ -679,6 +681,9 @@ export function CaseLoaderPage() {
         </p>
         <p className="case-status__hint">
           Team-Code zum Teilen: <strong className="case-code">{code}</strong>
+        </p>
+        <p className="case-status__hint">
+          Schwierigkeit: <strong>{DIFFICULTY_INFO[difficulty].label}</strong>
         </p>
         <p className="case-status__hint">
           {account ? (
