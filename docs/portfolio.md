@@ -357,7 +357,7 @@ Reflexion und Lernjournal.
 | Person | Mein Beitrag | Wichtigste Erkenntnis | Nächster Lernschritt |
 |---|---|---|---|
 | Lars | #53 (PR #155), 3D-Tatort #156 – #159 (PR #160 – #163), Windows-Fix (PR #114); Reviews und Merges der Sprint-3-PRs | Wenn viele PRs am Schluss zusammenkommen, kostet das Mergen mehr als das Bauen | Früher und laufend mergen, Reviews an andere abgeben |
-| Loris | 19 Feature-PRs (#164 – #182), Reviews von #114, #155, #160 – #163 | | |
+| Loris | 22 Feature-PRs: #164 – #182 (Stories #55 – #58, #60 – #74) und #183 – #185 (#78 – #80), umgesetzt mit Claude Code; Reviews von #114, #155, #160 – #163 und Elinas #128 – #151 | Mit KI entsteht Code sehr schnell, der Engpass verschiebt sich aber zu Review und Merge: Viele PRs gleichzeitig in denselben Dateien (`CaseLoaderPage.tsx`) haben beim Mergen viel Arbeit gemacht, und Stories ausserhalb des Sprint Backlogs zahlen nicht aufs Sprintziel ein | Nur Stories aus dem Sprint Backlog nach Absprache im Daily ziehen, einen PR fertig reviewen und mergen lassen, bevor ich den nächsten anfange, und selbst durchklicken (DoD 5) statt mich nur auf die CI zu verlassen |
 | Elina | #26, #27 (PR #123, #124), dazu #28, #29, #30 (PR #125 – #127) | Die Userstories fertigstellen und alle angefangenen Stories abzuschliessen | Auf jedenfall den Scrum wieder mal verwenden |
 | Nehir | Review und Durchlauf/ Szenarien testen | Merges sollten abgesprochen werden, damit keine conflicts entstehen | Strukturierter vorgehen |
 | Chime | Scrum Master: Sprint-3-Planning, Retro Sprint 2 | Vieles hat sich geändert, manches wurde übersehen oder nicht beachtet | Mit einer Struktur planen und organisieren |
