@@ -60,52 +60,10 @@ wer später merged, muss eventuell Konflikte auflösen.
 Ein Task ist so gross, dass eine Person ihn an einem Modultag schafft. **Reviewer ist nie der
 Autor des PRs.** Jeder PR bekommt zwei Reviews — so kommen alle auf mindestens zwei.
 
-### #1 Startseite anzeigen — PR #97
-| Task | Gezogen von |
-|---|---|
-| Code-Review PR #97 (Kommentare im PR) | `_<n>_` |
-| Zweites Review + lokal gegen die Akzeptanzkriterien durchklicken (DoD 5) | `_<n>_` |
-| Review-Kommentare einarbeiten, CI grün, mergen, Board auf `Done` | `_<n>_` |
-
-### #2 Fall laden — PR #98
-| Task | Gezogen von |
-|---|---|
-| Code-Review PR #98 inkl. Fehlerfall «Server nicht erreichbar» | `_<n>_` |
-| Zweites Review + lokal durchklicken, Fehlerfall testen (Server stoppen) | `_<n>_` |
-| Review-Kommentare einarbeiten, CI grün, mergen, Board auf `Done` | `_<n>_` |
-
-### #6 Fall-Briefing lesen — PR #99
-| Task | Gezogen von |
-|---|---|
-| Code-Review PR #99 | `_<n>_` |
-| Zweites Review + lokal durchklicken (schliessen und wieder öffnen) | `_<n>_` |
-| Rebase auf `master` nach #98, Kommentare einarbeiten, mergen, Board auf `Done` | `_<n>_` |
-
-### #7 Tatort als Szene sehen — PR #100
-| Task | Gezogen von |
-|---|---|
-| Code-Review PR #100 | `_<n>_` |
-| Zweites Review + durchklicken bei 1280×720 und 1920×1080, Platzhalter bei fehlendem Bild prüfen | `_<n>_` |
-| Rebase auf `master`, Kommentare einarbeiten, mergen, Board auf `Done` | `_<n>_` |
-
-### Abschluss
-| Task | Gezogen von |
-|---|---|
-| Ganzen Durchstich auf `master` einmal von Anfang bis Ende durchklicken | `_<n>_` |
-| Board aufräumen: Karten mit offenem PR aus `Done` zurück ins Backlog | `_<n>_` |
-
 ## 6. Daily Scrum (28.09.2026)
 
 10 Minuten, im Stehen. Scrum Master hält die Timebox. Keine Problemlösung im Daily — Hindernisse
 werden benannt und bekommen im Board das Label `Impediment`. **Fester Punkt: offene PRs.**
-
-| Person | Woran arbeite ich als Erstes? | Was brauche ich von jemandem? | Was blockiert mich? |
-|---|---|---|---|
-| Lars | | | |
-| Loris | | | |
-| Elina | | | |
-| Nehir | | | |
-| Chime | | | |
 
 ## 7. Fertig, wenn (Auftrag 6.2)
 
