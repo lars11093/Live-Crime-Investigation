@@ -517,6 +517,76 @@ button:disabled:hover {
   color: var(--accent);
 }
 
+/* ---------------------------------------------------------------
+   3D-Tatort: Canvas fuellt die Szene, Hotspots haengen an den
+   Markierungen im Modell (drei <Html>) statt an Prozentwerten.
+   --------------------------------------------------------------- */
+
+.scene__canvas {
+  position: absolute !important;
+  inset: 0;
+  /* Eigener Stapelkontext: die z-indizes der drei-<Html>-Hotspots bleiben
+     unter Detail-Dialog und Bestaetigung. */
+  z-index: 0;
+  cursor: grab;
+  touch-action: none;
+}
+
+.scene__canvas:active {
+  cursor: grabbing;
+}
+
+.scene__loading {
+  display: grid;
+  place-content: center;
+  height: 100%;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* drei zentriert das <Html> selbst — keine eigene Verschiebung. */
+.hotspot--3d {
+  position: static;
+  transform: none;
+}
+
+/* #157: oben rechts, ausserhalb der Overlay-Leiste unten. */
+.scene__reset {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background: rgba(5, 7, 10, 0.85);
+}
+
+/* #159: Tatort-Umschaltung in der Overlay-Leiste. */
+.scene__switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.scene__switch button {
+  background: rgba(5, 7, 10, 0.85);
+}
+
+/* Der aktive Tatort ist kein ausgegrauter Fehlerzustand, sondern markiert. */
+.scene__switch button[aria-current="page"],
+.scene__switch button[aria-current="page"]:hover {
+  opacity: 1;
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(34, 197, 94, 0.18);
+  cursor: default;
+}
+
+.scene__hotspot-fallback {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
 .scene__progress {
   margin: 0;
   color: var(--muted);
@@ -1577,4 +1647,240 @@ div.account-bar {
   display: grid;
   gap: 0.75rem;
   justify-items: start;
+}
+
+/* Story #61 — Tatortprotokoll */
+.scene-log + .scene-log {
+  margin-top: 1rem;
+}
+
+.scene-log__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scene-log__row {
+  display: grid;
+  grid-template-columns: 3.5rem 7.5rem 1fr;
+  gap: 0.75rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.scene-log__time {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Story #62 — eigene Tags */
+.evidence-tags__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.evidence-tags__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.2rem 0.15rem 0.6rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.evidence-tags__tag button {
+  padding: 0 0.4rem;
+  border: 0;
+}
+
+.evidence-tags__filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.evidence-tags__chip--on {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Story #68 — Zeitachse der Aussagen */
+.statement-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 2px solid var(--border);
+}
+
+.statement-timeline__row {
+  display: grid;
+  grid-template-columns: 4rem 9rem 1fr;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.45rem 0.75rem;
+}
+
+.statement-timeline__row--overlap {
+  border-left: 2px solid var(--accent);
+  margin-left: -2px;
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.statement-timeline__time {
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.statement-timeline__who {
+  justify-self: start;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* Story #69 — ausgeschlossene Verdaechtige */
+.suspect--excluded .suspect {
+  opacity: 0.45;
+}
+
+.suspect--excluded .suspect__name {
+  text-decoration: line-through;
+}
+
+/* Story #70 — Geraet entsperren */
+.unlock {
+  margin: 0.5rem 0 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+}
+
+.unlock__row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.unlock__input {
+  width: 12rem;
+  letter-spacing: 0.3em;
+}
+
+.unlock__hint {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* Story #53 — Bestaetigung vor dem Absenden */
+.confirm-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(5, 7, 10, 0.85);
+}
+
+.confirm-dialog__panel {
+  max-width: 34rem;
+  width: 100%;
+  padding: 1.75rem;
+  background: var(--panel);
+  border: 1px solid var(--danger);
+  border-radius: 4px;
+}
+
+.confirm-dialog__evidence {
+  margin: 0 0 1rem;
+  padding-left: 1.2rem;
+  line-height: 1.5;
+}
+
+.button--danger {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.button--danger:hover {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* Story #72 — Standortdaten */
+.device-location__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.device-location {
+  display: grid;
+  grid-template-columns: 7rem 1fr auto;
+  gap: 0.75rem;
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.device-location--crime {
+  border-left: 2px solid var(--danger);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.device-location__time,
+.device-location__source {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Story #71 — wiederhergestellte Nachrichten */
+.chat__recovered {
+  margin-left: 0.5rem;
+  padding: 0 0.4rem;
+  border: 1px dashed var(--danger);
+  border-radius: 3px;
+  color: var(--danger);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Story #66 — Befragung */
+.interrogation__log {
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.interrogation__log li {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.interrogation__question {
+  margin: 0 0 0.35rem;
+  color: var(--muted);
+}
+
+.interrogation__answer {
+  margin: 0;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--accent);
+}
+
+.interrogation__choices {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+}
+
+/* Story #67 — Fragen, die andere ausschliessen */
+.interrogation__choice--decision {
+  border-color: var(--danger);
 }

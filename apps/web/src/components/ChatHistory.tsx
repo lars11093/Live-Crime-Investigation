@@ -106,6 +106,8 @@ export function ChatHistory({
                       <span className="chat__meta">
                         <span className="chat__sender">{message.sender}</span>
                         <time className="chat__time">{message.sentAt}</time>
+                        {/* #71 — wiederhergestellt, also vom Besitzer geloescht. */}
+                        {message.recovered && <span className="chat__recovered">wiederhergestellt</span>}
                       </span>
                       <span className="chat__text">{message.text}</span>
                     </button>

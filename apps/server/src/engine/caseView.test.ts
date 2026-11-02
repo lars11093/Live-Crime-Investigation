@@ -18,8 +18,14 @@ describe("toPublicCase", () => {
     expect(view.suspects).toEqual(caseDef.suspects);
     expect(view.seedEvidence).toEqual(caseDef.seedEvidence);
     // Der Chatverlauf ist Ermittlungsmaterial, keine Loesung (#19).
-    const openDevices = caseDef.devices?.filter((d) => !d.locked);
-    expect(view.devices?.filter((d) => !d.locked)).toEqual(openDevices);
+    // Geloeschte Nachrichten (#71) gehen nur als Anzahl mit, der Rest unveraendert.
+    const openDevices = caseDef.devices
+      ?.filter((d) => !d.locked)
+      .map(({ deletedMessages: _deleted, ...d }) => d);
+    const publicOpen = view.devices
+      ?.filter((d) => !d.locked)
+      .map(({ deletedCount: _count, ...d }) => d);
+    expect(publicOpen).toEqual(openDevices);
   });
 
   // Das Forensik-Terminal listet gesperrte Geraete auf (#18), ihr Inhalt
@@ -34,6 +40,7 @@ describe("toPublicCase", () => {
       expect(publicDevice?.locked).toBe(true);
       expect(publicDevice?.messages).toEqual([]);
       expect(publicDevice?.files ?? []).toEqual([]);
+      expect(publicDevice?.locations ?? []).toEqual([]);
     }
     const serialized = JSON.stringify(view);
     for (const message of locked.flatMap((d) => d.messages)) {

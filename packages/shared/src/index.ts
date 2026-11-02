@@ -69,6 +69,25 @@ export interface Suspect {
   statement?: string;
   /** Portraet. Wie ueberall: kein Asset im Repo, Platzhalter im Client. */
   imagePath?: string;
+  /** Fragen fuer die Befragung (#66), in der Reihenfolge, in der sie angeboten werden. */
+  interrogation?: InterrogationQuestion[];
+}
+
+/**
+ * Eine Frage in der Befragung (#66).
+ *
+ * Inhalt, keine Loesung: Die Antworten passen zu jedem Szenario, deshalb
+ * duerfen sie an den Client. Ob eine Antwort luegt, zeigt erst der Abgleich
+ * mit den Spuren.
+ */
+export interface InterrogationQuestion {
+  id: string;
+  question: string;
+  answer: string;
+  /** Erst waehlbar, nachdem diese Frage gestellt wurde (#67). */
+  after?: string;
+  /** Wer diese Frage stellt, verwirft diese Alternativen (#67) — eine Entscheidung. */
+  closes?: string[];
 }
 
 /**
@@ -84,6 +103,8 @@ export interface ChatMessage {
   /** Zeitpunkt, wie er auf dem Geraet steht — z. B. "12.09. 20:31". */
   sentAt: string;
   text: string;
+  /** Gelöscht und per Forensik wiederhergestellt (#71). */
+  recovered?: boolean;
 }
 
 /**
@@ -130,9 +151,39 @@ export interface Device {
   locked?: boolean;
   /** Art der Sperre, wie sie im Terminal steht — z. B. "PIN, 4 Ziffern" (#18). */
   lockType?: string;
+  /**
+   * Hinweis zur Sperre, sichtbar im Terminal (#70) — z. B. woher die PIN
+   * kommen koennte. Verraet die PIN nicht selbst.
+   */
+  lockHint?: string;
+  /**
+   * PIN oder Passwort (#70). Bleibt auf dem Server: `toPublicCase` entfernt
+   * das Feld, geprueft wird nur in `engine/unlock.ts`.
+   */
+  unlockSecret?: string;
   messages: ChatMessage[];
   /** Dateien auf dem Geraet (#20). Optional: nicht jedes Geraet hat welche. */
   files?: DeviceFile[];
+  /**
+   * Geloeschte Nachrichten (#71). Bleiben auf dem Server, bis sie per
+   * `POST .../recover` wiederhergestellt werden; der Client sieht vorher nur
+   * `deletedCount`.
+   */
+  deletedMessages?: ChatMessage[];
+  /** Wie viele geloeschte Nachrichten sich wiederherstellen lassen (#71). Setzt nur der Server. */
+  deletedCount?: number;
+  /** Standortverlauf (#72), chronologisch wie im Case-JSON. Bei gesperrten Geraeten leer. */
+  locations?: DeviceLocation[];
+}
+
+/** Ein Standortpunkt eines Geraets (#72). */
+export interface DeviceLocation {
+  /** Zeitpunkt als Anzeigetext, wie `ChatMessage.sentAt` — z. B. "12.09. 22:31". */
+  at: string;
+  /** Ort in Worten, z. B. "Buero 4.12, Hardturmstrasse 61". */
+  place: string;
+  /** Woher der Punkt stammt, z. B. "WLAN CORP-4OG" oder "GPS". */
+  source?: string;
 }
 
 /**
@@ -214,11 +265,27 @@ export type ShareResult =
   | { ok: true }
   | { ok: false; reason: "invalid-room" | "not-in-team" | "unknown-evidence" | "already-shared" };
 
+/** Antwort auf `POST /api/cases/:caseId/devices/:deviceId/recover` (#71). */
+export type RecoverResult =
+  | { ok: true; messages: ChatMessage[] }
+  | { ok: false; reason: "unknown-device" | "locked" };
+/** Antwort auf `POST /api/cases/:caseId/devices/:deviceId/unlock` (#70). */
+export type UnlockResult =
+  | { ok: true; device: Device }
+  | { ok: false; reason: "wrong-secret" | "unknown-device" | "not-locked" };
+
 export interface Scene {
   id: string;
   /** Anzeigename, dauerhaft als Overlay sichtbar. */
   name: string;
   imagePath: string;
+  /**
+   * 3D-Modell des Tatorts (GLB). Optional: ist es gesetzt, zeigt der Client
+   * die Szene in 3D statt als Bild. Das Modell enthaelt pro Stelle ein Objekt
+   * `hotspot_<id>`; Stellen ohne passendes Objekt bleiben nur in der Liste
+   * erreichbar. Erzeugt wird es per Skript unter `tools/blender/`.
+   */
+  modelPath?: string;
   hotspots: Hotspot[];
 }
 

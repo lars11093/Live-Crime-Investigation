@@ -20,7 +20,7 @@ export function evidenceLabels(caseDef: CaseDefinition): Map<string, string> {
     }
   }
   for (const device of caseDef.devices ?? []) {
-    for (const message of device.messages) {
+    for (const message of [...device.messages, ...(device.deletedMessages ?? [])]) {
       labels.set(message.id, `Nachricht von ${message.sender} (${message.sentAt})`);
     }
   }
