@@ -80,6 +80,7 @@ import { EvidenceTagFilter } from "../components/EvidenceTagFilter";
 import { loadExcluded, saveExcluded, toggleExcluded } from "../lib/excludedSuspects";
 import { ObjectiveDock } from "../components/ObjectiveDock";
 import { storePhoto } from "../lib/photos";
+import { rateInsight } from "../lib/insightRating";
 
 /** Welche Ansicht der geladene Fall gerade zeigt. Der Fall selbst bleibt geladen. */
 type View =
@@ -647,6 +648,13 @@ export function CaseLoaderPage() {
                 <CombinePanel
                   evidence={collected}
                   insights={insights}
+                  ratings={progress.insightRatings}
+                  onRate={(insightId, strength) =>
+                    setProgress((prev) => ({
+                      ...prev,
+                      insightRatings: rateInsight(prev.insightRatings, insightId, strength),
+                    }))
+                  }
                   onCombine={async (a, b) => {
                     try {
                       const result = await combineEvidence(
