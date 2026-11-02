@@ -7,6 +7,7 @@ import type {
 } from "@case-zero/shared";
 import { rateChain } from "./chainRating.js";
 import { pickEnding } from "./ending.js";
+import { scoreAccusation } from "./score.js";
 
 /**
  * Alle Beweise eines Falls mit ihrem Anzeigenamen — aus dem Tatort und aus den
@@ -38,7 +39,9 @@ export function evidenceLabels(caseDef: CaseDefinition): Map<string, string> {
 export function judgeAccusation(
   caseDef: CaseDefinition,
   scenario: Scenario,
-  submission: AccusationSubmission
+  submission: AccusationSubmission,
+  /** Minuten seit Beginn der Session (#54); `null`, wenn unbekannt. */
+  elapsedMinutes: number | null = null
 ): AccusationVerdict {
   const labels = evidenceLabels(caseDef);
   const label = (id: string) => labels.get(id) ?? id;
@@ -83,5 +86,6 @@ export function judgeAccusation(
     findings,
     // #78 — wo die Begruendung schwach war, erst nach dem Absenden berechnet.
     chain: rateChain(caseDef, scenario, submission),
+    score: scoreAccusation(scenario, submission, elapsedMinutes),
   };
 }

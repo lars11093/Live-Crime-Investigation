@@ -568,6 +568,11 @@ export interface AccusationVerdict {
   chain?: ChainRating;
   /** Welches Ende die Anklage ausgeloest hat (#80). Fehlt, wenn das Szenario keine Enden hat. */
   ending?: { kind: "solved" | "insufficient" | "wrong"; title: string; text: string };
+  /**
+   * Die Punktzahl (#54). Optional, weil Quittungen aus der Zeit vor #54 sie
+   * nicht haben.
+   */
+  score?: AccusationScore;
 }
 
 /** Wie tragfaehig die Begruendung der Anklage war (#78). */
@@ -582,6 +587,15 @@ export interface ChainRating {
   summary: string;
   /** Konkret, wo die Begruendung schwach war — leer bei einer vollstaendigen Kette. */
   weaknesses: string[];
+}
+
+/** Punktzahl einer Anklage mit Aufschluesselung (#54). */
+export interface AccusationScore {
+  points: number;
+  maxPoints: number;
+  /** Einordnung in Worten, z. B. "Solide Ermittlung". */
+  rank: string;
+  breakdown: { label: string; points: number }[];
 }
 
 /** Antwort des Servers auf `POST /api/rooms/:code/accusation` (Story #27). */
