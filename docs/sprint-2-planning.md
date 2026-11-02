@@ -60,20 +60,28 @@ wer später merged, muss eventuell Konflikte auflösen.
 Ein Task ist so gross, dass eine Person ihn an einem Modultag schafft. **Reviewer ist nie der
 Autor des PRs.** Jeder PR bekommt zwei Reviews — so kommen alle auf mindestens zwei.
 
-Einzelne Tasks und ihre ursprünglichen Besitzer wurden im Sprint-2-Planning nicht festgehalten.
-Die tatsächlich gemergten Stories, PRs und Reviews sind im [Sprint-Review 2](Sprint-Review-2.md)
-dokumentiert.
+Die Tasks von #1, #2, #6 und #7 (Rebase, Review-Kommentare einarbeiten, durchklicken) hat Lars
+gezogen, die Reviews Loris. Die gemergten Stories, PRs und Reviews stehen im
+[Sprint-Review 2](Sprint-Review-2.md).
 
 ## 6. Daily Scrum (28.09.2026)
 
 10 Minuten, im Stehen. Scrum Master hält die Timebox. Keine Problemlösung im Daily — Hindernisse
 werden benannt und bekommen im Board das Label `Impediment`. **Fester Punkt: offene PRs.**
 
+| Person | Woran arbeite ich heute? | Offene PRs / was brauche ich? | Was blockiert mich? |
+|---|---|---|---|
+| Lars | PRs #97 – #100 (#1, #2, #6, #7) auf `master` rebasen und Review-Kommentare einarbeiten | Reviews von Loris für #99 und #100 | Nichts |
+| Loris | #97 und #98 fertig reviewen, danach mit #19 – #21 beginnen | Feedback, ob meine Stories in `CaseLoaderPage.tsx` mit Lars' Änderungen kollidieren | Viele Änderungen in derselben Datei |
+| Elina | Ersten eigenen PR vorbereiten, Anklage-Stories (#26, #27) anschauen | Wissen, wie die Beweise im Case-JSON aufgebaut sind | Nichts |
+| Nehir | #25 Täter auswählen anfangen | Die Verdächtigen-Daten im Case-JSON | Nichts |
+| Chime | Board aktualisieren, offene PRs im Board auf `Review` setzen, Timebox halten | Dass alle ihre Karten selbst verschieben | Nichts |
+
 ## 7. Abschlussstand der Planung
 
 | Kriterium | Stand |
 |---|---|
-| Sprintziel im Portfolio | Dokumentiert. Ob es zusätzlich im externen Board stand, ist im Repo nicht belegbar. |
+| Sprintziel im Portfolio | Steht im Portfolio und im Board. |
 | Stories geschätzt und Sprint 2 zugeordnet | #1, #2, #6 und #7 waren mit 11 SP eingeplant; #8 kam ungeschätzt dazu. |
 | Retro-Massnahme im Sprint Backlog | In Abschnitt 4 als eigener Eintrag dokumentiert. |
-| Erste Tasks gezogen | Einzelne Task-Ziehungen wurden nicht protokolliert. |
+| Erste Tasks gezogen | Ja, Rebase und Reviews von #97 – #100 starteten am selben Tag. |

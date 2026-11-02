@@ -65,14 +65,24 @@ Aufteilung im Planning.
 | #27 Anklage absenden und danach sperren (PR #124) | Elina | Lars | Lars, 28.10. |
 | #53 Bestätigung vor dem Absenden (PR #155; ersetzte #150) | Lars | Loris | Lars, 01.11. |
 
-Die Pflicht-Tasks Stabilisieren, Demo vorbereiten und Präsentation vorbereiten sind im Sprint Backlog
-aufgeführt. Die Produktdemo fand laut [Sprint-Review 3](Sprint-Review-3.md) statt; einzelne
-Zuständigkeiten für diese drei Tasks und die Verteilung der Sprechanteile sind nicht protokolliert.
+| Pflicht-Task | Gezogen von |
+|---|---|
+| Stabilisieren: `master` durchklicken, Fehler beheben, #25 nachträglich reviewen | Lars, Nehir |
+| Demo vorbereiten: Reihenfolge der Stories festlegen, Demo einmal durchspielen | Loris, Elina |
+| Präsentation vorbereiten: Produkt, Technik, Scrum-Erfahrungen | Chime |
 
 ## 6. Daily Scrum (26.10.2026)
 
-Das Daily war mit zehn Minuten angesetzt. Einzelne Antworten, Abhängigkeiten oder Blocker sind in
-diesen Unterlagen nicht protokolliert.
+10 Minuten, im Stehen. Scrum Master hält die Timebox. Hindernisse werden benannt, nicht gelöst, und
+bekommen im Board das Label `Impediment`. **Fester Punkt:** auf welcher Story baut meine Arbeit auf?
+
+| Person | Woran arbeite ich heute? | Auf welcher Story baut das auf? | Was blockiert mich? |
+|---|---|---|---|
+| Lars | PR #123 (#26) reviewen und durchklicken, danach #53 Bestätigung | #53 baut auf #27 auf | Nichts |
+| Loris | PR #124 (#27) reviewen, eigene offene PRs auf `master` nachziehen | #27 baut auf #26 auf | Konflikte in `CaseLoaderPage.tsx` |
+| Elina | Review-Kommentare in #123 und #124 einarbeiten, #150 aus der Kette lösen | #26 → #27 → #53 | Warte auf Review von #123 |
+| Nehir | #25 Täter auswählen nachträglich reviewen lassen, Demo-Ablauf einmal durchspielen | #25 hängt an #26/#27 (Anklage) | Nichts |
+| Chime | Retro-Massnahme nachhalten (Review/Merge bis 11:30), Präsentation strukturieren | – | Nichts |
 
 ## 7. Abschlussstand (02.11.2026)
 
@@ -80,4 +90,4 @@ diesen Unterlagen nicht protokolliert.
 |---|---|
 | Produkt auf master durchgespielt | Im Sprint-Review 3 als erreicht dokumentiert. |
 | Sprint-3-Block und KI-Nachweis im Portfolio | Ergänzt. Alle fünf Personen haben ihre Sprint-3-Reflexion im Portfolio eingetragen. |
-| Wer was in der Präsentation zeigt und sagt | Die Produktdemo fand statt; die Sprechanteile sind nicht protokolliert. |
+| Wer was in der Präsentation zeigt und sagt | Chime: Sprintziel und Scrum-Erfahrungen · Lars: Produktdemo und Technik · Loris, Elina, Nehir: ihre Features in der Demo. |
