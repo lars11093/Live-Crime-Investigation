@@ -2086,3 +2086,25 @@ div.account-bar {
   padding-left: 1.2rem;
   line-height: 1.5;
 }
+
+/* Story #80 — alternative Enden */
+.ending {
+  margin: 1rem 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.ending--solved {
+  border-color: var(--accent);
+}
+
+.ending--wrong,
+.ending--insufficient {
+  border-color: var(--danger);
+}
+
+.ending__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.35rem;
+}

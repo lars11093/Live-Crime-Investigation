@@ -53,6 +53,20 @@ export interface Scenario {
   keyEvidenceIds: string[];
   /** Was tatsaechlich passiert ist — erscheint erst nach der Anklage (#28). */
   resolution: string;
+  /** Alternative Enden (#80), je nach Anklage — siehe `CaseEnding.when`. */
+  endings?: CaseEnding[];
+}
+
+/** Ein Ende des Falls (#80). */
+export interface CaseEnding {
+  /**
+   * Wann es eintritt: `solved` (richtig und begruendet), `insufficient`
+   * (richtige Person, Beweise reichen nicht) oder eine Verdaechtigen-ID —
+   * das Ende, wenn diese Person zu Unrecht angeklagt wird.
+   */
+  when: string;
+  title: string;
+  text: string;
 }
 
 export interface Suspect {
@@ -482,6 +496,8 @@ export interface AccusationVerdict {
    * (im localStorage) sie nicht haben.
    */
   chain?: ChainRating;
+  /** Welches Ende die Anklage ausgeloest hat (#80). Fehlt, wenn das Szenario keine Enden hat. */
+  ending?: { kind: "solved" | "insufficient" | "wrong"; title: string; text: string };
 }
 
 /** Wie tragfaehig die Begruendung der Anklage war (#78). */

@@ -29,6 +29,19 @@ export function CaseResolution({ verdict }: Props) {
         Taeter: <strong>{verdict.culprit.name}</strong>
       </p>
 
+      {verdict.ending && (
+        <div className={`ending ending--${verdict.ending.kind}`}>
+          <p className="team-code__label">Dein Ende</p>
+          <h2 className="ending__title">{verdict.ending.title}</h2>
+          <p className="briefing__text" style={{ margin: 0 }}>
+            {verdict.ending.text}
+          </p>
+          <p className="case-status__hint" style={{ marginBottom: 0 }}>
+            Jede Anklage hat ein eigenes Ende, und jede neue Session wählt den Täter neu.
+          </p>
+        </div>
+      )}
+
       <p className="team-code__label">Was wirklich geschah</p>
       <p className="briefing__text">{verdict.resolution}</p>
 
