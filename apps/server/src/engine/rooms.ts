@@ -1,5 +1,11 @@
 import { customAlphabet } from "nanoid";
-import type { AccusationReceipt, CaseDefinition, RoomState, SharedFinding } from "@case-zero/shared";
+import type {
+  AccusationReceipt,
+  CaseDefinition,
+  RoomState,
+  SharedFinding,
+  TeamChatMessage,
+} from "@case-zero/shared";
 
 /**
  * In-Memory Room Store (Story #5).
@@ -19,6 +25,8 @@ export interface Room {
   accusation?: AccusationReceipt;
   /** Teamleiter (#48) — der erste Spieler, der dem Team beitritt. */
   leaderId?: string;
+  /** Verlauf des Team-Chats (#49), die aelteste Nachricht zuerst. */
+  chat?: TeamChatMessage[];
 }
 
 /** Ohne I, O, 0 und 1 — die verwechselt man beim Vorlesen im Team. */

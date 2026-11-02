@@ -17,6 +17,7 @@ import { submitAccusation } from "./engine/accusation.js";
 import { hintState, revealHint } from "./engine/hints.js";
 import { unlockDevice } from "./engine/unlock.js";
 import { recoverDeleted } from "./engine/recover.js";
+import { addChatMessage } from "./engine/chat.js";
 import {
   allRooms,
   createRoom,
@@ -294,6 +295,7 @@ io.on("connection", (socket) => {
     // Wer spaeter dazukommt, sieht trotzdem alles, was schon geteilt wurde (#23).
     socket.emit("team:findings", room.findings);
     socket.emit("team:notes", notesOf(room));
+    socket.emit("chat:history", room.chat ?? []);
   });
 
   // Story #31 — eigene Rolle waehlen, #48 — als Teamleitung fuer andere.
@@ -346,6 +348,23 @@ io.on("connection", (socket) => {
     }
     cb({ ok: true });
     io.to(from!.state.code).emit("team:moved", { code: to!.state.code, by: result.by });
+  });
+
+  // Story #49 — Team-Chat. Schreiben darf, wer im Team ist (#22); die
+  // Nachricht geht an alle im selben Raum wie die Teamliste.
+  socket.on("chat:send", ({ code, text }, cb) => {
+    const room = getRoom(String(code ?? ""));
+    if (!room) {
+      cb({ ok: false, reason: "Ungueltiger Team-Code" });
+      return;
+    }
+    const result = addChatMessage(room, socket.id, text);
+    if (!result.ok) {
+      cb({ ok: false, reason: result.reason });
+      return;
+    }
+    io.to(room.state.code).emit("chat:message", result.message);
+    cb({ ok: true });
   });
 
   socket.on("disconnect", () => {
