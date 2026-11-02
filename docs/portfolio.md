@@ -196,24 +196,35 @@ trotzdem wieder auf, weil nur Review und Merge fehlen; neu gebaut wird nur #8. #
 **Erkenntnisse aus dem Schätzen** und die Aufteilung in Tasks:
 [sprint-2-planning.md](sprint-2-planning.md).
 
-**Ergebnis:** `_<am 26.10. ergänzen: Sprintziel erreicht? Velocity: _ von _ SP>_`
+**Ergebnis:** Sprintziel **erreicht**. #1, #2, #6, #7 und #8 sind reviewt und auf `master` gemergt.
+**Velocity: 11 SP** (#8 war nicht geschätzt). Zusätzlich ungeplant gemergt: #5, #9 – #17, #18, #19, #21.
 
 **Review (Modultag 8, 26.10.2026)** — vollständig in [Sprint-Review-2.md](Sprint-Review-2.md):
 
 Gezeigt: Auf `master` live durchgeklickt: Startseite → Fall laden → Briefing → Tatort → Stellen untersuchen, dazu Beweisakte, Verdächtige und Forensik-Terminal. Sprintziel erreicht.
-Feedback: Texte zeigen ae/oe/ue statt Umlauten. _<weiteres Feedback aus dem Review>_
+Feedback: Texte zeigen ae/oe/ue statt Umlauten.
 Ins Backlog: #20, #22, #23, #24 (offene PRs ohne Review) ohne Sprint-Zuordnung zurück; neue Story «Texte mit korrekten Umlauten».
+Refinement für Sprint 3: [refinement-sprint-3.md](refinement-sprint-3.md).
 
-**Retrospective (Modultag 7, 26.10.2026)** — vollständig in
+**Retrospective (Modultag 8, 26.10.2026, Starfish)** — vollständig in
 [retrospective-sprint-2.md](retrospective-sprint-2.md):
 
-*Massnahme aus Sprint 1:* 
+*Massnahme aus Sprint 1:* **nicht erfüllt.** Alle Sprint-Stories sind von einer zweiten Person
+reviewt, aber nur Loris und Lars haben reviewt (2 von 5), und PR #97 – #102 lagen über drei Wochen
+offen statt innerhalb eines Modultags. #25 kam ohne PR direkt auf `master`.
 
-*Retro-Erkenntnis:* 
+*Retro-Erkenntnis:* Kommunikation und gegenseitige Unterstützung funktionieren. Gebremst haben zu
+grosse PRs, nicht abgesprochene Abhängigkeiten zwischen Stories und dass Reviews und Merges an zwei
+Personen hingen. Die Ferien haben den Sprint geteilt: am 28.09. wurde nichts abgeschlossen, am
+19.10. musste alles an einem Tag passieren.
 
 **Verbesserungsmassnahme für Sprint 3:**
 
-gegenseitiges reviewen
+> **Mergen aufteilen: Bis 11:30 hat jede Person im Team mindestens einen PR einer anderen Person
+> mit dem eigenen GitHub-Konto reviewt und gemergt.**
+
+*Nachprüfbar um 11:30:* fünf verschiedene Konten als Reviewer und Merger bei den gemergten PRs von
+Sprint 3. Verantwortlich: Scrum Master.
 
 ---
 
@@ -226,6 +237,7 @@ gegenseitiges reviewen
 | Refinement der obersten fünf Stories (freiwillig) | 4 | [refinement-sprint-1.md](refinement-sprint-1.md) |
 | Review-Protokoll und Retro-Dokumentation Sprint 1 strukturieren (Claude) | 6 | [Sprint-Review-1.md](Sprint-Review-1.md), [retrospective-sprint-1.md](retrospective-sprint-1.md) |
 | Story #18 Forensik-Terminal umsetzen und vor dem PR prüfen (Claude Code) | 7 | PR #120 |
+| Review-Protokoll, Retro-Dokumentation Sprint 2 und Refinement-Vorschläge Sprint 3 vorbereiten (Claude) | 8 | [Sprint-Review-2.md](Sprint-Review-2.md), [retrospective-sprint-2.md](retrospective-sprint-2.md), [refinement-sprint-3.md](refinement-sprint-3.md) |
 
 **Modultag 4 — übernommen:**
 
@@ -269,6 +281,28 @@ gegenseitiges reviewen
 *Selbst entschieden:* Basis `master` statt Feature-Branch, PR im gleichen Format wie die anderen,
 Review durch Loris, lokal durchgeklickt, Issue #18 von Hand geschlossen.
 
+**Modultag 8 — übernommen (Review, Retro, Refinement):**
+
+| Vorschlag | Warum übernommen |
+|---|---|
+| Sprint-Stories im Review nur nach DoD zählen und die Reviewer aus den PRs belegen | So ist «Sprintziel erreicht» nachprüfbar und nicht nur «läuft bei uns». |
+| Review- und Retro-Protokoll im selben Aufbau wie Sprint 1 führen | Die Sprints sind direkt vergleichbar. |
+| Anklage-Weg (#26 → #27 → #28) für Sprint 3 nach oben, #70 entlang PIN-Entsperren splitten | Ein präsentierbares Spiel braucht ein Ende; ganz #70 passt nicht in einen Vormittag. |
+
+**Modultag 8 — verworfen:**
+
+| Vorschlag | Warum verworfen |
+|---|---|
+| Massnahme «jede Person reviewt bis 11:30 einen PR» | Das Team hat in der Retro «Mergen aufteilen» gewählt. Übernommen wurde nur, es konkret und prüfbar zu formulieren. |
+| #25 (direkt auf `master` gepusht) mit einem Revert rückgängig machen | Mitten im Review zu riskant. Stattdessen nachträgliches Review im Task «Stabilisieren». |
+
+*Selbst entschieden:* Starfish-Inhalte, Massnahme und Reihenfolge des Backlogs kommen vom Team;
+Schätzungen werden im Planning Poker bestätigt.
+
+**KI-Reviewpunkte (Scrum-Experiment, mindestens zwei):** Product Vision prüfen (Tag 2),
+User Stories nach INVEST (Tag 3), Akzeptanzkriterien hinterfragen (Tag 4), Code-Review vor dem PR
+(#18, Sprint 2) — **vier durchgeführt, es fehlt keiner.**
+
 ---
 
 ## 6. Persönliche Kurzreflexion
@@ -291,7 +325,8 @@ Reflexion und Lernjournal.
 | Person | Mein Beitrag | Wichtigste Erkenntnis | Nächster Lernschritt |
 |---|---|---|---|
 | Lars | | | |
-| Loris | | | |
-| Elina | | | |
-| Nehir | | | |
+| Loris | Stories #19, #20, #21, #22, #23, #24 umgesetzt (PRs #112, #113, #116 – #119, von Lars reviewt, gemergt), PR #120 von Chime reviewt | Je länger ein PR offen ist, desto mehr Konflikte gibt es, vor allem wenn alle in `CaseLoaderPage.tsx` arbeiten. Aufeinander gestapelte PRs machen das noch schlimmer | PRs kleiner halten und früher zum Review geben, Abhängigkeiten zwischen Stories vorher im Daily absprechen |
+| Lars |Reviewen und mergen |Es ist gut wenn alle arbeiten sonst hart |letzte changes reviewen und mergen |
+| Elina | Ich war in den Ferien | Ich war in den Ferien | Mitarbeiten am Projekt |
+| Nehir | Story #25 | - | Ich muss mein Tempo verbessern. |hanges mergen
 | Chime | Story #18 Forensik-Terminal umgesetzt (PR #120, von Loris reviewt, gemergt) | Vor dem Start `master` holen, sonst baut man auf einem veralteten Stand und muss umbasen | PRs von anderen reviewen und im PR «Closes #…» schreiben, damit das Issue automatisch schliesst |

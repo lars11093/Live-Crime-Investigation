@@ -4,30 +4,48 @@ import { NAME_MAX, validateName, type Account } from "../lib/account";
 interface Props {
   account: Account | null;
   onLogin: (name: string) => void;
+  /**
+   * Konto mit Passwort erstellen oder anmelden (#55). Liefert `null` bei
+   * Erfolg, sonst die Meldung fuer den Spieler.
+   */
+  onServerAccount: (mode: "register" | "login", name: string, password: string) => Promise<string | null>;
   onLogout: () => void;
 }
 
 /**
- * Story #29 — anmelden.
+ * Story #29 — anmelden; Story #55 — Konto erstellen.
  *
- * Angemeldet: Name und "Abmelden". Sonst ein Feld fuer den Ermittlernamen.
- * Ohne Anmeldung spielt man als Gast weiter; der Fortschritt haengt dann nur
- * am Team-Code, wie vor #29.
+ * Nur mit Namen bleibt alles wie bei #29: Der Fortschritt haengt am Namen in
+ * diesem Browser. Mit Passwort entsteht ein Konto auf dem Server, und der
+ * Fortschritt laesst sich auf jedem Geraet wieder laden.
  */
-export function AccountBar({ account, onLogin, onLogout }: Props) {
+export function AccountBar({ account, onLogin, onServerAccount, onLogout }: Props) {
   const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent, mode: "local" | "register" | "login") {
     event.preventDefault();
     const problem = validateName(name);
     if (problem) {
       setError(problem);
       return;
     }
-    setError(null);
-    onLogin(name);
-    setName("");
+    if (mode === "local") {
+      setError(null);
+      onLogin(name);
+      setName("");
+      return;
+    }
+    setBusy(true);
+    const result = await onServerAccount(mode, name, password);
+    setBusy(false);
+    setError(result);
+    if (!result) {
+      setName("");
+      setPassword("");
+    }
   }
 
   if (account) {
@@ -35,6 +53,7 @@ export function AccountBar({ account, onLogin, onLogout }: Props) {
       <div className="account-bar">
         <span>
           Angemeldet als <strong>{account.name}</strong>
+          {account.token ? " · Konto, Fortschritt auf jedem Gerät" : " · nur in diesem Browser"}
         </span>
         <button onClick={onLogout}>Abmelden</button>
       </div>
@@ -42,7 +61,7 @@ export function AccountBar({ account, onLogin, onLogout }: Props) {
   }
 
   return (
-    <form className="account-bar" onSubmit={submit}>
+    <form className="account-bar" onSubmit={(e) => submit(e, password ? "login" : "local")}>
       <label className="team-code__label" htmlFor="account-name">
         Ermittlername
       </label>
@@ -54,8 +73,23 @@ export function AccountBar({ account, onLogin, onLogout }: Props) {
           placeholder="z. B. Kommissarin Frei"
           onChange={(e) => setName(e.target.value)}
         />
-        <button type="submit" disabled={!name.trim()}>
+        <input
+          aria-label="Passwort (optional)"
+          type="password"
+          value={password}
+          placeholder="Passwort (optional)"
+          autoComplete="current-password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit" disabled={!name.trim() || busy}>
           Anmelden
+        </button>
+        <button
+          type="button"
+          disabled={!name.trim() || !password || busy}
+          onClick={(e) => submit(e, "register")}
+        >
+          Konto erstellen
         </button>
       </div>
       {error ? (
@@ -64,8 +98,8 @@ export function AccountBar({ account, onLogin, onLogout }: Props) {
         </p>
       ) : (
         <p className="team-code__hint">
-          Angemeldet wird dein Fortschritt deinem Namen zugeordnet. Ohne Anmeldung spielst du als
-          Gast.
+          Nur mit Namen bleibt dein Fortschritt in diesem Browser. Mit Passwort entsteht ein Konto, und
+          deine Fälle sind auf jedem Gerät gespeichert.
         </p>
       )}
     </form>

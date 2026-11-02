@@ -7,6 +7,15 @@ interface Props {
   /** Gespeicherte Notiz zu diesem Beweis (#12), leer wenn keine da ist. */
   note: string;
   onSaveNote: (text: string) => void;
+  /** Teilen mit dem Team (#23). Fehlt, wenn die Seite kein Team kennt. */
+  share?: {
+    /** Name der Person, die diesen Fund schon geteilt hat — sonst `null`. */
+    sharedBy: string | null;
+    /** Ist man dem Team beigetreten? Ohne Namen gibt es keinen Urheber. */
+    joined: boolean;
+    /** Teilt und liefert die Meldung fuer den Spieler. */
+    onShare: () => Promise<string>;
+  };
   onBack: () => void;
 }
 
@@ -16,7 +25,7 @@ interface Props {
  * steht hier ein Platzhalter mit dem Titel statt einer leeren Flaeche — wie
  * bei der Szene in #7.
  */
-export function EvidenceDetail({ evidence, note, onSaveNote, onBack }: Props) {
+export function EvidenceDetail({ evidence, note, onSaveNote, share, onBack }: Props) {
   const [imageFailed, setImageFailed] = useState(!evidence.imagePath);
   const [draft, setDraft] = useState(note);
   const [saved, setSaved] = useState(false);
@@ -77,6 +86,8 @@ export function EvidenceDetail({ evidence, note, onSaveNote, onBack }: Props) {
         </div>
       </dl>
 
+      {share && <ShareAction key={evidence.id} {...share} />}
+
       <div className="evidence-note">
         <label className="team-code__label" htmlFor={`note-${evidence.id}`}>
           Meine Notiz
@@ -104,5 +115,43 @@ export function EvidenceDetail({ evidence, note, onSaveNote, onBack }: Props) {
         </div>
       </div>
     </section>
+  );
+}
+
+/** Story #23 — Teilen-Knopf mit Zustand und Rueckmeldung. */
+function ShareAction({ sharedBy, joined, onShare }: NonNullable<Props["share"]>) {
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function run() {
+    setBusy(true);
+    try {
+      setMessage(await onShare());
+    } catch {
+      setMessage("Server nicht erreichbar. Bitte erneut versuchen.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="evidence-share">
+      {sharedBy ? (
+        <p className="evidence-share__done">Mit dem Team geteilt von {sharedBy}</p>
+      ) : joined ? (
+        <button onClick={run} disabled={busy}>
+          {busy ? "Teile…" : "Mit Team teilen"}
+        </button>
+      ) : (
+        <p className="case-status__hint" style={{ margin: 0 }}>
+          Zum Teilen zuerst in der Fallakte dem Team beitreten.
+        </p>
+      )}
+      {message && !sharedBy && (
+        <p className="case-status__hint" role="status" style={{ margin: 0 }}>
+          {message}
+        </p>
+      )}
+    </div>
   );
 }
