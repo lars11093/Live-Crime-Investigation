@@ -13,7 +13,7 @@ interface Props {
   collectedIds: string[];
   /** Sichert eine Nachricht als Beweis (#21). */
   onSecure: (message: ChatMessage) => void;
-  /** Wechselt zu den Dateien desselben Geraets (#20). Fehlt, wenn es keine gibt. */
+  /** Wechselt zu den Dateien desselben Geräts (#20). Fehlt, wenn es keine gibt. */
   onShowFiles?: () => void;
   /** Nachrichten, deren Bildanhang schon ausgelesen ist (#45). */
   metadataReadIds: string[];
@@ -25,7 +25,7 @@ interface Props {
 }
 
 /**
- * Story #19 — Chatverlauf eines Geraets lesen.
+ * Story #19 — Chatverlauf eines Geräts lesen.
  * Jede Nachricht mit Absender und Zeit, der Verlauf scrollt in seinem eigenen
  * Fenster, ein Klick markiert eine Nachricht als relevant.
  *
@@ -34,7 +34,7 @@ interface Props {
  * Lesehilfe und jederzeit umkehrbar, sichern legt die Nachricht in die
  * Beweisakte, wo sie kombiniert und notiert werden kann.
  *
- * Nachrichten des Geraetebesitzers stehen rechts, wie auf einem Handy — so
+ * Nachrichten des Gerätebesitzers stehen rechts, wie auf einem Handy — so
  * sieht man ohne Lesen, wer geschrieben hat und wer geantwortet.
  */
 export function ChatHistory({
@@ -58,7 +58,7 @@ export function ChatHistory({
   const securedCount = securedIds.length;
   const counts = countByRelevance(securedIds, relevance);
 
-  // Die Bestaetigung verschwindet von selbst, wie beim Einsammeln im Tatort (#9).
+  // Die Bestätigung verschwindet von selbst, wie beim Einsammeln im Tatort (#9).
   useEffect(() => {
     if (!confirmation) return;
     const timer = setTimeout(() => setConfirmation(null), 4000);
@@ -80,7 +80,7 @@ export function ChatHistory({
           {onShowFiles && (
             <button onClick={onShowFiles}>Dateien ({device.files?.length ?? 0})</button>
           )}
-          <button onClick={onBack}>Zurueck zum Forensik-Terminal</button>
+          <button onClick={onBack}>Zurück zum Forensik-Terminal</button>
         </span>
       </div>
 
@@ -89,7 +89,7 @@ export function ChatHistory({
         {device.messages.length === 1 ? "Nachricht" : "Nachrichten"} &middot; {markedCount}{" "}
         markiert &middot; {securedCount} gesichert
         {securedCount > 0 &&
-          ` (${counts.hoch} wichtig, ${counts.mittel} mittel, ${counts.niedrig} nebensaechlich, ${counts.offen} unbewertet)`}
+          ` (${counts.hoch} wichtig, ${counts.mittel} mittel, ${counts.niedrig} nebensächlich, ${counts.offen} unbewertet)`}
       </p>
 
       {confirmation && (
@@ -99,7 +99,7 @@ export function ChatHistory({
       )}
 
       {device.messages.length === 0 ? (
-        <p className="evidence-list__empty">Auf diesem Geraet sind keine Nachrichten gespeichert.</p>
+        <p className="evidence-list__empty">Auf diesem Gerät sind keine Nachrichten gespeichert.</p>
       ) : (
         <>
           <p className="case-status__hint" style={{ marginBottom: "0.6rem" }}>

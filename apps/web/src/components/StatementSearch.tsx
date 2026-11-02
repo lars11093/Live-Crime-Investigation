@@ -4,15 +4,15 @@ import { searchStatements } from "../lib/statementSearch";
 
 interface Props {
   suspects: Suspect[];
-  /** Oeffnet das Profil der Person (#15). */
+  /** Öffnet das Profil der Person (#15). */
   onOpen: (suspectId: string) => void;
 }
 
 /**
  * Story #41 — Aussagen nach Stichwort filtern.
  *
- * Ein Suchfeld ueber alle Aussagen. Treffer sind ganze Saetze mit markiertem
- * Stichwort; ein Klick auf den Namen oeffnet das Profil mit der vollen Aussage.
+ * Ein Suchfeld über alle Aussagen. Treffer sind ganze Sätze mit markiertem
+ * Stichwort; ein Klick auf den Namen öffnet das Profil mit der vollen Aussage.
  */
 export function StatementSearch({ suspects, onOpen }: Props) {
   const [query, setQuery] = useState("");
@@ -35,7 +35,7 @@ export function StatementSearch({ suspects, onOpen }: Props) {
         <p className="case-status__hint" aria-live="polite">
           {hits.length === 0
             ? "Kein Satz in den Aussagen passt zu diesem Stichwort."
-            : `${hits.length} ${hits.length === 1 ? "Satz" : "Saetze"} gefunden`}
+            : `${hits.length} ${hits.length === 1 ? "Satz" : "Sätze"} gefunden`}
         </p>
       )}
 

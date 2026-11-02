@@ -17,7 +17,7 @@ interface Props {
  *
  * Ohne Namen zuerst das Namensfeld, danach die Liste. Der eigene Eintrag ist
  * hervorgehoben und mit "du" markiert; die Liste kommt live vom Server und
- * aendert sich, sobald jemand beitritt oder geht.
+ * ändert sich, sobald jemand beitritt oder geht.
  */
 export function TeamPanel({ name, players, myId, error, onJoin }: Props) {
   const [draft, setDraft] = useState("");

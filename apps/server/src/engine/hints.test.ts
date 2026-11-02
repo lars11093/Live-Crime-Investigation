@@ -17,7 +17,7 @@ describe("Hinweis anfordern (#74)", () => {
     expect(revealHint(room).state.revealed).toEqual([all[0], all[1]]);
   });
 
-  it("ist nach dem letzten Hinweis erschoepft", () => {
+  it("ist nach dem letzten Hinweis erschöpft", () => {
     const room = createRoom(caseDef);
     for (const _ of caseDef.hints ?? []) revealHint(room);
     expect(revealHint(room).ok).toBe(false);

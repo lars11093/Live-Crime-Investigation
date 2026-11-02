@@ -31,7 +31,7 @@ describe("Aufgabenliste anzeigen (#50)", () => {
     ]);
   });
 
-  it("zeigt Aufgaben fuer Unbekannte bei 'Noch niemand'", () => {
+  it("zeigt Aufgaben für Unbekannte bei 'Noch niemand'", () => {
     const groups = groupOpenTasks([task("t1", "zoe")], team, "anna");
     expect(groups).toEqual([{ assigneeId: null, label: "Noch niemand", open: [task("t1", "zoe")] }]);
   });

@@ -4,7 +4,7 @@ import type { CaseProgress } from "./caseProgress";
 import { isDigitalTrace } from "./relevance";
 import { SUSPICION_LABEL } from "./suspicion";
 
-/** Wie schwer eine Luecke wiegt (#52). Nur "fehler" verhindert das Absenden. */
+/** Wie schwer eine Lücke wiegt (#52). Nur "fehler" verhindert das Absenden. */
 export type ReviewLevel = "fehler" | "warnung" | "hinweis";
 
 export interface ReviewFinding {
@@ -23,21 +23,21 @@ export interface ReviewInput {
 }
 
 /**
- * Prueft eine Anklage auf offensichtliche Luecken (Story #52).
+ * Prüft eine Anklage auf offensichtliche Lücken (Story #52).
  *
- * Bewusst ohne Wissen ueber die Loesung — die kennt nur der Server, und eine
- * Pruefung dagegen waere ein Spoiler. Verglichen wird die Anklage mit der
+ * Bewusst ohne Wissen über die Lösung — die kennt nur der Server, und eine
+ * Prüfung dagegen wäre ein Spoiler. Verglichen wird die Anklage mit der
  * eigenen Ermittlung: Alibi-Urteil (#42), Verdachtsgrad (#43), markierte
- * Widersprueche (#17), Relevanz (#47), aufgedeckte Verknuepfungen (#13).
+ * Widersprüche (#17), Relevanz (#47), aufgedeckte Verknüpfungen (#13).
  */
 export function reviewAccusation({ draft, suspects, collected, progress }: ReviewInput): ReviewFinding[] {
   const findings: ReviewFinding[] = [];
   const suspect = suspects.find((s) => s.id === draft.suspectId);
   const attached = collected.filter((e) => draft.evidenceIds.includes(e.id));
 
-  if (!suspect) findings.push({ level: "fehler", text: "Es ist kein Taeter ausgewaehlt." });
+  if (!suspect) findings.push({ level: "fehler", text: "Es ist kein Täter ausgewählt." });
   if (attached.length === 0) {
-    findings.push({ level: "fehler", text: "Es ist kein Beweis angehaengt." });
+    findings.push({ level: "fehler", text: "Es ist kein Beweis angehängt." });
   } else if (attached.length === 1) {
     findings.push({
       level: "warnung",
@@ -50,10 +50,10 @@ export function reviewAccusation({ draft, suspects, collected, progress }: Revie
     if (alibi === "haltbar") {
       findings.push({
         level: "warnung",
-        text: `Du haeltst das Alibi von ${suspect.name} selbst fuer haltbar.`,
+        text: `Du hältst das Alibi von ${suspect.name} selbst für haltbar.`,
       });
     } else if (!alibi) {
-      findings.push({ level: "hinweis", text: `Das Alibi von ${suspect.name} hast du noch nicht geprueft.` });
+      findings.push({ level: "hinweis", text: `Das Alibi von ${suspect.name} hast du noch nicht geprüft.` });
     }
 
     const mine = progress.suspicion[suspect.id] ?? 0;
@@ -61,7 +61,7 @@ export function reviewAccusation({ draft, suspects, collected, progress }: Revie
     if (stronger) {
       findings.push({
         level: "warnung",
-        text: `Deinen hoechsten Verdacht hast du gegen ${stronger.name} (${
+        text: `Deinen höchsten Verdacht hast du gegen ${stronger.name} (${
           SUSPICION_LABEL[progress.suspicion[stronger.id]!]
         }), nicht gegen ${suspect.name}.`,
       });
@@ -79,7 +79,7 @@ export function reviewAccusation({ draft, suspects, collected, progress }: Revie
   if (unimportant.length > 0) {
     findings.push({
       level: "warnung",
-      text: `Angehaengt, aber von dir als nebensaechlich bewertet: ${unimportant.map((e) => e.label).join(", ")}.`,
+      text: `Angehängt, aber von dir als nebensächlich bewertet: ${unimportant.map((e) => e.label).join(", ")}.`,
     });
   }
 
@@ -87,15 +87,15 @@ export function reviewAccusation({ draft, suspects, collected, progress }: Revie
     const hasDigital = attached.some(isDigitalTrace);
     const hasPhysical = attached.some((e) => !isDigitalTrace(e));
     if (!hasDigital && collected.some(isDigitalTrace)) {
-      findings.push({ level: "hinweis", text: "Keine digitale Spur angehaengt, obwohl du welche gesichert hast." });
+      findings.push({ level: "hinweis", text: "Keine digitale Spur angehängt, obwohl du welche gesichert hast." });
     }
     if (!hasPhysical && collected.some((e) => !isDigitalTrace(e))) {
-      findings.push({ level: "hinweis", text: "Keine Spur aus dem Tatort angehaengt, obwohl du welche gesichert hast." });
+      findings.push({ level: "hinweis", text: "Keine Spur aus dem Tatort angehängt, obwohl du welche gesichert hast." });
     }
   }
 
   if (progress.insights.length === 0) {
-    findings.push({ level: "hinweis", text: "Du hast noch keine Verknuepfung zwischen Beweisen aufgedeckt." });
+    findings.push({ level: "hinweis", text: "Du hast noch keine Verknüpfung zwischen Beweisen aufgedeckt." });
   }
 
   return findings;

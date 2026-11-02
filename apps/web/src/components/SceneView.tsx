@@ -17,7 +17,7 @@ interface Props {
   /** IDs bereits untersuchter Stellen — bleibt beim Verlassen der Szene erhalten. */
   investigatedIds: string[];
   onInvestigate: (hotspotId: string) => void;
-  /** Markierung bewusst setzen oder zuruecknehmen (#34). */
+  /** Markierung bewusst setzen oder zurücknehmen (#34). */
   onToggleInvestigated: (hotspotId: string) => void;
   /** IDs bereits eingesammelter Funde (#9). */
   collectedIds: string[];
@@ -35,12 +35,12 @@ interface Props {
  *
  * TODO Bild-Assets: `scene.imagePath` zeigt auf Dateien, die es im Repo noch
  * nicht gibt — echte Bilder werden in der MVP-Phase bewusst nicht committet
- * (Copyright/Repo-Groesse). Bis dahin greift der Platzhalter, der deshalb
+ * (Copyright/Repo-Grösse). Bis dahin greift der Platzhalter, der deshalb
  * kein Randfall ist, sondern der Normalzustand.
  *
- * Story #33 — Zoom. Bild und Stellen liegen gemeinsam auf einer "Buehne", die
- * mit der Zoomstufe waechst; der Ausschnitt darum herum scrollt. Weil die
- * Stellen in Prozent der Buehne positioniert sind, bleiben sie beim Zoomen
+ * Story #33 — Zoom. Bild und Stellen liegen gemeinsam auf einer "Bühne", die
+ * mit der Zoomstufe wächst; der Ausschnitt darum herum scrollt. Weil die
+ * Stellen in Prozent der Bühne positioniert sind, bleiben sie beim Zoomen
  * genau auf ihrem Bilddetail.
  */
 export function SceneView({
@@ -79,13 +79,13 @@ export function SceneView({
     if (viewport && next !== zoom) {
       const left = keepCenter(viewport.scrollLeft, viewport.clientWidth, zoom, next);
       const top = keepCenter(viewport.scrollTop, viewport.clientHeight, zoom, next);
-      // Erst nach dem Neuzeichnen scrollen, sonst ist die Buehne noch zu klein.
+      // Erst nach dem Neuzeichnen scrollen, sonst ist die Bühne noch zu klein.
       requestAnimationFrame(() => viewport.scrollTo({ left, top }));
     }
     setZoom(next);
   }
 
-  // Tastatur (#33): + / - zoomen, 0 setzt zurueck — nicht, solange ein Dialog offen ist, und
+  // Tastatur (#33): + / - zoomen, 0 setzt zurück — nicht, solange ein Dialog offen ist, und
   // nicht in 3D: dort zoomt die Szene selbst (Mausrad).
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
@@ -101,7 +101,7 @@ export function SceneView({
   const investigated = new Set(investigatedIds);
   const collected = new Set(collectedIds);
 
-  // Bestaetigung wieder ausblenden, damit sie nicht dauerhaft im Bild steht.
+  // Bestätigung wieder ausblenden, damit sie nicht dauerhaft im Bild steht.
   useEffect(() => {
     if (!confirmation) return;
     const timer = setTimeout(() => setConfirmation(null), 4000);
@@ -187,7 +187,7 @@ export function SceneView({
                   [ ! ]
                 </p>
                 <p className="scene__placeholder-name">{scene.name}</p>
-                <p className="scene__placeholder-hint">Szenenbild nicht verfuegbar</p>
+                <p className="scene__placeholder-hint">Szenenbild nicht verfügbar</p>
               </div>
             ) : (
               <img
@@ -213,7 +213,7 @@ export function SceneView({
           >
             −
           </button>
-          <button onClick={() => changeZoom(ZOOM_LEVELS[0])} aria-label="Zoom zuruecksetzen">
+          <button onClick={() => changeZoom(ZOOM_LEVELS[0])} aria-label="Zoom zurücksetzen">
             {Math.round(zoom * 100)} %
           </button>
           <button
@@ -269,7 +269,7 @@ export function SceneView({
           </button>
         ))}
         <button className="scene__back" onClick={onBack}>
-          Zurueck
+          Zurück
         </button>
       </div>
 

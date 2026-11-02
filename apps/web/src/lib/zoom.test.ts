@@ -14,15 +14,15 @@ describe("Tatort-Zoom (#33)", () => {
     expect(zoomOut(1)).toBe(1);
   });
 
-  it("haelt die Bildmitte beim Zoomen fest", () => {
+  it("hält die Bildmitte beim Zoomen fest", () => {
     // 1000 px breit, ungezoomt, Mitte bei 500 -> bei 2x liegt die Mitte bei 1000,
     // also muss um 500 gescrollt werden.
     expect(keepCenter(0, 1000, 1, 2)).toBe(500);
-    // Zurueck auf 1x: kein Scrollen mehr moeglich.
+    // Zurück auf 1x: kein Scrollen mehr möglich.
     expect(keepCenter(500, 1000, 2, 1)).toBe(0);
   });
 
-  it("scrollt nie ueber den Rand hinaus", () => {
+  it("scrollt nie über den Rand hinaus", () => {
     expect(keepCenter(2000, 1000, 3, 3)).toBe(2000);
     expect(keepCenter(5000, 1000, 3, 3)).toBe(2000);
     expect(keepCenter(-50, 1000, 2, 2)).toBe(0);

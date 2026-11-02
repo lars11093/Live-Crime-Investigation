@@ -30,7 +30,7 @@ describe("Team beitreten", () => {
     expect(joinTeam(room, "socket-a", "x".repeat(MAX_NAME_LENGTH + 1)).ok).toBe(false);
   });
 
-  it("fuehrt mehrere Spieler in Beitrittsreihenfolge", () => {
+  it("führt mehrere Spieler in Beitrittsreihenfolge", () => {
     const room = createRoom(caseDef);
     joinTeam(room, "socket-a", "Loris");
     joinTeam(room, "socket-b", "Lars");
@@ -44,8 +44,8 @@ describe("Team beitreten", () => {
     expect(teamOf(room)).toEqual([{ id: "socket-a", name: "Loris R.", role: null }]);
   });
 
-  // Zwei Personen duerfen gleich heissen — unterschieden wird ueber die Verbindung.
-  it("laesst gleiche Namen bei verschiedenen Verbindungen zu", () => {
+  // Zwei Personen dürfen gleich heissen — unterschieden wird über die Verbindung.
+  it("lässt gleiche Namen bei verschiedenen Verbindungen zu", () => {
     const room = createRoom(caseDef);
     joinTeam(room, "socket-a", "Lea");
     joinTeam(room, "socket-b", "Lea");
@@ -74,7 +74,7 @@ function roomWith(...names: string[]) {
   return room;
 }
 
-describe("Rolle waehlen (#31)", () => {
+describe("Rolle wählen (#31)", () => {
   it("vergibt eine freie Rolle", () => {
     const room = roomWith("Anna");
     expect(chooseRole(room, "anna", "forensics").ok).toBe(true);
@@ -102,14 +102,14 @@ describe("Rolle waehlen (#31)", () => {
     expect(room.state.players[0].role).toBeNull();
   });
 
-  it("behaelt die Rolle bei einem erneuten Beitritt", () => {
+  it("behält die Rolle bei einem erneuten Beitritt", () => {
     const room = roomWith("Anna");
     chooseRole(room, "anna", "cyber");
     joinTeam(room, "anna", "Anna B.");
     expect(teamOf(room)[0]).toEqual({ id: "anna", name: "Anna B.", role: "cyber" });
   });
 
-  it("laesst Mitglieder ohne Teamleitung keine fremde Rolle setzen", () => {
+  it("lässt Mitglieder ohne Teamleitung keine fremde Rolle setzen", () => {
     const room = roomWith("Anna", "Ben");
     expect(chooseRole(room, "ben", "lead", "anna").ok).toBe(false);
   });
@@ -133,18 +133,18 @@ describe("Teamleitung vergibt Rollen (#48)", () => {
   it("macht die erste Person im Team zur Teamleitung", () => {
     const room = roomWith("Anna", "Ben");
     expect(teamStateOf(room).leaderId).toBe("socket-Anna");
-    // Ein erneuter Beitritt aendert daran nichts.
+    // Ein erneuter Beitritt ändert daran nichts.
     joinTeam(room, "socket-Ben", "Ben");
     expect(teamStateOf(room).leaderId).toBe("socket-Anna");
   });
 
-  it("laesst die Teamleitung Rollen an andere vergeben", () => {
+  it("lässt die Teamleitung Rollen an andere vergeben", () => {
     const room = roomWith("Anna", "Ben");
     expect(chooseRole(room, "socket-Anna", "cyber", "socket-Ben")).toEqual({ ok: true });
     expect(roleOf(room, "socket-Ben")).toBe("cyber");
   });
 
-  it("laesst Mitspieler nicht die Rolle eines anderen setzen", () => {
+  it("lässt Mitspieler nicht die Rolle eines anderen setzen", () => {
     const room = roomWith("Anna", "Ben");
     expect(chooseRole(room, "socket-Ben", "lead", "socket-Anna")).toEqual({
       ok: false,
@@ -152,13 +152,13 @@ describe("Teamleitung vergibt Rollen (#48)", () => {
     });
   });
 
-  it("haelt auch fuer die Teamleitung jede Rolle exklusiv", () => {
+  it("hält auch für die Teamleitung jede Rolle exklusiv", () => {
     const room = roomWith("Anna", "Ben");
     chooseRole(room, "socket-Anna", "lead");
     expect(chooseRole(room, "socket-Anna", "lead", "socket-Ben").ok).toBe(false);
   });
 
-  it("laesst die Teamleitung eine Rolle wieder entziehen", () => {
+  it("lässt die Teamleitung eine Rolle wieder entziehen", () => {
     const room = roomWith("Anna", "Ben");
     chooseRole(room, "socket-Ben", "field");
     chooseRole(room, "socket-Anna", null, "socket-Ben");

@@ -9,8 +9,8 @@ import { parseRelevance, type Relevance } from "./relevance";
 /**
  * Der Ermittlungsfortschritt einer Person in einer Team-Session.
  *
- * Story #12 verlangt, dass eine Notiz ein Neuladen ueberlebt. Eine Notiz ohne
- * den zugehoerigen Beweis waere wertlos, deshalb wird der ganze Fortschritt
+ * Story #12 verlangt, dass eine Notiz ein Neuladen überlebt. Eine Notiz ohne
+ * den zugehörigen Beweis wäre wertlos, deshalb wird der ganze Fortschritt
  * gesichert, nicht nur der Notiztext.
  */
 export interface CaseProgress {
@@ -18,27 +18,27 @@ export interface CaseProgress {
   collected: CollectedEvidence[];
   /** Beweis-ID -> Notiztext. */
   notes: Record<string, string>;
-  /** Beweis-ID -> ISO-Zeitpunkt der letzten Aenderung der Notiz (#38). */
+  /** Beweis-ID -> ISO-Zeitpunkt der letzten Änderung der Notiz (#38). */
   noteEditedAt: Record<string, string>;
-  /** Bereits aufgedeckte Verknuepfungen (#13). */
+  /** Bereits aufgedeckte Verknüpfungen (#13). */
   insights: Insight[];
-  /** Eigene Einschaetzung, wie stark eine Verknuepfung ist (#39). */
+  /** Eigene Einschätzung, wie stark eine Verknüpfung ist (#39). */
   insightRatings: Record<string, InsightStrength>;
-  /** Als widerspruechlich markierte Saetze aus Aussagen (#17). */
+  /** Als widersprüchlich markierte Sätze aus Aussagen (#17). */
   contradictions: Contradiction[];
   /** Als relevant markierte Chatnachrichten (#19), per Nachrichten-ID. */
   markedMessageIds: string[];
-  /** Im Forensik-Terminal bereits geoeffnete Geraete (#44). */
+  /** Im Forensik-Terminal bereits geöffnete Geräte (#44). */
   reviewedDeviceIds: string[];
   /** Nachrichten, deren Bild-Metadaten ausgelesen sind (#45). */
   metadataReadIds: string[];
   /** Relevanz digitaler Spuren, pro Beweis-ID (#47). */
   relevance: Record<string, Relevance>;
-  /** Eigenes Urteil ueber das Alibi, pro Verdaechtigem (#42). */
+  /** Eigenes Urteil über das Alibi, pro Verdächtigem (#42). */
   alibiVerdicts: Record<string, AlibiVerdict>;
-  /** Eigener Verdachtsgrad pro Verdaechtigem (#43). */
+  /** Eigener Verdachtsgrad pro Verdächtigem (#43). */
   suspicion: Record<string, SuspicionLevel>;
-  /** Entwurf der Anklage: Taeter (#25) und angehaengte Beweise (#26). */
+  /** Entwurf der Anklage: Täter (#25) und angehängte Beweise (#26). */
   accusation: AccusationDraft;
   /** Tatortfotos der Funde (#35), pro Beweis-ID eins. */
   photos: Record<string, EvidencePhoto>;
@@ -47,8 +47,8 @@ export interface CaseProgress {
 /**
  * Ein markierter Widerspruch (#17).
  *
- * Speichert den Satztext mit, nicht nur die Position: aendert sich eine
- * Aussage im Case-JSON, zeigt die Uebersicht sonst auf einen anderen Satz.
+ * Speichert den Satztext mit, nicht nur die Position: ändert sich eine
+ * Aussage im Case-JSON, zeigt die Übersicht sonst auf einen anderen Satz.
  */
 export interface Contradiction {
   suspectId: string;
@@ -57,12 +57,12 @@ export interface Contradiction {
   text: string;
 }
 
-/** Eindeutiger Schluessel eines Satzes innerhalb einer Aussage. */
+/** Eindeutiger Schlüssel eines Satzes innerhalb einer Aussage. */
 export function contradictionKey(suspectId: string, sentenceIndex: number): string {
   return `${suspectId}:${sentenceIndex}`;
 }
 
-/** Markiert einen Satz oder nimmt die Markierung zurueck (#17). */
+/** Markiert einen Satz oder nimmt die Markierung zurück (#17). */
 export function toggleContradiction(
   list: Contradiction[],
   entry: Contradiction
@@ -78,14 +78,14 @@ export function toggleContradiction(
 /**
  * Markiert eine Stelle im Tatort als untersucht oder wieder als offen (#34).
  *
- * Das Oeffnen einer Stelle markiert sie weiterhin automatisch (#8); hier
- * kann der Ermittler die Markierung bewusst setzen oder zuruecknehmen.
+ * Das Öffnen einer Stelle markiert sie weiterhin automatisch (#8); hier
+ * kann der Ermittler die Markierung bewusst setzen oder zurücknehmen.
  */
 export function toggleInvestigated(ids: string[], hotspotId: string): string[] {
   return ids.includes(hotspotId) ? ids.filter((id) => id !== hotspotId) : [...ids, hotspotId];
 }
 
-/** Markiert eine Chatnachricht als relevant oder nimmt die Markierung zurueck (#19). */
+/** Markiert eine Chatnachricht als relevant oder nimmt die Markierung zurück (#19). */
 export function toggleMarkedMessage(ids: string[], messageId: string): string[] {
   return ids.includes(messageId) ? ids.filter((id) => id !== messageId) : [...ids, messageId];
 }
@@ -93,9 +93,9 @@ export function toggleMarkedMessage(ids: string[], messageId: string): string[] 
 /**
  * Legt einen Fund in die Beweisakte, aber nur einmal (#9, #21).
  *
- * Gilt fuer Funde aus dem Tatort genauso wie fuer digitale Spuren: doppelt
- * ist doppelt, egal woher der Beweis kommt. Ohne Aenderung kommt dieselbe
- * Liste zurueck, damit React nicht unnoetig neu zeichnet.
+ * Gilt für Funde aus dem Tatort genauso wie für digitale Spuren: doppelt
+ * ist doppelt, egal woher der Beweis kommt. Ohne Änderung kommt dieselbe
+ * Liste zurück, damit React nicht unnötig neu zeichnet.
  */
 export function collectEvidence(
   list: CollectedEvidence[],
@@ -103,7 +103,7 @@ export function collectEvidence(
   now: Date = new Date()
 ): CollectedEvidence[] {
   if (list.some((e) => e.id === evidence.id)) return list;
-  // Der Zeitstempel entsteht hier, an einer Stelle fuer Tatort und Geraete (#37).
+  // Der Zeitstempel entsteht hier, an einer Stelle für Tatort und Geräte (#37).
   return [...list, { ...evidence, collectedAt: evidence.collectedAt ?? now.toISOString() }];
 }
 
@@ -129,7 +129,7 @@ export const EMPTY_PROGRESS: CaseProgress = {
  * Nur das, was wir zum Lesen und Schreiben brauchen.
  *
  * Als Parameter, damit die Funktionen ohne Browser testbar sind — und damit
- * ein spaeterer Umzug auf den Server (siehe unten) nur diese Datei trifft.
+ * ein späterer Umzug auf den Server (siehe unten) nur diese Datei trifft.
  */
 export interface ProgressStorage {
   getItem(key: string): string | null;
@@ -140,22 +140,22 @@ export interface ProgressStorage {
  * Wo der Fortschritt liegt: im localStorage des Browsers, pro Team-Code.
  *
  * Bewusste MVP-Entscheidung, mit zwei bekannten Grenzen:
- *   1. Der Fortschritt haengt am Geraet. Wer den Browser wechselt, faengt neu an.
+ *   1. Der Fortschritt hängt am Gerät. Wer den Browser wechselt, fängt neu an.
  *   2. Er ist privat. Das Team sieht ihn nicht.
  *
- * Grenze 2 ist fuer #12 richtig — eine Notiz ist eine persoenliche Ueberlegung.
+ * Grenze 2 ist für #12 richtig — eine Notiz ist eine persönliche Überlegung.
  * Sobald #23 ("Fund mit dem Team teilen") kommt, zieht der geteilte Teil in den
- * Room-State auf dem Server; diese Datei bleibt dann fuer das Private zustaendig.
+ * Room-State auf dem Server; diese Datei bleibt dann für das Private zuständig.
  */
 function storageKey(roomCode: string, accountId?: string): string {
   // Mit Konto (#29) liegt der Stand unter dem Konto; als Gast wie bisher nur
-  // unter dem Team-Code, damit bestehende Spielstaende erhalten bleiben.
+  // unter dem Team-Code, damit bestehende Spielstände erhalten bleiben.
   return accountId
     ? `case-zero:progress:${accountId}:${roomCode}`
     : `case-zero:progress:${roomCode}`;
 }
 
-/** Faengt alles ab, was kaputt sein kann: gesperrter Storage, kaputtes JSON, fremde Daten. */
+/** Fängt alles ab, was kaputt sein kann: gesperrter Storage, kaputtes JSON, fremde Daten. */
 export function loadProgress(
   storage: ProgressStorage,
   roomCode: string,
@@ -215,7 +215,7 @@ export function saveProgress(
   }
 }
 
-/** Leerer oder reiner Leerzeichen-Text loescht die Notiz, statt sie leer zu speichern. */
+/** Leerer oder reiner Leerzeichen-Text löscht die Notiz, statt sie leer zu speichern. */
 export function setNote(
   notes: CaseProgress["notes"],
   evidenceId: string,
@@ -230,10 +230,10 @@ export function setNote(
 }
 
 /**
- * Speichert, aendert oder loescht eine Notiz samt Zeitpunkt (#12, #38).
+ * Speichert, ändert oder löscht eine Notiz samt Zeitpunkt (#12, #38).
  *
- * Unveraenderter Text laesst auch den Zeitpunkt stehen — "zuletzt geaendert"
- * soll nicht springen, nur weil jemand ohne Aenderung speichert.
+ * Unveränderter Text lässt auch den Zeitpunkt stehen — "zuletzt geändert"
+ * soll nicht springen, nur weil jemand ohne Änderung speichert.
  */
 export function saveNote(
   progress: CaseProgress,

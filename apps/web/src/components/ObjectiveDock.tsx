@@ -9,7 +9,7 @@ interface Props {
  * Story #32 — das Ermittlungsziel jederzeit einsehen.
  *
  * Ein fester Knopf oben rechts, in jeder Ansicht des Falls — auch im
- * Tatort, der den ganzen Bildschirm fuellt. Ein Klick klappt das Ziel auf,
+ * Tatort, der den ganzen Bildschirm füllt. Ein Klick klappt das Ziel auf,
  * Escape oder ein zweiter Klick wieder zu.
  */
 export function ObjectiveDock({ objective }: Props) {
@@ -40,7 +40,7 @@ export function ObjectiveDock({ objective }: Props) {
             Ermittlungsziel
           </p>
           <p className="objective-dock__text">
-            {objective ?? "Fuer diesen Fall ist kein Ermittlungsziel hinterlegt."}
+            {objective ?? "Für diesen Fall ist kein Ermittlungsziel hinterlegt."}
           </p>
         </div>
       )}

@@ -20,8 +20,8 @@ const TEXT_MAX = 500;
 /**
  * Story #49 — mit dem Team chatten.
  *
- * Live ueber Socket.IO: wer im selben Fall ist, sieht neue Nachrichten sofort.
- * Eigene Nachrichten stehen rechts, wie im Chatverlauf der Geraete (#19).
+ * Live über Socket.IO: wer im selben Fall ist, sieht neue Nachrichten sofort.
+ * Eigene Nachrichten stehen rechts, wie im Chatverlauf der Geräte (#19).
  */
 export function TeamChat({ myId, joined, messages, connected, onSend, onBack }: Props) {
   const [draft, setDraft] = useState("");
@@ -51,7 +51,7 @@ export function TeamChat({ myId, joined, messages, connected, onSend, onBack }: 
         <p className="terminal-title" style={{ margin: 0 }}>
           Team-Chat
         </p>
-        <button onClick={onBack}>Zurueck zur Fallakte</button>
+        <button onClick={onBack}>Zurück zur Fallakte</button>
       </div>
 
       <p className="case-status__hint">

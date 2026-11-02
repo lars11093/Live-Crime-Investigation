@@ -30,7 +30,7 @@ describe("Zeitachse aller Aussagen (#68)", () => {
     expect(timeline[0].sentence).toBe("Ich ging um 22:10.");
   });
 
-  it("markiert Ueberschneidungen nur zwischen verschiedenen Personen", () => {
+  it("markiert Überschneidungen nur zwischen verschiedenen Personen", () => {
     const timeline = buildStatementTimeline([
       suspect("a", "Um 22:00 kam ich. Um 22:05 ging ich."),
       suspect("b", "Um 22:45 war ich weg."),
@@ -40,7 +40,7 @@ describe("Zeitachse aller Aussagen (#68)", () => {
     expect(byTime).toEqual({ "22:00": false, "22:05": false, "22:45": true, "22:50": true });
   });
 
-  it("kommt mit Verdaechtigen ohne Aussage aus", () => {
+  it("kommt mit Verdächtigen ohne Aussage aus", () => {
     expect(buildStatementTimeline([{ ...suspect("a", ""), statement: undefined }])).toEqual([]);
   });
 });

@@ -2,10 +2,10 @@ import type { DeviceLocation } from "@case-zero/shared";
 import { timesIn } from "./statement";
 import { clockToMinutes } from "./clock";
 
-/** Ein Standortpunkt, eingeordnet gegenueber der Tatzeit (#72). */
+/** Ein Standortpunkt, eingeordnet gegenüber der Tatzeit (#72). */
 export interface LocationEntry extends DeviceLocation {
   inCrimeWindow: boolean;
-  /** Hat das Geraet seit dem vorherigen Punkt den Ort gewechselt? */
+  /** Hat das Gerät seit dem vorherigen Punkt den Ort gewechselt? */
   moved: boolean;
 }
 
@@ -25,7 +25,7 @@ export function crimeWindowFrom(timeOfCrime: string | undefined): { from: number
 /**
  * Story #72 — Standortdaten auswerten.
  *
- * Markiert, welche Punkte in die Tatzeit fallen und wo das Geraet den Ort
+ * Markiert, welche Punkte in die Tatzeit fallen und wo das Gerät den Ort
  * gewechselt hat. Die Uhrzeit steht am Ende von `at` ("12.09. 22:31").
  */
 export function analyzeLocations(

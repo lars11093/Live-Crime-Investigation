@@ -3,7 +3,7 @@ import type { Device } from "@case-zero/shared";
 
 interface Props {
   device: Device;
-  /** Liefert `null` bei Erfolg, sonst die Meldung fuer den Spieler. */
+  /** Liefert `null` bei Erfolg, sonst die Meldung für den Spieler. */
   onUnlock: (secret: string) => Promise<string | null>;
 }
 
@@ -50,7 +50,7 @@ export function UnlockForm({ device, onUnlock }: Props) {
           }}
         />
         <button type="submit" disabled={sending || !secret.trim()}>
-          {sending ? "Pruefe …" : "Entsperren"}
+          {sending ? "Prüfe …" : "Entsperren"}
         </button>
       </div>
       {device.lockHint && <p className="unlock__hint">Hinweis: {device.lockHint}</p>}

@@ -5,7 +5,7 @@ interface Props {
   briefing?: CaseBriefing;
   /** Das Ermittlungsziel (#32) — im Briefing zum ersten Mal zu sehen. */
   objective?: string;
-  /** Fuehrt in den Tatort (#7). */
+  /** Führt in den Tatort (#7). */
   onOpenScene: () => void;
   /** Schliesst das Briefing, ohne den Spielstand anzufassen. */
   onClose: () => void;
@@ -14,7 +14,7 @@ interface Props {
 /**
  * Story #6 — Fall-Briefing.
  * Zeigt Falltitel, Tatzeit, Tatort und den Briefing-Text. Fehlt das Briefing
- * im Fall, steht hier "Kein Briefing verfuegbar" statt einer leeren Box.
+ * im Fall, steht hier "Kein Briefing verfügbar" statt einer leeren Box.
  */
 export function CaseBriefingPanel({ title, briefing, objective, onOpenScene, onClose }: Props) {
   return (
@@ -37,7 +37,7 @@ export function CaseBriefingPanel({ title, briefing, objective, onOpenScene, onC
           <p className="briefing__text">{briefing.text}</p>
         </>
       ) : (
-        <p className="briefing__empty">Kein Briefing verfuegbar</p>
+        <p className="briefing__empty">Kein Briefing verfügbar</p>
       )}
 
       {objective && (

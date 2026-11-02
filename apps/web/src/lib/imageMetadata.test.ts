@@ -12,9 +12,9 @@ describe("Bild-Metadaten auslesen (#45)", () => {
   it("zeigt die vorhandenen Felder in fester Reihenfolge", () => {
     expect(metadataRows(meta).map((r) => r.label)).toEqual([
       "Aufnahmezeit",
-      "Geraet",
+      "Gerät",
       "GPS",
-      "Aufloesung",
+      "Auflösung",
     ]);
   });
 
@@ -23,7 +23,7 @@ describe("Bild-Metadaten auslesen (#45)", () => {
     expect(formatGps(-33.9, -70.6)).toBe("33.90000° S, 70.60000° W");
   });
 
-  it("laesst fehlende Felder weg, ausser GPS wurde bewusst nicht aufgezeichnet", () => {
+  it("lässt fehlende Felder weg, ausser GPS wurde bewusst nicht aufgezeichnet", () => {
     expect(metadataRows({ takenAt: "12.09. 21:12" })).toEqual([
       { label: "Aufnahmezeit", value: "12.09. 21:12" },
     ]);
@@ -33,7 +33,7 @@ describe("Bild-Metadaten auslesen (#45)", () => {
     });
   });
 
-  it("fasst fuer die Akte zusammen", () => {
+  it("fasst für die Akte zusammen", () => {
     expect(metadataSummary(meta)).toBe("aufgenommen 12.09. 20:44 · Google Pixel 7 · Hardturmstrasse 61");
   });
 });

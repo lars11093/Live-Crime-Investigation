@@ -14,10 +14,10 @@ interface Props {
 /**
  * Story #43 — Verdachtsgrad als vier Balken.
  *
- * Mit `onChange` als Knopfgruppe zum Einschaetzen, ohne als reine Anzeige.
+ * Mit `onChange` als Knopfgruppe zum Einschätzen, ohne als reine Anzeige.
  */
 export function SuspicionMeter({ name, level, onChange }: Props) {
-  const label = level ? SUSPICION_LABEL[level] : "Nicht eingeschaetzt";
+  const label = level ? SUSPICION_LABEL[level] : "Nicht eingeschätzt";
 
   if (!onChange) {
     return (
@@ -41,7 +41,7 @@ export function SuspicionMeter({ name, level, onChange }: Props) {
       <p className="team-code__label" style={{ margin: 0 }}>
         Mein Verdachtsgrad · {label}
       </p>
-      <div className="suspicion" role="group" aria-label={`Verdachtsgrad fuer ${name}`}>
+      <div className="suspicion" role="group" aria-label={`Verdachtsgrad für ${name}`}>
         {SUSPICION_LEVELS.map((step) => (
           <button
             key={step}

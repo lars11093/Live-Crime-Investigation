@@ -122,7 +122,7 @@ type LoadState =
 
 /**
  * Story #2 — Fall laden.
- * Drei Zustaende, nie ein leerer Bildschirm: Laden, Fehler mit "Erneut
+ * Drei Zustände, nie ein leerer Bildschirm: Laden, Fehler mit "Erneut
  * versuchen", geladener Fall mit sichtbarem Titel.
  */
 export function CaseLoaderPage() {
@@ -130,13 +130,13 @@ export function CaseLoaderPage() {
   const [state, setState] = useState<LoadState>({ status: "loading" });
   // Nach dem Laden erscheint zuerst das Briefing (#2 -> #6).
   const [view, setView] = useState<View>("briefing");
-  // Angemeldet (#29) gehoert der Fortschritt dem Konto, sonst dem Gast.
-  // Einmal beim Oeffnen gelesen: ein Kontowechsel passiert auf der Startseite.
+  // Angemeldet (#29) gehört der Fortschritt dem Konto, sonst dem Gast.
+  // Einmal beim Öffnen gelesen: ein Kontowechsel passiert auf der Startseite.
   const [account] = useState(() => loadAccount(browserStorage()));
   // Fehler aus dem letzten Rollenwechsel (#31), z. B. "schon vergeben".
   const [roleError, setRoleError] = useState<string | null>(null);
-  // Fortschritt kommt gespeichert herein und wird bei jeder Aenderung
-  // zurueckgeschrieben, damit Notizen ein Neuladen ueberleben (#12).
+  // Fortschritt kommt gespeichert herein und wird bei jeder Änderung
+  // zurückgeschrieben, damit Notizen ein Neuladen überleben (#12).
   const [progress, setProgress] = useState<CaseProgress>(() =>
     loadProgress(browserStorage(), code, account?.id)
   );
@@ -151,28 +151,28 @@ export function CaseLoaderPage() {
   } = progress;
   // Welcher Beweis im Detail offen ist (#11).
   const [openEvidenceId, setOpenEvidenceId] = useState<string | null>(null);
-  // Ermittlungstafel (#65): Faeden zwischen Beweisen.
+  // Ermittlungstafel (#65): Fäden zwischen Beweisen.
   const [board, setBoard] = useState(() => loadBoard(browserStorage(), code));
   // Eigene Tags (#62) und welcher davon die Akte gerade filtert.
   const [tags, setTags] = useState(() => loadTags(browserStorage(), code));
   const [tagFilter, setTagFilter] = useState<string | null>(null);
-  // Welcher Verdaechtige im Profil offen ist (#15).
+  // Welcher Verdächtige im Profil offen ist (#15).
   const [openSuspectId, setOpenSuspectId] = useState<string | null>(null);
   // Befragungen (#66): welche Fragen an wen gestellt wurden.
   const [interrogations, setInterrogations] = useState(() => loadInterrogations(browserStorage(), code));
-  // Ausgeschlossene Verdaechtige (#69), pro Team-Code im Browser.
+  // Ausgeschlossene Verdächtige (#69), pro Team-Code im Browser.
   const [excludedIds, setExcludedIds] = useState(() => loadExcluded(browserStorage(), code));
-  // Welches Geraet im Forensik-Terminal ausgewertet wird (#18 -> #19).
+  // Welches Gerät im Forensik-Terminal ausgewertet wird (#18 -> #19).
   const [openDeviceId, setOpenDeviceId] = useState<string | null>(null);
-  // Am offenen Geraet: Nachrichten (#19) oder Dateien (#20).
+  // Am offenen Gerät: Nachrichten (#19) oder Dateien (#20).
   const [deviceTab, setDeviceTab] = useState<"chat" | "dateien">("chat");
   // Intro (#58): einmal pro Team-Session vor dem ersten Briefing.
   const [showIntro, setShowIntro] = useState(() => !introSeen(browserStorage(), code));
-  // Wiederhergestellte, geloeschte Nachrichten pro Geraet (#71).
+  // Wiederhergestellte, gelöschte Nachrichten pro Gerät (#71).
   const [recovered, setRecovered] = useState(() => loadRecovered(browserStorage(), code));
   // Tatortprotokoll (#61): was wann wo untersucht und eingesammelt wurde.
   const [sceneLog, setSceneLog] = useState(() => loadSceneLog(browserStorage(), code));
-  // Entsperrte Geraete (#70) — so, wie der Server sie nach der richtigen PIN liefert.
+  // Entsperrte Geräte (#70) — so, wie der Server sie nach der richtigen PIN liefert.
   const [unlocked, setUnlocked] = useState(() => loadUnlocked(browserStorage(), code));
   // Welcher Tatort offen ist (#159); null = der erste des Falls.
   const [sceneId, setSceneId] = useState<string | null>(null);
@@ -186,9 +186,9 @@ export function CaseLoaderPage() {
     saveProgress(browserStorage(), code, progress, account?.id);
   }, [code, progress, account]);
 
-  // Story #55 — mit Konto liegt der Stand zusaetzlich auf dem Server. Beim
-  // Oeffnen gewinnt der Server-Stand (anderes Geraet), danach wird jede
-  // Aenderung kurz gesammelt und hochgeladen.
+  // Story #55 — mit Konto liegt der Stand zusätzlich auf dem Server. Beim
+  // Öffnen gewinnt der Server-Stand (anderes Gerät), danach wird jede
+  // Änderung kurz gesammelt und hochgeladen.
   const [remoteLoaded, setRemoteLoaded] = useState(!account?.token);
   useEffect(() => {
     if (!account?.token) return;
@@ -257,7 +257,7 @@ export function CaseLoaderPage() {
     let cancelled = false;
     setState({ status: "loading" });
 
-    // Erst die Team-Session pruefen, dann den Fall dazu laden. So sehen zwei
+    // Erst die Team-Session prüfen, dann den Fall dazu laden. So sehen zwei
     // Personen mit demselben Code garantiert denselben Fall (#5).
     findRoom(code)
       .then((room) => {
@@ -280,22 +280,22 @@ export function CaseLoaderPage() {
 
   useEffect(() => load(), [load]);
 
-  // Team-Chat (#49): verbunden, sobald die Seite offen ist — so zaehlen auch
-  // Nachrichten, die ankommen, waehrend man im Tatort ist.
+  // Team-Chat (#49): verbunden, sobald die Seite offen ist — so zählen auch
+  // Nachrichten, die ankommen, während man im Tatort ist.
   const chat = useTeamChat(code);
   const [chatReadCount, setChatReadCount] = useState(0);
   useEffect(() => {
     if (view === "chat") setChatReadCount(chat.messages.length);
   }, [view, chat.messages.length]);
   const chatUnread = unreadCount(chat.messages, team.myId ?? "", chatReadCount);
-  // Gemeinsame Aufgabenliste (#50), ebenfalls live ueber das Team.
+  // Gemeinsame Aufgabenliste (#50), ebenfalls live über das Team.
   const teamTasks = useTeamTasks(code);
   const openTaskCount = teamTasks.tasks.filter((t) => !t.done).length;
 
   if (state.status === "loading") {
     return (
       <main className="app-shell">
-        <p className="terminal-title">Fallakte wird geoeffnet</p>
+        <p className="terminal-title">Fallakte wird geöffnet</p>
         <div className="panel case-status">
           <span className="case-status__spinner" aria-hidden="true" />
           <p>Fall wird geladen&hellip;</p>
@@ -309,9 +309,9 @@ export function CaseLoaderPage() {
       <main className="app-shell">
         <p className="terminal-title">Team-Session nicht gefunden</p>
         <div className="panel case-status">
-          <p className="case-status__error">Ungueltiger Team-Code</p>
+          <p className="case-status__error">Ungültiger Team-Code</p>
           <p className="case-status__hint">
-            Der Code <code>{code}</code> gehoert zu keiner laufenden Ermittlung. Sessions
+            Der Code <code>{code}</code> gehört zu keiner laufenden Ermittlung. Sessions
             leben nur im Serverspeicher — nach einem Server-Neustart sind sie weg.
           </p>
           <div className="case-status__actions">
@@ -331,7 +331,7 @@ export function CaseLoaderPage() {
         <div className="panel case-status">
           <p className="case-status__error">Fall konnte nicht geladen werden</p>
           <p className="case-status__hint">
-            Der Ermittlungsserver antwortet nicht. Laeuft <code>npm run dev</code>?
+            Der Ermittlungsserver antwortet nicht. Läuft <code>npm run dev</code>?
           </p>
           <div className="case-status__actions">
             <button className="button--primary" onClick={load}>
@@ -344,7 +344,7 @@ export function CaseLoaderPage() {
     );
   }
 
-  // Das Ermittlungsziel haengt an jeder Ansicht des geladenen Falls (#32).
+  // Das Ermittlungsziel hängt an jeder Ansicht des geladenen Falls (#32).
   return (
     <>
       {renderView(state)}
@@ -434,8 +434,8 @@ export function CaseLoaderPage() {
     const devices = withUnlocked(caseData.devices ?? [], unlocked).map((d) => withRecovered(d, recovered));
 
     if (view === "forensik") {
-      // Gesperrte Geraete kommen ohne Nachrichten vom Server und lassen sich im
-      // Terminal nicht oeffnen — hier landet nur ein auswertbares Geraet.
+      // Gesperrte Geräte kommen ohne Nachrichten vom Server und lassen sich im
+      // Terminal nicht öffnen — hier landet nur ein auswertbares Gerät.
       const device = devices.find((d) => d.id === openDeviceId && !d.locked);
       if (!device) {
         return (
@@ -446,7 +446,7 @@ export function CaseLoaderPage() {
               onOpen={(id) => {
                 setDeviceTab("chat");
                 setOpenDeviceId(id);
-                // Oeffnen heisst auswerten (#44) — gesperrte lassen sich gar nicht oeffnen.
+                // Öffnen heisst auswerten (#44) — gesperrte lassen sich gar nicht öffnen.
                 setProgress((prev) => ({
                   ...prev,
                   reviewedDeviceIds: markReviewed(prev.reviewedDeviceIds, id),
@@ -460,8 +460,8 @@ export function CaseLoaderPage() {
                     return null;
                   }
                   return result.reason === "wrong-secret"
-                    ? "PIN bzw. Passwort falsch. Das Geraet bleibt gesperrt."
-                    : "Dieses Geraet laesst sich nicht entsperren.";
+                    ? "PIN bzw. Passwort falsch. Das Gerät bleibt gesperrt."
+                    : "Dieses Gerät lässt sich nicht entsperren.";
                 } catch {
                   return "Server nicht erreichbar. Bitte erneut versuchen.";
                 }
@@ -543,7 +543,7 @@ export function CaseLoaderPage() {
               onRecover={async () => {
                 try {
                   const result = await recoverDeleted(caseData.id, device.id);
-                  if (!result.ok) return "Auf diesem Geraet laesst sich nichts wiederherstellen.";
+                  if (!result.ok) return "Auf diesem Gerät lässt sich nichts wiederherstellen.";
                   setRecovered((prev) => ({ ...prev, [device.id]: result.messages }));
                   return null;
                 } catch {
@@ -628,7 +628,7 @@ export function CaseLoaderPage() {
                 onBack={() => setView("akte")}
                 selectedSuspectId={accusation.suspectId}
                 onSelectSuspect={(id) =>
-                  // Story #25 — die Auswahl liegt im Anklage-Entwurf und ueberlebt so ein Neuladen.
+                  // Story #25 — die Auswahl liegt im Anklage-Entwurf und überlebt so ein Neuladen.
                   setProgress((prev) => ({
                     ...prev,
                     // #51 — zweiter Klick auf dieselbe Person hebt die Auswahl auf.
@@ -660,7 +660,7 @@ export function CaseLoaderPage() {
 
     if (view === "beweise") {
       const open = collected.find((e) => e.id === openEvidenceId);
-      // Ein Filter auf einen inzwischen geloeschten Tag zeigt wieder alles (#62).
+      // Ein Filter auf einen inzwischen gelöschten Tag zeigt wieder alles (#62).
       const activeTag = tagFilter && allTags(tags).includes(tagFilter) ? tagFilter : null;
       return (
         <main className="app-shell">
@@ -752,15 +752,15 @@ export function CaseLoaderPage() {
                           ...prev,
                           insights: [...prev.insights, result.insight],
                         }));
-                        // Fuer die Tafel (#65): aus welchem Paar die Erkenntnis entstand.
+                        // Für die Tafel (#65): aus welchem Paar die Erkenntnis entstand.
                         setBoard((prev) => recordInsight(prev, result.insight.id, a, b));
                         return `Neue Erkenntnis: ${result.insight.title}`;
                       }
                       if (result.reason === "already-found") {
-                        return "Diese Verknuepfung hast du bereits aufgedeckt.";
+                        return "Diese Verknüpfung hast du bereits aufgedeckt.";
                       }
                       if (result.reason === "invalid") {
-                        return "Waehle zwei verschiedene Beweise.";
+                        return "Wähle zwei verschiedene Beweise.";
                       }
                       return "Zwischen diesen beiden Beweisen ist kein Zusammenhang erkennbar.";
                     } catch {
@@ -871,7 +871,7 @@ export function CaseLoaderPage() {
               }))
             }
             onSubmit={async () => {
-              if (!accusation.suspectId) return "Waehle zuerst einen Taeter.";
+              if (!accusation.suspectId) return "Wähle zuerst einen Täter.";
               try {
                 const result = await submitAccusation(code, {
                   suspectId: accusation.suspectId,
@@ -933,13 +933,13 @@ export function CaseLoaderPage() {
     return (
       <main className="app-shell">
         <p className="terminal-title">
-          Fallakte geoeffnet
+          Fallakte geöffnet
           {myRole && <span className="role-badge">{ROLE_LABEL[myRole]}</span>}
         </p>
         <div className="panel case-status">
           <h1 className="case-title">{caseData.title}</h1>
           <p className="case-status__hint">
-            {caseData.suspects.length} Verdaechtige &middot;{" "}
+            {caseData.suspects.length} Verdächtige &middot;{" "}
             {caseData.seedEvidence.length} erste Spuren
           </p>
           <p className="case-status__hint">
@@ -954,7 +954,7 @@ export function CaseLoaderPage() {
                 Ermittelt als <strong>{account.name}</strong>
               </>
             ) : (
-              "Ermittelt als Gast — Fortschritt nur auf diesem Geraet"
+              "Ermittelt als Gast — Fortschritt nur auf diesem Gerät"
             )}
           </p>
           <p className="case-status__hint">
@@ -976,7 +976,7 @@ export function CaseLoaderPage() {
               Beweisakte ({collected.length})
             </button>
             <button onClick={() => setView("verdaechtige")}>
-              Verdaechtige ({caseData.suspects.length})
+              Verdächtige ({caseData.suspects.length})
             </button>
             {devices.length > 0 && (
               <button onClick={() => setView("forensik")}>
@@ -988,7 +988,7 @@ export function CaseLoaderPage() {
               {accusation.evidenceIds.length === 1 ? "Beweis" : "Beweise"})
             </button>
             <button onClick={() => setView("team")}>
-              {myRole ? `Team · ${ROLE_LABEL[myRole]}` : "Team · Rolle waehlen"}
+              {myRole ? `Team · ${ROLE_LABEL[myRole]}` : "Team · Rolle wählen"}
             </button>
             <button onClick={() => setView("chat")}>
               Team-Chat{chatUnread > 0 ? ` (${chatUnread} neu)` : ""}

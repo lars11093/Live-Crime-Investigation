@@ -2,11 +2,11 @@ import type { Suspect } from "@case-zero/shared";
 import type { ProgressStorage } from "./caseProgress";
 
 /**
- * Story #69 — ausgeschlossene Verdaechtige.
+ * Story #69 — ausgeschlossene Verdächtige.
  *
- * Eine persoenliche Einschaetzung wie die Notizen: Sie bleibt im Browser,
- * pro Team-Code, und sagt nichts darueber, ob die Person es war. Eigener
- * Schluessel neben dem Fortschritt, damit alte Spielstaende unberuehrt bleiben.
+ * Eine persönliche Einschätzung wie die Notizen: Sie bleibt im Browser,
+ * pro Team-Code, und sagt nichts darüber, ob die Person es war. Eigener
+ * Schlüssel neben dem Fortschritt, damit alte Spielstände unberührt bleiben.
  */
 function storageKey(roomCode: string): string {
   return `case-zero:excluded:${roomCode}`;

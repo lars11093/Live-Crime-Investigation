@@ -11,7 +11,7 @@ describe("Schwierigkeitsstufe (#56)", () => {
     expect(parseDifficulty(undefined)).toBe("normal");
   });
 
-  it("haelt die Stufe pro Team-Session", () => {
+  it("hält die Stufe pro Team-Session", () => {
     const a = createRoom(case01 as CaseDefinition);
     const b = createRoom(case01 as CaseDefinition);
     setDifficulty(a, "leicht");

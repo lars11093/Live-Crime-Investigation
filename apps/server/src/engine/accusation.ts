@@ -8,11 +8,11 @@ import type { Room } from "./rooms.js";
 import { judgeAccusation } from "./verdict.js";
 
 /**
- * Prueft eine Anklage, bevor der Server sie annimmt (Story #27).
+ * Prüft eine Anklage, bevor der Server sie annimmt (Story #27).
  *
- * Der Client prueft dasselbe schon vor dem Absenden — hier steht es trotzdem,
- * weil die Regel "Taeter und mindestens ein Beweis" sonst mit einem
- * handgebauten Request umgangen werden koennte.
+ * Der Client prüft dasselbe schon vor dem Absenden — hier steht es trotzdem,
+ * weil die Regel "Täter und mindestens ein Beweis" sonst mit einem
+ * handgebauten Request umgangen werden könnte.
  */
 export function validateSubmission(
   caseDef: CaseDefinition,
@@ -20,15 +20,15 @@ export function validateSubmission(
 ): { ok: true; submission: AccusationSubmission } | { ok: false; message: string } {
   const { suspectId, evidenceIds } = (raw ?? {}) as Partial<AccusationSubmission>;
   if (typeof suspectId !== "string" || !caseDef.suspects.some((s) => s.id === suspectId)) {
-    return { ok: false, message: "Unbekannter oder fehlender Taeter." };
+    return { ok: false, message: "Unbekannter oder fehlender Täter." };
   }
   if (!Array.isArray(evidenceIds)) {
-    return { ok: false, message: "Mindestens ein Beweis muss angehaengt werden." };
+    return { ok: false, message: "Mindestens ein Beweis muss angehängt werden." };
   }
   // Doppelte und nicht-textuelle IDs fallen raus, statt die Anklage abzulehnen.
   const ids = [...new Set(evidenceIds.filter((id): id is string => typeof id === "string"))];
   if (ids.length === 0) {
-    return { ok: false, message: "Mindestens ein Beweis muss angehaengt werden." };
+    return { ok: false, message: "Mindestens ein Beweis muss angehängt werden." };
   }
   return { ok: true, submission: { suspectId, evidenceIds: ids } };
 }
@@ -37,7 +37,7 @@ export function validateSubmission(
  * Nimmt die Anklage einer Team-Session an — genau einmal (Story #27).
  *
  * Danach ist sie gesperrt: ein zweiter Versuch bekommt die erste Quittung
- * zurueck, damit auch ein Teammitglied mit veraltetem Stand sieht, was
+ * zurück, damit auch ein Teammitglied mit veraltetem Stand sieht, was
  * abgesendet wurde.
  */
 export function submitAccusation(
@@ -55,7 +55,7 @@ export function submitAccusation(
   const receipt: AccusationReceipt = {
     ...checked.submission,
     submittedAt: now.toISOString(),
-    // Die Aufloesung haengt an der Quittung (#28): berechnet genau dann, wenn
+    // Die Auflösung hängt an der Quittung (#28): berechnet genau dann, wenn
     // die Anklage gesperrt ist, und nie davor.
     verdict: judgeAccusation(
       room.caseDef,

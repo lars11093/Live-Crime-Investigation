@@ -17,15 +17,15 @@ import type { ProgressStorage } from "./caseProgress";
 export const MAX_NAME_LENGTH = 24;
 
 /**
- * Prueft einen Namen, bevor er an den Server geht (#22).
- * `null` heisst "in Ordnung". Der Server prueft trotzdem nochmal — das hier
- * spart nur den Umweg fuer die offensichtlichen Faelle.
+ * Prüft einen Namen, bevor er an den Server geht (#22).
+ * `null` heisst "in Ordnung". Der Server prüft trotzdem nochmal — das hier
+ * spart nur den Umweg für die offensichtlichen Fälle.
  */
 export function nameError(rawName: string): string | null {
   const name = rawName.trim();
   if (!name) return "Bitte gib einen Namen ein.";
   if (name.length > MAX_NAME_LENGTH) {
-    return `Der Name darf hoechstens ${MAX_NAME_LENGTH} Zeichen haben.`;
+    return `Der Name darf höchstens ${MAX_NAME_LENGTH} Zeichen haben.`;
   }
   return null;
 }
@@ -39,7 +39,7 @@ export function shareMessage(result: ShareResult): string {
     case "already-shared":
       return "Diesen Fund hat schon jemand geteilt.";
     case "unknown-evidence":
-      return "Dieser Fund gehoert nicht zum Fall.";
+      return "Dieser Fund gehört nicht zum Fall.";
     case "invalid-room":
       return "Die Team-Session gibt es nicht mehr.";
   }
@@ -49,7 +49,7 @@ export function shareMessage(result: ShareResult): string {
  * Der eigene Name liegt im sessionStorage, pro Team-Code.
  *
  * sessionStorage statt localStorage, weil er pro Tab gilt: zwei Tabs im selben
- * Browser sind dann zwei Teammitglieder — so laesst sich #22 allein testen.
+ * Browser sind dann zwei Teammitglieder — so lässt sich #22 allein testen.
  */
 function nameKey(roomCode: string): string {
   return `case-zero:name:${roomCode}`;
@@ -80,7 +80,7 @@ function sessionStore(): ProgressStorage {
   return { getItem: () => null, setItem: () => {} };
 }
 
-/** Den Namen fuer eine Session vormerken, damit dort automatisch beigetreten wird (#57). */
+/** Den Namen für eine Session vormerken, damit dort automatisch beigetreten wird (#57). */
 export function rememberName(roomCode: string, name: string): void {
   saveName(sessionStore(), roomCode, name);
 }

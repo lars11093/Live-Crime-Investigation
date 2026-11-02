@@ -1,12 +1,12 @@
 import type { AccusationSubmission, AccusationVerdict, Scenario } from "@case-zero/shared";
 
 /**
- * Story #80 — welches Ende eine Anklage ausloest.
+ * Story #80 — welches Ende eine Anklage auslöst.
  *
- * Drei Ausgaenge: richtig und begruendet, richtige Person ohne tragfaehige
+ * Drei Ausgänge: richtig und begründet, richtige Person ohne tragfähige
  * Beweise, oder die falsche Person — dann je nach Person ein eigenes Ende.
- * Weil das Szenario pro Session zufaellig ist (rooms.ts), lohnt sich ein
- * zweiter Durchgang (#79): anderer Taeter, andere Enden.
+ * Weil das Szenario pro Session zufällig ist (rooms.ts), lohnt sich ein
+ * zweiter Durchgang (#79): anderer Täter, andere Enden.
  */
 export function pickEnding(
   scenario: Scenario,

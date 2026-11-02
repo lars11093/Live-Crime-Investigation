@@ -24,7 +24,7 @@ export interface AnalyzedLogEntry extends SystemLogEntry {
 /**
  * Wertet ein Systemprotokoll aus (Story #46).
  *
- * Markiert, was in die Tatzeit faellt, und filtert nach Kategorie. Die
+ * Markiert, was in die Tatzeit fällt, und filtert nach Kategorie. Die
  * Reihenfolge bleibt die aus dem Case-JSON — chronologisch, wie ein echtes
  * Protokoll, und `at` ist ein Anzeigetext, kein sortierbares Datum.
  */
@@ -48,8 +48,8 @@ export function analyzeLog(
 }
 
 /**
- * Wann wurde das Geraet benutzt? Erster und letzter Eintrag, an dem jemand
- * das Geraet aktiv bedient hat (Entsperren oder App), sonst null.
+ * Wann wurde das Gerät benutzt? Erster und letzter Eintrag, an dem jemand
+ * das Gerät aktiv bedient hat (Entsperren oder App), sonst null.
  */
 export function usageSpan(log: SystemLogEntry[]): { first: string; last: string } | null {
   const active = log.filter((e) => e.category === "unlock" || e.category === "app");

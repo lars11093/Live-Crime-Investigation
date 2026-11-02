@@ -9,7 +9,7 @@ import {
 
 interface Props {
   statement?: string;
-  /** Das Tatzeitfenster aus dem Briefing. Fehlt es, laesst sich nichts pruefen. */
+  /** Das Tatzeitfenster aus dem Briefing. Fehlt es, lässt sich nichts prüfen. */
   crimeWindow?: CrimeWindow;
   verdict?: AlibiVerdict;
   onVerdict: (verdict: AlibiVerdict) => void;
@@ -19,10 +19,10 @@ interface Props {
 const PADDING = 30;
 
 /**
- * Story #42 — ein Alibi gegen die Tatzeit pruefen.
+ * Story #42 — ein Alibi gegen die Tatzeit prüfen.
  *
  * Ein Zeitstrahl mit dem Tatzeitfenster und allen Uhrzeiten aus der Aussage,
- * darunter jede Angabe mit dem Satz, aus dem sie stammt. Das Urteil faellt der
+ * darunter jede Angabe mit dem Satz, aus dem sie stammt. Das Urteil fällt der
  * Ermittler selbst — das Spiel sagt nicht, ob ein Alibi stimmt.
  */
 export function AlibiCheck({ statement, crimeWindow, verdict, onVerdict }: Props) {
@@ -38,7 +38,7 @@ export function AlibiCheck({ statement, crimeWindow, verdict, onVerdict }: Props
 
   return (
     <div className="alibi">
-      <p className="team-code__label">Alibi-Pruefung · Tatzeit {crimeWindow.from}–{crimeWindow.to}</p>
+      <p className="team-code__label">Alibi-Prüfung · Tatzeit {crimeWindow.from}–{crimeWindow.to}</p>
 
       <div className="alibi__timeline" aria-hidden="true">
         <span
@@ -57,7 +57,7 @@ export function AlibiCheck({ statement, crimeWindow, verdict, onVerdict }: Props
       </div>
 
       {entries.length === 0 ? (
-        <p className="briefing__empty">Die Aussage enthaelt keine Uhrzeit.</p>
+        <p className="briefing__empty">Die Aussage enthält keine Uhrzeit.</p>
       ) : (
         <ul className="alibi__entries">
           {entries.map((entry, index) => (
@@ -74,12 +74,12 @@ export function AlibiCheck({ statement, crimeWindow, verdict, onVerdict }: Props
 
       {!coversWindow(entries, crimeWindow) && (
         <p className="alibi__warning">
-          Keine Angabe faellt in die Tatzeit — fuer {crimeWindow.from}–{crimeWindow.to} gibt es kein konkretes
+          Keine Angabe fällt in die Tatzeit — für {crimeWindow.from}–{crimeWindow.to} gibt es kein konkretes
           Alibi.
         </p>
       )}
 
-      <div className="insight-rating" role="group" aria-label="Alibi einschaetzen">
+      <div className="insight-rating" role="group" aria-label="Alibi einschätzen">
         <span className="team-code__label" style={{ margin: 0 }}>
           Mein Urteil
         </span>

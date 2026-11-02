@@ -28,7 +28,7 @@ export function addTask(
   if (!isMember(room, playerId)) return { ok: false, reason: "Tritt zuerst dem Team bei." };
   const clean = typeof text === "string" ? text.trim() : "";
   if (!clean) return { ok: false, reason: "Die Aufgabe braucht einen Text." };
-  if (clean.length > TASK_TEXT_MAX) return { ok: false, reason: `Hoechstens ${TASK_TEXT_MAX} Zeichen.` };
+  if (clean.length > TASK_TEXT_MAX) return { ok: false, reason: `Höchstens ${TASK_TEXT_MAX} Zeichen.` };
   if (tasksOf(room).length >= TASKS_MAX) return { ok: false, reason: "Die Liste ist voll." };
 
   const task: TeamTask = {
@@ -44,7 +44,7 @@ export function addTask(
 }
 
 /**
- * Aendert eine Aufgabe (#50): erledigt/offen und wer sie uebernimmt.
+ * Ändert eine Aufgabe (#50): erledigt/offen und wer sie übernimmt.
  *
  * Jedes Teammitglied darf das — die Liste ist gemeinsam. Zugewiesen werden
  * kann nur jemand aus dem Team, oder niemand (`null`).
@@ -71,15 +71,15 @@ export function removeTask(room: Room, actorId: unknown, taskId: unknown): Resul
   const task = tasksOf(room).find((t) => t.id === taskId);
   if (!task) return { ok: false, reason: "Diese Aufgabe gibt es nicht mehr." };
   if (actorId !== task.createdBy && actorId !== room.leaderId) {
-    return { ok: false, reason: "Nur wer die Aufgabe angelegt hat oder die Teamleitung kann sie loeschen." };
+    return { ok: false, reason: "Nur wer die Aufgabe angelegt hat oder die Teamleitung kann sie löschen." };
   }
   room.tasks = tasksOf(room).filter((t) => t.id !== task.id);
   return { ok: true, tasks: room.tasks };
 }
 
 /**
- * Wer das Team verlaesst (#22), gibt seine Aufgaben wieder frei — sonst stuenden
- * sie bei jemandem, den es nicht mehr gibt. Liefert, ob sich etwas geaendert hat.
+ * Wer das Team verlässt (#22), gibt seine Aufgaben wieder frei — sonst stünden
+ * sie bei jemandem, den es nicht mehr gibt. Liefert, ob sich etwas geändert hat.
  */
 export function releaseTasks(room: Room, playerId: string): boolean {
   if (!tasksOf(room).some((t) => t.assigneeId === playerId)) return false;

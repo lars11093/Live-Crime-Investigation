@@ -7,7 +7,7 @@ const evidence = (id: string): CollectedEvidence => ({
   label: id,
   kind: "object",
   description: "",
-  foundAt: { sceneName: "Buero", hotspotLabel: "Tisch" },
+  foundAt: { sceneName: "Büro", hotspotLabel: "Tisch" },
 });
 
 describe("Beweise taggen (#62)", () => {
@@ -16,14 +16,14 @@ describe("Beweise taggen (#62)", () => {
     expect(normalizeTag("x".repeat(40))).toHaveLength(20);
   });
 
-  it("fuegt hinzu, ohne Doppelte oder Leere", () => {
+  it("fügt hinzu, ohne Doppelte oder Leere", () => {
     let tags = addTag({}, "tasse", "Monica");
     tags = addTag(tags, "tasse", "monica");
     tags = addTag(tags, "tasse", "   ");
     expect(tags).toEqual({ tasse: ["monica"] });
   });
 
-  it("entfernt Tags und raeumt leere Eintraege auf", () => {
+  it("entfernt Tags und räumt leere Einträge auf", () => {
     expect(removeTag({ tasse: ["monica", "tatzeit"] }, "tasse", "monica")).toEqual({ tasse: ["tatzeit"] });
     expect(removeTag({ tasse: ["monica"] }, "tasse", "monica")).toEqual({});
   });

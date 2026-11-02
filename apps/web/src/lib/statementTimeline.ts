@@ -12,10 +12,10 @@ export interface TimelineEntry {
   overlaps: boolean;
 }
 
-/** Wie nah zwei Angaben liegen muessen, um als Ueberschneidung zu gelten. */
+/** Wie nah zwei Angaben liegen müssen, um als Überschneidung zu gelten. */
 export const OVERLAP_MINUTES = 10;
 
-/** "22:40" -> 1360. Ungueltige Uhrzeiten (25:00) fallen weg. */
+/** "22:40" -> 1360. Ungültige Uhrzeiten (25:00) fallen weg. */
 export function clockToMinutes(clock: string): number | null {
   const match = /^(\d{1,2}):(\d{2})$/.exec(clock);
   if (!match) return null;
@@ -28,7 +28,7 @@ export function clockToMinutes(clock: string): number | null {
  * Story #68 — alle Uhrzeiten aus allen Aussagen auf einer Zeitachse.
  *
  * Sortiert nach Uhrzeit; bei gleicher Uhrzeit bleibt die Reihenfolge der
- * Verdaechtigen aus dem Fall. Eine Ueberschneidung ist, wenn eine andere
+ * Verdächtigen aus dem Fall. Eine Überschneidung ist, wenn eine andere
  * Person innerhalb von `OVERLAP_MINUTES` eine Angabe macht — dann lohnt sich
  * der Vergleich, ob beide zur selben Zeit am selben Ort sein konnten.
  */

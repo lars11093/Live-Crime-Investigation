@@ -11,7 +11,7 @@ export interface EvidenceFilter {
 
 export const NO_FILTER: EvidenceFilter = { query: "", kinds: [] };
 
-/** Gross/klein und Umlaut-Schreibweise egal: "Kuendigung" findet "Kündigung" und umgekehrt. */
+/** Gross/klein und Umlaut-Schreibweise egal: "Kündigung" findet "Kündigung" und umgekehrt. */
 function normalize(text: string): string {
   return text
     .toLowerCase()
@@ -23,8 +23,8 @@ function normalize(text: string): string {
 /**
  * Filtert die Akte (Story #36).
  *
- * Gesucht wird in allem, was ein Ermittler ueber einen Beweis weiss: Titel,
- * Beschreibung, Fundort und die eigene Notiz. Mehrere Woerter muessen alle
+ * Gesucht wird in allem, was ein Ermittler über einen Beweis weiss: Titel,
+ * Beschreibung, Fundort und die eigene Notiz. Mehrere Wörter müssen alle
  * vorkommen, egal wo.
  */
 export function filterEvidence(

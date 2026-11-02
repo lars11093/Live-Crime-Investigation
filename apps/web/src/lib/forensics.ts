@@ -1,20 +1,20 @@
 import type { Device } from "@case-zero/shared";
 
 /**
- * Story #18 — wie ein Geraet im Forensik-Terminal erscheint.
+ * Story #18 — wie ein Gerät im Forensik-Terminal erscheint.
  *
  * Reine Funktion, damit die Regel "gesperrt ist erkennbar und nicht
  * auswertbar" ohne Browser testbar ist.
  */
 export interface DeviceEntry {
   device: Device;
-  /** Laesst sich das Geraet jetzt auswerten (Chatverlauf oeffnen)? */
+  /** Lässt sich das Gerät jetzt auswerten (Chatverlauf öffnen)? */
   canOpen: boolean;
   /** Status, wie er in der Liste steht, z. B. "Gesperrt · PIN, 4 Ziffern". */
   status: string;
-  /** Geraeteart in Worten (#44). */
+  /** Geräteart in Worten (#44). */
   kindLabel: string;
-  /** Schon einmal ausgewertet, d. h. geoeffnet (#44)? */
+  /** Schon einmal ausgewertet, d. h. geöffnet (#44)? */
   reviewed: boolean;
 }
 
@@ -22,11 +22,11 @@ export const DEVICE_KIND_LABEL: Record<NonNullable<Device["kind"]>, string> = {
   smartphone: "Smartphone",
   laptop: "Laptop",
   tablet: "Tablet",
-  storage: "Datentraeger",
+  storage: "Datenträger",
 };
 
 export function toDeviceEntry(device: Device, reviewedIds: readonly string[] = []): DeviceEntry {
-  const kindLabel = device.kind ? DEVICE_KIND_LABEL[device.kind] : "Geraet";
+  const kindLabel = device.kind ? DEVICE_KIND_LABEL[device.kind] : "Gerät";
   const reviewed = reviewedIds.includes(device.id);
   if (device.locked) {
     return {
@@ -74,7 +74,7 @@ export function deviceSummary(entries: DeviceEntry[]): string {
   return parts.join(" · ");
 }
 
-/** Merkt sich ein ausgewertetes Geraet — einmal reicht. */
+/** Merkt sich ein ausgewertetes Gerät — einmal reicht. */
 export function markReviewed(ids: string[], deviceId: string): string[] {
   return ids.includes(deviceId) ? ids : [...ids, deviceId];
 }

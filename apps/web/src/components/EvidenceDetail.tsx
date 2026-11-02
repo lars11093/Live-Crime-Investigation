@@ -25,7 +25,7 @@ interface Props {
     sharedBy: string | null;
     /** Ist man dem Team beigetreten? Ohne Namen gibt es keinen Urheber. */
     joined: boolean;
-    /** Teilt und liefert die Meldung fuer den Spieler. */
+    /** Teilt und liefert die Meldung für den Spieler. */
     onShare: () => Promise<string>;
   };
   onBack: () => void;
@@ -34,7 +34,7 @@ interface Props {
 /**
  * Story #11 — ein Beweis im Detail.
  * Zeigt Titel, Asservatenfoto, Beschreibung und den Fundort. Ohne Bild-Asset
- * steht hier ein Platzhalter mit dem Titel statt einer leeren Flaeche — wie
+ * steht hier ein Platzhalter mit dem Titel statt einer leeren Fläche — wie
  * bei der Szene in #7.
  */
 export function EvidenceDetail({
@@ -56,7 +56,7 @@ export function EvidenceDetail({
         <p className="terminal-title" style={{ margin: 0 }}>
           Asservat · {KIND_LABEL[evidence.kind]}
         </p>
-        <button onClick={onBack}>Zurueck zur Liste</button>
+        <button onClick={onBack}>Zurück zur Liste</button>
       </div>
 
       <h1 className="evidence-detail__title">{evidence.label}</h1>
@@ -115,7 +115,7 @@ export function EvidenceDetail({
   );
 }
 
-/** Story #23 — Teilen-Knopf mit Zustand und Rueckmeldung. */
+/** Story #23 — Teilen-Knopf mit Zustand und Rückmeldung. */
 function ShareAction({ sharedBy, joined, onShare }: NonNullable<Props["share"]>) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);

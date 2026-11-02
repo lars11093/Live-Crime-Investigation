@@ -4,16 +4,16 @@ import { FILE_TYPE_LABEL, openFile } from "../lib/deviceFiles";
 
 interface Props {
   device: Device;
-  /** Wechselt zum Chatverlauf desselben Geraets (#19). */
+  /** Wechselt zum Chatverlauf desselben Geräts (#19). */
   onShowMessages: () => void;
   onBack: () => void;
 }
 
 /**
- * Story #20 — Dateien auf einem Geraet oeffnen.
- * Links die Dateiliste, rechts die geoeffnete Datei: Text als Text, Bilder als
+ * Story #20 — Dateien auf einem Gerät öffnen.
+ * Links die Dateiliste, rechts die geöffnete Datei: Text als Text, Bilder als
  * Bild (mit Platzhalter, solange es kein Asset gibt), alles andere mit einem
- * Hinweis, warum es sich nicht oeffnen laesst.
+ * Hinweis, warum es sich nicht öffnen lässt.
  */
 export function DeviceFiles({ device, onShowMessages, onBack }: Props) {
   const files = device.files ?? [];
@@ -28,12 +28,12 @@ export function DeviceFiles({ device, onShowMessages, onBack }: Props) {
         </p>
         <span className="device-files__actions">
           <button onClick={onShowMessages}>Nachrichten</button>
-          <button onClick={onBack}>Zurueck zum Forensik-Terminal</button>
+          <button onClick={onBack}>Zurück zum Forensik-Terminal</button>
         </span>
       </div>
 
       {files.length === 0 ? (
-        <p className="evidence-list__empty">Auf diesem Geraet sind keine Dateien gespeichert.</p>
+        <p className="evidence-list__empty">Auf diesem Gerät sind keine Dateien gespeichert.</p>
       ) : (
         <div className="device-files">
           <ul className="device-files__list" aria-label={`Dateien auf ${device.label}`}>
@@ -58,7 +58,7 @@ export function DeviceFiles({ device, onShowMessages, onBack }: Props) {
               // key: beim Wechsel der Datei startet der Bild-Zustand neu.
               <FileViewer key={open.id} file={open} />
             ) : (
-              <p className="evidence-list__empty">Waehle links eine Datei, um sie zu oeffnen.</p>
+              <p className="evidence-list__empty">Wähle links eine Datei, um sie zu öffnen.</p>
             )}
           </div>
         </div>
@@ -86,7 +86,7 @@ function FileViewer({ file }: { file: DeviceFile }) {
             {opened.caption && (
               <p className="evidence-detail__placeholder-name">{opened.caption}</p>
             )}
-            <p className="scene__placeholder-hint">Bilddatei nicht verfuegbar</p>
+            <p className="scene__placeholder-hint">Bilddatei nicht verfügbar</p>
           </div>
         ) : (
           <figure className="device-files__figure">
@@ -102,7 +102,7 @@ function FileViewer({ file }: { file: DeviceFile }) {
 
       {opened.kind === "unreadable" && (
         <p className="device-files__unreadable" role="status">
-          Datei kann nicht geoeffnet werden. {opened.reason}
+          Datei kann nicht geöffnet werden. {opened.reason}
         </p>
       )}
     </div>

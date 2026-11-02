@@ -3,12 +3,12 @@ import type { TaskAck, TeamTask, TeamTaskPatch } from "@case-zero/shared";
 import { socket } from "./socket";
 
 /**
- * Die gemeinsame Aufgabenliste einer Session (Story #50) ueber Socket.IO.
+ * Die gemeinsame Aufgabenliste einer Session (Story #50) über Socket.IO.
  *
- * Laeuft ueber das Team aus #22: den Stand schickt der Server beim
- * `team:join` und nach jeder Aenderung. Der Client zeigt nur an, was
- * zurueckkommt — keine optimistischen Updates, die bei einer Ablehnung
- * zurueckgerollt werden muessten.
+ * Läuft über das Team aus #22: den Stand schickt der Server beim
+ * `team:join` und nach jeder Änderung. Der Client zeigt nur an, was
+ * zurückkommt — keine optimistischen Updates, die bei einer Ablehnung
+ * zurückgerollt werden müssten.
  */
 export function useTeamTasks(code: string) {
   const [tasks, setTasks] = useState<TeamTask[]>([]);

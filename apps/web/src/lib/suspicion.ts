@@ -1,9 +1,9 @@
 import type { Suspect } from "@case-zero/shared";
 
 /**
- * Wie verdaechtig der Ermittler eine Person findet (Story #43), 1 bis 4.
+ * Wie verdächtig der Ermittler eine Person findet (Story #43), 1 bis 4.
  *
- * Eine persoenliche Einschaetzung, die nichts ueber die Loesung verraet —
+ * Eine persönliche Einschätzung, die nichts über die Lösung verrät —
  * die kennt nur der Server.
  */
 export type SuspicionLevel = 1 | 2 | 3 | 4;
@@ -17,7 +17,7 @@ export const SUSPICION_LABEL: Record<SuspicionLevel, string> = {
   4: "Sehr hoch",
 };
 
-/** Setzt den Verdachtsgrad; derselbe Grad nochmal nimmt die Einschaetzung zurueck. */
+/** Setzt den Verdachtsgrad; derselbe Grad nochmal nimmt die Einschätzung zurück. */
 export function setSuspicion(
   levels: Record<string, SuspicionLevel>,
   suspectId: string,
@@ -31,8 +31,8 @@ export function setSuspicion(
 }
 
 /**
- * Die Person mit dem hoechsten Verdachtsgrad — nur, wenn sie eindeutig vorne
- * liegt. Bei Gleichstand gibt es keinen "Hauptverdaechtigen".
+ * Die Person mit dem höchsten Verdachtsgrad — nur, wenn sie eindeutig vorne
+ * liegt. Bei Gleichstand gibt es keinen "Hauptverdächtigen".
  */
 export function primeSuspect(
   suspects: Suspect[],

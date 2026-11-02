@@ -20,10 +20,10 @@ interface Props {
 }
 
 /**
- * Story #14 — Liste der Verdaechtigen.
- * Name und Bild pro Person, Anzahl in der Kopfzeile, Klick oeffnet das Profil.
- * Story #25 — Einen Verdaechtigen als Taeter auswaehlen.
- * Story #69 — Verdaechtige ausschliessen: Sie bleiben sichtbar, aber
+ * Story #14 — Liste der Verdächtigen.
+ * Name und Bild pro Person, Anzahl in der Kopfzeile, Klick öffnet das Profil.
+ * Story #25 — Einen Verdächtigen als Täter auswählen.
+ * Story #69 — Verdächtige ausschliessen: Sie bleiben sichtbar, aber
  * ausgegraut am Ende der Liste und lassen sich nicht anklagen.
  */
 export function SuspectList({
@@ -46,13 +46,13 @@ export function SuspectList({
     <section className="panel">
       <div className="evidence-list__bar">
         <p className="terminal-title" style={{ margin: 0 }}>
-          Verdaechtige · {excluded.size > 0 ? `${remaining} von ${suspects.length} verbleibend` : suspects.length}
+          Verdächtige · {excluded.size > 0 ? `${remaining} von ${suspects.length} verbleibend` : suspects.length}
         </p>
         <button onClick={onBack}>Zurück zur Fallakte</button>
       </div>
 
       {suspects.length === 0 ? (
-        <p className="evidence-list__empty">In diesem Fall ist niemand als verdaechtig gefuehrt.</p>
+        <p className="evidence-list__empty">In diesem Fall ist niemand als verdächtig geführt.</p>
       ) : (
         <ul className="suspect-list">
             {orderSuspects(suspects, excludedIds).map((suspect) => {
@@ -85,7 +85,7 @@ export function SuspectList({
                   type="button"
                   className="suspect-selection__button"
                   aria-pressed={isExcluded}
-                  // Wer angeklagt ist, laesst sich nicht gleichzeitig ausschliessen.
+                  // Wer angeklagt ist, lässt sich nicht gleichzeitig ausschliessen.
                   disabled={isSelected && !isExcluded}
                   onClick={() => onToggleExcluded(suspect.id)}
                 >

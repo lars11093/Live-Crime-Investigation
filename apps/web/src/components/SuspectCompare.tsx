@@ -10,7 +10,7 @@ interface Props {
 }
 
 /**
- * Story #40 — zwei Verdaechtige nebeneinander vergleichen.
+ * Story #40 — zwei Verdächtige nebeneinander vergleichen.
  *
  * Zwei Auswahlfelder, darunter eine Tabelle mit den Angaben beider Personen.
  * Zeilen, in denen sie sich unterscheiden, sind hervorgehoben; Uhrzeiten, die
@@ -37,7 +37,7 @@ export function SuspectCompare({ suspects, contradictions }: Props) {
 
   return (
     <section className="panel suspect-compare">
-      <p className="terminal-title">Verdaechtige vergleichen</p>
+      <p className="terminal-title">Verdächtige vergleichen</p>
 
       {left && right ? (
         <>
@@ -84,7 +84,7 @@ export function SuspectCompare({ suspects, contradictions }: Props) {
           )}
         </>
       ) : (
-        <p className="briefing__empty">Waehle zwei Personen aus.</p>
+        <p className="briefing__empty">Wähle zwei Personen aus.</p>
       )}
     </section>
   );

@@ -17,12 +17,12 @@ export function formatGps(lat: number, lng: number): string {
  * Die Metadaten eines Bildes als Tabelle (Story #45).
  *
  * Nur, was im Bild steht: fehlt ein Feld, fehlt die Zeile — ein leeres
- * "Ort: –" waere selbst schon eine Aussage ("GPS war aus"), die der Fall
+ * "Ort: –" wäre selbst schon eine Aussage ("GPS war aus"), die der Fall
  * dann explizit machen muss (`gpsDisabled`).
  */
 export function metadataRows(meta: ImageMetadata): MetadataRow[] {
   const rows: MetadataRow[] = [{ label: "Aufnahmezeit", value: meta.takenAt }];
-  if (meta.camera) rows.push({ label: "Geraet", value: meta.camera });
+  if (meta.camera) rows.push({ label: "Gerät", value: meta.camera });
   if (meta.gps) {
     rows.push({
       label: "GPS",
@@ -33,12 +33,12 @@ export function metadataRows(meta: ImageMetadata): MetadataRow[] {
   } else if (meta.gpsDisabled) {
     rows.push({ label: "GPS", value: "nicht aufgezeichnet" });
   }
-  if (meta.resolution) rows.push({ label: "Aufloesung", value: meta.resolution });
+  if (meta.resolution) rows.push({ label: "Auflösung", value: meta.resolution });
   if (meta.software) rows.push({ label: "Software", value: meta.software });
   return rows;
 }
 
-/** Kurzfassung fuer die Beweisakte, z. B. "aufgenommen 12.09. 20:44 · Pixel 7". */
+/** Kurzfassung für die Beweisakte, z. B. "aufgenommen 12.09. 20:44 · Pixel 7". */
 export function metadataSummary(meta: ImageMetadata): string {
   return [
     `aufgenommen ${meta.takenAt}`,

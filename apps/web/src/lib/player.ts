@@ -4,16 +4,16 @@ import type { Role } from "@case-zero/shared";
 export const ROLE_LABEL: Record<Role, string> = {
   forensics: "Forensiker",
   cyber: "Cyber Investigator",
-  interrogation: "Verhoer-Spezialist",
+  interrogation: "Verhör-Spezialist",
   field: "Field Detective",
   lead: "Lead Detective",
 };
 
 /** Kurz, was die Rolle exklusiv sieht (README Abschnitt 1). */
 export const ROLE_FOCUS: Record<Role, string> = {
-  forensics: "DNA, Fingerabdruecke, Autopsie",
+  forensics: "DNA, Fingerabdrücke, Autopsie",
   cyber: "Handys, Chats, Dateien, Metadaten",
-  interrogation: "Verdaechtige befragen",
+  interrogation: "Verdächtige befragen",
   field: "Orte, CCTV, Zeugenaussagen",
   lead: "Timeline und Evidence Board",
 };

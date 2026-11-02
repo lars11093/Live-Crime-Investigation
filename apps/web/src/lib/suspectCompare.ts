@@ -2,7 +2,7 @@ import type { Suspect } from "@case-zero/shared";
 import type { Contradiction } from "./caseProgress";
 import { timesIn } from "./statement";
 
-/** Eine Zeile im Vergleich zweier Verdaechtiger (#40). */
+/** Eine Zeile im Vergleich zweier Verdächtiger (#40). */
 export interface CompareRow {
   label: string;
   left: string;
@@ -12,11 +12,11 @@ export interface CompareRow {
 }
 
 /**
- * Stellt zwei Verdaechtige Angabe fuer Angabe gegenueber (Story #40).
+ * Stellt zwei Verdächtige Angabe für Angabe gegenüber (Story #40).
  *
  * Neben den Profildaten (#15) kommen zwei abgeleitete Zeilen dazu, weil genau
- * dort die Unterschiede fuer die Ermittlung stecken: die Uhrzeiten aus der
- * Aussage (#16) und wie viele Saetze man selbst als Widerspruch markiert
+ * dort die Unterschiede für die Ermittlung stecken: die Uhrzeiten aus der
+ * Aussage (#16) und wie viele Sätze man selbst als Widerspruch markiert
  * hat (#17).
  */
 export function compareSuspects(
@@ -43,7 +43,7 @@ export function compareSuspects(
     row("Beziehung zum Opfer", (s) => s.relationToVictim),
     row("Bekanntes Motiv", motive),
     row("Uhrzeiten in der Aussage", times),
-    row("Markierte Widersprueche", marked),
+    row("Markierte Widersprüche", marked),
   ];
 }
 
@@ -51,7 +51,7 @@ export function compareSuspects(
  * Uhrzeiten, die nur einer der beiden nennt (#40).
  *
  * Nennen beide dieselbe Uhrzeit, war vielleicht beides zur selben Zeit am
- * selben Ort — das ist fuer den Vergleich spannender als die Zeit selbst.
+ * selben Ort — das ist für den Vergleich spannender als die Zeit selbst.
  */
 export function sharedTimes(left: Suspect, right: Suspect): string[] {
   const rightTimes = new Set(timesIn(right.statement ?? ""));

@@ -4,7 +4,7 @@ import { UnlockForm } from "./UnlockForm";
 
 interface Props {
   devices: Device[];
-  /** Bereits geoeffnete Geraete (#44). */
+  /** Bereits geöffnete Geräte (#44). */
   reviewedIds?: string[];
   onOpen: (deviceId: string) => void;
   /** Entsperren (#70): `null` bei Erfolg, sonst die Meldung. */
@@ -13,15 +13,15 @@ interface Props {
 }
 
 /**
- * Story #18 — Forensik-Terminal oeffnen.
- * Listet alle sichergestellten Geraete mit Besitzer und Status. Offene Geraete
+ * Story #18 — Forensik-Terminal öffnen.
+ * Listet alle sichergestellten Geräte mit Besitzer und Status. Offene Geräte
  * lassen sich auswerten (Chatverlauf, #19), gesperrte sind deutlich als
  * gesperrt markiert und nicht anklickbar.
  *
- * Story #70 — unter einem gesperrten Geraet steht das Feld fuer PIN bzw.
- * Passwort. Nach dem Entsperren ist es ein auswertbares Geraet wie die anderen.
+ * Story #70 — unter einem gesperrten Gerät steht das Feld für PIN bzw.
+ * Passwort. Nach dem Entsperren ist es ein auswertbares Gerät wie die anderen.
  *
- * Story #44 — alle sichergestellten Geraete auflisten. Dazu Geraeteart, wo es
+ * Story #44 — alle sichergestellten Geräte auflisten. Dazu Geräteart, wo es
  * sichergestellt wurde und ob es schon ausgewertet ist; was noch aussteht,
  * steht oben.
  */
@@ -32,13 +32,13 @@ export function ForensicsTerminal({ devices, reviewedIds = [], onOpen, onUnlock,
     <section className="panel">
       <div className="evidence-list__bar">
         <p className="terminal-title" style={{ margin: 0 }}>
-          Forensik-Terminal · {devices.length} {devices.length === 1 ? "Geraet" : "Geraete"}
+          Forensik-Terminal · {devices.length} {devices.length === 1 ? "Gerät" : "Geräte"}
         </p>
-        <button onClick={onBack}>Zurueck zur Fallakte</button>
+        <button onClick={onBack}>Zurück zur Fallakte</button>
       </div>
 
       {entries.length === 0 ? (
-        <p className="evidence-list__empty">In diesem Fall wurden keine Geraete sichergestellt.</p>
+        <p className="evidence-list__empty">In diesem Fall wurden keine Geräte sichergestellt.</p>
       ) : (
         <>
           <p className="case-status__hint">{deviceSummary(entries)}</p>

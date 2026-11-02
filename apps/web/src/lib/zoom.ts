@@ -1,7 +1,7 @@
 /**
- * Zoomstufen fuer den Tatort (Story #33).
+ * Zoomstufen für den Tatort (Story #33).
  *
- * Feste Stufen statt stufenlos: mit Knoepfen und Tastatur bedient sich das
+ * Feste Stufen statt stufenlos: mit Knöpfen und Tastatur bedient sich das
  * vorhersehbarer, und 300 % reicht, um Details wie den Lippenstift am
  * Tassenrand zu erkennen.
  */

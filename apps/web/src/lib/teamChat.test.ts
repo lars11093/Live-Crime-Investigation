@@ -12,13 +12,13 @@ const msg = (id: string, playerId: string): TeamChatMessage => ({
 });
 
 describe("Team-Chat im Client (#49)", () => {
-  it("haengt neue Nachrichten an, doppelte nicht", () => {
+  it("hängt neue Nachrichten an, doppelte nicht", () => {
     const list = appendMessage([], msg("1", "anna"));
     expect(appendMessage(list, msg("1", "anna"))).toBe(list);
     expect(appendMessage(list, msg("2", "ben"))).toHaveLength(2);
   });
 
-  it("zaehlt nur ungelesene Nachrichten anderer", () => {
+  it("zählt nur ungelesene Nachrichten anderer", () => {
     const list = [msg("1", "anna"), msg("2", "ben"), msg("3", "anna"), msg("4", "ben")];
     expect(unreadCount(list, "anna", 0)).toBe(2);
     expect(unreadCount(list, "anna", 3)).toBe(1);

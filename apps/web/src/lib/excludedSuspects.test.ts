@@ -12,7 +12,7 @@ function memoryStorage() {
   };
 }
 
-describe("Verdaechtige ausschliessen (#69)", () => {
+describe("Verdächtige ausschliessen (#69)", () => {
   it("schliesst aus und nimmt wieder auf", () => {
     expect(toggleExcluded([], "leo")).toEqual(["leo"]);
     expect(toggleExcluded(["leo", "monica"], "leo")).toEqual(["monica"]);

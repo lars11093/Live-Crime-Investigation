@@ -13,7 +13,7 @@ describe("Team merken (#57)", () => {
     expect(loadSavedTeam(storage)).toEqual({ code: "ABC-DEF", name: "Loris" });
   });
 
-  it("verwirft ungueltige Eintraege", () => {
+  it("verwirft ungültige Einträge", () => {
     const storage = memoryStorage();
     expect(loadSavedTeam(storage)).toBeNull();
     storage.data.set("case-zero:last-team", JSON.stringify({ code: "falsch", name: "Loris" }));

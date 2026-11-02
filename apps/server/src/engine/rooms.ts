@@ -13,7 +13,7 @@ import type {
  *
  * Entscheidung zur offenen Frage im Issue ("Wie wird eine Session
  * serverseitig gehalten?"): im Server-Prozess, ohne Datenbank — so steht es
- * in CLAUDE.md fuer die MVP-Phase. Konsequenz, die das Team kennen muss:
+ * in CLAUDE.md für die MVP-Phase. Konsequenz, die das Team kennen muss:
  * ein Server-Neustart verwirft alle laufenden Sessions.
  */
 export interface Room {
@@ -26,11 +26,11 @@ export interface Room {
   accusation?: AccusationReceipt;
   /** Teamleiter (#48) — der erste Spieler, der dem Team beitritt. */
   leaderId?: string;
-  /** Verlauf des Team-Chats (#49), die aelteste Nachricht zuerst. */
+  /** Verlauf des Team-Chats (#49), die älteste Nachricht zuerst. */
   chat?: TeamChatMessage[];
   /** Gemeinsame Aufgabenliste (#50). */
   tasks?: TeamTask[];
-  /** Wann die Session angelegt wurde — fuer den Tempobonus (#54). */
+  /** Wann die Session angelegt wurde — für den Tempobonus (#54). */
   createdAt: Date;
 }
 
@@ -57,8 +57,8 @@ function pickScenario(caseDef: CaseDefinition) {
 
 export function createRoom(caseDef: CaseDefinition): Room {
   let code = `${nanoid()}-${nanoid()}`;
-  // Bei 32^6 Kombinationen praktisch nie noetig, aber billiger als ein
-  // ueberschriebener Raum mit fremden Spielern darin.
+  // Bei 32^6 Kombinationen praktisch nie nötig, aber billiger als ein
+  // überschriebener Raum mit fremden Spielern darin.
   while (rooms.has(code)) {
     code = `${nanoid()}-${nanoid()}`;
   }

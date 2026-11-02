@@ -13,7 +13,7 @@ interface Props {
  *
  * Das Bild selbst gibt es nicht (keine Assets im Repo, CLAUDE.md) — nur den
  * Anhang mit Dateinamen. Der eigentliche Fund steckt in den Metadaten:
- * Aufnahmezeit, Geraet, Ort.
+ * Aufnahmezeit, Gerät, Ort.
  */
 export function ImageAttachment({ attachment, read, onRead }: Props) {
   return (

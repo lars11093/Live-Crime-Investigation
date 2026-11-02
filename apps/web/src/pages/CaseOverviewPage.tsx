@@ -12,10 +12,10 @@ type LoadState =
   | { status: "ready"; cases: CaseSummary[] };
 
 /**
- * Story #30 — Uebersicht der verfuegbaren Faelle.
+ * Story #30 — Übersicht der verfügbaren Fälle.
  *
- * Pro Fall: Titel, Tatort, Tatzeit und Anzahl Verdaechtige — genug, um zu
- * waehlen, ohne etwas von der Loesung zu verraten. "Diesen Fall starten"
+ * Pro Fall: Titel, Tatort, Tatzeit und Anzahl Verdächtige — genug, um zu
+ * wählen, ohne etwas von der Lösung zu verraten. "Diesen Fall starten"
  * legt wie bisher eine Team-Session an (#5).
  */
 export function CaseOverviewPage() {
@@ -23,7 +23,7 @@ export function CaseOverviewPage() {
   const [state, setState] = useState<LoadState>({ status: "loading" });
   const [startingId, setStartingId] = useState<string | null>(null);
   const [startError, setStartError] = useState<string | null>(null);
-  // Schwierigkeitsstufe fuer den naechsten Start (#56).
+  // Schwierigkeitsstufe für den nächsten Start (#56).
   const [difficulty, setDifficulty] = useState<Difficulty>("normal");
 
   const load = useCallback(() => {
@@ -59,7 +59,7 @@ export function CaseOverviewPage() {
     <main className="app-shell">
       <div className="evidence-list__bar">
         <p className="terminal-title" style={{ margin: 0 }}>
-          Verfuegbare Faelle
+          Verfügbare Fälle
         </p>
         <button onClick={() => navigate("/")}>Zur Startseite</button>
       </div>
@@ -83,13 +83,13 @@ export function CaseOverviewPage() {
       {state.status === "loading" && (
         <div className="panel case-status">
           <span className="case-status__spinner" aria-hidden="true" />
-          <p>Faelle werden geladen&hellip;</p>
+          <p>Fälle werden geladen&hellip;</p>
         </div>
       )}
 
       {state.status === "error" && (
         <div className="panel case-status">
-          <p className="case-status__error">Faelle konnten nicht geladen werden</p>
+          <p className="case-status__error">Fälle konnten nicht geladen werden</p>
           <div className="case-status__actions">
             <button className="button--primary" onClick={load}>
               Erneut versuchen
@@ -100,7 +100,7 @@ export function CaseOverviewPage() {
 
       {state.status === "ready" &&
         (state.cases.length === 0 ? (
-          <p className="evidence-list__empty">Zurzeit ist kein Fall verfuegbar.</p>
+          <p className="evidence-list__empty">Zurzeit ist kein Fall verfügbar.</p>
         ) : (
           <ul className="case-overview">
             {state.cases.map((summary) => (
@@ -118,7 +118,7 @@ export function CaseOverviewPage() {
                     <dd>{summary.timeOfCrime ?? "unbekannt"}</dd>
                   </div>
                   <div>
-                    <dt>Verdaechtige</dt>
+                    <dt>Verdächtige</dt>
                     <dd>{summary.suspectCount}</dd>
                   </div>
                 </dl>

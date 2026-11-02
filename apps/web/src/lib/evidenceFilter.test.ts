@@ -7,7 +7,7 @@ const item = (id: string, kind: CollectedEvidence["kind"], label: string, descri
   kind,
   label,
   description,
-  foundAt: { sceneName: "Buero 4.12", hotspotLabel: "Schreibtisch" },
+  foundAt: { sceneName: "Büro 4.12", hotspotLabel: "Schreibtisch" },
 });
 
 const akte = [
@@ -26,20 +26,20 @@ describe("Beweise filtern (#36)", () => {
     expect(filterEvidence(akte, { query: "zutritte", kinds: [] }).map((e) => e.id)).toEqual(["badge"]);
   });
 
-  it("findet auch ueber die eigene Notiz", () => {
+  it("findet auch über die eigene Notiz", () => {
     const notes = { kratzer: "Passt zu Monica?" };
     expect(filterEvidence(akte, { query: "monica", kinds: [] }, notes).map((e) => e.id)).toEqual([
       "kratzer",
     ]);
   });
 
-  it("verlangt alle Woerter", () => {
+  it("verlangt alle Wörter", () => {
     expect(filterEvidence(akte, { query: "tasse kalte", kinds: [] })).toHaveLength(1);
     expect(filterEvidence(akte, { query: "tasse badge", kinds: [] })).toHaveLength(0);
   });
 
   it("behandelt Umlaute und ihre Umschreibung gleich", () => {
-    const list = [item("k", "object", "Notebook mit Kuendigungsentwurf")];
+    const list = [item("k", "object", "Notebook mit Kündigungsentwurf")];
     expect(filterEvidence(list, { query: "Kündigung", kinds: [] })).toHaveLength(1);
   });
 

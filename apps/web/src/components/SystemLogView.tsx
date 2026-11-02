@@ -10,9 +10,9 @@ interface Props {
 /**
  * Story #46 — Systemprotokolle analysieren.
  *
- * Das Protokoll eines Geraets als Terminal-Liste. Eintraege in der Tatzeit
+ * Das Protokoll eines Geräts als Terminal-Liste. Einträge in der Tatzeit
  * sind rot markiert, Kategorien lassen sich filtern, und oben steht, wann das
- * Geraet zuletzt aktiv bedient wurde.
+ * Gerät zuletzt aktiv bedient wurde.
  */
 export function SystemLogView({ log, crimeWindow }: Props) {
   const [categories, setCategories] = useState<LogCategory[]>([]);
@@ -22,7 +22,7 @@ export function SystemLogView({ log, crimeWindow }: Props) {
     return (
       <section className="panel">
         <p className="terminal-title">Systemprotokoll</p>
-        <p className="evidence-list__empty">Fuer dieses Geraet liegt kein Systemprotokoll vor.</p>
+        <p className="evidence-list__empty">Für dieses Gerät liegt kein Systemprotokoll vor.</p>
       </section>
     );
   }
@@ -43,13 +43,13 @@ export function SystemLogView({ log, crimeWindow }: Props) {
 
   return (
     <section className="panel">
-      <p className="terminal-title">Systemprotokoll · {log.length} Eintraege</p>
+      <p className="terminal-title">Systemprotokoll · {log.length} Einträge</p>
       <p className="case-status__hint">
         {span
           ? `Aktiv benutzt zwischen ${span.first} und ${span.last}`
           : "Keine aktive Benutzung protokolliert"}
         {crimeWindow &&
-          ` · ${inWindowCount} ${inWindowCount === 1 ? "Eintrag" : "Eintraege"} in der Tatzeit ${crimeWindow.from}–${crimeWindow.to}`}
+          ` · ${inWindowCount} ${inWindowCount === 1 ? "Eintrag" : "Einträge"} in der Tatzeit ${crimeWindow.from}–${crimeWindow.to}`}
       </p>
 
       <div className="evidence-filter__kinds" role="group" aria-label="Protokoll filtern">

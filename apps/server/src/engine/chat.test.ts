@@ -39,7 +39,7 @@ describe("Team-Chat (#49)", () => {
     expect(result.ok && result.message).toMatchObject({ name: "Anna", role: "cyber" });
   });
 
-  it("laesst nur Teammitglieder schreiben", () => {
+  it("lässt nur Teammitglieder schreiben", () => {
     const room = roomWithAnna();
     expect(addChatMessage(room, "socket-fremd", "Hallo", now)).toEqual({
       ok: false,
@@ -55,7 +55,7 @@ describe("Team-Chat (#49)", () => {
     expect(room.chat ?? []).toHaveLength(0);
   });
 
-  it("behaelt nur die letzten Nachrichten", () => {
+  it("behält nur die letzten Nachrichten", () => {
     const room = roomWithAnna();
     for (let i = 0; i < CHAT_HISTORY_MAX + 5; i++) {
       addChatMessage(room, "socket-anna", `Nachricht ${i}`, now, `m${i}`);

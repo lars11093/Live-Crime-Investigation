@@ -7,23 +7,23 @@ interface Props {
   players: Player[];
   /** Socket-ID der Teamleitung (#48). */
   leaderId: string | null;
-  /** Erst nach dem Beitritt (#22) kann man eine Rolle waehlen. */
+  /** Erst nach dem Beitritt (#22) kann man eine Rolle wählen. */
   joined: boolean;
   /** Fehler aus dem letzten Versuch, z. B. "Die Rolle ist schon vergeben". */
   error: string | null;
-  /** Rolle eines Spielers setzen — die eigene (#31) oder als Teamleitung fuer andere (#48). */
+  /** Rolle eines Spielers setzen — die eigene (#31) oder als Teamleitung für andere (#48). */
   onAssign: (playerId: string, role: Role | null) => void;
   onBack: () => void;
 }
 
 /**
- * Story #31 — im Team eine Rolle waehlen.
+ * Story #31 — im Team eine Rolle wählen.
  *
- * Alle fuenf Rollen mit dem, was sie exklusiv sehen. Vergebene Rollen zeigen,
- * wer sie hat, und sind fuer alle anderen gesperrt.
+ * Alle fünf Rollen mit dem, was sie exklusiv sehen. Vergebene Rollen zeigen,
+ * wer sie hat, und sind für alle anderen gesperrt.
  *
  * Story #48 — die Teamleitung vergibt Rollen. Wer das Team leitet, sieht
- * zusaetzlich alle Mitspieler mit einer Rollenauswahl. Die Regel "jede Rolle
+ * zusätzlich alle Mitspieler mit einer Rollenauswahl. Die Regel "jede Rolle
  * einmal" gilt auch hier; der Server setzt sie durch.
  */
 export function TeamRoles({ myId, players, leaderId, joined, error, onAssign, onBack }: Props) {
@@ -38,7 +38,7 @@ export function TeamRoles({ myId, players, leaderId, joined, error, onAssign, on
           Team · Rollen
         </p>
         <div className="case-status__actions" style={{ margin: 0 }}>
-          <button onClick={onBack}>Zurueck zur Fallakte</button>
+          <button onClick={onBack}>Zurück zur Fallakte</button>
         </div>
       </div>
 
@@ -48,7 +48,7 @@ export function TeamRoles({ myId, players, leaderId, joined, error, onAssign, on
             Deine Rolle: <strong>{ROLE_LABEL[myRole]}</strong>
           </>
         ) : (
-          "Du hast noch keine Rolle. Waehle, welchen Teil der Ermittlung du uebernimmst."
+          "Du hast noch keine Rolle. Wähle, welchen Teil der Ermittlung du übernimmst."
         )}
         {leader && (
           <>
@@ -114,7 +114,7 @@ export function TeamRoles({ myId, players, leaderId, joined, error, onAssign, on
                       disabled={Boolean(holder) || !myId}
                       onClick={() => onAssign(myId!, role)}
                     >
-                      {holder ? "Vergeben" : "Diese Rolle uebernehmen"}
+                      {holder ? "Vergeben" : "Diese Rolle übernehmen"}
                     </button>
                   )}
                 </li>

@@ -33,7 +33,7 @@ describe("Anmelden (#29)", () => {
     expect(loadAccount(storage)).toBeNull();
   });
 
-  it("meldet mit ungueltigem Namen nicht an", () => {
+  it("meldet mit ungültigem Namen nicht an", () => {
     const storage = fakeStorage();
     expect(login(storage, " ")).toBeNull();
     expect(loadAccount(storage)).toBeNull();

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 
 interface Props {
-  /** Fuer die Zuordnung von Label und Feld. */
+  /** Für die Zuordnung von Label und Feld. */
   evidenceId: string;
   /** Gespeicherte Notiz, leer wenn keine da ist (#12). */
   note: string;
   /** Wann die Notiz zuletzt gespeichert wurde (#38). */
   editedAt?: string;
-  /** Leerer Text loescht die Notiz (siehe setNote). */
+  /** Leerer Text löscht die Notiz (siehe setNote). */
   onSave: (text: string) => void;
 }
 
@@ -22,16 +22,16 @@ function formatEditedAt(iso: string): string {
  *
  * Ohne Notiz: direkt ein Eingabefeld. Mit Notiz: zuerst die Notiz zum Lesen,
  * dann "Bearbeiten" — mit "Abbrechen", das den gespeicherten Stand
- * zurueckholt, und "Loeschen". So wird eine Ueberlegung nicht aus Versehen
- * ueberschrieben, wenn man den Beweis nur ansehen will.
+ * zurückholt, und "Löschen". So wird eine Überlegung nicht aus Versehen
+ * überschrieben, wenn man den Beweis nur ansehen will.
  */
 export function NoteEditor({ evidenceId, note, editedAt, onSave }: Props) {
   const [editing, setEditing] = useState(!note);
   const [draft, setDraft] = useState(note);
   const [saved, setSaved] = useState(false);
 
-  // Nur beim Wechsel auf einen anderen Beweis zuruecksetzen — nicht, wenn sich
-  // die Notiz durch das eigene Speichern aendert, sonst verschwaende
+  // Nur beim Wechsel auf einen anderen Beweis zurücksetzen — nicht, wenn sich
+  // die Notiz durch das eigene Speichern ändert, sonst verschwände
   // "Gespeichert" sofort wieder.
   useEffect(() => {
     setDraft(note);
@@ -66,11 +66,11 @@ export function NoteEditor({ evidenceId, note, editedAt, onSave }: Props) {
         <p className="team-code__label">Meine Notiz</p>
         <p className="evidence-note__text">{note}</p>
         {editedAt && formatEditedAt(editedAt) && (
-          <p className="evidence-note__meta">Zuletzt geaendert {formatEditedAt(editedAt)}</p>
+          <p className="evidence-note__meta">Zuletzt geändert {formatEditedAt(editedAt)}</p>
         )}
         <div className="case-status__actions">
           <button onClick={() => setEditing(true)}>Bearbeiten</button>
-          <button onClick={remove}>Loeschen</button>
+          <button onClick={remove}>Löschen</button>
           {saved && (
             <span className="evidence-note__saved" role="status">
               Gespeichert
@@ -91,7 +91,7 @@ export function NoteEditor({ evidenceId, note, editedAt, onSave }: Props) {
         className="evidence-note__input"
         value={draft}
         rows={4}
-        placeholder="Was faellt dir an diesem Beweis auf?"
+        placeholder="Was fällt dir an diesem Beweis auf?"
         autoFocus={Boolean(note)}
         onChange={(e) => {
           setDraft(e.target.value);
@@ -100,7 +100,7 @@ export function NoteEditor({ evidenceId, note, editedAt, onSave }: Props) {
       />
       <div className="case-status__actions">
         <button className="button--primary" onClick={save} disabled={!dirty}>
-          {note ? "Aenderungen speichern" : "Notiz speichern"}
+          {note ? "Änderungen speichern" : "Notiz speichern"}
         </button>
         {note && <button onClick={cancel}>Abbrechen</button>}
       </div>

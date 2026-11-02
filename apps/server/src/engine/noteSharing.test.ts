@@ -26,7 +26,7 @@ describe("Notiz mit dem Team teilen (#64)", () => {
     ]);
   });
 
-  it("ersetzt die eigene Notiz zum selben Beweis, laesst fremde stehen", () => {
+  it("ersetzt die eigene Notiz zum selben Beweis, lässt fremde stehen", () => {
     const room = createRoom(caseDef);
     joinTeam(room, "s1", "Loris");
     joinTeam(room, "s2", "Lars");
@@ -36,7 +36,7 @@ describe("Notiz mit dem Team teilen (#64)", () => {
     expect(notesOf(room).map((n) => n.text)).toEqual(["andere Person", "zweite"]);
   });
 
-  it("prueft Team, Beweis und Text", () => {
+  it("prüft Team, Beweis und Text", () => {
     const room = createRoom(caseDef);
     joinTeam(room, "s1", "Loris");
     expect(shareNote(room, "fremd", note("x"))).toEqual({ ok: false, reason: "not-in-team" });

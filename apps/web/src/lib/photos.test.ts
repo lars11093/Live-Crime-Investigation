@@ -4,7 +4,7 @@ import { parsePhotos, photoCrop, storePhoto, type EvidencePhoto } from "./photos
 const photo: EvidencePhoto = {
   evidenceId: "tasse-lippenstift",
   takenAt: "2026-10-26T10:00:00.000Z",
-  sceneName: "Buero 4.12",
+  sceneName: "Büro 4.12",
   sceneImagePath: "/scenes/case-01/buero-412.jpg",
   hotspotLabel: "Tasse auf der Ablage",
   x: 55,
@@ -25,7 +25,7 @@ describe("Fund fotografieren (#35)", () => {
     expect(photoCrop({ ...photo, zoom: 3 }).backgroundSize).toBe("600% auto");
   });
 
-  it("uebersteht Speichern und Laden, Kaputtes faellt weg", () => {
+  it("übersteht Speichern und Laden, Kaputtes fällt weg", () => {
     const stored = JSON.parse(JSON.stringify({ a: photo, b: { x: "kaputt" } }));
     expect(parsePhotos(stored)).toEqual({ a: { ...photo, evidenceId: "a" } });
     expect(parsePhotos(null)).toEqual({});

@@ -5,7 +5,7 @@ export interface RestartDeps {
   createRoom: (caseId: string, difficulty: Difficulty) => Promise<{ code: string }>;
   /** Nimmt das Team mit (#57). Fehlt, wenn man keinem Team beigetreten ist. */
   moveTeam?: (newCode: string) => Promise<{ ok: boolean }>;
-  /** Ueberspringt das Intro in der neuen Session — man kennt es schon (#58). */
+  /** Überspringt das Intro in der neuen Session — man kennt es schon (#58). */
   skipIntro: (newCode: string) => void;
   go: (newCode: string) => void;
 }
@@ -13,12 +13,12 @@ export interface RestartDeps {
 /**
  * Story #79 — einen Fall neu starten.
  *
- * Neu starten heisst: neue Team-Session fuer denselben Fall und dieselbe
- * Schwierigkeit. Der Server waehlt dabei das Taeter-Szenario neu, und der
- * Fortschritt beginnt leer, weil er am Team-Code haengt. Ist man im Team,
+ * Neu starten heisst: neue Team-Session für denselben Fall und dieselbe
+ * Schwierigkeit. Der Server wählt dabei das Täter-Szenario neu, und der
+ * Fortschritt beginnt leer, weil er am Team-Code hängt. Ist man im Team,
  * kommt das ganze Team mit; sonst wechselt nur man selbst.
  *
- * Gibt `null` bei Erfolg zurueck, sonst die Meldung fuer den Spieler.
+ * Gibt `null` bei Erfolg zurück, sonst die Meldung für den Spieler.
  */
 export async function restartCase(caseId: string, difficulty: Difficulty, deps: RestartDeps): Promise<string | null> {
   let code: string;

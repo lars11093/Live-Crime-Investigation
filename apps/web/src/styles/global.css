@@ -268,14 +268,14 @@ body,
 
 /* ---------------------------------------------------------------
    Story #7 — Tatort als Szene
-   Vollflaechig ohne horizontales Scrollen: die Szene ist genau so
+   Vollflächig ohne horizontales Scrollen: die Szene ist genau so
    breit wie der Viewport, das Bild wird zugeschnitten statt gestreckt.
    --------------------------------------------------------------- */
 
 .scene {
   position: relative;
   width: 100vw;
-  /* 100dvh faengt die Browserleisten auf Mobilgeraeten ab. */
+  /* 100dvh fängt die Browserleisten auf Mobilgeräten ab. */
   height: 100dvh;
   max-width: 100%;
   overflow: hidden;
@@ -299,7 +299,7 @@ body,
   padding: 2rem;
   text-align: center;
   background-color: #04060a;
-  /* Diagonales Absperrband-Raster statt weisser Flaeche. */
+  /* Diagonales Absperrband-Raster statt weisser Fläche. */
   background-image: repeating-linear-gradient(
     45deg,
     rgba(34, 197, 94, 0.05) 0px,
@@ -444,7 +444,7 @@ button:disabled:hover {
 /* ---------------------------------------------------------------
    Story #8 — Stellen im Tatort anklicken
    Position kommt aus den Falldaten in Prozent, damit die Hotspots
-   bei jeder Viewport-Groesse an derselben Stelle im Bild sitzen.
+   bei jeder Viewport-Grösse an derselben Stelle im Bild sitzen.
    --------------------------------------------------------------- */
 
 .hotspot {
@@ -518,7 +518,7 @@ button:disabled:hover {
 }
 
 /* ---------------------------------------------------------------
-   3D-Tatort: Canvas fuellt die Szene, Hotspots haengen an den
+   3D-Tatort: Canvas füllt die Szene, Hotspots hängen an den
    Markierungen im Modell (drei <Html>) statt an Prozentwerten.
    --------------------------------------------------------------- */
 
@@ -526,7 +526,7 @@ button:disabled:hover {
   position: absolute !important;
   inset: 0;
   /* Eigener Stapelkontext: die z-indizes der drei-<Html>-Hotspots bleiben
-     unter Detail-Dialog und Bestaetigung. */
+     unter Detail-Dialog und Bestätigung. */
   z-index: 0;
   cursor: grab;
   touch-action: none;
@@ -909,7 +909,7 @@ button:disabled:hover {
 }
 
 /* ---------------------------------------------------------------
-   Story #14 — Liste der Verdaechtigen
+   Story #14 — Liste der Verdächtigen
    --------------------------------------------------------------- */
 
 .suspect-list {
@@ -987,7 +987,7 @@ button:disabled:hover {
   margin-top: 1rem;
 }
 
-/* Story #15 — Profil eines Verdaechtigen */
+/* Story #15 — Profil eines Verdächtigen */
 .suspect-profile__motive {
   margin-top: 1.5rem;
 }
@@ -1046,7 +1046,7 @@ button:disabled:hover {
 }
 
 /* ---------------------------------------------------------------
-   Story #17 — Widersprueche markieren
+   Story #17 — Widersprüche markieren
    --------------------------------------------------------------- */
 
 .statement__sentence {
@@ -1101,11 +1101,11 @@ button:disabled:hover {
 }
 
 /* ---------------------------------------------------------------
-   Story #19 — Chatverlauf eines Geraets
+   Story #19 — Chatverlauf eines Geräts
    --------------------------------------------------------------- */
 
-/* Eigenes Scrollfenster: lange Verlaeufe schieben die Kopfzeile mit
-   "Zurueck" nicht aus dem Bild. */
+/* Eigenes Scrollfenster: lange Verläufe schieben die Kopfzeile mit
+   "Zurück" nicht aus dem Bild. */
 .chat {
   list-style: none;
   margin: 0;
@@ -1421,7 +1421,7 @@ button:disabled:hover {
 }
 
 /* ---------------------------------------------------------------
-   Story #20 — Dateien auf einem Geraet
+   Story #20 — Dateien auf einem Gerät
    --------------------------------------------------------------- */
 
 .device-files__actions {
@@ -1556,7 +1556,7 @@ button:disabled:hover {
   color: var(--danger);
 }
 
-/* Story #27 — Bestaetigung nach dem Absenden */
+/* Story #27 — Bestätigung nach dem Absenden */
 .accusation__confirmation {
   border: 1px solid var(--accent);
   border-radius: 3px;
@@ -1564,7 +1564,7 @@ button:disabled:hover {
   color: var(--accent);
 }
 
-/* Story #28 — Aufloesung */
+/* Story #28 — Auflösung */
 .resolution {
   display: grid;
   gap: 0.6rem;
@@ -1745,7 +1745,7 @@ div.account-bar {
   font-size: 0.8rem;
 }
 
-/* Story #69 — ausgeschlossene Verdaechtige */
+/* Story #69 — ausgeschlossene Verdächtige */
 .suspect--excluded .suspect {
   opacity: 0.45;
 }
@@ -1754,7 +1754,7 @@ div.account-bar {
   text-decoration: line-through;
 }
 
-/* Story #70 — Geraet entsperren */
+/* Story #70 — Gerät entsperren */
 .unlock {
   margin: 0.5rem 0 1rem;
   padding: 0.75rem 1rem;
@@ -1778,7 +1778,7 @@ div.account-bar {
   font-size: 0.85rem;
 }
 
-/* Story #53 — Bestaetigung vor dem Absenden */
+/* Story #53 — Bestätigung vor dem Absenden */
 .confirm-dialog {
   position: fixed;
   inset: 0;
@@ -2032,13 +2032,13 @@ div.account-bar {
   cursor: pointer;
 }
 
-/* Leicht: Stellen mit Fund leuchten zusaetzlich auf. */
+/* Leicht: Stellen mit Fund leuchten zusätzlich auf. */
 .scene--leicht .hotspot--find .hotspot__ring {
   border-color: var(--danger);
   background: rgba(239, 68, 68, 0.2);
 }
 
-/* Schwer: Namen erst beim Darueberfahren, kein Pulsieren. */
+/* Schwer: Namen erst beim Darüberfahren, kein Pulsieren. */
 .scene--schwer .hotspot__label {
   opacity: 0;
   transition: opacity 0.15s;
@@ -2146,7 +2146,7 @@ div.account-bar {
 /* Story #32 — Ermittlungsziel jederzeit */
 .objective-dock {
   position: fixed;
-  /* Oben rechts: unten liegt im Tatort die Szenenleiste mit "Zurueck". */
+  /* Oben rechts: unten liegt im Tatort die Szenenleiste mit "Zurück". */
   right: 1rem;
   top: 1rem;
   z-index: 50;
@@ -2341,7 +2341,7 @@ div.account-bar {
   margin: 0;
 }
 
-/* Story #39 — Verknuepfungen bewerten */
+/* Story #39 — Verknüpfungen bewerten */
 .insight-rating {
   display: flex;
   flex-wrap: wrap;
@@ -2375,7 +2375,7 @@ div.account-bar {
   background: rgba(34, 197, 94, 0.1);
 }
 
-/* Story #40 — Verdaechtige vergleichen */
+/* Story #40 — Verdächtige vergleichen */
 .suspect-compare__table {
   width: 100%;
   border-collapse: collapse;
@@ -2443,7 +2443,7 @@ div.account-bar {
   padding: 0 0.1rem;
 }
 
-/* Story #42 — Alibi pruefen */
+/* Story #42 — Alibi prüfen */
 .alibi {
   border-top: 1px solid var(--border);
   margin-top: 1.25rem;
@@ -2754,7 +2754,7 @@ div.account-bar {
   font-size: 0.8rem;
 }
 
-/* Story #52 — Anklage pruefen */
+/* Story #52 — Anklage prüfen */
 .review {
   list-style: none;
   margin: 0;

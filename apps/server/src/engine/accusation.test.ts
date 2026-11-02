@@ -7,7 +7,7 @@ import case01 from "../data/case-01.json" with { type: "json" };
 const caseDef = case01 as CaseDefinition;
 
 describe("Anklage absenden (#27)", () => {
-  it("nimmt eine Anklage mit Taeter und Beweis an", () => {
+  it("nimmt eine Anklage mit Täter und Beweis an", () => {
     const room = createRoom(caseDef);
     const result = submitAccusation(
       room,
@@ -22,7 +22,7 @@ describe("Anklage absenden (#27)", () => {
         submittedAt: "2026-10-26T10:00:00.000Z",
       },
     });
-    // Die Aufloesung kommt mit der Quittung (#28).
+    // Die Auflösung kommt mit der Quittung (#28).
     expect(result.ok && result.receipt.verdict.culprit.id).toBe(room.scenario.suspectId);
   });
 
@@ -31,7 +31,7 @@ describe("Anklage absenden (#27)", () => {
     expect(result.ok).toBe(false);
   });
 
-  it("lehnt einen unbekannten Taeter ab", () => {
+  it("lehnt einen unbekannten Täter ab", () => {
     const result = validateSubmission(caseDef, { suspectId: "niemand", evidenceIds: ["a"] });
     expect(result.ok).toBe(false);
   });
@@ -55,7 +55,7 @@ describe("Anklage absenden (#27)", () => {
     const second = submitAccusation(room, { suspectId: "daniel-keller", evidenceIds: ["b"] });
     expect(first.ok).toBe(true);
     expect(second).toMatchObject({ ok: false, reason: "already-submitted" });
-    // Die erste Quittung bleibt gueltig, die zweite Anklage aendert nichts.
+    // Die erste Quittung bleibt gültig, die zweite Anklage ändert nichts.
     expect(room.accusation?.suspectId).toBe("monica-brandt");
   });
 });
@@ -70,6 +70,6 @@ describe("Punktzahl mit der Quittung (#54)", () => {
       new Date("2026-10-26T10:20:00Z")
     );
     const labels = result.ok ? result.receipt.verdict.score?.breakdown.map((b) => b.label) : [];
-    expect(labels).toContain("Schnell geloest (< 30 Min.)");
+    expect(labels).toContain("Schnell gelöst (< 30 Min.)");
   });
 });

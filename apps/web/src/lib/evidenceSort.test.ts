@@ -8,7 +8,7 @@ const item = (id: string, kind: CollectedEvidence["kind"], label: string): Colle
   kind,
   label,
   description: "",
-  foundAt: { sceneName: "Buero", hotspotLabel: "Stelle" },
+  foundAt: { sceneName: "Büro", hotspotLabel: "Stelle" },
 });
 
 // In Fundreihenfolge, wie die Akte gespeichert ist.
@@ -21,7 +21,7 @@ const akte = [
 const ids = (list: CollectedEvidence[]) => list.map((e) => e.id);
 
 describe("Akte sortieren (#37)", () => {
-  it("nach Fundzeit, aelteste oder neueste zuerst", () => {
+  it("nach Fundzeit, älteste oder neueste zuerst", () => {
     expect(ids(sortEvidence(akte, "found-asc"))).toEqual(["zettel", "badge", "tasse", "kratzer"]);
     expect(ids(sortEvidence(akte, "found-desc"))).toEqual(["kratzer", "tasse", "badge", "zettel"]);
   });
@@ -35,7 +35,7 @@ describe("Akte sortieren (#37)", () => {
     expect(ids(sortEvidence(akte, "name"))).toEqual(["badge", "kratzer", "tasse", "zettel"]);
   });
 
-  it("aendert die gespeicherte Akte nicht", () => {
+  it("ändert die gespeicherte Akte nicht", () => {
     sortEvidence(akte, "name");
     expect(ids(akte)).toEqual(["zettel", "badge", "tasse", "kratzer"]);
   });

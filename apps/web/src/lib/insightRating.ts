@@ -1,10 +1,10 @@
 import type { Insight } from "@case-zero/shared";
 
 /**
- * Wie stark der Ermittler eine aufgedeckte Verknuepfung einschaetzt (#39).
+ * Wie stark der Ermittler eine aufgedeckte Verknüpfung einschätzt (#39).
  *
- * Eine persoenliche Einschaetzung, keine Bewertung des Servers: ob die
- * Verknuepfung zur Loesung gehoert, verraet das Spiel nicht.
+ * Eine persönliche Einschätzung, keine Bewertung des Servers: ob die
+ * Verknüpfung zur Lösung gehört, verrät das Spiel nicht.
  */
 export type InsightStrength = 1 | 2 | 3;
 
@@ -16,7 +16,7 @@ export const STRENGTH_LABEL: Record<InsightStrength, string> = {
 
 export const STRENGTHS: InsightStrength[] = [1, 2, 3];
 
-/** Setzt die Staerke; dieselbe Staerke nochmal waehlen nimmt die Bewertung zurueck. */
+/** Setzt die Stärke; dieselbe Stärke nochmal wählen nimmt die Bewertung zurück. */
 export function rateInsight(
   ratings: Record<string, InsightStrength>,
   insightId: string,
@@ -30,7 +30,7 @@ export function rateInsight(
 }
 
 /**
- * Stark zuerst, unbewertet zuletzt; bei gleicher Staerke in der Reihenfolge,
+ * Stark zuerst, unbewertet zuletzt; bei gleicher Stärke in der Reihenfolge,
  * in der sie aufgedeckt wurden.
  */
 export function sortByStrength(
@@ -43,7 +43,7 @@ export function sortByStrength(
     .map(({ insight }) => insight);
 }
 
-/** Nur gueltige Staerken uebernehmen. */
+/** Nur gültige Stärken übernehmen. */
 export function parseRatings(raw: unknown): Record<string, InsightStrength> {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
   const result: Record<string, InsightStrength> = {};

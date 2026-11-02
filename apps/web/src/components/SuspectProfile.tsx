@@ -8,10 +8,10 @@ import { StatementView } from "./StatementView";
 
 interface Props {
   suspect: Suspect;
-  /** Satznummern der markierten Widersprueche dieser Person (#17). */
+  /** Satznummern der markierten Widersprüche dieser Person (#17). */
   markedIndices: number[];
   onToggleSentence: (sentenceIndex: number, text: string) => void;
-  /** Tatzeitfenster aus dem Briefing, fuer die Alibi-Pruefung (#42). */
+  /** Tatzeitfenster aus dem Briefing, für die Alibi-Prüfung (#42). */
   crimeWindow?: CrimeWindow;
   alibiVerdict?: AlibiVerdict;
   onAlibiVerdict: (verdict: AlibiVerdict) => void;
@@ -22,11 +22,11 @@ interface Props {
 }
 
 /**
- * Story #15 — das Profil eines Verdaechtigen.
+ * Story #15 — das Profil eines Verdächtigen.
  * Name, Alter, Beziehung zum Opfer und — sofern bekannt — das Motiv.
  *
- * `knownMotive` ist das oeffentlich bekannte Motiv, nicht die Loesung: die
- * steht in `Scenario` und verlaesst den Server nie (engine/caseView.ts).
+ * `knownMotive` ist das öffentlich bekannte Motiv, nicht die Lösung: die
+ * steht in `Scenario` und verlässt den Server nie (engine/caseView.ts).
  */
 export function SuspectProfile({
   suspect,
@@ -43,9 +43,9 @@ export function SuspectProfile({
     <section className="panel">
       <div className="evidence-list__bar">
         <p className="terminal-title" style={{ margin: 0 }}>
-          Verdaechtiger
+          Verdächtiger
         </p>
-        <button onClick={onBack}>Zurueck zur Liste</button>
+        <button onClick={onBack}>Zurück zur Liste</button>
       </div>
 
       <div className="suspect-profile__head">

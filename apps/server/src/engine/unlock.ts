@@ -2,13 +2,13 @@ import type { CaseDefinition, Device, UnlockResult } from "@case-zero/shared";
 
 /**
  * Gross/klein, Leerzeichen und Bindestriche spielen keine Rolle: "0417",
- * "04 17" und bei Passwoertern "Finanzen-Q3" zaehlen gleich.
+ * "04 17" und bei Passwörtern "Finanzen-Q3" zählen gleich.
  */
 function normalizeSecret(input: string): string {
   return input.toLowerCase().replace(/[\s\-_/]+/g, "");
 }
 
-/** Das Geraet, wie es nach dem Entsperren an den Client geht: offen, ohne Geheimnis. */
+/** Das Gerät, wie es nach dem Entsperren an den Client geht: offen, ohne Geheimnis. */
 export function unlockedView(device: Device): Device {
   const { unlockSecret: _secret, deletedMessages, ...rest } = device;
   const deletedCount = deletedMessages?.length ?? 0;
@@ -16,11 +16,11 @@ export function unlockedView(device: Device): Device {
 }
 
 /**
- * Story #70 — ein gesperrtes Geraet entsperren.
+ * Story #70 — ein gesperrtes Gerät entsperren.
  *
  * Die richtige PIN bzw. das Passwort steht nur im Case-JSON auf dem Server
- * und wird hier geprueft. Der Client bekommt Nachrichten und Dateien erst
- * zurueck, wenn der Versuch stimmt — vorher kennt er sie nicht (caseView.ts).
+ * und wird hier geprüft. Der Client bekommt Nachrichten und Dateien erst
+ * zurück, wenn der Versuch stimmt — vorher kennt er sie nicht (caseView.ts).
  */
 export function unlockDevice(caseDef: CaseDefinition, deviceId: string, attempt: unknown): UnlockResult {
   const device = caseDef.devices?.find((d) => d.id === deviceId);

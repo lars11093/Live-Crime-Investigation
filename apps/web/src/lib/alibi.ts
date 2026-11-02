@@ -1,7 +1,7 @@
 import type { CrimeWindow } from "@case-zero/shared";
 import { splitIntoSentences, timesIn } from "./statement";
 
-/** "22:30" -> 1350 Minuten seit Mitternacht; ungueltig -> null. */
+/** "22:30" -> 1350 Minuten seit Mitternacht; ungültig -> null. */
 export function toMinutes(clock: string): number | null {
   const match = /^(\d{1,2}):(\d{2})$/.exec(clock.trim());
   if (!match) return null;
@@ -24,8 +24,8 @@ export interface AlibiEntry {
 /**
  * Ordnet jede Uhrzeit einer Aussage gegen das Tatzeitfenster ein (Story #42).
  *
- * Bewusst ohne Urteil: ob ein Alibi haelt, entscheidet der Ermittler. Das
- * Spiel zeigt nur, welche Angaben in die Tatzeit fallen — genau die muessen
+ * Bewusst ohne Urteil: ob ein Alibi hält, entscheidet der Ermittler. Das
+ * Spiel zeigt nur, welche Angaben in die Tatzeit fallen — genau die müssen
  * mit Spuren wie dem Badge-Protokoll abgeglichen werden.
  */
 export function alibiTimeline(statement: string | undefined, window: CrimeWindow): AlibiEntry[] {
@@ -49,11 +49,11 @@ export function alibiTimeline(statement: string | undefined, window: CrimeWindow
 }
 
 /**
- * Sagt die Aussage ueberhaupt etwas zur Tatzeit?
+ * Sagt die Aussage überhaupt etwas zur Tatzeit?
  *
- * Ja, wenn eine Angabe ins Fenster faellt — oder wenn ein Satz einen
+ * Ja, wenn eine Angabe ins Fenster fällt — oder wenn ein Satz einen
  * Zeitraum nennt, der das Fenster umschliesst ("Zwischen 22:00 und 23:00 war
- * ich unten"). Sonst gibt es fuer die Tatzeit kein konkretes Alibi.
+ * ich unten"). Sonst gibt es für die Tatzeit kein konkretes Alibi.
  */
 export function coversWindow(entries: AlibiEntry[], window: CrimeWindow): boolean {
   if (entries.some((e) => e.inWindow)) return true;
@@ -69,7 +69,7 @@ export function coversWindow(entries: AlibiEntry[], window: CrimeWindow): boolea
   );
 }
 
-/** Wie der Ermittler das Alibi einschaetzt (#42). */
+/** Wie der Ermittler das Alibi einschätzt (#42). */
 export type AlibiVerdict = "haltbar" | "zweifelhaft" | "nicht-haltbar";
 
 export const VERDICT_LABEL: Record<AlibiVerdict, string> = {
@@ -78,7 +78,7 @@ export const VERDICT_LABEL: Record<AlibiVerdict, string> = {
   "nicht-haltbar": "Nicht haltbar",
 };
 
-/** Setzt die Einschaetzung; dieselbe nochmal waehlen nimmt sie zurueck. */
+/** Setzt die Einschätzung; dieselbe nochmal wählen nimmt sie zurück. */
 export function setAlibiVerdict(
   verdicts: Record<string, AlibiVerdict>,
   suspectId: string,

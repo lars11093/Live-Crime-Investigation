@@ -13,22 +13,22 @@ export const POINTS = {
   fastUnder60: 50,
 } as const;
 
-/** Wie die Punktzahl einzuordnen ist — ab Anteil an der Hoechstpunktzahl. */
+/** Wie die Punktzahl einzuordnen ist — ab Anteil an der Höchstpunktzahl. */
 const RANKS: { from: number; label: string }[] = [
   { from: 0.9, label: "Meisterhafte Ermittlung" },
   { from: 0.6, label: "Solide Ermittlung" },
-  { from: 0.3, label: "Lueckenhafte Ermittlung" },
+  { from: 0.3, label: "Lückenhafte Ermittlung" },
   { from: 0, label: "Fehlermittlung" },
 ];
 
 /**
  * Berechnet die Punktzahl einer Anklage (Story #54).
  *
- * - Richtiger Taeter: der Grossteil der Punkte.
- * - Jeder Beweis, der die Loesung traegt (#28), zaehlt; jeder, der nichts
- *   beitraegt, kostet ein wenig — Raten mit allem, was in der Akte liegt,
+ * - Richtiger Täter: der Grossteil der Punkte.
+ * - Jeder Beweis, der die Lösung trägt (#28), zählt; jeder, der nichts
+ *   beiträgt, kostet ein wenig — Raten mit allem, was in der Akte liegt,
  *   soll sich nicht lohnen.
- * - Bonus fuer die vollstaendige Beweiskette und fuer Tempo.
+ * - Bonus für die vollständige Beweiskette und für Tempo.
  *
  * Nie unter 0: auch eine Fehlermittlung ist eine Ermittlung.
  */
@@ -43,7 +43,7 @@ export function scoreAccusation(
   const rightSuspect = submission.suspectId === scenario.suspectId;
 
   const breakdown: AccusationScore["breakdown"] = [];
-  if (rightSuspect) breakdown.push({ label: "Richtiger Taeter", points: POINTS.rightSuspect });
+  if (rightSuspect) breakdown.push({ label: "Richtiger Täter", points: POINTS.rightSuspect });
   if (useful > 0) {
     breakdown.push({
       label: `${useful} tragende${useful === 1 ? "r Beweis" : " Beweise"}`,
@@ -52,17 +52,17 @@ export function scoreAccusation(
   }
   if (useless > 0) {
     breakdown.push({
-      label: `${useless} Beweis${useless === 1 ? "" : "e"} ohne Bezug zur Loesung`,
+      label: `${useless} Beweis${useless === 1 ? "" : "e"} ohne Bezug zur Lösung`,
       points: useless * POINTS.perUselessEvidence,
     });
   }
   if (rightSuspect && useful === key.size && key.size > 0) {
-    breakdown.push({ label: "Vollstaendige Beweiskette", points: POINTS.fullChain });
+    breakdown.push({ label: "Vollständige Beweiskette", points: POINTS.fullChain });
   }
-  // Tempo zaehlt nur, wenn die Anklage auch stimmt — sonst lohnt sich schnelles Raten.
+  // Tempo zählt nur, wenn die Anklage auch stimmt — sonst lohnt sich schnelles Raten.
   if (rightSuspect && elapsedMinutes !== null) {
-    if (elapsedMinutes < 30) breakdown.push({ label: "Schnell geloest (< 30 Min.)", points: POINTS.fastUnder30 });
-    else if (elapsedMinutes < 60) breakdown.push({ label: "Zuegig geloest (< 60 Min.)", points: POINTS.fastUnder60 });
+    if (elapsedMinutes < 30) breakdown.push({ label: "Schnell gelöst (< 30 Min.)", points: POINTS.fastUnder30 });
+    else if (elapsedMinutes < 60) breakdown.push({ label: "Zügig gelöst (< 60 Min.)", points: POINTS.fastUnder60 });
   }
 
   const points = Math.max(0, breakdown.reduce((sum, item) => sum + item.points, 0));

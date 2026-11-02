@@ -5,18 +5,18 @@ interface Props {
 }
 
 const TOPIC_LABEL = {
-  suspect: "Taeter",
+  suspect: "Täter",
   evidence: "Beweis",
-  missed: "Uebersehen",
+  missed: "Übersehen",
 } as const;
 
 /**
- * Story #28 — die Aufloesung nach der Anklage.
+ * Story #28 — die Auflösung nach der Anklage.
  *
- * Zuoberst und unuebersehbar: geloest oder nicht. Darunter, was tatsaechlich
- * passiert ist, und welche Schluesse richtig oder falsch waren.
+ * Zuoberst und unübersehbar: gelöst oder nicht. Darunter, was tatsächlich
+ * passiert ist, und welche Schlüsse richtig oder falsch waren.
  *
- * Story #54 — die Punktzahl mit Einordnung und Aufschluesselung.
+ * Story #54 — die Punktzahl mit Einordnung und Aufschlüsselung.
  */
 export function CaseResolution({ verdict }: Props) {
   return (
@@ -25,10 +25,10 @@ export function CaseResolution({ verdict }: Props) {
         className={`resolution__result${verdict.solved ? "" : " resolution__result--failed"}`}
         role="status"
       >
-        {verdict.solved ? "Fall geloest" : "Fall nicht geloest"}
+        {verdict.solved ? "Fall gelöst" : "Fall nicht gelöst"}
       </p>
       <p className="case-status__hint">
-        Taeter: <strong>{verdict.culprit.name}</strong>
+        Täter: <strong>{verdict.culprit.name}</strong>
       </p>
 
       {verdict.ending && (
@@ -103,7 +103,7 @@ export function CaseResolution({ verdict }: Props) {
         </div>
       )}
 
-      <p className="team-code__label">Deine Schluesse</p>
+      <p className="team-code__label">Deine Schlüsse</p>
       <ul className="resolution__findings">
         {verdict.findings.map((finding, index) => (
           <li

@@ -1,11 +1,11 @@
 import type { CaseDefinition, CombineResult } from "@case-zero/shared";
 
 /**
- * Prueft, ob zwei Beweise zusammengehoeren (Story #13).
+ * Prüft, ob zwei Beweise zusammengehören (Story #13).
  *
- * Laeuft auf dem Server, weil die Kombinationsliste die Loesung verraet —
+ * Läuft auf dem Server, weil die Kombinationsliste die Lösung verrät —
  * siehe caseView.ts. Der Client schickt zwei IDs und bekommt entweder die
- * Erkenntnis oder eine Absage, aber nie die Liste der Moeglichkeiten.
+ * Erkenntnis oder eine Absage, aber nie die Liste der Möglichkeiten.
  */
 export function combineEvidence(
   caseDef: CaseDefinition,

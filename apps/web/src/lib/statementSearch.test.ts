@@ -11,7 +11,7 @@ const suspect = (id: string, statement: string): Suspect => ({
 });
 
 const suspects = [
-  suspect("daniel", "Ich war bis 22:10 im Buero. Gegen 22:40 war ich zu Hause."),
+  suspect("daniel", "Ich war bis 22:10 im Büro. Gegen 22:40 war ich zu Hause."),
   suspect("monica", "Ich hatte um 22:30 einen Termin. Ich habe das Gebäude um 22:45 verlassen."),
   suspect("leo", "Ich war im Serverraum. Mit dem vierten Stock habe ich nichts zu tun."),
 ];
@@ -27,7 +27,7 @@ describe("Aussagen nach Stichwort filtern (#41)", () => {
     });
   });
 
-  it("findet ueber mehrere Personen hinweg", () => {
+  it("findet über mehrere Personen hinweg", () => {
     expect(searchStatements(suspects, "ich war").map((h) => h.suspectId)).toEqual([
       "daniel",
       "daniel",
@@ -35,7 +35,7 @@ describe("Aussagen nach Stichwort filtern (#41)", () => {
     ]);
   });
 
-  it("verlangt alle Woerter im selben Satz", () => {
+  it("verlangt alle Wörter im selben Satz", () => {
     expect(searchStatements(suspects, "serverraum stock")).toHaveLength(0);
     expect(searchStatements(suspects, "stock nichts")).toHaveLength(1);
   });

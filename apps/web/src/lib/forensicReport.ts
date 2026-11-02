@@ -1,13 +1,13 @@
 import type { ChatMessage, CollectedEvidence, Device } from "@case-zero/shared";
 import { toDeviceEntry } from "./forensics";
 
-/** Was der Report pro Geraet buendelt (#73). */
+/** Was der Report pro Gerät bündelt (#73). */
 export interface DeviceReport {
   device: Device;
   status: string;
   /** Als relevant markierte Nachrichten (#19). */
   marked: ChatMessage[];
-  /** In die Akte gesicherte digitale Spuren dieses Geraets (#21). */
+  /** In die Akte gesicherte digitale Spuren dieses Geräts (#21). */
   secured: CollectedEvidence[];
 }
 
@@ -18,11 +18,11 @@ export interface ForensicReport {
 }
 
 /**
- * Story #73 — die digitalen Funde gebuendelt.
+ * Story #73 — die digitalen Funde gebündelt.
  *
- * Eine gesicherte Spur gehoert zu dem Geraet, dessen Name als Fundort in der
+ * Eine gesicherte Spur gehört zu dem Gerät, dessen Name als Fundort in der
  * Akte steht — so legt `messageToEvidence` (#21) sie an. Notizen werden pro
- * Spur mitgenommen, damit der Report auch die eigene Einschaetzung zeigt.
+ * Spur mitgenommen, damit der Report auch die eigene Einschätzung zeigt.
  */
 export function buildForensicReport(
   devices: Device[],

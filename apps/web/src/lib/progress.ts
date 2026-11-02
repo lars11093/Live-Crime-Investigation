@@ -25,10 +25,10 @@ export interface CaseProgressSummary {
 /**
  * Story #24 — wie weit sind wir im Fall?
  *
- * Gezaehlt werden die Beweise aus dem Tatort (#9) — sie sind das, was der
- * Fall zum Finden vorsieht. Chatnachrichten (#21) zaehlen nicht mit: jede
- * Nachricht laesst sich sichern, aber nicht jede ist ein Beweis, und neun
- * Nachrichten wuerden den Balken verzerren.
+ * Gezählt werden die Beweise aus dem Tatort (#9) — sie sind das, was der
+ * Fall zum Finden vorsieht. Chatnachrichten (#21) zählen nicht mit: jede
+ * Nachricht lässt sich sichern, aber nicht jede ist ein Beweis, und neun
+ * Nachrichten würden den Balken verzerren.
  *
  * `foundIds` ist, was das Team weiss: die eigene Akte plus das, was andere
  * geteilt haben (#23). Deshalb "wir" und nicht "ich".

@@ -21,7 +21,7 @@ export function SharedFindings({ findings, myId }: Props) {
 
       {findings.length === 0 ? (
         <p className="evidence-list__empty">
-          Noch nichts geteilt. Oeffne einen Beweis und teile ihn mit dem Team.
+          Noch nichts geteilt. Öffne einen Beweis und teile ihn mit dem Team.
         </p>
       ) : (
         <ol className="evidence-list__items">

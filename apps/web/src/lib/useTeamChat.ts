@@ -4,9 +4,9 @@ import { socket } from "./socket";
 import { appendMessage } from "./teamChat";
 
 /**
- * Der Team-Chat einer Session (Story #49) ueber Socket.IO.
+ * Der Team-Chat einer Session (Story #49) über Socket.IO.
  *
- * Laeuft ueber das Team aus #22: den Verlauf schickt der Server beim
+ * Läuft über das Team aus #22: den Verlauf schickt der Server beim
  * `team:join`, also auch nach jedem Reconnect erneut. Schreiben kann nur, wer
  * dem Team beigetreten ist.
  */

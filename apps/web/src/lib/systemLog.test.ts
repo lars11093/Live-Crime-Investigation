@@ -3,7 +3,7 @@ import type { SystemLogEntry } from "@case-zero/shared";
 import { analyzeLog, clockOf, usageSpan } from "./systemLog";
 
 const log: SystemLogEntry[] = [
-  { at: "12.09. 20:30", category: "app", event: "Nachrichten geoeffnet" },
+  { at: "12.09. 20:30", category: "app", event: "Nachrichten geöffnet" },
   { at: "12.09. 22:02", category: "network", event: "Nachricht empfangen" },
   { at: "12.09. 22:31", category: "unlock", event: "Bildschirm entsperrt (PIN)" },
   { at: "12.09. 22:36", category: "call", event: "Anruf abgelehnt" },
@@ -17,11 +17,11 @@ describe("Systemprotokolle analysieren (#46)", () => {
     expect(clockOf("gestern")).toBeNull();
   });
 
-  it("markiert, was in die Tatzeit faellt", () => {
+  it("markiert, was in die Tatzeit fällt", () => {
     expect(analyzeLog(log, window).map((e) => e.inWindow)).toEqual([false, false, true, true, true]);
   });
 
-  it("filtert nach Kategorie und behaelt die Reihenfolge", () => {
+  it("filtert nach Kategorie und behält die Reihenfolge", () => {
     expect(analyzeLog(log, window, ["unlock", "app"]).map((e) => e.at)).toEqual([
       "12.09. 20:30",
       "12.09. 22:31",

@@ -7,15 +7,15 @@ export interface StatementHit {
   suspectName: string;
   sentenceIndex: number;
   sentence: string;
-  /** Der Satz in Stuecken, Treffer markiert — fuers Hervorheben. */
+  /** Der Satz in Stücken, Treffer markiert — fürs Hervorheben. */
   segments: { text: string; hit: boolean }[];
 }
 
 const UMLAUT: Record<string, string> = { ä: "ae", ö: "oe", ü: "ue" };
 
 /**
- * Kleinschreibung, Umlaute ausgeschrieben — mit einer Zuordnung zurueck auf
- * die Position im Originaltext, damit "Buero" im Satz "Büro" markiert werden
+ * Kleinschreibung, Umlaute ausgeschrieben — mit einer Zuordnung zurück auf
+ * die Position im Originaltext, damit "Büro" im Satz "Büro" markiert werden
  * kann, obwohl die beiden unterschiedlich lang sind.
  */
 function normalizeWithMap(text: string): { normalized: string; toOriginal: number[] } {
@@ -36,7 +36,7 @@ function normalize(text: string): string {
   return normalizeWithMap(text).normalized;
 }
 
-/** Zerlegt einen Satz in Treffer- und Nicht-Treffer-Stuecke. */
+/** Zerlegt einen Satz in Treffer- und Nicht-Treffer-Stücke. */
 export function highlight(sentence: string, words: string[]): StatementHit["segments"] {
   const { normalized, toOriginal } = normalizeWithMap(sentence);
   const marked = new Array<boolean>(sentence.length).fill(false);
@@ -61,10 +61,10 @@ export function highlight(sentence: string, words: string[]): StatementHit["segm
 }
 
 /**
- * Durchsucht die Aussagen aller Verdaechtigen nach Stichworten (Story #41).
+ * Durchsucht die Aussagen aller Verdächtigen nach Stichworten (Story #41).
  *
  * Satzweise, wie das Markieren in #17: ein Treffer ist der Satz, in dem alle
- * Woerter vorkommen. Die Satznummer passt deshalb zu den Widerspruchs-
+ * Wörter vorkommen. Die Satznummer passt deshalb zu den Widerspruchs-
  * Markierungen.
  */
 export function searchStatements(suspects: Suspect[], query: string): StatementHit[] {

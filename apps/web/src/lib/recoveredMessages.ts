@@ -1,12 +1,12 @@
 import type { ChatMessage, Device } from "@case-zero/shared";
 import type { ProgressStorage } from "./caseProgress";
 
-/** Geraete-ID -> wiederhergestellte Nachrichten (#71). */
+/** Geräte-ID -> wiederhergestellte Nachrichten (#71). */
 export type RecoveredMessages = Record<string, ChatMessage[]>;
 
 /**
  * Story #71 — wiederhergestellte Nachrichten pro Team-Code merken, damit sie
- * nach einem Neuladen nicht erneut wiederhergestellt werden muessen.
+ * nach einem Neuladen nicht erneut wiederhergestellt werden müssen.
  */
 function storageKey(roomCode: string): string {
   return `case-zero:recovered:${roomCode}`;
@@ -39,7 +39,7 @@ export function saveRecovered(storage: ProgressStorage, roomCode: string, recove
 }
 
 /**
- * Fuegt wiederhergestellte Nachrichten in den Verlauf ein, chronologisch.
+ * Fügt wiederhergestellte Nachrichten in den Verlauf ein, chronologisch.
  * `sentAt` hat im Fall immer das Format "TT.MM. HH:MM", ist also als Text
  * sortierbar, solange alles im selben Monat liegt — wie in diesem Fall.
  */

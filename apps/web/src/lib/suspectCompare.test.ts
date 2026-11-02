@@ -7,8 +7,8 @@ const daniel: Suspect = {
   name: "Daniel Keller",
   age: 34,
   relationToVictim: "Kollege",
-  knownMotive: "Befoerderung blockiert.",
-  statement: "Ich war bis 22:10 im Buero. Gegen 22:40 war ich zu Hause.",
+  knownMotive: "Beförderung blockiert.",
+  statement: "Ich war bis 22:10 im Büro. Gegen 22:40 war ich zu Hause.",
 };
 
 const monica: Suspect = {
@@ -19,15 +19,15 @@ const monica: Suspect = {
   statement: "Ich hatte um 22:30 einen Termin. Um 22:40 bin ich gegangen.",
 };
 
-describe("Verdaechtige vergleichen (#40)", () => {
-  it("stellt die Angaben Zeile fuer Zeile gegenueber", () => {
+describe("Verdächtige vergleichen (#40)", () => {
+  it("stellt die Angaben Zeile für Zeile gegenüber", () => {
     const rows = compareSuspects(daniel, monica);
     expect(rows.map((r) => r.label)).toEqual([
       "Alter",
       "Beziehung zum Opfer",
       "Bekanntes Motiv",
       "Uhrzeiten in der Aussage",
-      "Markierte Widersprueche",
+      "Markierte Widersprüche",
     ]);
     expect(rows[0]).toEqual({ label: "Alter", left: "34 Jahre", right: "41 Jahre", differs: true });
   });
@@ -43,7 +43,7 @@ describe("Verdaechtige vergleichen (#40)", () => {
     expect(rows[3]).toMatchObject({ left: "22:10, 22:40", right: "22:30, 22:40" });
   });
 
-  it("zaehlt eigene Widerspruchs-Markierungen pro Person", () => {
+  it("zählt eigene Widerspruchs-Markierungen pro Person", () => {
     const marked = [
       { suspectId: "daniel-keller", suspectName: "Daniel Keller", sentenceIndex: 1, text: "" },
     ];

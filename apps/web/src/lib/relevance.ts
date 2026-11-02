@@ -1,6 +1,6 @@
 import type { CollectedEvidence } from "@case-zero/shared";
 
-/** Wie wichtig eine digitale Spur fuer die Ermittlung ist (Story #47). */
+/** Wie wichtig eine digitale Spur für die Ermittlung ist (Story #47). */
 export type Relevance = "hoch" | "mittel" | "niedrig";
 
 export const RELEVANCE_LEVELS: Relevance[] = ["hoch", "mittel", "niedrig"];
@@ -8,13 +8,13 @@ export const RELEVANCE_LEVELS: Relevance[] = ["hoch", "mittel", "niedrig"];
 export const RELEVANCE_LABEL: Record<Relevance, string> = {
   hoch: "Wichtig",
   mittel: "Mittel",
-  niedrig: "Nebensaechlich",
+  niedrig: "Nebensächlich",
 };
 
 /**
- * Ist das eine digitale Spur, also von einem Geraet gesichert (#21)?
+ * Ist das eine digitale Spur, also von einem Gerät gesichert (#21)?
  *
- * Neue Eintraege tragen `source: "device"`. Aeltere Spielstaende haben das
+ * Neue Einträge tragen `source: "device"`. Ältere Spielstände haben das
  * Feld nicht — dort erkennt man die Spur am Fundort "Chat · …", den
  * `messageToEvidence` seit #21 setzt.
  */
@@ -22,7 +22,7 @@ export function isDigitalTrace(evidence: CollectedEvidence): boolean {
   return evidence.source === "device" || evidence.foundAt.hotspotLabel.startsWith("Chat ·");
 }
 
-/** Setzt die Relevanz; dieselbe Stufe nochmal waehlen nimmt sie zurueck. */
+/** Setzt die Relevanz; dieselbe Stufe nochmal wählen nimmt sie zurück. */
 export function setRelevance(
   ratings: Record<string, Relevance>,
   evidenceId: string,
@@ -35,7 +35,7 @@ export function setRelevance(
   return { ...ratings, [evidenceId]: relevance };
 }
 
-/** Wie viele Spuren pro Stufe — fuer die Kopfzeile im Chatverlauf. */
+/** Wie viele Spuren pro Stufe — für die Kopfzeile im Chatverlauf. */
 export function countByRelevance(
   ids: string[],
   ratings: Record<string, Relevance>

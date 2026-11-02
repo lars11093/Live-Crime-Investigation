@@ -18,7 +18,7 @@ interface Props {
  * Story #50 — eine gemeinsame Aufgabenliste.
  *
  * Offene Aufgaben nach Person gruppiert, damit auf einen Blick klar ist, wer
- * was noch erledigt. Jede Aenderung geht ueber den Server live an alle.
+ * was noch erledigt. Jede Änderung geht über den Server live an alle.
  */
 export function TeamTasks({ myId, joined, tasks, team, onAdd, onUpdate, onRemove, onBack }: Props) {
   const [draft, setDraft] = useState("");
@@ -55,7 +55,7 @@ export function TeamTasks({ myId, joined, tasks, team, onAdd, onUpdate, onRemove
           von {playerName(team, task.createdBy, myId)}
         </span>
         <select
-          aria-label={`Zustaendig fuer: ${task.text}`}
+          aria-label={`Zuständig für: ${task.text}`}
           value={task.assigneeId ?? ""}
           onChange={(e) => run(onUpdate(task.id, { assigneeId: e.target.value || null }))}
         >
@@ -67,11 +67,11 @@ export function TeamTasks({ myId, joined, tasks, team, onAdd, onUpdate, onRemove
           ))}
         </select>
         {!task.done && task.assigneeId !== myId && (
-          <button onClick={() => run(onUpdate(task.id, { assigneeId: myId }))}>Ich uebernehme</button>
+          <button onClick={() => run(onUpdate(task.id, { assigneeId: myId }))}>Ich übernehme</button>
         )}
         {canRemove && (
-          <button onClick={() => run(onRemove(task.id))} aria-label={`Aufgabe loeschen: ${task.text}`}>
-            Loeschen
+          <button onClick={() => run(onRemove(task.id))} aria-label={`Aufgabe löschen: ${task.text}`}>
+            Löschen
           </button>
         )}
       </li>
@@ -86,20 +86,20 @@ export function TeamTasks({ myId, joined, tasks, team, onAdd, onUpdate, onRemove
         <p className="terminal-title" style={{ margin: 0 }}>
           Aufgaben · {tasks.length - done.length} offen
         </p>
-        <button onClick={onBack}>Zurueck zur Fallakte</button>
+        <button onClick={onBack}>Zurück zur Fallakte</button>
       </div>
 
       {joined ? (
         <form className="team-chat__form" onSubmit={submit}>
           <input
             aria-label="Neue Aufgabe"
-            placeholder="Neue Aufgabe, z. B. Alibi von Leo pruefen"
+            placeholder="Neue Aufgabe, z. B. Alibi von Leo prüfen"
             value={draft}
             maxLength={140}
             onChange={(e) => setDraft(e.target.value)}
           />
           <button type="submit" className="button--primary" disabled={!draft.trim()}>
-            Hinzufuegen
+            Hinzufügen
           </button>
         </form>
       ) : (

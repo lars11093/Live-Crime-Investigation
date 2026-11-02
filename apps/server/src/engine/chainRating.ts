@@ -1,6 +1,6 @@
 import type { AccusationSubmission, CaseDefinition, ChainRating, Scenario } from "@case-zero/shared";
 
-/** IDs aller digitalen Spuren eines Falls: Nachrichten, auch geloeschte (#21, #71). */
+/** IDs aller digitalen Spuren eines Falls: Nachrichten, auch gelöschte (#21, #71). */
 function digitalIds(caseDef: CaseDefinition): Set<string> {
   const ids = new Set<string>();
   for (const device of caseDef.devices ?? []) {
@@ -10,17 +10,17 @@ function digitalIds(caseDef: CaseDefinition): Set<string> {
 }
 
 /**
- * Story #78 — die Beweiskette bewerten, damit man lernt, wo die Begruendung
+ * Story #78 — die Beweiskette bewerten, damit man lernt, wo die Begründung
  * schwach war.
  *
- * Grundlage ist dasselbe wie in der Aufloesung (#28): `keyEvidenceIds` des
+ * Grundlage ist dasselbe wie in der Auflösung (#28): `keyEvidenceIds` des
  * aktiven Szenarios. Berechnet wird nur auf dem Server und erst nach dem
- * Absenden — vorher waere die Bewertung ein Hinweis auf die Loesung.
+ * Absenden — vorher wäre die Bewertung ein Hinweis auf die Lösung.
  *
- *   stark:   richtiger Taeter, mindestens 60 % der tragenden Beweise, und
- *            hoechstens die Haelfte der Anhaenge ohne Bezug
- *   mittel:  richtiger Taeter und mindestens 30 % der tragenden Beweise
- *   schwach: alles andere, insbesondere ein falscher Taeter
+ *   stark:   richtiger Täter, mindestens 60 % der tragenden Beweise, und
+ *            höchstens die Hälfte der Anhänge ohne Bezug
+ *   mittel:  richtiger Täter und mindestens 30 % der tragenden Beweise
+ *   schwach: alles andere, insbesondere ein falscher Täter
  */
 export function rateChain(
   caseDef: CaseDefinition,

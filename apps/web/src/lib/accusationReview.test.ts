@@ -13,7 +13,7 @@ const scene = (id: string): CollectedEvidence => ({
   kind: "object",
   description: "",
   source: "scene",
-  foundAt: { sceneName: "Buero", hotspotLabel: "Ablage" },
+  foundAt: { sceneName: "Büro", hotspotLabel: "Ablage" },
 });
 const digital = (id: string): CollectedEvidence => ({ ...scene(id), kind: "message", source: "device" });
 
@@ -30,8 +30,8 @@ const texts = (input: ReviewInput, level?: string) =>
     .filter((f) => !level || f.level === level)
     .map((f) => f.text);
 
-describe("Anklage vor dem Absenden pruefen (#52)", () => {
-  it("meldet fehlenden Taeter und Beweis als Fehler und blockiert", () => {
+describe("Anklage vor dem Absenden prüfen (#52)", () => {
+  it("meldet fehlenden Täter und Beweis als Fehler und blockiert", () => {
     const findings = reviewAccusation({
       draft: { suspectId: null, evidenceIds: [] },
       suspects,
@@ -61,11 +61,11 @@ describe("Anklage vor dem Absenden pruefen (#52)", () => {
       progress: { ...empty, alibiVerdicts: { monica: "haltbar" as const }, suspicion: { monica: 2 as const, daniel: 4 as const } },
     };
     const warnings = texts(input, "warnung");
-    expect(warnings).toContain("Du haeltst das Alibi von Monica selbst fuer haltbar.");
+    expect(warnings).toContain("Du hältst das Alibi von Monica selbst für haltbar.");
     expect(warnings.some((w) => w.includes("gegen Daniel (Sehr hoch)"))).toBe(true);
   });
 
-  it("weist auf ungepruefte Alibis, fehlende Widersprueche und Verknuepfungen hin", () => {
+  it("weist auf ungeprüfte Alibis, fehlende Widersprüche und Verknüpfungen hin", () => {
     const hints = texts(
       {
         draft: { suspectId: "monica", evidenceIds: ["tasse", "badge"] },
@@ -76,9 +76,9 @@ describe("Anklage vor dem Absenden pruefen (#52)", () => {
       "hinweis"
     );
     expect(hints).toEqual([
-      "Das Alibi von Monica hast du noch nicht geprueft.",
+      "Das Alibi von Monica hast du noch nicht geprüft.",
       "In der Aussage von Monica hast du keinen Widerspruch markiert.",
-      "Du hast noch keine Verknuepfung zwischen Beweisen aufgedeckt.",
+      "Du hast noch keine Verknüpfung zwischen Beweisen aufgedeckt.",
     ]);
   });
 
@@ -86,23 +86,23 @@ describe("Anklage vor dem Absenden pruefen (#52)", () => {
     const base = { suspects, progress: empty };
     expect(
       texts({ ...base, draft: { suspectId: "monica", evidenceIds: ["a", "b"] }, collected: [scene("a"), scene("b"), digital("m")] })
-    ).toContain("Keine digitale Spur angehaengt, obwohl du welche gesichert hast.");
+    ).toContain("Keine digitale Spur angehängt, obwohl du welche gesichert hast.");
     expect(
       texts({ ...base, draft: { suspectId: "monica", evidenceIds: ["a", "b"] }, collected: [scene("a"), scene("b")] }).join()
     ).not.toContain("digitale Spur");
   });
 
-  it("warnt bei angehaengten, selbst als nebensaechlich bewerteten Spuren", () => {
+  it("warnt bei angehängten, selbst als nebensächlich bewerteten Spuren", () => {
     const input = {
       draft: { suspectId: "monica", evidenceIds: ["m", "a"] },
       suspects,
       collected: [digital("m"), scene("a")],
       progress: { ...empty, relevance: { m: "niedrig" as const } },
     };
-    expect(texts(input, "warnung").some((w) => w.includes("nebensaechlich bewertet: m"))).toBe(true);
+    expect(texts(input, "warnung").some((w) => w.includes("nebensächlich bewertet: m"))).toBe(true);
   });
 
-  it("findet bei gruendlicher Ermittlung keine Luecke", () => {
+  it("findet bei gründlicher Ermittlung keine Lücke", () => {
     const findings = reviewAccusation({
       draft: { suspectId: "monica", evidenceIds: ["a", "m"] },
       suspects,

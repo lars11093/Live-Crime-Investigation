@@ -3,7 +3,7 @@ import { TAG_MAX_LENGTH } from "../lib/evidenceTags";
 
 interface Props {
   tags: string[];
-  /** Bereits vergebene Tags anderer Beweise — als Vorschlaege. */
+  /** Bereits vergebene Tags anderer Beweise — als Vorschläge. */
   suggestions: string[];
   onAdd: (tag: string) => void;
   onRemove: (tag: string) => void;

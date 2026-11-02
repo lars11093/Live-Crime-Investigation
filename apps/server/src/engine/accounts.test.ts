@@ -13,7 +13,7 @@ describe("Konto erstellen (#55)", () => {
     expect(store.login("Kommissarin Frei", "falsch")).toEqual({ ok: false, error: "Name oder Passwort falsch." });
   });
 
-  it("prueft Name, Passwort und doppelte Konten", () => {
+  it("prüft Name, Passwort und doppelte Konten", () => {
     const store = new AccountStore();
     expect(store.register("A", "geheim123").ok).toBe(false);
     expect(store.register("Loris", "kurz").ok).toBe(false);
@@ -21,7 +21,7 @@ describe("Konto erstellen (#55)", () => {
     expect(store.register("loris", "anderes123")).toEqual({ ok: false, error: "Dieser Name ist schon vergeben." });
   });
 
-  it("speichert den Spielstand pro Team-Code und nur mit gueltigem Token", () => {
+  it("speichert den Spielstand pro Team-Code und nur mit gültigem Token", () => {
     const store = new AccountStore();
     const created = store.register("Loris", "geheim123");
     if (!created.ok) throw new Error("Konto fehlt");
@@ -33,7 +33,7 @@ describe("Konto erstellen (#55)", () => {
     expect(store.getProgress(undefined, "ABC-DEF")).toBeUndefined();
   });
 
-  it("ueberlebt einen Neustart ueber die Datei, ohne Klartext-Passwort", () => {
+  it("überlebt einen Neustart über die Datei, ohne Klartext-Passwort", () => {
     const file = join(mkdtempSync(join(tmpdir(), "accounts-")), "accounts.json");
     new AccountStore(file).register("Loris", "geheim123");
     expect(readFileSync(file, "utf-8")).not.toContain("geheim123");

@@ -9,8 +9,8 @@ interface Props {
  * Story #5 — Team-Code eingeben.
  *
  * Kleinbuchstaben werden beim Tippen gross dargestellt; der Button bleibt bei
- * leerem Feld deaktiviert. Falsches Format und unbekannter Code fuehren zur
- * selben Meldung — fuer den Spieler ist beides "der Code stimmt nicht" — und
+ * leerem Feld deaktiviert. Falsches Format und unbekannter Code führen zur
+ * selben Meldung — für den Spieler ist beides "der Code stimmt nicht" — und
  * die Eingabe bleibt stehen, damit man den Tippfehler sieht.
  */
 export function TeamCodeForm({ onJoined }: Props) {
@@ -32,7 +32,7 @@ export function TeamCodeForm({ onJoined }: Props) {
       if (room) {
         onJoined(room.code);
       } else {
-        setError("Ungueltiger Team-Code");
+        setError("Ungültiger Team-Code");
       }
     } catch {
       // Server nicht erreichbar ist kein falscher Code — sonst sucht jemand
@@ -65,7 +65,7 @@ export function TeamCodeForm({ onJoined }: Props) {
           aria-describedby={error ? "team-code-error" : undefined}
         />
         <button type="submit" disabled={isEmpty || checking}>
-          {checking ? "Pruefe…" : "Beitreten"}
+          {checking ? "Prüfe…" : "Beitreten"}
         </button>
       </div>
       {error && (

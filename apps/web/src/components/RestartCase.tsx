@@ -7,8 +7,8 @@ interface Props {
 }
 
 /**
- * Story #79 — nach der Aufloesung den Fall noch einmal spielen.
- * Mit Rueckfrage, weil der bisherige Stand in dieser Session bleibt und die
+ * Story #79 — nach der Auflösung den Fall noch einmal spielen.
+ * Mit Rückfrage, weil der bisherige Stand in dieser Session bleibt und die
  * neue Session leer beginnt.
  */
 export function RestartCase({ withTeam, onRestart }: Props) {

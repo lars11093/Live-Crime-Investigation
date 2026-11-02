@@ -1,9 +1,9 @@
 import type { TeamChatMessage } from "@case-zero/shared";
 import type { Room } from "./rooms.js";
 
-/** Laenger wird es im Terminal unlesbar. */
+/** Länger wird es im Terminal unlesbar. */
 export const CHAT_TEXT_MAX = 500;
-/** Mehr braucht eine Sitzung nicht; aeltere Nachrichten fallen vorne raus. */
+/** Mehr braucht eine Sitzung nicht; ältere Nachrichten fallen vorne raus. */
 export const CHAT_HISTORY_MAX = 200;
 
 /**
@@ -25,7 +25,7 @@ export function addChatMessage(
   const clean = typeof text === "string" ? text.trim() : "";
   if (!clean) return { ok: false, reason: "Leere Nachricht." };
   if (clean.length > CHAT_TEXT_MAX) {
-    return { ok: false, reason: `Hoechstens ${CHAT_TEXT_MAX} Zeichen.` };
+    return { ok: false, reason: `Höchstens ${CHAT_TEXT_MAX} Zeichen.` };
   }
 
   const message: TeamChatMessage = {

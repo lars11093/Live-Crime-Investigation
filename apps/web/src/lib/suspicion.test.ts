@@ -6,7 +6,7 @@ const s = (id: string): Suspect => ({ id, name: id, age: 30, relationToVictim: "
 const suspects = [s("daniel"), s("monica"), s("leo")];
 
 describe("Verdachtsgrad (#43)", () => {
-  it("setzt, aendert und nimmt den Verdachtsgrad zurueck", () => {
+  it("setzt, ändert und nimmt den Verdachtsgrad zurück", () => {
     const once = setSuspicion({}, "monica", 3);
     expect(once).toEqual({ monica: 3 });
     expect(setSuspicion(once, "monica", 4)).toEqual({ monica: 4 });
@@ -17,12 +17,12 @@ describe("Verdachtsgrad (#43)", () => {
     expect(primeSuspect(suspects, { daniel: 2, monica: 4 })?.id).toBe("monica");
   });
 
-  it("nennt bei Gleichstand oder ohne Einschaetzung niemanden", () => {
+  it("nennt bei Gleichstand oder ohne Einschätzung niemanden", () => {
     expect(primeSuspect(suspects, { daniel: 3, monica: 3 })).toBeNull();
     expect(primeSuspect(suspects, {})).toBeNull();
   });
 
-  it("liest nur gueltige Grade ein", () => {
+  it("liest nur gültige Grade ein", () => {
     expect(parseSuspicion({ a: 4, b: 0, c: "hoch" })).toEqual({ a: 4 });
   });
 });

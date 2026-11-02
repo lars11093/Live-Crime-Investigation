@@ -6,10 +6,10 @@ import type { CaseProgress } from "./caseProgress";
  * Story #63 — die eigene Akte als Markdown-Datei.
  *
  * Markdown, weil es ohne Programm lesbar ist und sich trotzdem sauber in
- * Word, Obsidian oder GitHub weiterverwenden laesst. Exportiert wird nur, was
+ * Word, Obsidian oder GitHub weiterverwenden lässt. Exportiert wird nur, was
  * der Ermittler selbst weiss — der Fall-Inhalt, den der Server ausgeliefert
- * hat, plus der eigene Fortschritt. Keine Loesung, ausser die Anklage ist
- * schon abgesendet und die Aufloesung damit bekannt.
+ * hat, plus der eigene Fortschritt. Keine Lösung, ausser die Anklage ist
+ * schon abgesendet und die Auflösung damit bekannt.
  */
 export function exportAkte(
   caseData: Pick<PublicCase, "title" | "briefing" | "suspects">,

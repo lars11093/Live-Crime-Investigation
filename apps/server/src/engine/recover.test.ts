@@ -6,8 +6,8 @@ import case01 from "../data/case-01.json" with { type: "json" };
 
 const caseDef = case01 as CaseDefinition;
 
-describe("Geloeschte Daten wiederherstellen (#71)", () => {
-  it("liefert die geloeschten Nachrichten als wiederhergestellt", () => {
+describe("Gelöschte Daten wiederherstellen (#71)", () => {
+  it("liefert die gelöschten Nachrichten als wiederhergestellt", () => {
     const result = recoverDeleted(caseDef, "smartphone-vogt");
     expect(result.ok).toBe(true);
     if (!result.ok) return;
@@ -15,7 +15,7 @@ describe("Geloeschte Daten wiederherstellen (#71)", () => {
     expect(result.messages.every((m) => m.recovered)).toBe(true);
   });
 
-  it("verweigert gesperrte und unbekannte Geraete", () => {
+  it("verweigert gesperrte und unbekannte Geräte", () => {
     expect(recoverDeleted(caseDef, "smartphone-fischer")).toEqual({ ok: false, reason: "locked" });
     expect(recoverDeleted(caseDef, "gibt-es-nicht")).toEqual({ ok: false, reason: "unknown-device" });
   });

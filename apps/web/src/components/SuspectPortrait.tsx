@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Suspect } from "@case-zero/shared";
 
-/** Initialen als Platzhalter, wenn kein Portraet vorliegt. */
+/** Initialen als Platzhalter, wenn kein Porträt vorliegt. */
 export function initials(name: string): string {
   return name
     .split(/\s+/)
@@ -13,7 +13,7 @@ export function initials(name: string): string {
 }
 
 /**
- * Portraet eines Verdaechtigen (#14).
+ * Porträt eines Verdächtigen (#14).
  * Ohne Asset — und das ist in der MVP-Phase der Normalfall — stehen die
  * Initialen da, nicht ein gebrochenes Bildsymbol.
  */

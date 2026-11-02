@@ -32,7 +32,7 @@ describe("Gemeinsame Aufgabenliste (#50)", () => {
     ]);
   });
 
-  it("laesst nur Teammitglieder Aufgaben anlegen", () => {
+  it("lässt nur Teammitglieder Aufgaben anlegen", () => {
     const room = team();
     expect(addTask(room, "fremd", "Hallo", now).ok).toBe(false);
     expect(addTask(room, "ben", "  ", now).ok).toBe(false);
@@ -41,7 +41,7 @@ describe("Gemeinsame Aufgabenliste (#50)", () => {
 
   it("weist zu, hakt ab und macht wieder offen", () => {
     const room = team();
-    addTask(room, "ben", "Alibi von Leo pruefen", now, "t1");
+    addTask(room, "ben", "Alibi von Leo prüfen", now, "t1");
     updateTask(room, "cleo", "t1", { assigneeId: "cleo" });
     updateTask(room, "cleo", "t1", { done: true });
     expect(room.tasks?.[0]).toMatchObject({ assigneeId: "cleo", done: true });
@@ -51,12 +51,12 @@ describe("Gemeinsame Aufgabenliste (#50)", () => {
 
   it("weist niemanden ausserhalb des Teams zu", () => {
     const room = team();
-    addTask(room, "ben", "Alibi pruefen", now, "t1");
+    addTask(room, "ben", "Alibi prüfen", now, "t1");
     expect(updateTask(room, "ben", "t1", { assigneeId: "fremd" }).ok).toBe(false);
     expect(updateTask(room, "ben", "gibts-nicht", { done: true }).ok).toBe(false);
   });
 
-  it("laesst nur Ersteller oder Teamleitung loeschen", () => {
+  it("lässt nur Ersteller oder Teamleitung löschen", () => {
     const room = team();
     addTask(room, "ben", "A", now, "t1");
     addTask(room, "ben", "B", now, "t2");
@@ -68,17 +68,17 @@ describe("Gemeinsame Aufgabenliste (#50)", () => {
 });
 
 describe("Aufgaben beim Verlassen freigeben (#50)", () => {
-  it("nimmt die Zuweisung zurueck, wenn die Person geht", () => {
+  it("nimmt die Zuweisung zurück, wenn die Person geht", () => {
     const room = team();
-    addTask(room, "anna", "Alibi pruefen", now, "t1");
+    addTask(room, "anna", "Alibi prüfen", now, "t1");
     updateTask(room, "ben", "t1", { assigneeId: "ben" });
     expect(releaseTasks(room, "ben")).toBe(true);
     expect(room.tasks?.[0].assigneeId).toBeNull();
   });
 
-  it("meldet keine Aenderung, wenn die Person nichts uebernommen hatte", () => {
+  it("meldet keine Änderung, wenn die Person nichts übernommen hatte", () => {
     const room = team();
-    addTask(room, "anna", "Alibi pruefen", now, "t1");
+    addTask(room, "anna", "Alibi prüfen", now, "t1");
     expect(releaseTasks(room, "cleo")).toBe(false);
   });
 });

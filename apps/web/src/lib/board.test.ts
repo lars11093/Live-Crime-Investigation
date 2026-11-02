@@ -7,12 +7,12 @@ const ev = (id: string): CollectedEvidence => ({
   label: id,
   kind: "object",
   description: "",
-  foundAt: { sceneName: "Buero", hotspotLabel: "Tisch" },
+  foundAt: { sceneName: "Büro", hotspotLabel: "Tisch" },
 });
 const insight = { id: "i1", title: "Zweite Person", body: "" };
 
 describe("Ermittlungstafel (#65)", () => {
-  it("spannt eigene Faeden und nimmt sie wieder ab, egal in welcher Richtung", () => {
+  it("spannt eigene Fäden und nimmt sie wieder ab, egal in welcher Richtung", () => {
     let board = toggleOwnThread(EMPTY_BOARD, "a", "b");
     expect(board.own).toEqual([["a", "b"]]);
     board = toggleOwnThread(board, "b", "a");
@@ -20,7 +20,7 @@ describe("Ermittlungstafel (#65)", () => {
     expect(toggleOwnThread(EMPTY_BOARD, "a", "a")).toBe(EMPTY_BOARD);
   });
 
-  it("zeigt bestaetigte Verknuepfungen und eigene Faeden, ohne Doppelte", () => {
+  it("zeigt bestätigte Verknüpfungen und eigene Fäden, ohne Doppelte", () => {
     let board = recordInsight(EMPTY_BOARD, "i1", "a", "b");
     board = toggleOwnThread(board, "b", "a");
     board = toggleOwnThread(board, "a", "c");
@@ -31,7 +31,7 @@ describe("Ermittlungstafel (#65)", () => {
     ]);
   });
 
-  it("laesst Faeden zu Beweisen weg, die nicht in der Akte sind", () => {
+  it("lässt Fäden zu Beweisen weg, die nicht in der Akte sind", () => {
     const board = toggleOwnThread(EMPTY_BOARD, "a", "fehlt");
     expect(threadsFor(board, [ev("a")], [])).toEqual([]);
   });

@@ -11,9 +11,9 @@ interface Props {
 /**
  * Story #58 — stimmungsvoller Einstieg in den Fall.
  *
- * Gibt es das Video unter `intro.videoPath`, laeuft es (stumm, mit
+ * Gibt es das Video unter `intro.videoPath`, läuft es (stumm, mit
  * Steuerung). TODO Asset: Videos werden in der MVP-Phase nicht committet,
- * deshalb greift fast immer die Titelsequenz aus `intro.lines`. Ueberspringen
+ * deshalb greift fast immer die Titelsequenz aus `intro.lines`. Überspringen
  * geht jederzeit, auch mit Escape.
  */
 export function CaseIntro({ title, intro, onDone }: Props) {

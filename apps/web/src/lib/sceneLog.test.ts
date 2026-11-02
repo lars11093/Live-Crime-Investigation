@@ -4,7 +4,7 @@ import { appendSceneLog, groupByScene, loadSceneLog, saveSceneLog, type SceneLog
 const entry = (over: Partial<SceneLogEntry> = {}): SceneLogEntry => ({
   at: "2026-11-01T21:47:00.000Z",
   action: "untersucht",
-  sceneName: "Buero 4.12",
+  sceneName: "Büro 4.12",
   hotspotLabel: "Schreibtisch",
   ...over,
 });
@@ -24,12 +24,12 @@ describe("Tatortprotokoll (#61)", () => {
       entry({ hotspotLabel: "Fenster" }),
     ]);
     expect(groups.map((g) => [g.sceneName, g.entries.length])).toEqual([
-      ["Buero 4.12", 2],
+      ["Büro 4.12", 2],
       ["Flur 4. OG", 1],
     ]);
   });
 
-  it("speichert pro Team-Code und verwirft Ungueltiges", () => {
+  it("speichert pro Team-Code und verwirft Ungültiges", () => {
     const data = new Map<string, string>();
     const storage = { getItem: (k: string) => data.get(k) ?? null, setItem: (k: string, v: string) => void data.set(k, v) };
     saveSceneLog(storage, "ABC-DEF", [entry()]);

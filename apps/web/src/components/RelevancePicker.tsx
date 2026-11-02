@@ -6,7 +6,7 @@ interface Props {
   onChange: (relevance: Relevance) => void;
 }
 
-/** Story #47 — drei Stufen fuer eine digitale Spur. Nochmal klicken nimmt die Bewertung zurueck. */
+/** Story #47 — drei Stufen für eine digitale Spur. Nochmal klicken nimmt die Bewertung zurück. */
 export function RelevancePicker({ label, value, onChange }: Props) {
   return (
     <div className="insight-rating" role="group" aria-label={`Relevanz: ${label}`}>

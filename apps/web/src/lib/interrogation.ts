@@ -1,14 +1,14 @@
 import type { InterrogationQuestion, Suspect } from "@case-zero/shared";
 import type { ProgressStorage } from "./caseProgress";
 
-/** Verdaechtigen-ID -> gestellte Fragen in der Reihenfolge der Befragung (#66). */
+/** Verdächtigen-ID -> gestellte Fragen in der Reihenfolge der Befragung (#66). */
 export type InterrogationLog = Record<string, string[]>;
 
 /**
  * Story #66 — eine Befragung starten und gezielt nachhaken.
  *
  * Gemerkt wird nur, welche Fragen in welcher Reihenfolge gestellt wurden; die
- * Antworten stehen im Fall. Eigener localStorage-Schluessel pro Team-Code.
+ * Antworten stehen im Fall. Eigener localStorage-Schlüssel pro Team-Code.
  */
 function storageKey(roomCode: string): string {
   return `case-zero:interrogation:${roomCode}`;
@@ -36,7 +36,7 @@ export function saveInterrogations(storage: ProgressStorage, roomCode: string, l
   }
 }
 
-/** Stellt eine Frage — nur, wenn sie gerade waehlbar ist (#66, #67). */
+/** Stellt eine Frage — nur, wenn sie gerade wählbar ist (#66, #67). */
 export function askQuestion(log: InterrogationLog, suspect: Suspect, questionId: string): InterrogationLog {
   if (!openQuestions(log, suspect).some((q) => q.id === questionId)) return log;
   return { ...log, [suspect.id]: [...(log[suspect.id] ?? []), questionId] };
@@ -50,17 +50,17 @@ export function closedQuestionIds(log: InterrogationLog, suspect: Suspect): Set<
   );
 }
 
-/** Das bisherige Gespraech: gestellte Fragen mit Antwort, in Reihenfolge. */
+/** Das bisherige Gespräch: gestellte Fragen mit Antwort, in Reihenfolge. */
 export function transcript(log: InterrogationLog, suspect: Suspect): InterrogationQuestion[] {
   const byId = new Map((suspect.interrogation ?? []).map((q) => [q.id, q]));
   return (log[suspect.id] ?? []).flatMap((id) => byId.get(id) ?? []);
 }
 
 /**
- * Fragen, die gerade gestellt werden koennen (#66).
+ * Fragen, die gerade gestellt werden können (#66).
  *
  * Story #67: Folgefragen (`after`) erscheinen erst nach ihrer Ausgangsfrage,
- * und wer eine Variante waehlt, verwirft die anderen (`closes`) — so
+ * und wer eine Variante wählt, verwirft die anderen (`closes`) — so
  * beeinflusst die Wahl den Verlauf.
  */
 export function openQuestions(log: InterrogationLog, suspect: Suspect): InterrogationQuestion[] {

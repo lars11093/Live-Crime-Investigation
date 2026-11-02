@@ -2,7 +2,7 @@
  * Ein Tatortfoto eines Fundes (Story #35).
  *
  * Kein Bild im Speicher: echte Bild-Assets gibt es im Repo bewusst nicht
- * (CLAUDE.md), und Pixel im localStorage waeren schnell zu viel. Das Foto
+ * (CLAUDE.md), und Pixel im localStorage wären schnell zu viel. Das Foto
  * merkt sich stattdessen, *wo* es aufgenommen wurde — Szenenbild, Stelle und
  * Zoom. Daraus zeichnet die Akte den Ausschnitt jederzeit neu.
  */
@@ -30,8 +30,8 @@ export function storePhoto(
 }
 
 /**
- * CSS fuer den Ausschnitt: das Szenenbild vergroessert und auf die Stelle
- * geschoben. Mindestens 3x, damit es nach Nahaufnahme aussieht — bei hoeherem
+ * CSS für den Ausschnitt: das Szenenbild vergrössert und auf die Stelle
+ * geschoben. Mindestens 3x, damit es nach Nahaufnahme aussieht — bei höherem
  * Zoom entsprechend mehr.
  */
 export function photoCrop(photo: EvidencePhoto): { backgroundSize: string; backgroundPosition: string } {
@@ -42,7 +42,7 @@ export function photoCrop(photo: EvidencePhoto): { backgroundSize: string; backg
   };
 }
 
-/** Liest gespeicherte Fotos robust ein; Unvollstaendiges faellt weg. */
+/** Liest gespeicherte Fotos robust ein; Unvollständiges fällt weg. */
 export function parsePhotos(raw: unknown): Record<string, EvidencePhoto> {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
   const result: Record<string, EvidencePhoto> = {};

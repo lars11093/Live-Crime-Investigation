@@ -17,8 +17,8 @@ const open: Device = {
   messages: [{ id: "m1", sender: "Leo", sentAt: "22:18", text: "Hallo" }],
 };
 
-describe("Entsperrte Geraete merken (#70)", () => {
-  it("ueberlebt ein Neuladen pro Team-Code", () => {
+describe("Entsperrte Geräte merken (#70)", () => {
+  it("überlebt ein Neuladen pro Team-Code", () => {
     const storage = memoryStorage();
     saveUnlocked(storage, "ABC-DEF", { phone: open });
     expect(loadUnlocked(storage, "ABC-DEF")).toEqual({ phone: open });
@@ -33,7 +33,7 @@ describe("Entsperrte Geraete merken (#70)", () => {
     expect(loadUnlocked(storage, "ABC-DEF")).toEqual({});
   });
 
-  it("ersetzt nur entsperrte Geraete", () => {
+  it("ersetzt nur entsperrte Geräte", () => {
     const other: Device = { ...locked, id: "laptop" };
     expect(withUnlocked([locked, other], { phone: open })).toEqual([open, other]);
   });

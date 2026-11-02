@@ -5,18 +5,18 @@ interface Props {
 }
 
 /**
- * Story #17 — Uebersicht der markierten Widersprueche.
- * Sammelt ueber alle Verdaechtigen hinweg, damit sich Aussagen
+ * Story #17 — Übersicht der markierten Widersprüche.
+ * Sammelt über alle Verdächtigen hinweg, damit sich Aussagen
  * nebeneinander lesen lassen — genau darum geht es beim Vergleichen.
  */
 export function ContradictionOverview({ contradictions }: Props) {
   return (
     <section className="panel">
-      <p className="terminal-title">Markierte Widersprueche · {contradictions.length}</p>
+      <p className="terminal-title">Markierte Widersprüche · {contradictions.length}</p>
 
       {contradictions.length === 0 ? (
         <p className="evidence-list__empty">
-          Noch nichts markiert. Oeffne ein Profil und klicke in der Aussage einen Satz an,
+          Noch nichts markiert. Öffne ein Profil und klicke in der Aussage einen Satz an,
           der nicht zu den Beweisen passt.
         </p>
       ) : (

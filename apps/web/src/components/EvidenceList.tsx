@@ -23,20 +23,20 @@ interface Props {
   tags?: Record<string, string[]>;
   /** Relevanz digitaler Spuren (#47). */
   relevance?: Record<string, Relevance>;
-  /** Oeffnet die Detailansicht (#11). */
+  /** Öffnet die Detailansicht (#11). */
   onOpen?: (id: string) => void;
-  /** Zurueck in die Fallakte. Fehlt, wenn die Liste eingebettet gezeigt wird. */
+  /** Zurück in die Fallakte. Fehlt, wenn die Liste eingebettet gezeigt wird. */
   onBack?: () => void;
 }
 
 /**
  * Story #10 — alle gesammelten Beweise als Liste.
  *
- * Die Liste haengt am State der Fallseite, nicht an einem eigenen Ladevorgang:
+ * Die Liste hängt am State der Fallseite, nicht an einem eigenen Ladevorgang:
  * ein neu eingesammelter Fund erscheint dadurch sofort, ohne Neuladen.
  *
  * Story #36 — filtern. Suchfeld (Titel, Beschreibung, Fundort, Notiz) und
- * Arten zum An- und Abwaehlen. Angeboten werden nur Arten, die in der Akte
+ * Arten zum An- und Abwählen. Angeboten werden nur Arten, die in der Akte
  * auch vorkommen.
  *
  * Story #37 — sortieren nach Fundzeit (beide Richtungen), Art oder Name.
@@ -65,7 +65,7 @@ export function EvidenceList({
         <p className="terminal-title" style={{ margin: 0 }}>
           Beweisakte · {filtering ? `${shown.length} von ${evidence.length}` : evidence.length}
         </p>
-        {onBack && <button onClick={onBack}>Zurueck zur Fallakte</button>}
+        {onBack && <button onClick={onBack}>Zurück zur Fallakte</button>}
       </div>
 
       {evidence.length > 0 && (
@@ -102,14 +102,14 @@ export function EvidenceList({
                 </button>
               );
             })}
-            {filtering && <button onClick={() => setFilter(NO_FILTER)}>Filter zuruecksetzen</button>}
+            {filtering && <button onClick={() => setFilter(NO_FILTER)}>Filter zurücksetzen</button>}
           </div>
         </div>
       )}
 
       {evidence.length === 0 ? (
         <p className="evidence-list__empty">
-          Noch nichts eingesammelt. Untersuche den Tatort oder ein Geraet und sichere, was du findest.
+          Noch nichts eingesammelt. Untersuche den Tatort oder ein Gerät und sichere, was du findest.
         </p>
       ) : shown.length === 0 ? (
         <p className="evidence-list__empty">Kein Beweis passt zu diesem Filter.</p>

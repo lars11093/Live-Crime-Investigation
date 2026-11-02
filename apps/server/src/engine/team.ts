@@ -1,14 +1,14 @@
 import { ROLES, type Player, type Role, type TeamJoinResult, type TeamState } from "@case-zero/shared";
 import type { Room } from "./rooms.js";
 
-/** Laenger wird ein Name in der Teamliste unleserlich. */
+/** Länger wird ein Name in der Teamliste unleserlich. */
 export const MAX_NAME_LENGTH = 24;
 
 /**
  * Story #22 — ein Spieler tritt dem Team einer Session bei.
  *
- * Der Name wird hier geprueft, nicht nur im Client: der Server ist die Quelle
- * fuer das, was alle anderen in ihrer Teamliste sehen.
+ * Der Name wird hier geprüft, nicht nur im Client: der Server ist die Quelle
+ * für das, was alle anderen in ihrer Teamliste sehen.
  *
  * Tritt dieselbe Verbindung erneut bei (z. B. nach einem Namenswechsel),
  * wird ihr Eintrag ersetzt statt verdoppelt. Die Rolle bleibt dabei erhalten;
@@ -20,7 +20,7 @@ export function joinTeam(room: Room, playerId: string, rawName: string): TeamJoi
     return { ok: false, error: "Bitte gib einen Namen ein." };
   }
   if (name.length > MAX_NAME_LENGTH) {
-    return { ok: false, error: `Der Name darf hoechstens ${MAX_NAME_LENGTH} Zeichen haben.` };
+    return { ok: false, error: `Der Name darf höchstens ${MAX_NAME_LENGTH} Zeichen haben.` };
   }
 
   const existing = room.state.players.find((p) => p.id === playerId);
@@ -35,10 +35,10 @@ export function joinTeam(room: Room, playerId: string, rawName: string): TeamJoi
 }
 
 /**
- * Entfernt eine Verbindung aus dem Team. Gibt zurueck, ob sie dabei war.
+ * Entfernt eine Verbindung aus dem Team. Gibt zurück, ob sie dabei war.
  *
- * Geht die Teamleitung, uebernimmt die Person, die am laengsten dabei ist
- * (#48) — sonst koennte niemand mehr Rollen vergeben.
+ * Geht die Teamleitung, übernimmt die Person, die am längsten dabei ist
+ * (#48) — sonst könnte niemand mehr Rollen vergeben.
  */
 export function leaveTeam(room: Room, playerId: string): boolean {
   const before = room.state.players.length;
@@ -52,11 +52,11 @@ function isRole(value: unknown): value is Role {
 }
 
 /**
- * Story #31 — eine Verbindung waehlt ihre eigene Rolle. `null` gibt sie frei.
+ * Story #31 — eine Verbindung wählt ihre eigene Rolle. `null` gibt sie frei.
  * Story #48 — die Teamleitung vergibt Rollen auch an andere.
  *
  * Jede Rolle gibt es pro Team genau einmal. `actorId` ist immer die Socket-ID,
- * die der Server kennt: wer handelt, laesst sich per Payload nicht faelschen.
+ * die der Server kennt: wer handelt, lässt sich per Payload nicht fälschen.
  */
 export function chooseRole(
   room: Room,
