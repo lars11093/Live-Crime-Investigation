@@ -1879,3 +1879,8 @@ div.account-bar {
   gap: 0.5rem;
   justify-items: start;
 }
+
+/* Story #67 — Fragen, die andere ausschliessen */
+.interrogation__choice--decision {
+  border-color: var(--danger);
+}

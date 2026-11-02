@@ -163,7 +163,9 @@
       "interrogation": [
         {"id": "dk-abend", "question": "Warum waren Sie am Abend noch im Haus?", "answer": "Ich wollte Thomas wegen der Befoerderungsliste abfangen. Er hat mich auf naechste Woche vertroestet, wie immer."},
         {"id": "dk-nachricht", "question": "Was meinten Sie um 22:02 mit «Wir muessen reden, heute noch»?", "answer": "Dass ich endlich wissen wollte, woran ich bin. Er hat nicht geantwortet, also bin ich gegangen."},
-        {"id": "dk-alibi", "question": "Wer kann bestaetigen, dass Sie um 22:40 zu Hause waren?", "answer": "Meine Schwester. Wir haben telefoniert, fragen Sie sie. Die Nummer gebe ich Ihnen gerne."}
+        {"id": "dk-alibi", "question": "Wer kann bestaetigen, dass Sie um 22:40 zu Hause waren?", "answer": "Meine Schwester. Wir haben telefoniert, fragen Sie sie. Die Nummer gebe ich Ihnen gerne."},
+        {"id": "dk-druck", "question": "Druck machen: «Ihre Schwester wird das sicher bestaetigen, oder?»", "answer": "Wollen Sie mir etwas unterstellen? Ich sage nichts mehr ohne Anwalt. Rufen Sie sie halt an.", "after": "dk-alibi", "closes": ["dk-verstaendnis"]},
+        {"id": "dk-verstaendnis", "question": "Verstaendnis zeigen: «Die Befoerderung muss Sie sehr belastet haben.»", "answer": "Ja. Zwei Jahre hingehalten. Ich war wuetend, ja, aber deswegen tut man doch so etwas nicht. Ich bin um 22:10 raus, das schwoere ich.", "after": "dk-alibi", "closes": ["dk-druck"]}
       ]
     },
     {
@@ -177,7 +179,9 @@
       "interrogation": [
         {"id": "mb-termin", "question": "Worum ging es im Termin um 22:30?", "answer": "Um die Q3-Zahlen. Thomas wollte, dass ich sie zurueckziehe. Ich habe gesagt, wir klaeren das am Montag mit der Geschaeftsleitung."},
         {"id": "mb-unter-uns", "question": "Warum sollte Ihr Treffen «unter uns» bleiben?", "answer": "Weil interne Zahlen nicht ueber den Flurfunk gehen. Das ist alles."},
-        {"id": "mb-ausgang", "question": "Wie haben Sie das Gebaeude verlassen?", "answer": "Ueber den Haupteingang, mit meinem eigenen Badge. Das muessten Sie im Protokoll sehen."}
+        {"id": "mb-ausgang", "question": "Wie haben Sie das Gebaeude verlassen?", "answer": "Ueber den Haupteingang, mit meinem eigenen Badge. Das muessten Sie im Protokoll sehen."},
+        {"id": "mb-druck", "question": "Druck machen: «Sie hatten am meisten zu verlieren.»", "answer": "Sie haben keine Ahnung, wie solche Zahlen entstehen. Ich habe ihm zehn Minuten zugehoert und bin gegangen. Ende.", "after": "mb-termin", "closes": ["mb-verstaendnis"]},
+        {"id": "mb-verstaendnis", "question": "Verstaendnis zeigen: «War das Gespraech schwierig?»", "answer": "Sehr. Er wollte zur Revisionsstelle. Ich habe ihn gebeten, bis Montag zu warten. Als ich ging, war er aufgebracht, aber er lebte.", "after": "mb-termin", "closes": ["mb-druck"]}
       ]
     },
     {
@@ -190,7 +194,9 @@
       "interrogation": [
         {"id": "lf-update", "question": "Was haben Sie im Serverraum gemacht?", "answer": "Ein Update eingespielt, das laenger gedauert hat als geplant. Ich war bis nach elf unten."},
         {"id": "lf-oben", "question": "Was meinten Sie mit «Brauchst du mich noch oben?»", "answer": "Thomas hatte mich am Nachmittag gebeten, nach seinem WLAN zu schauen. Er hat nicht geantwortet, also bin ich unten geblieben."},
-        {"id": "lf-badge", "question": "Warum haben Sie das Ersatzbadge noch nicht zurueckgegeben?", "answer": "Vergessen. Es liegt irgendwo in meiner Tasche."}
+        {"id": "lf-badge", "question": "Warum haben Sie das Ersatzbadge noch nicht zurueckgegeben?", "answer": "Vergessen. Es liegt irgendwo in meiner Tasche."},
+        {"id": "lf-druck", "question": "Druck machen: «Das klingt, als waeren Sie doch oben gewesen.»", "answer": "Nein! Ich war unten. Fragen Sie die Logs vom Serverraum, ich habe die ganze Zeit Konsolenbefehle eingegeben.", "after": "lf-oben", "closes": ["lf-verstaendnis"]},
+        {"id": "lf-verstaendnis", "question": "Verstaendnis zeigen: «Sie wollten ihm helfen, oder?»", "answer": "Ja. Thomas war einer der wenigen, die mich nicht wie einen Externen behandelt haben. Ich haette hochgehen sollen.", "after": "lf-oben", "closes": ["lf-druck"]}
       ]
     }
   ],

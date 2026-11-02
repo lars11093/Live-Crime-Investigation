@@ -38,6 +38,7 @@ import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation
 import { loadAccount } from "../lib/account";
 import {
   askQuestion,
+  closedQuestionIds,
   loadInterrogations,
   openQuestions,
   saveInterrogations,
@@ -415,6 +416,7 @@ export function CaseLoaderPage() {
               suspect={openSuspect}
               asked={transcript(interrogations, openSuspect)}
               open={openQuestions(interrogations, openSuspect)}
+              closedCount={closedQuestionIds(interrogations, openSuspect).size}
               onAsk={(questionId) =>
                 setInterrogations((prev) => askQuestion(prev, openSuspect, questionId))
               }
