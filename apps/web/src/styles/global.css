@@ -2052,3 +2052,37 @@ div.account-bar {
 .scene--schwer .hotspot__ring {
   animation: none;
 }
+
+/* Story #78 — Bewertung der Beweiskette */
+.chain {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--muted);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.chain--stark {
+  border-left-color: var(--accent);
+}
+
+.chain--schwach {
+  border-left-color: var(--danger);
+}
+
+.chain__level {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.chain__count {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.chain__weaknesses {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+  line-height: 1.5;
+}

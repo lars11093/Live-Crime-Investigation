@@ -5,6 +5,7 @@ import type {
   Scenario,
   VerdictFinding,
 } from "@case-zero/shared";
+import { rateChain } from "./chainRating.js";
 
 /**
  * Alle Beweise eines Falls mit ihrem Anzeigenamen — aus dem Tatort und aus den
@@ -76,5 +77,7 @@ export function judgeAccusation(
     culprit: { id: scenario.suspectId, name: nameOf(scenario.suspectId) },
     resolution: scenario.resolution,
     findings,
+    // #78 — wo die Begruendung schwach war, erst nach dem Absenden berechnet.
+    chain: rateChain(caseDef, scenario, submission),
   };
 }
