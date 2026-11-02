@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { CaseSummary } from "@case-zero/shared";
+import type { Difficulty } from "@case-zero/shared";
+import { DIFFICULTIES } from "@case-zero/shared";
 import { createRoom, fetchCaseList } from "../lib/api";
+import { DIFFICULTY_INFO } from "../lib/difficulty";
 
 type LoadState =
   | { status: "loading" }
@@ -20,6 +23,8 @@ export function CaseOverviewPage() {
   const [state, setState] = useState<LoadState>({ status: "loading" });
   const [startingId, setStartingId] = useState<string | null>(null);
   const [startError, setStartError] = useState<string | null>(null);
+  // Schwierigkeitsstufe fuer den naechsten Start (#56).
+  const [difficulty, setDifficulty] = useState<Difficulty>("normal");
 
   const load = useCallback(() => {
     let cancelled = false;
@@ -42,7 +47,7 @@ export function CaseOverviewPage() {
     setStartingId(caseId);
     setStartError(null);
     try {
-      const room = await createRoom(caseId);
+      const room = await createRoom(caseId, difficulty);
       navigate(`/fall/${room.code}`);
     } catch {
       setStartError("Fall konnte nicht gestartet werden. Server nicht erreichbar.");
@@ -58,6 +63,22 @@ export function CaseOverviewPage() {
         </p>
         <button onClick={() => navigate("/")}>Zur Startseite</button>
       </div>
+
+      <fieldset className="panel difficulty">
+        <legend className="team-code__label">Schwierigkeitsstufe</legend>
+        {DIFFICULTIES.map((d) => (
+          <label key={d} className="difficulty__option">
+            <input
+              type="radio"
+              name="difficulty"
+              value={d}
+              checked={difficulty === d}
+              onChange={() => setDifficulty(d)}
+            />
+            <strong>{DIFFICULTY_INFO[d].label}</strong> — {DIFFICULTY_INFO[d].text}
+          </label>
+        ))}
+      </fieldset>
 
       {state.status === "loading" && (
         <div className="panel case-status">

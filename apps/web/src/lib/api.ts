@@ -2,8 +2,12 @@ import type {
   AccusationSubmission,
   CaseSummary,
   CombineResult,
+  Difficulty,
+  HintState,
   PublicCase,
+  RecoverResult,
   SubmitAccusationResult,
+  UnlockResult,
 } from "@case-zero/shared";
 
 /** Antwort auf Konto erstellen/anmelden (#55). */
@@ -41,6 +45,8 @@ export interface RoomSummary {
   code: string;
   caseId: string;
   caseTitle: string;
+  /** Schwierigkeitsstufe der Session (#56). Fehlt bei aelteren Servern. */
+  difficulty?: Difficulty;
 }
 
 /** Code-Format aus CLAUDE.md, gespiegelt vom Server (engine/rooms.ts). */
@@ -55,11 +61,11 @@ export function isValidRoomCode(code: string): boolean {
 }
 
 /** Legt eine neue Team-Session an und gibt den teilbaren Code zurueck (#5). */
-export async function createRoom(caseId: string): Promise<RoomSummary> {
+export async function createRoom(caseId: string, difficulty?: Difficulty): Promise<RoomSummary> {
   const response = await fetch(`${SERVER_URL}/api/rooms`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ caseId }),
+    body: JSON.stringify({ caseId, difficulty }),
   });
   if (!response.ok) {
     throw new Error(`Team-Session konnte nicht angelegt werden (HTTP ${response.status})`);
@@ -163,4 +169,54 @@ export async function saveAccountProgress(token: string, code: string, progress:
     body: JSON.stringify({ progress }),
   });
   if (!response.ok) throw new Error(`Spielstand nicht gespeichert (HTTP ${response.status})`);
+}
+
+/** Freigegebene Hinweise der Team-Session (#74). */
+export async function fetchHints(code: string): Promise<HintState> {
+  const response = await fetch(`${SERVER_URL}/api/rooms/${normalizeRoomCode(code)}/hints`);
+  if (!response.ok) throw new Error(`Hinweise nicht verfuegbar (HTTP ${response.status})`);
+  return (await response.json()) as HintState;
+}
+
+/** Gibt den naechsten Hinweis fuer das Team frei (#74). 409 heisst: keine mehr. */
+export async function requestHint(code: string): Promise<{ ok: boolean; state: HintState }> {
+  const response = await fetch(`${SERVER_URL}/api/rooms/${normalizeRoomCode(code)}/hints`, { method: "POST" });
+  if (response.status !== 201 && response.status !== 409) {
+    throw new Error(`Hinweis konnte nicht angefordert werden (HTTP ${response.status})`);
+  }
+  return { ok: response.status === 201, state: (await response.json()) as HintState };
+}
+
+/** Stellt die geloeschten Nachrichten eines Geraets wieder her (#71). Wirft nur ohne Server. */
+export async function recoverDeleted(caseId: string, deviceId: string): Promise<RecoverResult> {
+  const response = await fetch(`${SERVER_URL}/api/cases/${caseId}/devices/${deviceId}/recover`, {
+    method: "POST",
+  });
+  if (![200, 400, 404].includes(response.status)) {
+    throw new Error(`Wiederherstellen fehlgeschlagen (HTTP ${response.status})`);
+  }
+  return (await response.json()) as RecoverResult;
+}
+
+/**
+ * Versucht, ein gesperrtes Geraet zu entsperren (#70).
+ *
+ * Die Pruefung passiert auf dem Server — PIN und Passwort kennt der Browser
+ * nie. "Falsche PIN" ist eine Antwort, kein Fehler; geworfen wird nur, wenn
+ * der Server nicht erreichbar ist.
+ */
+export async function unlockDevice(
+  caseId: string,
+  deviceId: string,
+  secret: string
+): Promise<UnlockResult> {
+  const response = await fetch(`${SERVER_URL}/api/cases/${caseId}/devices/${deviceId}/unlock`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ secret }),
+  });
+  if (![200, 400, 404].includes(response.status)) {
+    throw new Error(`Entsperren fehlgeschlagen (HTTP ${response.status})`);
+  }
+  return (await response.json()) as UnlockResult;
 }
