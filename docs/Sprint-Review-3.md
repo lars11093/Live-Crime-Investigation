@@ -7,9 +7,7 @@ Modul 426 · AP 25b · 02.11.2026 · Abschlusspräsentation mit Produktdemo (run
 > Am 2. November spielt eine Person CASE//ZERO auf `master` vom Start bis zur abgeschickten
 > Anklage durch, und wir zeigen dazu nachvollziehbar, wie wir mit Scrum gearbeitet haben.
 
-**Erreicht?** Auf `master` ist der ganze Weg bis zur abgeschickten Anklage gemergt, CI ist grün
-(Typecheck, Lint, 210 Tests, Build). Bestätigt wird es durch das Durchspielen in der Demo.
-_Nach der Demo: ✅ erreicht / ❌ nicht erreicht ankreuzen._
+**Erreicht?** Ja, auf dem localhost
 
 ## 2. Gezeigtes Inkrement
 
@@ -30,20 +28,10 @@ Ungeplant ebenfalls auf `master`: #28 Auflösung, #29 Anmelden, #30 Fallübersic
 |---|---|
 | #31 Rolle wählen und Folge-Stories (PR #128 – #151) | Change-Requests offen: Spieler-ID kommt vom Client, zweites Team-System neben #22 |
 | Texte mit korrekten Umlauten (PR #115) | veraltet, Konflikte mit `master`; neu aufsetzen statt flicken |
-
-## 4. Feedback
-
-> Entwurf — nach der Präsentation durch das echte Feedback ersetzen.
-
-| Von | Feedback | Wohin |
-|---|---|---|
-| _Lehrperson / Publikum_ | _eintragen_ | _Backlog / verworfen_ |
+| | Merge Conflicts |
 
 ## 5. Anpassungen am Product Backlog
 
-- #31 Rolle wählen: PR #128 nach den Change-Requests umbauen (Spieler-ID vom Server, Socket-Team aus #22 verwenden), dann die Folge-Stories neu stapeln.
-- #150 schliessen bzw. geschlossen lassen: Duplikat von #53 (#155).
-- «Texte mit korrekten Umlauten»: PR #115 auf dem aktuellen `master` neu aufsetzen.
-- #59 Mehrere Tatorte: prüfen, ob durch #159 erledigt.
+- Merge conflicts lösen
 
 **Protokoll:** Chime Dongkar (SM)
