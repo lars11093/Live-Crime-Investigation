@@ -352,6 +352,17 @@ export interface TeamDiscovery {
   foundAt: string;
 }
 
+/** Ein Eintrag im Aktivitätsprotokoll des Teams (#76). */
+export interface ActivityEntry {
+  id: string;
+  /** ISO-Zeitpunkt, vom Server gesetzt. */
+  at: string;
+  /** Wer gehandelt hat — `null` für Ereignisse des ganzen Teams. */
+  who: string | null;
+  /** Was passiert ist, als Satzrest nach dem Namen, z. B. "hat «Tasse» gefunden". */
+  text: string;
+}
+
 /** Eine mit dem Team geteilte Notiz zu einem Beweis (#64). */
 export interface SharedNote {
   evidenceId: string;
@@ -729,6 +740,8 @@ export interface ServerToClientEvents {
   "team:update": (team: TeamState) => void;
   /** Story #23 — alle geteilten Funde, nach jedem Teilen an alle und beim Beitritt an den Neuen. */
   "team:findings": (findings: SharedFinding[]) => void;
+  /** Das ganze Aktivitätsprotokoll (#76) nach jedem neuen Eintrag, der älteste zuerst. */
+  "team:activity": (entries: ActivityEntry[]) => void;
   /** Alle live gemeldeten Funde des Teams (#75), der älteste zuerst. */
   "team:discoveries": (discoveries: TeamDiscovery[]) => void;
   /** Story #64 — alle geteilten Notizen, nach jedem Teilen an alle und beim Beitritt an den Neuen. */

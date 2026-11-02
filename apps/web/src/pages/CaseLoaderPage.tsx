@@ -46,6 +46,7 @@ import { TeamPanel } from "../components/TeamPanel";
 import { shareMessage, useTeam } from "../lib/team";
 import { SharedFindings } from "../components/SharedFindings";
 import { TeamDiscoveries } from "../components/TeamDiscoveries";
+import { ActivityLog } from "../components/ActivityLog";
 import { ShareNoteButton, SharedNotesList } from "../components/SharedNotes";
 import { ProgressPanel } from "../components/ProgressPanel";
 import { HintPanel } from "../components/HintPanel";
@@ -113,6 +114,7 @@ type View =
   | "anklage"
   | "team"
   | "chat"
+  | "protokoll"
   | "aufgaben";
 
 type LoadState =
@@ -814,6 +816,19 @@ export function CaseLoaderPage() {
       );
     }
 
+    if (view === "protokoll") {
+      return (
+        <main className="app-shell">
+          <ActivityLog
+            entries={team.activity}
+            myName={team.name}
+            joined={team.name !== ""}
+            onBack={() => setView("akte")}
+          />
+        </main>
+      );
+    }
+
     if (view === "chat") {
       return (
         <main className="app-shell">
@@ -1003,6 +1018,7 @@ export function CaseLoaderPage() {
             <button onClick={() => setView("chat")}>
               Team-Chat{chatUnread > 0 ? ` (${chatUnread} neu)` : ""}
             </button>
+            <button onClick={() => setView("protokoll")}>Protokoll</button>
             <button onClick={() => setView("aufgaben")}>Aufgaben ({openTaskCount} offen)</button>
             <button onClick={() => setView("briefing")}>Briefing</button>
             {caseData.intro && (

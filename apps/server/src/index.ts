@@ -31,6 +31,7 @@ import {
 import { chooseRole, joinTeam, leaveTeam, teamStateOf } from "./engine/team.js";
 import { shareFinding } from "./engine/sharing.js";
 import { recordDiscovery } from "./engine/discoveries.js";
+import { logActivity, nameOf, roleText } from "./engine/activity.js";
 import { AccountStore } from "./engine/accounts.js";
 import { difficultyOf, parseDifficulty, setDifficulty } from "./engine/difficulty.js";
 import { notesOf, shareNote } from "./engine/noteSharing.js";
@@ -195,6 +196,7 @@ app.post("/api/rooms/:code/hints", (req, res) => {
   const room = getRoom(req.params.code);
   if (!room) return res.status(404).json({ error: "Ungültiger Team-Code" });
   const result = revealHint(room);
+  if (result.ok) activity(room, null, "Ein Hinweis wurde für das Team freigegeben.");
   return res.status(result.ok ? 201 : 409).json(result.state);
 });
 
@@ -205,7 +207,10 @@ app.post("/api/rooms/:code/accusation", (req, res) => {
     return res.status(404).json({ error: "Ungültiger Team-Code" });
   }
   const result = submitAccusation(room, req.body);
-  if (result.ok) return res.status(201).json(result);
+  if (result.ok) {
+    activity(room, null, "Die Anklage wurde abgesendet.");
+    return res.status(201).json(result);
+  }
   return res.status(result.reason === "already-submitted" ? 409 : 400).json(result);
 });
 
@@ -213,6 +218,12 @@ const httpServer = createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
   cors: { origin: "*" },
 });
+
+/** Story #76 — Eintrag ins Aktivitätsprotokoll und an alle im Raum. */
+function activity(room: Room, who: string | null, text: string) {
+  logActivity(room, who, text);
+  io.to(room.state.code).emit("team:activity", room.activity);
+}
 
 io.on("connection", (socket) => {
   socket.on("room:create", ({ caseId, playerName }, cb) => {
@@ -289,10 +300,13 @@ io.on("connection", (socket) => {
       cb({ ok: false, error: "Ungültiger Team-Code" });
       return;
     }
+    const isNew = nameOf(room, socket.id) === undefined;
     const result = joinTeam(room, socket.id, String(playerName ?? ""));
     cb(result);
     if (!result.ok) return;
     socket.join(room.state.code);
+    if (isNew) activity(room, nameOf(room, socket.id) ?? null, "ist dem Team beigetreten");
+    else socket.emit("team:activity", room.activity);
     io.to(room.state.code).emit("team:update", teamStateOf(room));
     // Wer später dazukommt, sieht trotzdem alles, was schon geteilt wurde (#23).
     socket.emit("team:findings", room.findings);
@@ -313,7 +327,9 @@ io.on("connection", (socket) => {
     const target = typeof playerId === "string" ? playerId : socket.id;
     const result = chooseRole(room, socket.id, role, target);
     cb(result);
-    if (result.ok) io.to(room.state.code).emit("team:update", teamStateOf(room));
+    if (!result.ok) return;
+    io.to(room.state.code).emit("team:update", teamStateOf(room));
+    activity(room, nameOf(room, socket.id) ?? null, roleText(role ?? null, target === socket.id ? null : (nameOf(room, target) ?? "jemandem")));
   });
 
   // Story #64 — Notiz teilen. Geprüfte Notiz geht an alle im Raum.
@@ -325,7 +341,9 @@ io.on("connection", (socket) => {
     }
     const result = shareNote(room, socket.id, { evidenceId, evidenceLabel, text });
     cb(result);
-    if (result.ok) io.to(room.state.code).emit("team:notes", notesOf(room));
+    if (!result.ok) return;
+    io.to(room.state.code).emit("team:notes", notesOf(room));
+    activity(room, nameOf(room, socket.id) ?? null, `hat eine Notiz zu «${String(evidenceLabel)}» geteilt`);
   });
 
   // Story #23 — Fund teilen. Geprüfter Fund geht an alle im Raum.
@@ -337,7 +355,9 @@ io.on("connection", (socket) => {
     }
     const result = shareFinding(room, socket.id, evidence);
     cb(result);
-    if (result.ok) io.to(room.state.code).emit("team:findings", room.findings);
+    if (!result.ok) return;
+    io.to(room.state.code).emit("team:findings", room.findings);
+    activity(room, nameOf(room, socket.id) ?? null, `hat «${String(evidence.label)}» mit dem Team geteilt`);
   });
 
   // Story #75 — Funde live ans Team. Der Client meldet jeden eingesammelten
@@ -350,7 +370,9 @@ io.on("connection", (socket) => {
     }
     const result = recordDiscovery(room, socket.id, evidence);
     cb?.(result);
-    if (result.ok) io.to(room.state.code).emit("team:discoveries", room.discoveries);
+    if (!result.ok) return;
+    io.to(room.state.code).emit("team:discoveries", room.discoveries);
+    activity(room, nameOf(room, socket.id) ?? null, `hat «${String(evidence.label)}» gefunden`);
   });
 
   // Story #57 — das Team in den nächsten Fall mitnehmen. Alle im alten Raum
@@ -398,6 +420,7 @@ io.on("connection", (socket) => {
     const result = addTask(room, socket.id, text);
     if (!result.ok) return cb({ ok: false, reason: result.reason });
     broadcastTasks(room);
+    activity(room, nameOf(room, socket.id) ?? null, `hat die Aufgabe «${String(text).trim()}» angelegt`);
     cb({ ok: true });
   });
 
@@ -407,6 +430,8 @@ io.on("connection", (socket) => {
     const result = updateTask(room, socket.id, taskId, patch ?? {});
     if (!result.ok) return cb({ ok: false, reason: result.reason });
     broadcastTasks(room);
+    const task = (room.tasks ?? []).find((t) => t.id === taskId);
+    if (task && patch?.done === true) activity(room, nameOf(room, socket.id) ?? null, `hat «${task.text}» erledigt`);
     cb({ ok: true });
   });
 
@@ -422,7 +447,9 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     for (const room of allRooms()) {
       // Wer geht, verschwindet auch aus den Teamlisten der anderen (#22).
+      const leaving = nameOf(room, socket.id);
       if (leaveTeam(room, socket.id)) {
+        if (leaving) activity(room, leaving, "hat das Team verlassen");
         io.to(room.state.code).emit("team:update", teamStateOf(room));
         // Übernommene Aufgaben werden wieder frei (#50).
         if (releaseTasks(room, socket.id)) broadcastTasks(room);
