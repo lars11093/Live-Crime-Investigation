@@ -17,10 +17,10 @@ interface Props {
   evidence: CollectedEvidence[];
   /** Beweis-ID -> Notiztext (#12). */
   notes?: Record<string, string>;
-  /** Eigene Tags pro Beweis (#62). */
-  tags?: Record<string, string[]>;
   /** Tatortfotos (#35), pro Beweis-ID. */
   photos?: Record<string, EvidencePhoto>;
+  /** Eigene Tags pro Beweis (#62). */
+  tags?: Record<string, string[]>;
   /** Relevanz digitaler Spuren (#47). */
   relevance?: Record<string, Relevance>;
   /** Oeffnet die Detailansicht (#11). */

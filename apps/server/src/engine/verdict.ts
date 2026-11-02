@@ -5,6 +5,8 @@ import type {
   Scenario,
   VerdictFinding,
 } from "@case-zero/shared";
+import { rateChain } from "./chainRating.js";
+import { pickEnding } from "./ending.js";
 
 /**
  * Alle Beweise eines Falls mit ihrem Anzeigenamen — aus dem Tatort und aus den
@@ -71,10 +73,15 @@ export function judgeAccusation(
   }
 
   const supported = submission.evidenceIds.some((id) => key.has(id));
+  const solved = rightSuspect && supported;
   return {
-    solved: rightSuspect && supported,
+    solved,
+    // #80 — eines von mehreren Enden, je nach Anklage.
+    ending: pickEnding(scenario, submission, solved),
     culprit: { id: scenario.suspectId, name: nameOf(scenario.suspectId) },
     resolution: scenario.resolution,
     findings,
+    // #78 — wo die Begruendung schwach war, erst nach dem Absenden berechnet.
+    chain: rateChain(caseDef, scenario, submission),
   };
 }
