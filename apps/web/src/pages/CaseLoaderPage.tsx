@@ -39,6 +39,7 @@ import { DeviceFiles } from "../components/DeviceFiles";
 import { TeamPanel } from "../components/TeamPanel";
 import { shareMessage, useTeam } from "../lib/team";
 import { SharedFindings } from "../components/SharedFindings";
+import { ShareNoteButton, SharedNotesList } from "../components/SharedNotes";
 import { ProgressPanel } from "../components/ProgressPanel";
 import { summarizeProgress } from "../lib/progress";
 import { messageToEvidence } from "../lib/digitalTrace";
@@ -494,6 +495,22 @@ export function CaseLoaderPage() {
           />
         ) : null}
         {open && (
+          <>
+          <ShareNoteButton
+            evidence={open}
+            note={notes[open.id] ?? ""}
+            joined={team.name !== ""}
+            onShare={async () => {
+              try {
+                const result = await team.shareNote(open, notes[open.id] ?? "");
+                if (result.ok) return "Notiz geteilt. Das ganze Team sieht sie jetzt.";
+                if (result.reason === "not-in-team") return "Tritt zuerst dem Team bei.";
+                return "Diese Notiz lässt sich nicht teilen.";
+              } catch {
+                return "Server nicht erreichbar. Bitte erneut versuchen.";
+              }
+            }}
+          />
           <div style={{ marginTop: "1rem" }}>
             <EvidenceTagEditor
               tags={tags[open.id] ?? []}
@@ -502,6 +519,7 @@ export function CaseLoaderPage() {
               onRemove={(tag) => setTags((prev) => removeTag(prev, open.id, tag))}
             />
           </div>
+          </>
         )}
         {!open && (
           <>
@@ -550,6 +568,9 @@ export function CaseLoaderPage() {
             </div>
             <div style={{ marginTop: "1rem" }}>
               <SharedFindings findings={team.findings} myId={team.myId} />
+            </div>
+            <div style={{ marginTop: "1rem" }}>
+              <SharedNotesList notes={team.notes} myId={team.myId} />
             </div>
           </>
         )}

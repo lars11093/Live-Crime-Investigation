@@ -66,6 +66,7 @@ Live-Crime-Investigation/
 2. Andere 4 Spieler joinen mit Code + wählen Rolle → Socket-Room `case:<code>` beitreten.
    Umgesetzt (#22): In der Fallakte tritt man mit Namen bei (`team:join`); der Server schickt nach jedem Beitritt und Verlassen die Teamliste an alle im Raum (`team:update`). Die Rollenwahl folgt mit #31.
    Umgesetzt (#23): Funde teilen per `evidence:share`; der Server prüft Teammitgliedschaft und Fall-Zugehörigkeit, hält die geteilten Funde im Raum und schickt sie als `team:findings` an alle (auch an später Beitretende).
+   Umgesetzt (#64): Notizen teilen per `note:share` (`{ code, evidenceId, evidenceLabel, text }`). Der Server prüft Team, Beweis und Länge (max. 500 Zeichen), hält pro Person und Beweis eine Notiz und schickt alle als `team:notes` an den Raum, auch an später Beitretende.
    Umgesetzt (#57): «Neuer Fall mit diesem Team» legt eine neue Session an und schickt `team:next`; der Server prüft, dass die Person im alten Team ist, und sendet `team:moved` mit dem neuen Code an alle im alten Raum. Die Clients wechseln dorthin und treten mit ihrem bisherigen Namen bei. Das zuletzt genutzte Team steht ausserdem im localStorage und lässt sich von der Startseite aus wieder öffnen.
 3. Server pusht rollenspezifische Payloads (`role:payload`) — jeder Client sieht nur, was seine Rolle darf.
 4. Aktionen (Board verbinden, Beweis anzeigen, Verhör-Antwort) gehen als Socket-Events zum Server, der validiert + an alle im Room broadcastet (`board:update`, `event:new`).

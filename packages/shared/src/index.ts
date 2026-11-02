@@ -260,6 +260,23 @@ export interface SharedFinding {
   sharedById: string;
 }
 
+/** Eine mit dem Team geteilte Notiz zu einem Beweis (#64). */
+export interface SharedNote {
+  evidenceId: string;
+  /** Name des Beweises, damit die Notiz auch ohne eigenen Fund lesbar ist. */
+  evidenceLabel: string;
+  text: string;
+  sharedBy: string;
+  sharedById: string;
+  /** ISO-Zeitpunkt, gesetzt vom Server. */
+  sharedAt: string;
+}
+
+/** Antwort auf `note:share` (#64). */
+export type NoteShareResult =
+  | { ok: true }
+  | { ok: false; reason: "invalid-room" | "not-in-team" | "unknown-evidence" | "invalid-text" };
+
 /** Antwort auf `evidence:share` (#23). */
 export type ShareResult =
   | { ok: true }
@@ -459,6 +476,11 @@ export interface ClientToServerEvents {
   "team:join": (payload: { code: string; playerName: string }, cb: (result: TeamJoinResult) => void) => void;
   /** Story #23 — einen Fund aus der eigenen Akte mit dem Team teilen. */
   "evidence:share": (payload: { code: string; evidence: CollectedEvidence }, cb: (result: ShareResult) => void) => void;
+  /** Story #64 — eine eigene Notiz zu einem Beweis mit dem Team teilen. */
+  "note:share": (
+    payload: { code: string; evidenceId: string; evidenceLabel: string; text: string },
+    cb: (result: NoteShareResult) => void
+  ) => void;
   /** Story #57 — das ganze Team aus `code` in die neue Session `newCode` mitnehmen. */
   "team:next": (payload: { code: string; newCode: string }, cb: (result: TeamJoinResult) => void) => void;
 }
@@ -475,6 +497,8 @@ export interface ServerToClientEvents {
   "team:update": (players: Player[]) => void;
   /** Story #23 — alle geteilten Funde, nach jedem Teilen an alle und beim Beitritt an den Neuen. */
   "team:findings": (findings: SharedFinding[]) => void;
+  /** Story #64 — alle geteilten Notizen, nach jedem Teilen an alle und beim Beitritt an den Neuen. */
+  "team:notes": (notes: SharedNote[]) => void;
   /** Story #57 — das Team zieht in eine neue Session um; `by` hat sie angelegt. */
   "team:moved": (payload: { code: string; by: string }) => void;
 }
