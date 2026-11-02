@@ -14,6 +14,15 @@ interface Props {
   /** Eigenes Tatortfoto (#35), falls aufgenommen. */
   photo?: EvidencePhoto;
   onSaveNote: (text: string) => void;
+  /** Teilen mit dem Team (#23). Fehlt, wenn die Seite kein Team kennt. */
+  share?: {
+    /** Name der Person, die diesen Fund schon geteilt hat — sonst `null`. */
+    sharedBy: string | null;
+    /** Ist man dem Team beigetreten? Ohne Namen gibt es keinen Urheber. */
+    joined: boolean;
+    /** Teilt und liefert die Meldung fuer den Spieler. */
+    onShare: () => Promise<string>;
+  };
   onBack: () => void;
 }
 
@@ -29,6 +38,7 @@ export function EvidenceDetail({
   noteEditedAt,
   photo,
   onSaveNote,
+  share,
   onBack,
 }: Props) {
   const [imageFailed, setImageFailed] = useState(!evidence.imagePath);
@@ -83,6 +93,8 @@ export function EvidenceDetail({
         </div>
       </dl>
 
+      {share && <ShareAction key={evidence.id} {...share} />}
+
       <NoteEditor
         evidenceId={evidence.id}
         note={note}
@@ -90,5 +102,43 @@ export function EvidenceDetail({
         onSave={onSaveNote}
       />
     </section>
+  );
+}
+
+/** Story #23 — Teilen-Knopf mit Zustand und Rueckmeldung. */
+function ShareAction({ sharedBy, joined, onShare }: NonNullable<Props["share"]>) {
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function run() {
+    setBusy(true);
+    try {
+      setMessage(await onShare());
+    } catch {
+      setMessage("Server nicht erreichbar. Bitte erneut versuchen.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="evidence-share">
+      {sharedBy ? (
+        <p className="evidence-share__done">Mit dem Team geteilt von {sharedBy}</p>
+      ) : joined ? (
+        <button onClick={run} disabled={busy}>
+          {busy ? "Teile…" : "Mit Team teilen"}
+        </button>
+      ) : (
+        <p className="case-status__hint" style={{ margin: 0 }}>
+          Zum Teilen zuerst in der Fallakte dem Team beitreten.
+        </p>
+      )}
+      {message && !sharedBy && (
+        <p className="case-status__hint" role="status" style={{ margin: 0 }}>
+          {message}
+        </p>
+      )}
+    </div>
   );
 }
