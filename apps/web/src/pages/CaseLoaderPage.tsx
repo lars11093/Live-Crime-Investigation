@@ -36,16 +36,13 @@ import { CombinePanel } from "../components/CombinePanel";
 import { SuspectList } from "../components/SuspectList";
 import { SuspectProfile } from "../components/SuspectProfile";
 import { ContradictionOverview } from "../components/ContradictionOverview";
-import { StatementTimeline } from "../components/StatementTimeline";
 import { SuspectCompare } from "../components/SuspectCompare";
 import { StatementSearch } from "../components/StatementSearch";
+import { StatementTimeline } from "../components/StatementTimeline";
 import { ChatHistory } from "../components/ChatHistory";
 import { ForensicsTerminal } from "../components/ForensicsTerminal";
 import { DeviceFiles } from "../components/DeviceFiles";
 import { TeamPanel } from "../components/TeamPanel";
-import { TeamRoles } from "../components/TeamRoles";
-import { ROLE_LABEL } from "../lib/roles";
-import { ObjectiveDock } from "../components/ObjectiveDock";
 import { shareMessage, useTeam } from "../lib/team";
 import { SharedFindings } from "../components/SharedFindings";
 import { ShareNoteButton, SharedNotesList } from "../components/SharedNotes";
@@ -58,7 +55,11 @@ import { markReviewed } from "../lib/forensics";
 import { AccusationPanel } from "../components/AccusationPanel";
 import { attachEvidence, chooseSuspect, detachEvidence } from "../lib/accusation";
 import { loadAccount } from "../lib/account";
+import { ROLE_LABEL } from "../lib/player";
+import { TeamRoles } from "../components/TeamRoles";
 import { introSeen, markIntroSeen } from "../lib/intro";
+import { restartCase } from "../lib/restart";
+import { RestartCase } from "../components/RestartCase";
 import { CaseIntro } from "../components/CaseIntro";
 import { loadBoard, recordInsight, saveBoard, toggleOwnThread } from "../lib/board";
 import { InvestigationBoard } from "../components/InvestigationBoard";
@@ -81,6 +82,7 @@ import { addTag, allTags, filterByTag, loadTags, removeTag, saveTags } from "../
 import { EvidenceTagEditor } from "../components/EvidenceTagEditor";
 import { EvidenceTagFilter } from "../components/EvidenceTagFilter";
 import { loadExcluded, saveExcluded, toggleExcluded } from "../lib/excludedSuspects";
+import { ObjectiveDock } from "../components/ObjectiveDock";
 import { TeamChat } from "../components/TeamChat";
 import { useTeamChat } from "../lib/useTeamChat";
 import { unreadCount } from "../lib/teamChat";
@@ -121,6 +123,8 @@ export function CaseLoaderPage() {
   // Angemeldet (#29) gehoert der Fortschritt dem Konto, sonst dem Gast.
   // Einmal beim Oeffnen gelesen: ein Kontowechsel passiert auf der Startseite.
   const [account] = useState(() => loadAccount(browserStorage()));
+  // Fehler aus dem letzten Rollenwechsel (#31), z. B. "schon vergeben".
+  const [roleError, setRoleError] = useState<string | null>(null);
   // Fortschritt kommt gespeichert herein und wird bei jeder Aenderung
   // zurueckgeschrieben, damit Notizen ein Neuladen ueberleben (#12).
   const [progress, setProgress] = useState<CaseProgress>(() =>
@@ -165,8 +169,8 @@ export function CaseLoaderPage() {
   const navigate = useNavigate();
   // Wer sonst noch in dieser Session ermittelt (#22).
   const team = useTeam(code);
-  // Absage des Servers auf die letzte Rollenwahl (#31).
-  const [roleError, setRoleError] = useState<string | null>(null);
+  // Wer im Team auftritt (#31): die eigene Verbindung, wie der Server sie kennt (#22).
+  const me = { id: team.myId ?? "", name: team.name };
 
   useEffect(() => {
     saveProgress(browserStorage(), code, progress, account?.id);
@@ -327,29 +331,29 @@ export function CaseLoaderPage() {
     );
   }
 
-  if (showIntro && state.caseData.intro && view === "briefing") {
-    return (
-      <CaseIntro
-        title={state.caseData.title}
-        intro={state.caseData.intro}
-        onDone={() => {
-          markIntroSeen(browserStorage(), code);
-          setShowIntro(false);
-        }}
-      />
-    );
-  }
-
   // Das Ermittlungsziel haengt an jeder Ansicht des geladenen Falls (#32).
-  // Nicht ueber dem Intro (#58), das bildschirmfuellend laeuft.
   return (
     <>
-      {renderView(state.caseData, state.difficulty)}
+      {renderView(state)}
       <ObjectiveDock objective={state.caseData.objective} />
     </>
   );
 
-  function renderView(caseData: PublicCase, difficulty: Difficulty) {
+  function renderView({ caseData, difficulty }: Extract<LoadState, { status: "ready" }>) {
+
+    if (showIntro && caseData.intro && view === "briefing") {
+      return (
+        <CaseIntro
+          title={caseData.title}
+          intro={caseData.intro}
+          onDone={() => {
+            markIntroSeen(browserStorage(), code);
+            setShowIntro(false);
+          }}
+        />
+      );
+    }
+
     const scenes = caseData.scenes;
     const scene = scenes.find((s) => s.id === sceneId) ?? scenes.at(0);
 
@@ -618,9 +622,9 @@ export function CaseLoaderPage() {
                   }))
                 }
                 selectionLocked={Boolean(accusation.receipt)}
+                suspicion={progress.suspicion}
                 excludedIds={excludedIds}
                 onToggleExcluded={(id) => setExcludedIds((prev) => toggleExcluded(prev, id))}
-                suspicion={progress.suspicion}
               />
               <div style={{ marginTop: "1rem" }}>
                 <StatementSearch suspects={caseData.suspects} onOpen={setOpenSuspectId} />
@@ -705,8 +709,8 @@ export function CaseLoaderPage() {
               <EvidenceList
                 evidence={filterByTag(collected, tags, activeTag)}
                 notes={notes}
-                tags={tags}
                 photos={progress.photos}
+                tags={tags}
                 relevance={progress.relevance}
                 onOpen={setOpenEvidenceId}
                 onBack={() => setView("akte")}
@@ -807,7 +811,7 @@ export function CaseLoaderPage() {
       );
     }
 
-    const myRole = team.players.find((p) => p.id === team.myId)?.role ?? null;
+    const myRole = team.players.find((p) => p.id === me.id)?.role ?? null;
 
     if (view === "anklage") {
       return (
@@ -849,6 +853,22 @@ export function CaseLoaderPage() {
             }}
             onBack={() => setView("akte")}
           />
+          {/* #79 — erst nach der Aufloesung: den Fall noch einmal spielen. */}
+          {accusation.receipt && (
+            <div style={{ marginTop: "1rem" }}>
+              <RestartCase
+                withTeam={team.name !== ""}
+                onRestart={() =>
+                  restartCase(caseData.id, difficulty, {
+                    createRoom,
+                    moveTeam: team.name ? team.moveTo : undefined,
+                    skipIntro: (newCode) => markIntroSeen(browserStorage(), newCode),
+                    go: (newCode) => window.location.assign(`/fall/${newCode}`),
+                  })
+                }
+              />
+            </div>
+          )}
         </main>
       );
     }
@@ -857,9 +877,9 @@ export function CaseLoaderPage() {
       return (
         <main className="app-shell">
           <CaseBriefingPanel
+            objective={caseData.objective}
             title={caseData.title}
             briefing={caseData.briefing}
-            objective={caseData.objective}
             onOpenScene={() => setView(scene ? "tatort" : "akte")}
             onClose={() => setView("akte")}
           />
@@ -871,7 +891,7 @@ export function CaseLoaderPage() {
       <main className="app-shell">
         <p className="terminal-title">
           Fallakte geoeffnet
-          {myRole && <span className="role-badge" style={{ marginLeft: "0.75rem" }}>{ROLE_LABEL[myRole]}</span>}
+          {myRole && <span className="role-badge">{ROLE_LABEL[myRole]}</span>}
         </p>
         <div className="panel case-status">
           <h1 className="case-title">{caseData.title}</h1>
@@ -994,5 +1014,5 @@ export function CaseLoaderPage() {
         </div>
       </main>
     );
-}
+  }
 }
