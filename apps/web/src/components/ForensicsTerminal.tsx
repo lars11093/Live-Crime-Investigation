@@ -1,9 +1,12 @@
 import type { Device } from "@case-zero/shared";
 import { listDevices } from "../lib/forensics";
+import { UnlockForm } from "./UnlockForm";
 
 interface Props {
   devices: Device[];
   onOpen: (deviceId: string) => void;
+  /** Entsperren (#70): `null` bei Erfolg, sonst die Meldung. */
+  onUnlock: (deviceId: string, secret: string) => Promise<string | null>;
   onBack: () => void;
 }
 
@@ -11,9 +14,12 @@ interface Props {
  * Story #18 — Forensik-Terminal oeffnen.
  * Listet alle sichergestellten Geraete mit Besitzer und Status. Offene Geraete
  * lassen sich auswerten (Chatverlauf, #19), gesperrte sind deutlich als
- * gesperrt markiert und nicht anklickbar. Entsperren ist eine eigene Story.
+ * gesperrt markiert und nicht anklickbar.
+ *
+ * Story #70 — unter einem gesperrten Geraet steht das Feld fuer PIN bzw.
+ * Passwort. Nach dem Entsperren ist es ein auswertbares Geraet wie die anderen.
  */
-export function ForensicsTerminal({ devices, onOpen, onBack }: Props) {
+export function ForensicsTerminal({ devices, onOpen, onUnlock, onBack }: Props) {
   const entries = listDevices(devices);
   const lockedCount = entries.filter((e) => !e.canOpen).length;
 
@@ -55,6 +61,9 @@ export function ForensicsTerminal({ devices, onOpen, onBack }: Props) {
                     {canOpen ? `${status} — klicken zum Auswerten` : status}
                   </span>
                 </button>
+                {!canOpen && (
+                  <UnlockForm device={device} onUnlock={(secret) => onUnlock(device.id, secret)} />
+                )}
               </li>
             ))}
           </ul>

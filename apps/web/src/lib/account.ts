@@ -12,6 +12,11 @@ export interface Account {
   /** Aus dem Namen abgeleitet, damit derselbe Name dasselbe Konto ist. */
   id: string;
   name: string;
+  /**
+   * Sitzungs-Token eines Server-Kontos (#55). Fehlt bei einer reinen
+   * Namens-Anmeldung (#29) — dann bleibt der Fortschritt in diesem Browser.
+   */
+  token?: string;
 }
 
 export const NAME_MIN = 2;
@@ -46,7 +51,8 @@ export function loadAccount(storage: ProgressStorage): Account | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<Account>;
     if (typeof parsed.name !== "string" || validateName(parsed.name)) return null;
-    return { id: accountIdFor(parsed.name), name: parsed.name.trim() };
+    const account: Account = { id: accountIdFor(parsed.name), name: parsed.name.trim() };
+    return typeof parsed.token === "string" && parsed.token ? { ...account, token: parsed.token } : account;
   } catch {
     return null;
   }
@@ -56,6 +62,17 @@ export function loadAccount(storage: ProgressStorage): Account | null {
 export function login(storage: ProgressStorage, name: string): Account | null {
   if (validateName(name)) return null;
   const account: Account = { id: accountIdFor(name), name: name.trim() };
+  try {
+    storage.setItem(ACCOUNT_KEY, JSON.stringify(account));
+  } catch {
+    // Ohne Storage gilt die Anmeldung nur bis zum Neuladen.
+  }
+  return account;
+}
+
+/** Merkt sich ein Server-Konto (#55) nach Erstellen oder Anmelden. */
+export function rememberServerAccount(storage: ProgressStorage, name: string, token: string): Account {
+  const account: Account = { id: accountIdFor(name), name: name.trim(), token };
   try {
     storage.setItem(ACCOUNT_KEY, JSON.stringify(account));
   } catch {

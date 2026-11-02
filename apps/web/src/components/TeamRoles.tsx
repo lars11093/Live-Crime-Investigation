@@ -1,5 +1,11 @@
 import { ROLES, type Role, type TeamView } from "@case-zero/shared";
-import { ROLE_FOCUS, ROLE_LABEL, type PlayerIdentity } from "../lib/player";
+import { ROLE_FOCUS, ROLE_LABEL } from "../lib/player";
+
+/** Wer im Team auftritt: die eigene Verbindung und der Name (#22, #31). */
+export interface PlayerIdentity {
+  id: string;
+  name: string;
+}
 
 interface Props {
   me: PlayerIdentity;
@@ -7,7 +13,6 @@ interface Props {
   /** Fehler aus dem letzten Versuch, z. B. "Die Rolle ist schon vergeben". */
   error: string | null;
   onChoose: (role: Role | null) => void;
-  onRefresh: () => void;
   onBack: () => void;
 }
 
@@ -15,9 +20,10 @@ interface Props {
  * Story #31 — im Team eine Rolle waehlen.
  *
  * Alle fuenf Rollen mit dem, was sie exklusiv sehen. Vergebene Rollen zeigen,
- * wer sie hat, und sind fuer alle anderen gesperrt.
+ * wer sie hat, und sind fuer alle anderen gesperrt. Aenderungen anderer
+ * kommen live per `team:update` (#22) — kein Nachladen noetig.
  */
-export function TeamRoles({ me, team, error, onChoose, onRefresh, onBack }: Props) {
+export function TeamRoles({ me, team, error, onChoose, onBack }: Props) {
   const players = team?.players ?? [];
   const myRole = players.find((p) => p.id === me.id)?.role ?? null;
 
@@ -28,7 +34,6 @@ export function TeamRoles({ me, team, error, onChoose, onRefresh, onBack }: Prop
           Team · Rollen
         </p>
         <div className="case-status__actions" style={{ margin: 0 }}>
-          <button onClick={onRefresh}>Aktualisieren</button>
           <button onClick={onBack}>Zurueck zur Fallakte</button>
         </div>
       </div>
@@ -44,7 +49,7 @@ export function TeamRoles({ me, team, error, onChoose, onRefresh, onBack }: Prop
       </p>
 
       {!team ? (
-        <p className="briefing__empty">Team wird geladen&hellip;</p>
+        <p className="briefing__empty">Tritt zuerst in der Fallakte mit deinem Namen dem Team bei.</p>
       ) : (
         <ul className="role-list">
           {ROLES.map((role) => {
