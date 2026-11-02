@@ -2,8 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Difficulty, PublicCase } from "@case-zero/shared";
 import { DIFFICULTY_INFO } from "../lib/difficulty";
-import { combineEvidence, fetchCase, findRoom, submitAccusation } from "../lib/api";
-import type { PublicCase } from "@case-zero/shared";
 import { saveTeam } from "../lib/savedTeam";
 import {
   combineEvidence,

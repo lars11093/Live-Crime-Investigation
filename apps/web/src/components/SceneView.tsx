@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
-import type { CollectedEvidence, Difficulty, Hotspot, Scene } from "@case-zero/shared";
-import { sceneProgressText } from "../lib/difficulty";
 import { lazy, Suspense, useEffect, useState } from "react";
 import type { CSSProperties } from "react";
-import type { CollectedEvidence, Hotspot, Scene, SceneTool } from "@case-zero/shared";
+import type { CollectedEvidence, Difficulty, Hotspot, Scene, SceneTool } from "@case-zero/shared";
+import { sceneProgressText } from "../lib/difficulty";
 import { TOOL_LABEL, toolsIn, visibleHotspots } from "../lib/sceneTools";
 
 // three.js ist gross — erst laden, wenn ein Tatort wirklich ein 3D-Modell hat.
@@ -82,10 +80,12 @@ export function SceneView({
 
   function hotspotButton(hotspot: Hotspot, style?: CSSProperties) {
     const done = investigated.has(hotspot.id);
+    // #56 — auf "leicht" sind Stellen mit noch nicht gesichertem Fund markiert.
+    const hint = difficulty === "leicht" && hotspot.evidence && !collected.has(hotspot.evidence.id);
     return (
       <button
         key={hotspot.id}
-        className={`hotspot${style ? "" : " hotspot--3d"}${done ? " hotspot--done" : ""}`}
+        className={`hotspot${style ? "" : " hotspot--3d"}${done ? " hotspot--done" : ""}${hint ? " hotspot--find" : ""}`}
         style={style}
         onClick={() => open(hotspot)}
         aria-pressed={done}
@@ -103,9 +103,7 @@ export function SceneView({
   const show3d = Boolean(scene.modelPath) && !modelFailed;
 
   return (
-    <section className={`scene scene--${difficulty}`} aria-label={`Tatort: ${scene.name}`}>
-      {imageFailed ? (
-    <section className={`scene${activeTool ? ` scene--${activeTool}` : ""}`} aria-label={`Tatort: ${scene.name}`}>
+    <section className={`scene scene--${difficulty}${activeTool ? ` scene--${activeTool}` : ""}`} aria-label={`Tatort: ${scene.name}`}>
       {show3d ? (
         <Suspense fallback={<p className="scene__loading">Tatort wird geladen …</p>}>
           <Scene3D
@@ -132,27 +130,6 @@ export function SceneView({
         />
       )}
 
-      {scene.hotspots.map((hotspot) => {
-        const done = investigated.has(hotspot.id);
-        // #56 — auf "leicht" sind Stellen mit noch nicht gesichertem Fund markiert.
-        const hint = difficulty === "leicht" && hotspot.evidence && !collected.has(hotspot.evidence.id);
-        return (
-          <button
-            key={hotspot.id}
-            className={`hotspot${done ? " hotspot--done" : ""}${hint ? " hotspot--find" : ""}`}
-            style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%` }}
-            onClick={() => open(hotspot)}
-            aria-pressed={done}
-            aria-label={`${hotspot.label}${done ? " (bereits untersucht)" : ""}`}
-          >
-            <span className="hotspot__ring" aria-hidden="true" />
-            <span className="hotspot__label">
-              {hotspot.label}
-              {done && <span className="hotspot__check" aria-hidden="true"> ✓</span>}
-            </span>
-          </button>
-        );
-      })}
       {!show3d &&
         shown.map((hotspot) =>
           hotspotButton(hotspot, { left: `${hotspot.x}%`, top: `${hotspot.y}%` })
@@ -161,10 +138,12 @@ export function SceneView({
       <div className="scene__overlay">
         <p className="scene__name">{scene.name}</p>
         <p className="scene__progress">
-          {sceneProgressText(difficulty, investigated.size, scene.hotspots.length)}
           {/* Nur die Stellen dieses Tatorts — investigatedIds gilt fuer den ganzen Fall. */}
-          {scene.hotspots.filter((h) => investigated.has(h.id)).length} / {scene.hotspots.length}{" "}
-          untersucht
+          {sceneProgressText(
+            difficulty,
+            scene.hotspots.filter((h) => investigated.has(h.id)).length,
+            scene.hotspots.length
+          )}
         </p>
         {scenes.length > 1 && (
           <nav className="scene__switch" aria-label="Tatort wechseln">
