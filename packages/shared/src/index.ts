@@ -53,6 +53,20 @@ export interface Scenario {
   keyEvidenceIds: string[];
   /** Was tatsaechlich passiert ist — erscheint erst nach der Anklage (#28). */
   resolution: string;
+  /** Alternative Enden (#80), je nach Anklage — siehe `CaseEnding.when`. */
+  endings?: CaseEnding[];
+}
+
+/** Ein Ende des Falls (#80). */
+export interface CaseEnding {
+  /**
+   * Wann es eintritt: `solved` (richtig und begruendet), `insufficient`
+   * (richtige Person, Beweise reichen nicht) oder eine Verdaechtigen-ID —
+   * das Ende, wenn diese Person zu Unrecht angeklagt wird.
+   */
+  when: string;
+  title: string;
+  text: string;
 }
 
 export interface Suspect {
@@ -189,6 +203,10 @@ export interface Device {
   locked?: boolean;
   /** Art der Sperre, wie sie im Terminal steht — z. B. "PIN, 4 Ziffern" (#18). */
   lockType?: string;
+  /** Geraeteart fuer die Uebersicht (#44). Fehlt sie, steht "Geraet". */
+  kind?: "smartphone" | "laptop" | "tablet" | "storage";
+  /** Wo das Geraet sichergestellt wurde (#44), z. B. "Schreibtisch, Buero 4.12". */
+  seizedAt?: string;
   /**
    * Hinweis zur Sperre, sichtbar im Terminal (#70) — z. B. woher die PIN
    * kommen koennte. Verraet die PIN nicht selbst.
@@ -199,10 +217,6 @@ export interface Device {
    * das Feld, geprueft wird nur in `engine/unlock.ts`.
    */
   unlockSecret?: string;
-  /** Geraeteart fuer die Uebersicht (#44). Fehlt sie, steht "Geraet". */
-  kind?: "smartphone" | "laptop" | "tablet" | "storage";
-  /** Wo das Geraet sichergestellt wurde (#44), z. B. "Schreibtisch, Buero 4.12". */
-  seizedAt?: string;
   /**
    * Systemprotokoll (#46), chronologisch wie die Nachrichten. Bei gesperrten
    * Geraeten entfernt der Server es wie die Nachrichten.
@@ -443,12 +457,12 @@ export interface CaseIntro {
 export interface CaseDefinition {
   id: string;
   title: string;
-  intro?: CaseIntro;
   /**
    * Was das Team herausfinden soll, in einem bis zwei Saetzen (#32). Jederzeit
    * im Spiel einsehbar — deshalb nichts darin, was die Loesung verraet.
    */
   objective?: string;
+  intro?: CaseIntro;
   briefing?: CaseBriefing;
   scenes: Scene[];
   combinations: Combination[];
@@ -548,10 +562,31 @@ export interface AccusationVerdict {
   resolution: string;
   findings: VerdictFinding[];
   /**
+   * Bewertung der Beweiskette (#78). Optional, weil Quittungen von vor #78
+   * (im localStorage) sie nicht haben.
+   */
+  chain?: ChainRating;
+  /** Welches Ende die Anklage ausgeloest hat (#80). Fehlt, wenn das Szenario keine Enden hat. */
+  ending?: { kind: "solved" | "insufficient" | "wrong"; title: string; text: string };
+  /**
    * Die Punktzahl (#54). Optional, weil Quittungen aus der Zeit vor #54 sie
    * nicht haben.
    */
   score?: AccusationScore;
+}
+
+/** Wie tragfaehig die Begruendung der Anklage war (#78). */
+export interface ChainRating {
+  level: "stark" | "mittel" | "schwach";
+  /** Angehaengte Beweise, die die Loesung tragen, und wie viele es gegeben haette. */
+  supporting: number;
+  possible: number;
+  /** Angehaengte Beweise ohne Bezug zur Loesung. */
+  irrelevant: number;
+  /** Ein Satz zur Einordnung. */
+  summary: string;
+  /** Konkret, wo die Begruendung schwach war — leer bei einer vollstaendigen Kette. */
+  weaknesses: string[];
 }
 
 /** Punktzahl einer Anklage mit Aufschluesselung (#54). */

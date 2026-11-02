@@ -31,6 +31,19 @@ export function CaseResolution({ verdict }: Props) {
         Taeter: <strong>{verdict.culprit.name}</strong>
       </p>
 
+      {verdict.ending && (
+        <div className={`ending ending--${verdict.ending.kind}`}>
+          <p className="team-code__label">Dein Ende</p>
+          <h2 className="ending__title">{verdict.ending.title}</h2>
+          <p className="briefing__text" style={{ margin: 0 }}>
+            {verdict.ending.text}
+          </p>
+          <p className="case-status__hint" style={{ marginBottom: 0 }}>
+            Jede Anklage hat ein eigenes Ende, und jede neue Session wählt den Täter neu.
+          </p>
+        </div>
+      )}
+
       {verdict.score && (
         <div className="score" aria-label="Punktzahl">
           <p className="score__points">
@@ -65,6 +78,30 @@ export function CaseResolution({ verdict }: Props) {
 
       <p className="team-code__label">Was wirklich geschah</p>
       <p className="briefing__text">{verdict.resolution}</p>
+
+      {verdict.chain && (
+        <div className={`chain chain--${verdict.chain.level}`}>
+          <p className="team-code__label">Bewertung deiner Beweiskette</p>
+          <p className="chain__level">
+            {verdict.chain.level === "stark" ? "Stark" : verdict.chain.level === "mittel" ? "Mittel" : "Schwach"}
+            <span className="chain__count">
+              {" "}
+              · {verdict.chain.supporting} von {verdict.chain.possible} tragenden Beweisen
+              {verdict.chain.irrelevant > 0 && ` · ${verdict.chain.irrelevant} ohne Bezug`}
+            </span>
+          </p>
+          <p className="briefing__text" style={{ margin: "0.25rem 0" }}>
+            {verdict.chain.summary}
+          </p>
+          {verdict.chain.weaknesses.length > 0 && (
+            <ul className="chain__weaknesses">
+              {verdict.chain.weaknesses.map((text) => (
+                <li key={text}>{text}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       <p className="team-code__label">Deine Schluesse</p>
       <ul className="resolution__findings">
